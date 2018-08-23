@@ -1,0 +1,21 @@
+Bloom Filter Manipulation tool
+
+Usage:
+    bloom-tool create --size=SIZE --fpp=FP [--] NAME
+    bloom-tool insert [--hex] [--source=FILE] [--] NAME
+    bloom-tool check [--hex] [--source=FILE] [--] NAME
+    bloom-tool benchmark --size=SIZE --fpp=FP
+    bloom-tool (-h | --help)
+
+Options:
+    -h --help             Show this screen.
+    --version             Show version.
+    -s SIZE --size=SIZE   Expected number of elements to be inserted
+    --fpp=fpp             Target maximum probability of false positives (floating point)
+    --source=FILE         Source file for entries to be inserted or checked,
+                          each line is a separate entry, (default is stdin)
+    --hex                 when inserting or checking interpret argument as hexadecimal string and convert to bytes before inserting
+
+Examples:
+    bloom-tool create --size=1000000 --fpp=1e-6 my.bloom
+
