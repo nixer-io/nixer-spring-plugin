@@ -1,0 +1,7 @@
+apply from: javaConfigGradle()
+
+dependencies {
+    compile libraries.guava
+    compile libraries.jackson.annotations
+}
+
