@@ -1,11 +1,14 @@
 package eu.xword.nixer.bloom;
 
 import java.io.IOException;
+import java.math.RoundingMode;
+import java.nio.ByteOrder;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import javax.annotation.Nonnull;
 
 import com.google.common.base.Preconditions;
+import com.google.common.math.LongMath;
 import com.google.common.primitives.Ints;
 
 /**
@@ -21,18 +24,21 @@ public class BitArrayMappedFile implements BitArray {
     private static int SEGMENT_SIZE_POW_2 = 30; // each segment is currently 1GB
     private static int SEGMENT_SIZE_BYTES = 1 << SEGMENT_SIZE_POW_2;
     private static int SEGMENT_SIZE_IN_LONG_POW_2 = SEGMENT_SIZE_POW_2 - 3;
-    private static int SEGMENT_SIZE_IN_LONG_MASK = (1 << SEGMENT_SIZE_IN_LONG_POW_2 - 1);
+    private static int SEGMENT_SIZE_IN_LONG_MASK = (1 << SEGMENT_SIZE_IN_LONG_POW_2) - 1;
     private final long bitSize;
 
     // because Java API for ByteBuffers uses int everywhere, we open multiple mappings each of maximum size of SEGMENT_SIZE_IN_BYTES
     private final MappedByteBuffer[] mappedByteBuffers;
+    private final MappedByteBuffer firstByteBuffer;
 
-    public BitArrayMappedFile(@Nonnull final FileChannel fileChannel) throws IOException {
+    public BitArrayMappedFile(@Nonnull final FileChannel fileChannel, final ByteOrder byteOrder) throws IOException {
         Preconditions.checkNotNull(fileChannel, "fileChannel");
 
         final long totalSizeInBytes = fileChannel.size();
-        this.bitSize = totalSizeInBytes * 8;
-        final long segments = (totalSizeInBytes / SEGMENT_SIZE_BYTES) + 1;
+        this.bitSize = totalSizeInBytes * 8 - 64; // 64 corrects for first long containing bitCount
+        Preconditions.checkArgument(this.bitSize > 0, "Bloom filter data file is too small");
+        final long segments = Ints.checkedCast(LongMath.divide(totalSizeInBytes, SEGMENT_SIZE_BYTES, RoundingMode.CEILING));
+
         this.mappedByteBuffers = new MappedByteBuffer[Ints.checkedCast(segments)];
         long remainingSize = totalSizeInBytes;
         for (int i = 0; i < segments; i++) {
@@ -43,7 +49,11 @@ public class BitArrayMappedFile implements BitArray {
 
             // note: memory mappings are valid even if the file is closed
             mappedByteBuffers[i] = fileChannel.map(FileChannel.MapMode.READ_WRITE, ((long) i) * SEGMENT_SIZE_BYTES, size);
+
+            mappedByteBuffers[i].order(byteOrder);
         }
+
+        firstByteBuffer = mappedByteBuffers[0];
 
     }
 
@@ -61,16 +71,18 @@ public class BitArrayMappedFile implements BitArray {
         final long correctedIndex = index + 64; // corrects for existence for bitCount stored at index 0
         final long indexInLongs = correctedIndex >>> 6;
         final long segmentIndex = indexInLongs >>> SEGMENT_SIZE_IN_LONG_POW_2;
-        final int indexInSegmentInLongs = Ints.checkedCast(indexInLongs & SEGMENT_SIZE_IN_LONG_MASK);
+        final int positionInSegment = Ints.checkedCast((indexInLongs & SEGMENT_SIZE_IN_LONG_MASK) << 3);
 
         final MappedByteBuffer segment = mappedByteBuffers[Ints.checkedCast(segmentIndex)];
-        final long value = segment.getLong(indexInSegmentInLongs);
+        final long value = segment.getLong(positionInSegment);
 
         final long bitMask = 1L << correctedIndex;
         final boolean wasSet = (value & bitMask) != 0;
         if (alsoSet && !wasSet) {
             final long changedValue = value | bitMask;
-            segment.putLong(indexInSegmentInLongs, changedValue);
+            segment.putLong(positionInSegment, changedValue);
+            final long newCount = firstByteBuffer.getLong(0) + 1;
+            firstByteBuffer.putLong(0, newCount);
         }
         return wasSet;
     }
@@ -82,6 +94,6 @@ public class BitArrayMappedFile implements BitArray {
 
     @Override
     public long bitCount() {
-        return mappedByteBuffers[0].getLong(0);
+        return firstByteBuffer.getLong(0);
     }
 }

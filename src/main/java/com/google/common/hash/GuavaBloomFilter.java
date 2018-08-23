@@ -16,13 +16,17 @@ package com.google.common.hash;
 
 import java.io.Serializable;
 import java.math.RoundingMode;
+import java.nio.ByteOrder;
 
-import com.google.common.annotations.Beta;
+import javax.annotation.Nonnull;
+
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Predicate;
 import com.google.common.math.DoubleMath;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import eu.xword.nixer.bloom.BitArray;
+import eu.xword.nixer.bloom.BitArray.Factory;
+import eu.xword.nixer.bloom.BloomFilterParameters;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -54,14 +58,16 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author Kevin Bourrillion
  * @since 11.0
  */
-@Beta
-public final class GuavaBloomFilter<T> implements Predicate<T>, Serializable {
+// CROSSWORD CHANGES - added interface eu.xword.nixer.bloom.BloomFilter and removed Serializable
+public final class GuavaBloomFilter<T> implements eu.xword.nixer.bloom.BloomFilter<T> {
   /**
    * A strategy to translate T instances, to {@code numHashFunctions} bit indexes.
    *
    * <p>Implementations should be collections of pure functions (i.e. stateless).
    */
-  interface Strategy extends Serializable {
+
+// CROSSWORD CHANGES - made public
+  public interface Strategy extends Serializable {
 
     /**
      * Sets {@code numHashFunctions} bits of the given bit array, by hashing a user element.
@@ -101,12 +107,16 @@ public final class GuavaBloomFilter<T> implements Predicate<T>, Serializable {
    */
   private final Strategy strategy;
 
+
+  // CROSSWORD CHANGES - added field parameters
+  private final BloomFilterParameters parameters;
+
   /**
    * Creates a GuavaBloomFilter.
    */
-  // CROSSWORD CHANGES - constructor made package private
+  // CROSSWORD CHANGES - constructor made package private and added "parameters" argument
   GuavaBloomFilter(
-      BitArray bits, int numHashFunctions, Funnel<? super T> funnel, Strategy strategy) {
+          BitArray bits, int numHashFunctions, Funnel<? super T> funnel, Strategy strategy, @Nonnull final BloomFilterParameters parameters) {
     checkArgument(numHashFunctions > 0, "numHashFunctions (%s) must be > 0", numHashFunctions);
     checkArgument(
         numHashFunctions <= 255, "numHashFunctions (%s) must be <= 255", numHashFunctions);
@@ -114,6 +124,7 @@ public final class GuavaBloomFilter<T> implements Predicate<T>, Serializable {
     this.numHashFunctions = numHashFunctions;
     this.funnel = checkNotNull(funnel);
     this.strategy = checkNotNull(strategy);
+    this.parameters = parameters;
   }
 
   //  --- CROSSWORD CHANGES - removed copy() method
@@ -122,6 +133,7 @@ public final class GuavaBloomFilter<T> implements Predicate<T>, Serializable {
    * Returns {@code true} if the element <i>might</i> have been put in this Bloom filter,
    * {@code false} if this is <i>definitely</i> not the case.
    */
+  @Override
   public boolean mightContain(T object) {
     return strategy.mightContain(object, funnel, numHashFunctions, bits);
   }
@@ -147,6 +159,7 @@ public final class GuavaBloomFilter<T> implements Predicate<T>, Serializable {
    *     result to what {@code mightContain(t)} would have returned at the time it is called.
    * @since 12.0 (present in 11.0 with {@code void} return type})
    */
+  @Override
   @CanIgnoreReturnValue
   public boolean put(T object) {
     return strategy.put(object, funnel, numHashFunctions, bits);
@@ -157,12 +170,13 @@ public final class GuavaBloomFilter<T> implements Predicate<T>, Serializable {
    * {@code true} for an object that has not actually been put in the {@code GuavaBloomFilter}.
    *
    * <p>Ideally, this number should be close to the {@code fpp} parameter passed in
-   * {@linkplain #create(Funnel, int, double, BitArray.Factory)}, or smaller. If it is significantly higher, it is
+   * {@linkplain #create(Funnel, int, double, Factory, BloomFilterParameters)}, or smaller. If it is significantly higher, it is
    * usually the case that too many elements (more than expected) have been put in the
    * {@code GuavaBloomFilter}, degenerating it.
    *
    * @since 14.0 (since 11.0 as expectedFalsePositiveProbability())
    */
+  @Override
   public double expectedFpp() {
     // You down with FPP? (Yeah you know me!) Who's down with FPP? (Every last homie!)
     return Math.pow((double) bits.bitCount() / bitSize(), numHashFunctions);
@@ -175,6 +189,7 @@ public final class GuavaBloomFilter<T> implements Predicate<T>, Serializable {
    *
    * @since 22.0
    */
+  @Override
   public long approximateElementCount() {
     long bitSize = bits.bitSize();
     long bitCount = bits.bitCount();
@@ -188,6 +203,12 @@ public final class GuavaBloomFilter<T> implements Predicate<T>, Serializable {
     double fractionOfBitsSet = (double) bitCount / bitSize;
     return DoubleMath.roundToLong(
         -Math.log1p(-fractionOfBitsSet) * bitSize / numHashFunctions, RoundingMode.HALF_UP);
+  }
+
+  @Nonnull
+  @Override
+  public BloomFilterParameters getParameters() {
+    return this.parameters;
   }
 
   /**
@@ -246,46 +267,35 @@ public final class GuavaBloomFilter<T> implements Predicate<T>, Serializable {
    *     {@code GuavaBloomFilter<T>}; must be positive
    * @param fpp the desired false positive probability (must be positive and less than 1.0)
    * @param bitArrayFactory a factory used to create new bit arrays
-   * @return a {@code GuavaBloomFilter}
-   */
-  // CROSSWORD CHANGES - added bitArrayFactory argument
-  public static <T> GuavaBloomFilter<T> create(
-          Funnel<? super T> funnel, int expectedInsertions, double fpp, final BitArray.Factory bitArrayFactory) {
-    return create(funnel, (long) expectedInsertions, fpp, bitArrayFactory);
-  }
-
-  /**
-   * Creates a {@link GuavaBloomFilter}{@code <T>} with the expected number of insertions and
-   * expected false positive probability.
-   *
-   * <p>Note that overflowing a {@code GuavaBloomFilter} with significantly more elements than specified,
-   * will result in its saturation, and a sharp deterioration of its false positive probability.
-   *
-   * <p>The constructed {@code GuavaBloomFilter<T>} will be serializable if the provided
-   * {@code Funnel<T>} is.
-   *
-   * <p>It is recommended that the funnel be implemented as a Java enum. This has the benefit of
-   * ensuring proper serialization and deserialization, which is important since {@link #equals}
-   * also relies on object identity of funnels.
-   *
-   * @param funnel the funnel of T's that the constructed {@code GuavaBloomFilter<T>} will use
-   * @param expectedInsertions the number of expected insertions to the constructed
-   *     {@code GuavaBloomFilter<T>}; must be positive
-   * @param fpp the desired false positive probability (must be positive and less than 1.0)
-   * @param bitArrayFactory a factory used to create new bit arrays
+   * @param parameters
    * @return a {@code GuavaBloomFilter}
    * @since 19.0
    */
   // CROSSWORD CHANGES - added bitArrayFactory argument
-  public static <T> GuavaBloomFilter<T> create(
-          Funnel<? super T> funnel, long expectedInsertions, double fpp, final BitArray.Factory bitArrayFactory) {
+  public static <T> GuavaBloomFilter<T> create(Funnel<? super T> funnel, long expectedInsertions, double fpp, final Factory bitArrayFactory) {
     return create(funnel, expectedInsertions, fpp, GuavaBloomFilterStrategies.MURMUR128_MITZ_64, bitArrayFactory);
   }
+
+  // CROSSWORD CHANGES - added new variation of create() that accepts BloomFilterParameters
+  public static <T> GuavaBloomFilter<T> create(Funnel<? super T> funnel, final Factory bitArrayFactory, final BloomFilterParameters parameters) {
+    try {
+      return new GuavaBloomFilter<T>(
+              bitArrayFactory.create(parameters.getBitSize()),
+              parameters.getNumHashFunctions(),
+              funnel,
+              parameters.getStrategy(),
+              parameters
+      );
+    } catch (IllegalArgumentException e) {
+      throw new IllegalArgumentException("Could not create GuavaBloomFilter of " + parameters.getNumHashFunctions() + " bits", e);
+    }
+  }
+
 
   @VisibleForTesting
   // CROSSWORD CHANGES - added bitArrayFactory argument
   static <T> GuavaBloomFilter<T> create(
-          Funnel<? super T> funnel, long expectedInsertions, double fpp, Strategy strategy, final BitArray.Factory bitArrayFactory) {
+          Funnel<? super T> funnel, long expectedInsertions, double fpp, GuavaBloomFilterStrategies strategy, final Factory bitArrayFactory) {
     checkNotNull(funnel);
     checkArgument(
         expectedInsertions >= 0, "Expected insertions (%s) must be >= 0", expectedInsertions);
@@ -303,64 +313,19 @@ public final class GuavaBloomFilter<T> implements Predicate<T>, Serializable {
      */
     long numBits = optimalNumOfBits(expectedInsertions, fpp);
     int numHashFunctions = optimalNumOfHashFunctions(expectedInsertions, numBits);
+
+    // CROSSWORD CHANGES - added creation targetParameters
+    final BloomFilterParameters targetParameters = new BloomFilterParameters(expectedInsertions, fpp, numHashFunctions, numBits, strategy, ByteOrder.nativeOrder());
+
     try {
       // CROSSWORD CHANGES - replaced "new BitArray()" with "bitArrayFactory.create()"
-      return new GuavaBloomFilter<T>(bitArrayFactory.create(numBits), numHashFunctions, funnel, strategy);
+      return new GuavaBloomFilter<T>(bitArrayFactory.create(numBits), numHashFunctions, funnel, strategy, targetParameters);
     } catch (IllegalArgumentException e) {
       throw new IllegalArgumentException("Could not create GuavaBloomFilter of " + numBits + " bits", e);
     }
   }
 
-  /**
-   * Creates a {@link GuavaBloomFilter}{@code <T>} with the expected number of insertions and a
-   * default expected false positive probability of 3%.
-   *
-   * <p>Note that overflowing a {@code GuavaBloomFilter} with significantly more elements than specified,
-   * will result in its saturation, and a sharp deterioration of its false positive probability.
-   *
-   * <p>The constructed {@code GuavaBloomFilter<T>} will be serializable if the provided
-   * {@code Funnel<T>} is.
-   *
-   * <p>It is recommended that the funnel be implemented as a Java enum. This has the benefit of
-   * ensuring proper serialization and deserialization, which is important since {@link #equals}
-   * also relies on object identity of funnels.
-   *
-   * @param funnel the funnel of T's that the constructed {@code GuavaBloomFilter<T>} will use
-   * @param expectedInsertions the number of expected insertions to the constructed
-   *     {@code GuavaBloomFilter<T>}; must be positive
-   * @param bitArrayFactory
-   * @return a {@code GuavaBloomFilter}
-   */
-  // CROSSWORD CHANGES - added bitArrayFactory argument
-  public static <T> GuavaBloomFilter<T> create(Funnel<? super T> funnel, int expectedInsertions, final BitArray.Factory bitArrayFactory) {
-    return create(funnel, (long) expectedInsertions, bitArrayFactory);
-  }
-
-  /**
-   * Creates a {@link GuavaBloomFilter}{@code <T>} with the expected number of insertions and a
-   * default expected false positive probability of 3%.
-   *
-   * <p>Note that overflowing a {@code GuavaBloomFilter} with significantly more elements than specified,
-   * will result in its saturation, and a sharp deterioration of its false positive probability.
-   *
-   * <p>The constructed {@code GuavaBloomFilter<T>} will be serializable if the provided
-   * {@code Funnel<T>} is.
-   *
-   * <p>It is recommended that the funnel be implemented as a Java enum. This has the benefit of
-   * ensuring proper serialization and deserialization, which is important since {@link #equals}
-   * also relies on object identity of funnels.
-   *
-   * @param funnel the funnel of T's that the constructed {@code GuavaBloomFilter<T>} will use
-   * @param expectedInsertions the number of expected insertions to the constructed
-   *     {@code GuavaBloomFilter<T>}; must be positive
-   * @param bitArrayFactory
-   * @return a {@code GuavaBloomFilter}
-   * @since 19.0
-   */
-  // CROSSWORD CHANGES - added bitArrayFactory argument
-  public static <T> GuavaBloomFilter<T> create(Funnel<? super T> funnel, long expectedInsertions, final BitArray.Factory bitArrayFactory) {
-    return create(funnel, expectedInsertions, 0.03, bitArrayFactory); // FYI, for 3%, we always get 5 hash functions
-  }
+  // CROSSWORD CHANGES - removed some overloaded variations of create() method
 
   // Cheat sheet:
   //
