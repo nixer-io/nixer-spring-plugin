@@ -109,12 +109,12 @@ public class BloomToolMain {
     }
 
     private static void benchmarkInsertion(final long size, final Stopwatch watch, final BloomFilter<Long> filter, final long seedInsertion) {
-        message("Inserting " + size + " values");
+        message("Inserting", "%d values", size);
         watch.reset().start();
         insertRandomElements(filter, size, seedInsertion);
         reportTime(watch, "Insertion time");
         final double elapsed = ((double) watch.elapsed(TimeUnit.NANOSECONDS)) / TimeUnit.SECONDS.toNanos(1);
-        message(String.format("Insertion speed: %6.2f op/sec", (double)size / elapsed));
+        message("Insertion speed", "%6.2f op/sec", (double) size / elapsed);
     }
 
     private static void benchmarkChecking(final long size, final Stopwatch watch, final BloomFilter<Long> filter, final long seedInsertion, final long seedOther) {
@@ -123,7 +123,8 @@ public class BloomToolMain {
 
         long falsePositives = 0;
 
-        message("Checking " + 2 * size + " values (half exist, half should not exist)");
+        message("Checking", "%d values (half exist, half should not exist)", 2 * size);
+
         for (long i = 0; i < size; i++) {
             final long mustExistValue = randomInsertion.nextLong();
             if (!filter.mightContain(mustExistValue)) {
@@ -131,7 +132,7 @@ public class BloomToolMain {
             }
             final long probablyShouldNotExist = randomOther.nextLong();
             if (filter.mightContain(probablyShouldNotExist * 1001)) {
-                ++ falsePositives;
+                ++falsePositives;
             }
         }
 
@@ -139,9 +140,31 @@ public class BloomToolMain {
 
         final double elapsed = ((double) watch.elapsed().toNanos()) / TimeUnit.SECONDS.toNanos(1);
 
-        message(String.format("Check speed: %6.2f op/sec", 2.0 * (double)size / elapsed));
-        message(String.format("False positive rate: %16.14f", (double)falsePositives / (double) size));
+        message("Check speed", "%6.2f op/sec", 2.0 * (double) size / elapsed);
+        message("False Positives", "%d", falsePositives);
+        final double falsePositivesRate = (double) falsePositives / (double) size;
+        message("False Positive rate", "%16.14f", falsePositivesRate);
+        final double expectedFpp = filter.expectedFpp();
+        message("FP rate evaluation", "%s", evaluateFalsePositives(falsePositivesRate, expectedFpp));
     }
+
+    @Nonnull
+    private static String evaluateFalsePositives(final double falsePositivesRate, final double expectedFpp) {
+        if (expectedFpp <= 0.0) {
+            return "invalid expected fpp";
+        }
+
+        final String grade = (falsePositivesRate <= expectedFpp * 1.5)
+                ? "good"
+                : (falsePositivesRate  <= expectedFpp * 2.0 ? "tolerable" : "bad");
+
+        final String comment = (falsePositivesRate == 0)
+                ? "no detected"
+                : String.format("%.2f%% target", falsePositivesRate * 100.0 / expectedFpp);
+
+        return String.format("%s (%s)", grade, comment);
+    }
+
 
     @Nonnull
     private static BloomFilter<Long> createFilterForBenchmark(final long size, final double fpp, final Path name, final Stopwatch watch) {
@@ -156,7 +179,7 @@ public class BloomToolMain {
         reportTime(watch, "Creation time");
 
         final BloomFilterParameters parameters = filter.getParameters();
-        message("Parameters: " + parameters);
+        message("Parameters", "%s", parameters);
 
         return FileBasedBloomFilter.open(name, Funnels.longFunnel());
     }
@@ -170,7 +193,11 @@ public class BloomToolMain {
     }
 
     private static void reportTime(@Nonnull final Stopwatch watch, @Nonnull final String text) {
-        message(String.format("%-20s: %15s", text, watch.elapsed()));
+        message(text, "%s", watch.elapsed());
+    }
+
+    private static void message(final String text, String format, Object value) {
+        message(String.format("%-20s: %s", text, String.format(format, value)));
     }
 
     private static void message(final String m) {
