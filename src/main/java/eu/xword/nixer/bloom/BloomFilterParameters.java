@@ -14,13 +14,12 @@ import com.google.common.hash.GuavaBloomFilter;
 import com.google.common.hash.GuavaBloomFilterStrategies;
 
 /**
- * TODO
+ * A set of parameters describing {@link BloomFilter} when it was created.
  * <br>
  * Created on 23/08/2018.
  *
  * @author cezary.biernacki@crosswordcybersecurity.com
  */
-
 public class BloomFilterParameters {
     private static final Map<String, ByteOrder> BYTE_ORDER_MAP = ImmutableMap.of(
         ByteOrder.BIG_ENDIAN.toString(), ByteOrder.BIG_ENDIAN,
@@ -49,6 +48,7 @@ public class BloomFilterParameters {
     ) {
         Preconditions.checkNotNull(strategy, "strategy");
         Preconditions.checkNotNull(byteOrder, "byteOrder");
+
         this.expectedInsertions = expectedInsertions;
         this.falsePositivesProbability = falsePositivesProbability;
         this.numHashFunctions = numHashFunctions;
@@ -57,6 +57,8 @@ public class BloomFilterParameters {
         this.byteOrder = byteOrder;
     }
 
+
+    // Used for de-serialisation
     @JsonCreator
     public BloomFilterParameters(
             @JsonProperty("expectedInsertions") final long expectedInsertions,
@@ -85,6 +87,7 @@ public class BloomFilterParameters {
     public long getExpectedInsertions() {
         return expectedInsertions;
     }
+
     @JsonProperty
     public int getNumHashFunctions() {
         return numHashFunctions;
@@ -107,6 +110,7 @@ public class BloomFilterParameters {
         return byteOrder;
     }
 
+    // used for serialisation
     @JsonProperty("byteOrder")
     @Nonnull
     public String getByteOrderString() {

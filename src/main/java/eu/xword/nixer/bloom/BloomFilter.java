@@ -51,6 +51,9 @@ public interface BloomFilter<T> extends Predicate<T> {
      */
     long approximateElementCount();
 
+    /**
+     * Returns configuration of the bloom filter used for its creation.
+     */
     @Nonnull
     BloomFilterParameters getParameters();
 }
