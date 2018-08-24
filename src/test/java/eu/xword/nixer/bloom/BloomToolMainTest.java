@@ -4,16 +4,13 @@ import java.io.File;
 import java.io.IOException;
 
 import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.junit.rules.TestRule;
 import org.junit.runner.RunWith;
 
 import static eu.xword.nixer.bloom.BloomToolMain.main;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.BDDMockito.given;
 
 /**
  * Unit tests for {@link BloomToolMain}.
@@ -32,12 +29,18 @@ public class BloomToolMainTest {
     public void createFilter() throws IOException {
         // given
         final File file = temporaryFolder.newFile("test.bloom");
-        file.delete();
+        delete(file);
 
         // when
         main(new String[] {"create", "--size=100", "--fpp=1e-2", file.getAbsolutePath()});
 
         // then
         assertThat(file).exists();
+    }
+
+    private static void delete(final File file) throws IOException {
+        if (!file.delete()) {
+            throw new IOException("Failed to delete: " + file);
+        }
     }
 }

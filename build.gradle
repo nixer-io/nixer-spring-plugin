@@ -3,7 +3,7 @@ apply from: javaConfigGradle()
 dependencies {
     compile project(':bloom-lib')
 
-    compile 'com.offbytwo:docopt:0.6.0.20150202' // see: https://github.com/docopt/docopt.java
+    compile libraries.docopt        // see: https://github.com/docopt/docopt.java
 }
 
 rootProject.copyDistribution.from fileTree('src/main/dist')

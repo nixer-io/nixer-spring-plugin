@@ -7,15 +7,32 @@ Usage:
     bloom-tool benchmark --size=SIZE [--fpp=FPP]
     bloom-tool (-h | --help)
 
+Commands:
+    create                  Creates a new bloom filter.
+    insert                  Inserts values to the filter from standard input.
+    check                   Checks if values provided in the standard input appear in the filter,
+                            printing matches to the standard output, and skipping not mached values.
 Options:
-    -h --help             Show this screen.
-    --version             Show version.
-    -s SIZE --size=SIZE   Expected number of elements to be inserted
-    --fpp=fpp             Target maximum probability of false positives (floating point) [default: 1e-6]
-    --source=FILE         Source file for entries to be inserted or checked,
-                          each line is a separate entry, (default is stdin)
-    --hex                 when inserting or checking interpret argument as hexadecimal string and convert to bytes before inserting
+    -h --help               Show this screen.
+    --version               Show version.
+    -s SIZE --size=SIZE     Expected number of elements to be inserted
+    --fpp=fpp               Target maximum probability of false positives (floating point) [default: 1e-6]
+    --source=FILE           Source file for entries to be inserted or checked,
+                            each line is a separate entry, (default is stdin)
+    --hex                   Interprets input values as hexadecimal string when inserting or checking.
+                            Values are converted to bytes before inserting, if this conversion fail, the string is inserted in normal way.
 
 Examples:
-    bloom-tool create --size=1000000 --fpp=1e-6 my.bloom
+    $ bloom-tool create --size=1000000 --fpp=1e-6 my.bloom
+        # creates a new filter "my.bloom" for 1M insertions and 1 to 1M false positive rate
+
+    bloom-tool insert my.bloom < entries.txt
+        # inserts lines from entries.txt to my.bloom
+
+    echo "example" | bloom-tool check my.bloom
+        # checks if string "example" might be inserted in my.bloom,
+        # printing it standard output if it might be true, and skipping it otherwise
+
+
+
 
