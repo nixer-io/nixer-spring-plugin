@@ -7,4 +7,4 @@ set -o nounset
 # find the location of this script
 DIR="$(dirname "$0")"
 
-java -jar "$DIR/nixer-bloom-tool.jar" "$@"
+java -Xms64m -Xmx128m -jar "$DIR/nixer-bloom-tool.jar" "$@"
