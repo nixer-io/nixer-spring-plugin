@@ -84,6 +84,28 @@ public class FileBasedBloomFilterTest {
         assertThat(found).isTrue();
     }
 
+    @Test
+    public void shouldFindAfterInsertingReopening() throws IOException {
+        // given
+        final File file = temporaryFolder.newFile("test.bloom");
+        delete(file);
+        final BloomFilter<Integer> filter = FileBasedBloomFilter.create(
+                file.toPath(), Funnels.integerFunnel(),
+                100,
+                0.1
+        );
+
+        // then
+        final boolean changed = filter.put(1);
+
+        final BloomFilter<Integer> filter2 = FileBasedBloomFilter.open(file.toPath(), Funnels.integerFunnel());
+        final boolean found = filter2.mightContain(1);
+
+        // then
+        assertThat(changed).isTrue();
+        assertThat(found).isTrue();
+    }
+
     private static void delete(final File file) throws IOException {
         if (!file.delete()) {
             throw new IOException("Failed to delete: " + file);
