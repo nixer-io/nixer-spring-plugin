@@ -23,8 +23,7 @@ public class BitArrayMappedFile implements BitArray {
     /** Maximum size of one segment */
     private static int SEGMENT_SIZE_POW_2 = 30; // each segment is currently 1GB
     private static int SEGMENT_SIZE_BYTES = 1 << SEGMENT_SIZE_POW_2;
-    private static int SEGMENT_SIZE_IN_LONG_POW_2 = SEGMENT_SIZE_POW_2 - 3;
-    private static int SEGMENT_SIZE_IN_LONG_MASK = (1 << SEGMENT_SIZE_IN_LONG_POW_2) - 1;
+    private static int SEGMENT_SIZE_MASK = (1 << SEGMENT_SIZE_POW_2) - 1;
     private final long bitSize;
 
     // because Java API for ByteBuffers uses int everywhere, we open multiple mappings each of maximum size of SEGMENT_SIZE_IN_BYTES
@@ -69,22 +68,25 @@ public class BitArrayMappedFile implements BitArray {
 
     private boolean getAndMaybeSet(final long index, final boolean alsoSet) {
         final long correctedIndex = index + 64; // corrects for existence for bitCount stored at index 0
-        final long indexInLongs = correctedIndex >>> 6;
-        final long segmentIndex = indexInLongs >>> SEGMENT_SIZE_IN_LONG_POW_2;
-        final int positionInSegment = Ints.checkedCast((indexInLongs & SEGMENT_SIZE_IN_LONG_MASK) << 3);
+        final long longPosition = correctedIndex >>> 6;
+        final long segmentIndex = longPosition >>> (SEGMENT_SIZE_POW_2 - 3);
+        final int bytPositionInSegment = Ints.checkedCast((longPosition << 3) & SEGMENT_SIZE_MASK);
 
         final MappedByteBuffer segment = mappedByteBuffers[Ints.checkedCast(segmentIndex)];
-        final long value = segment.getLong(positionInSegment);
+        final long value = segment.getLong(bytPositionInSegment);
 
         final long bitMask = 1L << correctedIndex;
         final boolean wasSet = (value & bitMask) != 0;
-        if (alsoSet && !wasSet) {
-            final long changedValue = value | bitMask;
-            segment.putLong(positionInSegment, changedValue);
-            final long newCount = firstByteBuffer.getLong(0) + 1;
-            firstByteBuffer.putLong(0, newCount);
+        if (wasSet || !alsoSet) {
+            return wasSet;
         }
-        return wasSet;
+
+        final long changedValue = value | bitMask;
+        segment.putLong(bytPositionInSegment, changedValue);
+        final long newCount = firstByteBuffer.getLong(0) + 1;
+        firstByteBuffer.putLong(0, newCount);
+
+        return false;
     }
 
     @Override
