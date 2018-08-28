@@ -7,11 +7,15 @@ import com.google.common.hash.Funnel;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
 /**
- * TODO
+ * An interface to a <a href="https://en.wikipedia.org/wiki/Bloom_filter">Bloom Filter</a> data structure.
+ * Create new instances with {@link FileBasedBloomFilter}.
  * <br>
  * Created on 23/08/2018.
  *
  * @author cezary.biernacki@crosswordcybersecurity.com
+ * @see com.google.common.hash.GuavaBloomFilter
+ * @see BitArrayFactories
+ *
  */
 public interface BloomFilter<T> extends Predicate<T> {
     /**

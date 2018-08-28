@@ -4,11 +4,9 @@ import java.io.File;
 import java.io.IOException;
 
 import com.google.common.hash.Funnels;
-import junitparams.JUnitParamsRunner;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.junit.runner.RunWith;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -19,7 +17,6 @@ import static org.assertj.core.api.Assertions.assertThat;
  *
  * @author cezary
  */
-@RunWith(JUnitParamsRunner.class)
 public class FileBasedBloomFilterTest {
     @Rule
     public final TemporaryFolder temporaryFolder = new TemporaryFolder();

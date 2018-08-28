@@ -64,7 +64,7 @@ public class BitArrayMappedFile implements BitArray {
             final long totalSizeInBytes
     ) throws IOException {
 
-        final MappedByteBuffer[] mappedByteBuffers = new MappedByteBuffer[Ints.checkedCast(segments)];
+        final MappedByteBuffer[] mappedByteBuffers = new MappedByteBuffer[segments];
 
         long remainingSize = totalSizeInBytes;
         long offset = 0;
