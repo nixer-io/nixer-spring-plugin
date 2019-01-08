@@ -1,9 +1,9 @@
 apply from: javaConfigGradle()
 
 dependencies {
-    compile project(':bloom-lib')
+    compile project(":bloom-lib")
 
     compile libraries.docopt        // see: https://github.com/docopt/docopt.java
 }
 
-rootProject.copyDistribution.from fileTree('src/main/dist')
+rootProject.copyDistribution.from fileTree("src/main/dist")
