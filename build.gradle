@@ -1,3 +1,5 @@
+import buildConfig.libraries
+
 apply from: javaConfigGradle()
 
 dependencies {
