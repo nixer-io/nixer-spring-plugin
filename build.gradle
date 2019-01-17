@@ -1,6 +1,7 @@
 import buildConfig.libraries
+import eu.xword.gradle.plugins.JavaConfigPlugin
 
-apply from: javaConfigGradle()
+apply plugin: JavaConfigPlugin
 
 dependencies {
     compile libraries.guava
