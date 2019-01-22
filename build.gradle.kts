@@ -1,12 +1,15 @@
 import buildConfig.libraries
-import eu.xword.gradle.plugins.JavaConfigPlugin
 
-apply plugin: JavaConfigPlugin
-
-dependencies {
-    compile project(":bloom-lib")
-
-    compile libraries.docopt        // see: https://github.com/docopt/docopt.java
+plugins {
+    id("java-config-plugin")
 }
 
-rootProject.copyDistribution.from fileTree("src/main/dist")
+dependencies {
+    compile(project(":bloom-lib"))
+
+    compile(libraries.docopt)        // see: https://github.com/docopt/docopt.java
+}
+
+rootProject.tasks.getByName<Sync>("copyDistribution") {
+    from(fileTree("src/main/dist"))
+}
