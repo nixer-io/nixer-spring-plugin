@@ -1,0 +1,35 @@
+<html xmlns:th="https://www.thymeleaf.org">
+<head>
+    <title>Please Login</title>
+    <!--    TODO conditional load of captcha depending whether in CS mode and captcha enabled-->
+    <script th:if="${@captchaChecker.isCaptchaEnabled()}" src='https://www.google.com/recaptcha/api.js' async defer>
+
+    </script>
+</head>
+<body>
+<div>
+    <form name="f" th:action="@{/login}" method="post">
+        <fieldset>
+            <legend>Please Login</legend>
+            <div th:if="${param.error}" class="alert alert-error">
+                Invalid username and password.
+            </div>
+            <div th:if="${param.logout}" class="alert alert-success">
+                You have been logged out.
+            </div>
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username"/>
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password"/>
+            <!--            TODO conditional rendering of captcha depending whether in CS mode and captcha enabled-->
+            <div th:if="${@captchaChecker.isCaptchaEnabled()}" class="g-recaptcha"
+                 th:attr="data-sitekey=${@recaptchaProperties.getKey().getSite()}"></div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn">Log in</button>
+            </div>
+        </fieldset>
+    </form>
+</div>
+</body>
+</html>
