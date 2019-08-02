@@ -5,30 +5,33 @@
     <script th:if="${@captchaChecker.isCaptchaEnabled()}" src='https://www.google.com/recaptcha/api.js' async defer>
 
     </script>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+    <link href="https://getbootstrap.com/docs/4.0/examples/signin/signin.css" rel="stylesheet" crossorigin="anonymous"/>
 </head>
 <body>
-<div>
-    <form name="f" th:action="@{/login}" method="post">
-        <fieldset>
-            <legend>Please Login</legend>
-            <div th:if="${param.error}" class="alert alert-error">
-                Invalid username and password.
-            </div>
-            <div th:if="${param.logout}" class="alert alert-success">
-                You have been logged out.
-            </div>
-            <label for="username">Username</label>
-            <input type="text" id="username" name="username"/>
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password"/>
-            <!--            TODO conditional rendering of captcha depending whether in CS mode and captcha enabled-->
-            <div th:if="${@captchaChecker.isCaptchaEnabled()}" class="g-recaptcha"
-                 th:attr="data-sitekey=${@recaptchaProperties.getKey().getSite()}"></div>
+<div class="container">
+    <form name="form-signin" th:action="@{/login}" method="post">
+        <h2 class="form-signin-heading">Please Login</h2>
+        <div th:if="${param.error}" class="alert alert-danger" role="alert">
+            Invalid username and password.
+        </div>
+        <div th:if="${param.logout}" class="alert alert-success">
+            You have been logged out.
+        </div>
+        <p>
+            <label class="sr-only" for="username">Username</label>
+            <input type="text" id="username" name="username" class="form-control" placeholder="Username" required autofocus/>
+        </p>
+        <p>
+            <label class="sr-only" for="password">Password</label>
+            <input type="password" id="password" name="password" class="form-control" placeholder="Password" required/>
+        </p>
+        <!--            TODO conditional rendering of captcha depending whether in CS mode and captcha enabled-->
+        <div th:if="${@captchaChecker.isCaptchaEnabled()}" class="g-recaptcha"
+             th:attr="data-sitekey=${@recaptchaProperties.getKey().getSite()}"></div>
 
-            <div class="form-actions">
-                <button type="submit" class="btn">Log in</button>
-            </div>
-        </fieldset>
+        <button type="submit" class="btn btn-lg btn-primary btn-block">Log in</button>
     </form>
 </div>
 </body>

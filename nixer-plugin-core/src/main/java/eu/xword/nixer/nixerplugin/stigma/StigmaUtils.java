@@ -10,7 +10,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.util.WebUtils;
 
 @Component
-public class StigmaSource {
+public class StigmaUtils {
 
     @Value("${nixer.stigma.cookie}")
     private String stigmaCookie;

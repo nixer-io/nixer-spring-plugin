@@ -1,4 +1,4 @@
-package eu.xword.nixer.nixerplugin;
+package eu.xword.nixer.nixerplugin.login;
 
 import com.google.common.base.Objects;
 

@@ -1,4 +1,4 @@
-package eu.xword.nixer.nixerplugin;
+package eu.xword.nixer.nixerplugin.stigma;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -6,6 +6,7 @@ import java.time.Duration;
 import java.time.Instant;
 import javax.annotation.Nonnull;
 
+import eu.xword.nixer.nixerplugin.NixerProperties;
 import eu.xword.nixer.nixerplugin.stigma.token.EncryptedStigmaTokenProvider;
 import eu.xword.nixer.nixerplugin.stigma.token.PlainStigmaTokenProvider;
 import eu.xword.nixer.nixerplugin.stigma.token.StigmaTokenConstants;

@@ -1,10 +1,10 @@
-package eu.xword.nixer.nixerplugin.stigma.embedd;
+package eu.xword.nixer.nixerplugin.stigma.embed;
 
 import java.util.UUID;
 
 import com.nimbusds.jwt.JWT;
-import eu.xword.nixer.nixerplugin.LoginResult;
-import eu.xword.nixer.nixerplugin.LoginContext;
+import eu.xword.nixer.nixerplugin.login.LoginResult;
+import eu.xword.nixer.nixerplugin.login.LoginContext;
 import eu.xword.nixer.nixerplugin.stigma.StigmaService;
 import eu.xword.nixer.nixerplugin.stigma.StigmaToken;
 import eu.xword.nixer.nixerplugin.stigma.storage.StigmaRepository;

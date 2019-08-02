@@ -1,4 +1,4 @@
-package eu.xword.nixer.nixerplugin;
+package eu.xword.nixer.nixerplugin.stigma;
 
 public class StigmaProperties {
     private String cookie;
