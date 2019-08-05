@@ -7,6 +7,7 @@ import com.nimbusds.jose.KeyLengthException;
 import com.nimbusds.jose.crypto.DirectEncrypter;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.OctetSequenceKey;
+import org.springframework.util.Assert;
 
 /**
  * Factory of {@link DirectEncrypter} with shared symmetric key.
@@ -22,11 +23,11 @@ public class DirectEncrypterFactory extends EncrypterFactory {
     }
 
     public static DirectEncrypterFactory withKeysFrom(final KeysLoader keysLoader) {
-//        Preconditions.checkNotNull(keysLoader, "keysLoader");
+        Assert.notNull(keysLoader, "KeysLoader must not be null");
 
         final JWK encryptionKey = keysLoader.getEncryptionKey();
-//        Preconditions.checkArgument(encryptionKey instanceof OctetSequenceKey,
-//                "JWK must be an OctetSequenceKey, instead got: %s", encryptionKey.getClass());
+        Assert.isInstanceOf(OctetSequenceKey.class, encryptionKey,
+                () -> "JWK must be an OctetSequenceKey, instead got: " + encryptionKey.getClass());
 
         return new DirectEncrypterFactory((OctetSequenceKey) encryptionKey);
     }

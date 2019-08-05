@@ -7,6 +7,7 @@ import java.text.ParseException;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
+import org.springframework.util.Assert;
 
 /**
  * Loads an encryption key and a set of decryption keys to be used during Stigma Token creation and validation.
@@ -26,23 +27,20 @@ public class KeysLoader {
     private final ImmutableJWKSet decryptionKeySet;
 
     public KeysLoader(final JWK encryptionKey, final ImmutableJWKSet decryptionKeySet) {
+        Assert.notNull(encryptionKey, "JWK must not be null");
         this.encryptionKey = encryptionKey;
+        Assert.notNull(decryptionKeySet, "ImmutableJWKSet must not be null");
         this.decryptionKeySet = decryptionKeySet;
     }
 
-    //    private KeysLoader(final JWK encryptionKey, final ImmutableJWKSet decryptionKeySet) {
-//        this.encryptionKey = Preconditions.checkNotNull(encryptionKey, "encryptionKey");
-//        this.decryptionKeySet = Preconditions.checkNotNull(decryptionKeySet, "decryptionKeySet");
-//    }
-
     public static KeysLoader load(final File encryptionKeyFile, final File decryptionKeyFile) {
-//        Preconditions.checkNotNull(encryptionKeyFile, "encryptionKeyFile");
-//        Preconditions.checkNotNull(decryptionKeyFile, "decryptionKeyFile");
+        Assert.notNull(encryptionKeyFile, "File not be null");
+        Assert.notNull(decryptionKeyFile, "File not be null");
 
         final JWK encryptionKey = loadEncryptionKey(encryptionKeyFile);
         final ImmutableJWKSet decryptionKeySet = loadDecryptionKeys(decryptionKeyFile);
 
-//        Verify.verify(decryptionKeySet.getJWKSet().getKeys().contains(encryptionKey), "Decryption keys must include the encryption key.");
+        Assert.state(decryptionKeySet.getJWKSet().getKeys().contains(encryptionKey), "Decryption keys must include the encryption key.");
 
         return new KeysLoader(encryptionKey, decryptionKeySet);
     }
@@ -50,10 +48,9 @@ public class KeysLoader {
     private static JWK loadEncryptionKey(final File encryptionKeyFile) {
         final JWKSet jwkSet = loadJwkSet(encryptionKeyFile);
 
-//        Preconditions.checkState(jwkSet.getKeys().size() == 1, "JWK encryption set must contain only one key");
+        Assert.state(jwkSet.getKeys().size() == 1, "JWK encryption set must contain only one key");
 
         return jwkSet.getKeys().get(0);
-//        return Iterables.getOnlyElement(jwkSet.getKeys());
     }
 
     private static ImmutableJWKSet loadDecryptionKeys(final File decryptionKeyFile) {

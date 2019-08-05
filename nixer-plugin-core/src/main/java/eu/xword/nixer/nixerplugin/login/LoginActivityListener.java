@@ -5,7 +5,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.common.net.HttpHeaders;
 import eu.xword.nixer.nixerplugin.UserUtils;
-import eu.xword.nixer.nixerplugin.metrics.LoginMetricsReporter;
+import eu.xword.nixer.nixerplugin.login.metrics.LoginMetricsReporter;
 import eu.xword.nixer.nixerplugin.stigma.StigmaToken;
 import eu.xword.nixer.nixerplugin.stigma.StigmaUtils;
 import eu.xword.nixer.nixerplugin.stigma.embed.EmbeddedStigmaService;
@@ -51,7 +51,7 @@ public class LoginActivityListener implements ApplicationListener<AbstractAuthen
     }
 
     private void reportLogin(LoginResult loginResult, final LoginContext context) {
-        loginActivityService.record(loginResult, context);
+        loginActivityService.handle(loginResult, context);
     }
 
     private LoginContext buildContext() {
@@ -72,7 +72,6 @@ public class LoginActivityListener implements ApplicationListener<AbstractAuthen
 
         if (loginResult != null) {
             final LoginContext context = buildContext();
-            loginMetricsReporter.reportLoginResult(loginResult);
             reportLogin(loginResult, context);
             handleStigma(loginResult, context);
         }

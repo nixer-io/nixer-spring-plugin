@@ -5,6 +5,7 @@ import javax.validation.ConstraintValidatorContext;
 
 import eu.xword.nixer.nixerplugin.captcha.CaptchaService;
 import eu.xword.nixer.nixerplugin.captcha.CaptchaServiceFactory;
+import eu.xword.nixer.nixerplugin.captcha.error.RecaptchaException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -26,7 +27,7 @@ public class CaptchaValidator implements ConstraintValidator<Captcha, String> {
         try {
             captchaService.processResponse(value);
             return true;
-        } catch (Exception e) {
+        } catch (RecaptchaException e) {
             return false;
         }
     }

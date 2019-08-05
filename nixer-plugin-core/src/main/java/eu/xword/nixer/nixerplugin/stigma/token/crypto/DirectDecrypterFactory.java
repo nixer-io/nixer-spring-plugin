@@ -14,9 +14,9 @@ import com.nimbusds.jose.crypto.DirectDecrypter;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.JWEDecryptionKeySelector;
 import com.nimbusds.jose.proc.JWEKeySelector;
-import com.nimbusds.jose.proc.SecurityContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.util.Assert;
 
 /**
  * Factory of {@link DirectDecrypter} with decryption key selected from the provided keys source.
@@ -38,21 +38,20 @@ public class DirectDecrypterFactory extends DecrypterFactory {
 
     public DirectDecrypterFactory(final JWKSource jwkSource) {
         super(ALGORITHM, ENCRYPTION_METHOD);
-
-//        Preconditions.checkNotNull(jwkSource, "jwkSource");
+        Assert.notNull(jwkSource, "JWKSource must not be null");
 
         this.keySelector = new JWEDecryptionKeySelector(ALGORITHM, ENCRYPTION_METHOD, jwkSource);
     }
 
     public static DirectDecrypterFactory withKeysFrom(final KeysLoader keysLoader) {
-//        Preconditions.checkNotNull(keysLoader, "keysLoader");
+        Assert.notNull(keysLoader, "KeysLoader must not be null");
 
         return new DirectDecrypterFactory(keysLoader.getDecryptionKeySet());
     }
 
     @Override
     public JWEDecrypter decrypter(final JWEHeader header) {
-//        Preconditions.checkNotNull(header, "header");
+        Assert.notNull(header, "JWEHeader must not be null");
 
         final List<Key> keys = selectKeys(header);
 
@@ -83,7 +82,7 @@ public class DirectDecrypterFactory extends DecrypterFactory {
 
     private List<Key> selectKeys(final JWEHeader header) {
         try {
-            return keySelector.selectJWEKeys(header, (SecurityContext) null);
+            return keySelector.selectJWEKeys(header, null);
         } catch (KeySourceException e) {
             throw new IllegalStateException("Could not select key for header: " + header, e);
         }

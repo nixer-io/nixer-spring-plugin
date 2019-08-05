@@ -6,7 +6,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 
-import com.google.common.base.Preconditions;
+import org.springframework.util.Assert;
 
 /**
  * Created on 2019-06-03.
@@ -28,10 +28,10 @@ public class ValidationResult {
     @Nonnull
     public static ValidationResult invalid(@Nonnull final ValidationStatus status,
                                            @Nonnull final String details) {
-        Preconditions.checkNotNull(status, "status");
-        Preconditions.checkArgument(!status.isValid(), "Passed status [%s] must not represent a valid one.", status);
-        Preconditions.checkArgument(!status.isReadable(), "Passed status [%s] must not represent one with readable stigma.", status);
-        Preconditions.checkNotNull(details, "details");
+        Assert.notNull(status, "status");
+        Assert.state(!status.isValid(), () -> "Passed status " + status + " must not represent a valid one.");
+        Assert.state(!status.isReadable(), () -> "Passed status " + status + " must represent one with readable stigma.");
+        Assert.notNull(details, "details");
 
         return new ValidationResult(status, details, null);
     }
@@ -40,18 +40,18 @@ public class ValidationResult {
     public static ValidationResult invalid(@Nonnull final ValidationStatus status,
                                            @Nonnull final String details,
                                            @Nonnull final String stigmaValue) {
-        Preconditions.checkNotNull(status, "status");
-        Preconditions.checkArgument(!status.isValid(), "Passed status [%s] must not represent a valid one.", status);
-        Preconditions.checkArgument(status.isReadable(), "Passed status [%s] must represent one with readable stigma.", status);
-        Preconditions.checkNotNull(details, "details");
-        Preconditions.checkNotNull(stigmaValue, "stigmaValue");
+        Assert.notNull(status, "status");
+        Assert.state(!status.isValid(), () -> "Passed status " + status + " must not represent a valid one.");
+        Assert.state(status.isReadable(), () -> "Passed status " + status + " must represent one with readable stigma.");
+        Assert.notNull(details, "details");
+        Assert.notNull(stigmaValue, "stigmaValue");
 
         return new ValidationResult(status, details, stigmaValue);
     }
 
     @Nonnull
     public static ValidationResult valid(@Nonnull final String stigmaValue) {
-        Preconditions.checkNotNull(stigmaValue, "stigmaValue");
+        Assert.notNull(stigmaValue, "stigmaValue");
         return new ValidationResult(ValidationStatus.VALID, ValidationStatus.VALID.toString(), stigmaValue);
     }
 

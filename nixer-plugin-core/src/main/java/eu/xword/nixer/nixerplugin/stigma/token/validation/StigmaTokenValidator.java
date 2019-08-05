@@ -4,12 +4,12 @@ import java.text.ParseException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.google.common.base.Preconditions;
 import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTParser;
 import io.micrometer.core.instrument.util.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.util.Assert;
 
 import static eu.xword.nixer.nixerplugin.stigma.token.validation.ValidationStatus.MISSING;
 import static eu.xword.nixer.nixerplugin.stigma.token.validation.ValidationStatus.PARSING_ERROR;
@@ -27,11 +27,12 @@ public class StigmaTokenValidator {
 
     private static final ValidationResult MISSING_TOKEN_RESULT = ValidationResult.invalid(MISSING, "Missing token");
 
-    @Nonnull
     private JwtValidator jwtValidator;
 
     public StigmaTokenValidator(@Nonnull final JwtValidator jwtValidator) {
-        this.jwtValidator = Preconditions.checkNotNull(jwtValidator, "jwtValidator");
+        Assert.notNull(jwtValidator, "JwtValidator must not be null");
+
+        this.jwtValidator = jwtValidator;
     }
 
     @Nonnull

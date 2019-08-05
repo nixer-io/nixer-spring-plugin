@@ -1,15 +1,15 @@
-package eu.xword.nixer.nixerplugin.captcha;
+package eu.xword.nixer.nixerplugin.captcha.metrics;
 
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 
-public class CaptchaMetricsReporter {
+public class MicrometerMetricsReporter implements MetricsReporter {
 
     private final Counter captchaPassedCounter;
 
     private final Counter captchaFailedCounter;
 
-    public CaptchaMetricsReporter(final MeterRegistry meterRegistry, final String action) {
+    public MicrometerMetricsReporter(final MeterRegistry meterRegistry, final String action) {
         this.captchaPassedCounter = Counter.builder("recaptcha")
                 .description("Captcha passes")
                 .tag("result", "passed")

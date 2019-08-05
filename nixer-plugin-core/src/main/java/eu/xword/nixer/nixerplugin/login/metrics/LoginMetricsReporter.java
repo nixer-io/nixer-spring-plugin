@@ -1,15 +1,17 @@
-package eu.xword.nixer.nixerplugin.metrics;
+package eu.xword.nixer.nixerplugin.login.metrics;
 
 import java.util.EnumMap;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
+import eu.xword.nixer.nixerplugin.login.LoginActivityRepository;
+import eu.xword.nixer.nixerplugin.login.LoginContext;
 import eu.xword.nixer.nixerplugin.login.LoginFailureType;
 import eu.xword.nixer.nixerplugin.login.LoginResult;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 
-public class LoginMetricsReporter {
+public class LoginMetricsReporter implements LoginActivityRepository {
 
     private final Counter loginSuccessCounter;
 
@@ -35,11 +37,6 @@ public class LoginMetricsReporter {
 
     }
 
-    public void reportLoginResult(final LoginResult loginResult) {
-        loginResult
-                .onSuccess(it -> reportLoginSuccess())
-                .onFailure(result -> reportLoginFail(result.getFailureType()));
-    }
 
     private void reportLoginFail(final LoginFailureType loginFailureType) {
         final Counter failureCounter = failureCounters.get(loginFailureType);
@@ -51,4 +48,10 @@ public class LoginMetricsReporter {
         loginSuccessCounter.increment();
     }
 
+    @Override
+    public void reportLoginActivity(final LoginResult loginResult, final LoginContext loginContext) {
+        loginResult
+                .onSuccess(it -> reportLoginSuccess())
+                .onFailure(result -> reportLoginFail(result.getFailureType()));
+    }
 }

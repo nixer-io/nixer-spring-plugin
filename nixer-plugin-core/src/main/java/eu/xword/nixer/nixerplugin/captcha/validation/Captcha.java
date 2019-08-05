@@ -12,11 +12,11 @@ import com.nimbusds.jose.Payload;
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = CaptchaValidator.class)
 public @interface Captcha {
-    String message() default "{eu.xword.nixer.nixerplugin.captcha.validation.Captcha.message}"; // TODO parameterize
+    String message() default "{eu.xword.nixer.nixerplugin.captcha.validation.Captcha.message}";
 
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
 
-    String action();
+    String action() default "global";
 }

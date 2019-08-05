@@ -60,7 +60,7 @@ public class CaptchaVerifyResponse {
         return false;
     }
 
-    static enum ErrorCode {
+    public enum ErrorCode {
         MissingSecret,
         InvalidSecret,
         MissingResponse,

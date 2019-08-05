@@ -7,18 +7,16 @@ import java.util.Date;
 import java.util.function.Supplier;
 import javax.annotation.Nonnull;
 
-import com.google.common.base.Preconditions;
 import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTClaimsSet;
 import eu.xword.nixer.nixerplugin.stigma.token.StigmaTokenConstants;
 import io.micrometer.core.instrument.util.StringUtils;
-
+import org.springframework.util.Assert;
 
 import static eu.xword.nixer.nixerplugin.stigma.token.validation.ValidationStatus.EXPIRED;
 import static eu.xword.nixer.nixerplugin.stigma.token.validation.ValidationStatus.INVALID_PAYLOAD;
 import static eu.xword.nixer.nixerplugin.stigma.token.validation.ValidationStatus.MISSING_STIGMA;
 import static eu.xword.nixer.nixerplugin.stigma.token.validation.ValidationStatus.PAYLOAD_PARSING_ERROR;
-
 import static java.lang.String.format;
 
 /**
@@ -37,13 +35,16 @@ public class StigmaTokenPayloadValidator implements JwtValidator {
     private final Duration tokenLifetime;
 
     public StigmaTokenPayloadValidator(@Nonnull final Supplier<Instant> nowSource, @Nonnull final Duration tokenLifetime) {
-        this.nowSource = Preconditions.checkNotNull(nowSource, "nowSource");
-        this.tokenLifetime = Preconditions.checkNotNull(tokenLifetime, "tokenLifetime");
+        Assert.notNull(nowSource, "nowSource must not be null");
+        this.nowSource = nowSource;
+
+        Assert.notNull(tokenLifetime, "Duration must not be null");
+        this.tokenLifetime = tokenLifetime;
     }
 
     @Override
     public ValidationResult validate(@Nonnull final JWT jwt) {
-        Preconditions.checkNotNull(jwt, "jwt");
+        Assert.notNull(jwt, "JWT must not be null");
 
         final JWTClaimsSet result;
         try {

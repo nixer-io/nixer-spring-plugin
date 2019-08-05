@@ -2,12 +2,12 @@ package eu.xword.nixer.nixerplugin.stigma.token.validation;
 
 import javax.annotation.Nonnull;
 
-import com.google.common.base.Preconditions;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWEHeader;
 import com.nimbusds.jwt.EncryptedJWT;
 import com.nimbusds.jwt.JWT;
 import eu.xword.nixer.nixerplugin.stigma.token.crypto.DecrypterFactory;
+import org.springframework.util.Assert;
 
 import static eu.xword.nixer.nixerplugin.stigma.token.validation.ValidationStatus.DECRYPTION_ERROR;
 import static eu.xword.nixer.nixerplugin.stigma.token.validation.ValidationStatus.NOT_ENCRYPTED;
@@ -33,13 +33,16 @@ public class EncryptedJwtValidator implements JwtValidator {
     private final JwtValidator delegate;
 
     public EncryptedJwtValidator(@Nonnull final DecrypterFactory decrypterFactory, @Nonnull final JwtValidator delegate) {
-        this.decrypterFactory = Preconditions.checkNotNull(decrypterFactory, "decrypterFactory");
-        this.delegate = Preconditions.checkNotNull(delegate, "delegate");
+        Assert.notNull(decrypterFactory, "DecrypterFactory must not be null");
+        this.decrypterFactory = decrypterFactory;
+
+        Assert.notNull(delegate, "JwtValidator must not be null");
+        this.delegate = delegate;
     }
 
     @Override
     public ValidationResult validate(@Nonnull final JWT jwt) {
-        Preconditions.checkNotNull(jwt, "jwt");
+        Assert.notNull(jwt, "JWT must not be null");
 
         if (!(jwt instanceof EncryptedJWT)) {
             return ValidationResult.invalid(NOT_ENCRYPTED, format("Expected EncryptedJWT, but got [%s]", jwt.getClass()));

@@ -20,4 +20,5 @@ dependencies {
     implementation("org.springframework.boot", "spring-boot-starter-web")
 
     implementation("io.micrometer", "micrometer-registry-influx", "1.2.0")
+    runtimeOnly("com.h2database", "h2")
 }

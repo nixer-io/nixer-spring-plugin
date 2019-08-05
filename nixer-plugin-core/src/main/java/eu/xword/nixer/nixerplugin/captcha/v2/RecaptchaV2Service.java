@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import eu.xword.nixer.nixerplugin.captcha.metrics.MetricsReporter;
 import eu.xword.nixer.nixerplugin.captcha.error.CaptchaErrors;
-import eu.xword.nixer.nixerplugin.captcha.CaptchaMetricsReporter;
 import eu.xword.nixer.nixerplugin.captcha.CaptchaService;
 import eu.xword.nixer.nixerplugin.captcha.CaptchaVerifyResponse;
 import eu.xword.nixer.nixerplugin.captcha.error.FallbackMode;
@@ -26,14 +26,14 @@ public class RecaptchaV2Service implements CaptchaService {
     private static Pattern RESPONSE_PATTERN = Pattern.compile("[A-Za-z0-9_-]+");
 
     private RestOperations restTemplate;
-    private CaptchaMetricsReporter metricsReporter;
+    private MetricsReporter metricsReporter;
 
     private String verifyUrl;
     private String recaptchaSecret;
     private FallbackMode fallbackMode;
 
 
-    public RecaptchaV2Service(final RestOperations restTemplate, final CaptchaMetricsReporter metricsReporter, final RecaptchaProperties config) {
+    public RecaptchaV2Service(final RestOperations restTemplate, final MetricsReporter metricsReporter, final RecaptchaProperties config) {
         this.restTemplate = restTemplate;
         this.metricsReporter = metricsReporter;
         this.fallbackMode = config.getFallback();
@@ -41,7 +41,7 @@ public class RecaptchaV2Service implements CaptchaService {
         this.verifyUrl = config.getVerifyUrl();
     }
 
-    private boolean responseSanityCheck(String response) {
+    private boolean isInValidFormat(String response) {
         return StringUtils.hasLength(response) && RESPONSE_PATTERN.matcher(response).matches();
     }
 
@@ -49,7 +49,7 @@ public class RecaptchaV2Service implements CaptchaService {
 
     @Override
     public void processResponse(final String captcha) {
-        if (!responseSanityCheck(captcha)) {
+        if (!isInValidFormat(captcha)) {
             //TODO report failure
             metricsReporter.reportFailedCaptcha(); // TODO rethink
             throw CaptchaErrors.invalidCaptchaFormat("Response contains invalid characters");

@@ -1,6 +1,6 @@
 package eu.xword.nixer.nixerplugin.captcha.error;
 
-public class RecaptchaServiceException extends RuntimeException {
+public class RecaptchaServiceException extends RecaptchaException {
     public RecaptchaServiceException(final String message) {
         super(message);
     }
@@ -9,7 +9,4 @@ public class RecaptchaServiceException extends RuntimeException {
         super(message, cause);
     }
 
-    public RecaptchaServiceException(final Throwable cause) {
-        super(cause);
-    }
 }

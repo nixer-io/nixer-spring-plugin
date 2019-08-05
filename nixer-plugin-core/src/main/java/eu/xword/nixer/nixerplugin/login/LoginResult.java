@@ -4,13 +4,14 @@ import java.util.function.Consumer;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
+import com.google.common.base.Preconditions;
 
 public class LoginResult {
     private final Status status;
     private final LoginFailureType reason;
 
     private LoginResult(final Status status, final LoginFailureType reason) {
-        this.status = status;
+        this.status = Preconditions.checkNotNull(status, "status");
         this.reason = reason;
     }
 
@@ -19,6 +20,8 @@ public class LoginResult {
     }
 
     public static LoginResult failure(LoginFailureType reason) {
+        Preconditions.checkNotNull(reason, "reason");
+
         return new LoginResult(Status.FAILURE, reason);
     }
 

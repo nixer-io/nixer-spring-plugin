@@ -8,8 +8,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class RecaptchaProperties {
 
-    private boolean enabled;
-
     private String verifyUrl;
 
     private Timeout timeout = new Timeout();
@@ -18,14 +16,6 @@ public class RecaptchaProperties {
     private String param = "g-recaptcha-response";
 
     private FallbackMode fallback = FallbackMode.FAIL;
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(final boolean enabled) {
-        this.enabled = enabled;
-    }
 
     public String getVerifyUrl() {
         return verifyUrl;
