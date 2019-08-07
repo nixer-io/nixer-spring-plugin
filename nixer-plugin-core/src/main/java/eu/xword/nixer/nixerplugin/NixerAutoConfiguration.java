@@ -4,8 +4,9 @@ import eu.xword.nixer.nixerplugin.blocking.BlockingConfiguration;
 import eu.xword.nixer.nixerplugin.blocking.policies.AutomaticCaptchaStrategy;
 import eu.xword.nixer.nixerplugin.captcha.CaptchaChecker;
 import eu.xword.nixer.nixerplugin.captcha.CaptchaServiceFactory;
-import eu.xword.nixer.nixerplugin.captcha.CaptchaStrategy;
 import eu.xword.nixer.nixerplugin.captcha.RecaptchaProperties;
+import eu.xword.nixer.nixerplugin.captcha.strategy.CaptchaStrategy;
+import eu.xword.nixer.nixerplugin.captcha.strategy.StrategyRegistry;
 import eu.xword.nixer.nixerplugin.login.metrics.LoginMetricsReporter;
 import eu.xword.nixer.nixerplugin.stigma.StigmaConfiguration;
 import io.micrometer.core.instrument.MeterRegistry;
@@ -38,7 +39,10 @@ public class NixerAutoConfiguration {
     }
 
     @Bean
-    public CaptchaStrategy captchaStrategy() {
-        return new AutomaticCaptchaStrategy();
+    public AutomaticCaptchaStrategy automaticCaptchaStrategy(StrategyRegistry strategyRegistry) {
+        final AutomaticCaptchaStrategy strategy = new AutomaticCaptchaStrategy();
+        strategyRegistry.registerStrategy(strategy);
+
+        return strategy;
     }
 }

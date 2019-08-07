@@ -1,8 +1,10 @@
 package eu.xword.nixer.nixerplugin.captcha;
 
+import eu.xword.nixer.nixerplugin.captcha.endpoint.CaptchaEndpoint;
 import eu.xword.nixer.nixerplugin.captcha.metrics.MetricsReporterFactory;
 import eu.xword.nixer.nixerplugin.captcha.metrics.MicrometerMetricsReporterFactory;
 import eu.xword.nixer.nixerplugin.captcha.metrics.NOPMetricsReporter;
+import eu.xword.nixer.nixerplugin.captcha.strategy.StrategyRegistry;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
@@ -63,5 +65,13 @@ public class CaptchaConfiguration {
     @ConditionalOnMissingBean
     public MetricsReporterFactory nopMetricsReporterFactory() {
         return action -> new NOPMetricsReporter();
+    }
+
+    @Bean
+//    @ConditionalOnEnabledEndpoint(endpoint = CaptchaEndpoint.class) TODO consider if needed
+    @ConditionalOnBean(CaptchaChecker.class)
+    @ConditionalOnMissingBean
+    public CaptchaEndpoint captchaEndpoint(CaptchaChecker captchaChecker, StrategyRegistry strategyRegistry) {
+        return new CaptchaEndpoint(captchaChecker, strategyRegistry);
     }
 }

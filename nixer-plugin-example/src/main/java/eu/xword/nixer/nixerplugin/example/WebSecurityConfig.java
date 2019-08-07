@@ -1,8 +1,6 @@
 package eu.xword.nixer.nixerplugin.example;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
-import org.springframework.boot.actuate.metrics.MetricsEndpoint;
 import org.springframework.boot.web.servlet.filter.OrderedRequestContextFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,23 +27,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.authorizeRequests()
-                .requestMatchers(EndpointRequest.to(MetricsEndpoint.class))
-                .permitAll()
-                .antMatchers("/*")
-                .authenticated()
-                .and()
-                .formLogin()
-                .loginPage("/login")
-                .permitAll()
-                .and()
-                .logout()
-                    .logoutUrl("/logout")
-                .permitAll()
-
+        httpSecurity
+                .authorizeRequests()
+                    .antMatchers("/actuator/**").permitAll()
+                    .antMatchers("/assets/**").permitAll()
+                    .anyRequest().authenticated()
+                    .and()
+                    .formLogin().loginPage("/login").permitAll()
+                    .and()
+                    .logout().logoutUrl("/logout").permitAll()
+                    .and().csrf().ignoringAntMatchers("/actuator/**")
         ;
-
-
     }
 
     @Override
@@ -88,4 +80,5 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         filter.setOrder(-100001);
         return filter;
     }
+
 }

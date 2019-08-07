@@ -1,10 +1,13 @@
 package eu.xword.nixer.nixerplugin.captcha;
 
+import java.util.concurrent.atomic.AtomicReference;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
 import eu.xword.nixer.nixerplugin.blocking.policies.BadCaptchaException;
 import eu.xword.nixer.nixerplugin.captcha.error.RecaptchaException;
+import eu.xword.nixer.nixerplugin.captcha.strategy.CaptchaStrategies;
+import eu.xword.nixer.nixerplugin.captcha.strategy.CaptchaStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsChecker;
@@ -25,7 +28,7 @@ public class CaptchaChecker implements UserDetailsChecker {
 
     private CaptchaService captchaService;
 
-    private CaptchaStrategy captchaStrategy = ALWAYS;
+    private AtomicReference<CaptchaStrategy> captchaStrategy = new AtomicReference<>(CaptchaStrategies.ALWAYS);
 
     public CaptchaChecker(final CaptchaServiceFactory captchaServiceFactory, final RecaptchaProperties recaptchaProperties) {
         Assert.notNull(captchaServiceFactory, "CaptchaServiceFactory must not be null");
@@ -54,16 +57,16 @@ public class CaptchaChecker implements UserDetailsChecker {
     }
 
     public boolean applies() {
-        return captchaStrategy.applies();
+        return captchaStrategy.get().applies();
     }
 
     public void setCaptchaStrategy(final CaptchaStrategy captchaStrategy) {
         Assert.notNull(captchaStrategy, "CaptchaStrategy must not be null");
 
-        this.captchaStrategy = captchaStrategy;
+        this.captchaStrategy.set(captchaStrategy);
     }
 
-    public static CaptchaStrategy ALWAYS = () -> Boolean.TRUE;
-    public static CaptchaStrategy NEVER = () -> Boolean.FALSE;
-
+    public CaptchaStrategy getCaptchaStrategy() {
+        return captchaStrategy.get();
+    }
 }
