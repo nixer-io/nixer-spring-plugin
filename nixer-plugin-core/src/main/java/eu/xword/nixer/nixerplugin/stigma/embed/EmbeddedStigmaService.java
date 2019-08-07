@@ -3,8 +3,8 @@ package eu.xword.nixer.nixerplugin.stigma.embed;
 import java.util.UUID;
 
 import com.nimbusds.jwt.JWT;
-import eu.xword.nixer.nixerplugin.login.LoginResult;
 import eu.xword.nixer.nixerplugin.login.LoginContext;
+import eu.xword.nixer.nixerplugin.login.LoginResult;
 import eu.xword.nixer.nixerplugin.stigma.StigmaService;
 import eu.xword.nixer.nixerplugin.stigma.StigmaToken;
 import eu.xword.nixer.nixerplugin.stigma.storage.StigmaRepository;
@@ -36,26 +36,27 @@ public class EmbeddedStigmaService implements StigmaService {
     public StigmaToken refreshStigma(StigmaToken receivedStigma, final LoginResult loginResult, final LoginContext loginContext) {
         logger.info("Found token: " + receivedStigma);
 
-        StigmaToken stigma = null;
-
         if (receivedStigma != null) {
             final ValidationResult validationResult = stigmaTokenValidator.validate(receivedStigma.getValue());
             if (validationResult.isValid()) {
-                stigma = receivedStigma;
+                String stigmaValue = validationResult.getStigmaValue();
+                stigmaRepository.save(stigmaValue, loginResult);
+                return receivedStigma;
             }
         }
-        if (stigma == null) {
-            stigma = fetchNewStigma();
-        }
 
+        final String stigma = generateStigmaValue();
         stigmaRepository.save(stigma, loginResult);
+        return tokenize(stigma);
+    }
 
+    private String generateStigmaValue() {
+        final String stigma = UUID.randomUUID().toString();
+        logger.debug("Creating new stigma " + stigma);
         return stigma;
     }
 
-    private StigmaToken fetchNewStigma() {
-        final String stigma = UUID.randomUUID().toString();
-        logger.debug("Creating new stigma " + stigma);
+    private StigmaToken tokenize(String stigma) {
         final JWT token = stigmaTokenProvider.getToken(stigma);
         return new StigmaToken(token.serialize());
     }

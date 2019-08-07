@@ -1,5 +1,7 @@
 package eu.xword.nixer.nixerplugin;
 
+import javax.sql.DataSource;
+
 import eu.xword.nixer.nixerplugin.blocking.BlockingConfiguration;
 import eu.xword.nixer.nixerplugin.blocking.policies.AutomaticCaptchaStrategy;
 import eu.xword.nixer.nixerplugin.captcha.CaptchaChecker;
@@ -7,6 +9,7 @@ import eu.xword.nixer.nixerplugin.captcha.CaptchaServiceFactory;
 import eu.xword.nixer.nixerplugin.captcha.RecaptchaProperties;
 import eu.xword.nixer.nixerplugin.captcha.strategy.CaptchaStrategy;
 import eu.xword.nixer.nixerplugin.captcha.strategy.StrategyRegistry;
+import eu.xword.nixer.nixerplugin.login.jdbc.JdbcDAO;
 import eu.xword.nixer.nixerplugin.login.metrics.LoginMetricsReporter;
 import eu.xword.nixer.nixerplugin.stigma.StigmaConfiguration;
 import io.micrometer.core.instrument.MeterRegistry;
@@ -44,5 +47,12 @@ public class NixerAutoConfiguration {
         strategyRegistry.registerStrategy(strategy);
 
         return strategy;
+    }
+
+    @Bean
+    public JdbcDAO jdbcDAO(DataSource dataSource) {
+        final JdbcDAO jdbcDAO = new JdbcDAO();
+        jdbcDAO.setDataSource(dataSource);
+        return jdbcDAO;
     }
 }
