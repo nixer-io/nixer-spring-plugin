@@ -3,7 +3,7 @@ package eu.xword.nixer.nixerplugin.login;
 import java.util.Map;
 
 import com.google.common.collect.ImmutableMap;
-import eu.xword.nixer.nixerplugin.blocking.policies.BadCaptchaException;
+import eu.xword.nixer.nixerplugin.captcha.BadCaptchaException;
 import org.springframework.security.authentication.AccountExpiredException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;

@@ -1,4 +1,4 @@
-package eu.xword.nixer.nixerplugin.blocking.policies;
+package eu.xword.nixer.nixerplugin.captcha;
 
 import org.springframework.security.authentication.BadCredentialsException;
 

@@ -58,7 +58,7 @@ public class RecaptchaProperties {
         this.fallback = fallback;
     }
 
-    public class Timeout {
+    public static class Timeout {
         private int connect = 1_000;
         private int read = 1_000;
         private int connectionRequest = 1_000;
@@ -88,7 +88,7 @@ public class RecaptchaProperties {
         }
     }
 
-    public class RecaptchaKeys {
+    public static class RecaptchaKeys {
         private String site;
         private String secret;
 

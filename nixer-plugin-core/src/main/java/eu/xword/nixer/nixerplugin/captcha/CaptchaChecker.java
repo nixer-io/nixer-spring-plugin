@@ -4,7 +4,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
-import eu.xword.nixer.nixerplugin.blocking.policies.BadCaptchaException;
 import eu.xword.nixer.nixerplugin.captcha.error.RecaptchaException;
 import eu.xword.nixer.nixerplugin.captcha.strategy.CaptchaStrategies;
 import eu.xword.nixer.nixerplugin.captcha.strategy.CaptchaStrategy;
