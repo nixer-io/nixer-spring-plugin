@@ -12,7 +12,7 @@ dependencyManagement {
 }
 
 dependencies {
-    implementation(project(":nixer-plugin-core"))
+    implementation(project(":core"))
     compile("org.springframework.boot", "spring-boot")
     implementation("org.springframework.boot", "spring-boot-starter-thymeleaf")
     implementation("org.springframework.boot", "spring-boot-starter-actuator")

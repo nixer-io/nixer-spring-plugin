@@ -5,6 +5,5 @@ pluginManagement {
 }
 rootProject.name = "nixer-spring-plugin"
 
-include("nixer-plugin-example",
-        "nixer-plugin-core")
+include("example", "core")
 
