@@ -3,12 +3,6 @@ package eu.xword.nixer.nixerplugin;
 import javax.sql.DataSource;
 
 import eu.xword.nixer.nixerplugin.blocking.BlockingConfiguration;
-import eu.xword.nixer.nixerplugin.blocking.policies.AutomaticCaptchaStrategy;
-import eu.xword.nixer.nixerplugin.captcha.CaptchaChecker;
-import eu.xword.nixer.nixerplugin.captcha.CaptchaServiceFactory;
-import eu.xword.nixer.nixerplugin.captcha.RecaptchaProperties;
-import eu.xword.nixer.nixerplugin.captcha.strategy.CaptchaStrategy;
-import eu.xword.nixer.nixerplugin.captcha.strategy.StrategyRegistry;
 import eu.xword.nixer.nixerplugin.login.jdbc.JdbcDAO;
 import eu.xword.nixer.nixerplugin.login.metrics.LoginMetricsReporter;
 import eu.xword.nixer.nixerplugin.stigma.StigmaConfiguration;
@@ -30,23 +24,6 @@ public class NixerAutoConfiguration {
     @ConditionalOnClass(MeterRegistry.class)
     public LoginMetricsReporter loginMetrics(MeterRegistry meterRegistry) {
         return new LoginMetricsReporter(meterRegistry);
-    }
-
-    @Bean
-    @ConditionalOnMissingBean
-    public CaptchaChecker captchaChecker(CaptchaServiceFactory captchaServiceFactory, CaptchaStrategy strategy, RecaptchaProperties properties) {
-        final CaptchaChecker captchaChecker = new CaptchaChecker(captchaServiceFactory, properties);
-        captchaChecker.setCaptchaStrategy(strategy);
-
-        return captchaChecker;
-    }
-
-    @Bean
-    public AutomaticCaptchaStrategy automaticCaptchaStrategy(StrategyRegistry strategyRegistry) {
-        final AutomaticCaptchaStrategy strategy = new AutomaticCaptchaStrategy();
-        strategyRegistry.registerStrategy(strategy);
-
-        return strategy;
     }
 
     @Bean

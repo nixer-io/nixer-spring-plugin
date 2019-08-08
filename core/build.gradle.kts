@@ -4,6 +4,9 @@ plugins {
     id("io.spring.dependency-management") version "1.0.6.RELEASE"
 }
 
+tasks.named("compileJava") {
+    dependsOn("processResources")
+}
 
 dependencyManagement {
     imports {
@@ -29,7 +32,6 @@ dependencies {
     implementation("org.springframework", "spring-jdbc")
     implementation("io.micrometer", "micrometer-core", "1.2.0")
 
-    testCompile("org.junit.jupiter", "junit-jupiter-engine", "5.3.2")
     testCompile("org.mockito", "mockito-core", "2.21.0")
     testCompile("org.mockito", "mockito-junit-jupiter", "2.23.0")
 
@@ -40,4 +42,7 @@ dependencies {
         exclude(module = "junit")
     }
     testImplementation("org.springframework.security", "spring-security-test")
+
+    testImplementation("org.junit.jupiter", "junit-jupiter-api", "5.3.2")
+    testRuntimeOnly("org.junit.jupiter", "junit-jupiter-engine","5.3.2")
 }

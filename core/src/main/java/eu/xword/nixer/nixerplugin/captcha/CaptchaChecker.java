@@ -29,12 +29,12 @@ public class CaptchaChecker implements UserDetailsChecker {
 
     private AtomicReference<CaptchaStrategy> captchaStrategy = new AtomicReference<>(CaptchaStrategies.ALWAYS);
 
-    public CaptchaChecker(final CaptchaServiceFactory captchaServiceFactory, final RecaptchaProperties recaptchaProperties) {
+    public CaptchaChecker(final CaptchaServiceFactory captchaServiceFactory, final CaptchaLoginProperties captchaLoginProperties) {
         Assert.notNull(captchaServiceFactory, "CaptchaServiceFactory must not be null");
         this.captchaServiceFactory = captchaServiceFactory;
 
-        Assert.notNull(recaptchaProperties, "RecaptchaProperties must not be null");
-        this.captchaParam = recaptchaProperties.getParam();
+        Assert.notNull(captchaLoginProperties, "RecaptchaProperties must not be null");
+        this.captchaParam = captchaLoginProperties.getParam();
     }
 
     @PostConstruct

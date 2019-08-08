@@ -5,7 +5,6 @@ import java.util.Map;
 
 import org.springframework.stereotype.Component;
 
-@Component
 public class StrategyRegistry {
 
     private Map<String, CaptchaStrategy> mapping = new HashMap<>();
