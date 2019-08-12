@@ -1,0 +1,44 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>Spring Boot Nixer Plugin Example</title>
+
+    <script src='https://www.google.com/recaptcha/api.js' async defer></script>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+    <a class="navbar-brand" href="#">nixer.io</a>
+</nav>
+
+<main role="main" class="container">
+
+    <div class="starter-template">
+        <h1>Nixer Example</h1>
+
+        <a href="/">Home</a>
+        <a href="/logout">Logout</a>
+
+        <form name="f" th:action="@{/subscribeUser}" method="post">
+            <div th:if="${param.message}" class="alert alert-error" th:text="${param.message}">
+            </div>
+
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username"/>
+
+            <div class="g-recaptcha" th:attr="data-sitekey=${@recaptchaProperties.getKey().getSite()}"></div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn">Register</button>
+            </div>
+        </form>
+
+    </div>
+
+</main>
+
+</body>
+</html>

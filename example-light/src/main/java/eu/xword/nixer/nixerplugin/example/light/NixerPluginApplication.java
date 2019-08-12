@@ -1,4 +1,4 @@
-package eu.xword.nixer.nixerplugin.example;
+package eu.xword.nixer.nixerplugin.example.light;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

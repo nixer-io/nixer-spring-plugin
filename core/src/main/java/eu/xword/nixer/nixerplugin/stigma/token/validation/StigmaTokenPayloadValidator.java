@@ -10,7 +10,7 @@ import javax.annotation.Nonnull;
 import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTClaimsSet;
 import eu.xword.nixer.nixerplugin.stigma.token.StigmaTokenConstants;
-import io.micrometer.core.instrument.util.StringUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.util.Assert;
 
 import static eu.xword.nixer.nixerplugin.stigma.token.validation.ValidationStatus.EXPIRED;
@@ -63,7 +63,7 @@ public class StigmaTokenPayloadValidator implements JwtValidator {
         final Instant now = nowSource.get();
 
         final Object stigmaValue = claims.getClaim(StigmaTokenConstants.STIGMA_VALUE_FIELD_NAME);
-        if (stigmaValue == null || StringUtils.isBlank(stigmaValue.toString())) {
+        if (stigmaValue == null || StringUtils.isEmpty(stigmaValue.toString())) {
             return ValidationResult.invalid(MISSING_STIGMA, "Missing stigma value");
         }
 

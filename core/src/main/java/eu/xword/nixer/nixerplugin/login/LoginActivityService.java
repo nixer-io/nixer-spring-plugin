@@ -14,7 +14,7 @@ public class LoginActivityService {
     @Autowired
     private ApplicationEventPublisher eventPublisher;
 
-    @Autowired
+//    @Autowired
     private LoginActivityRepository loginActivityRepository;
 
     public void handle(final LoginResult loginResult, final LoginContext context) {

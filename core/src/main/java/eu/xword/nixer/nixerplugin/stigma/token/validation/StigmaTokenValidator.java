@@ -6,7 +6,7 @@ import javax.annotation.Nullable;
 
 import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTParser;
-import io.micrometer.core.instrument.util.StringUtils;
+import org.springframework.util.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.util.Assert;
@@ -57,7 +57,7 @@ public class StigmaTokenValidator {
     }
 
     private boolean missing(final String token) {
-        return StringUtils.isBlank(token);
+        return StringUtils.isEmpty(token);
     }
 
     private ValidationResult validatePresentToken(@Nonnull final String token) {

@@ -13,9 +13,7 @@ import eu.xword.nixer.nixerplugin.stigma.token.validation.StigmaTokenValidator;
 import eu.xword.nixer.nixerplugin.stigma.token.validation.ValidationResult;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.stereotype.Component;
 
-@Component
 public class EmbeddedStigmaService implements StigmaService {
 
     private final Log logger = LogFactory.getLog(getClass());

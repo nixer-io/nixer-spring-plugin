@@ -5,7 +5,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.common.net.HttpHeaders;
 import eu.xword.nixer.nixerplugin.UserUtils;
-import eu.xword.nixer.nixerplugin.login.metrics.LoginMetricsReporter;
 import eu.xword.nixer.nixerplugin.stigma.StigmaToken;
 import eu.xword.nixer.nixerplugin.stigma.StigmaUtils;
 import eu.xword.nixer.nixerplugin.stigma.embed.EmbeddedStigmaService;
@@ -25,9 +24,6 @@ public class LoginActivityListener implements ApplicationListener<AbstractAuthen
 
     @Autowired
     private HttpServletResponse response;
-
-    @Autowired
-    private LoginMetricsReporter loginMetricsReporter;
 
     private StigmaUtils stigmaUtils;
     private EmbeddedStigmaService stigmaService;

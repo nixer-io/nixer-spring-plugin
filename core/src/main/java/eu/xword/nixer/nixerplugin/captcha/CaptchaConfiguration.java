@@ -20,22 +20,21 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
 @Configuration
+@ConditionalOnProperty(value = "nixer.login.captcha.enabled", havingValue = "true", matchIfMissing = false)
+//@ConditionalOnExpression(value = "#{@nixerProperties.getCaptcha().isEnabled()}")
 public class CaptchaConfiguration {
 
     @Bean
-    public PoolingHttpClientConnectionManager poolingHttpClientConnectionManager() {
-        PoolingHttpClientConnectionManager result = new PoolingHttpClientConnectionManager();
-        result.setMaxTotal(20); // TODO make configurable
-        return result;
-    }
+    @ConditionalOnClass(HttpClient.class)
+    public ClientHttpRequestFactory apacheClientHttpRequestFactory(RecaptchaProperties recaptcha) {
+        final PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
+        connectionManager.setMaxTotal(20); // TODO make configurable
 
-    @Bean
-    @ConditionalOnClass(org.apache.http.client.HttpClient.class)
-    public CloseableHttpClient httpClient(PoolingHttpClientConnectionManager poolingHttpClientConnectionManager, RecaptchaProperties recaptcha) {
         final RecaptchaProperties.Timeout timeout = recaptcha.getTimeout();
         RequestConfig requestConfig = RequestConfig.custom()
                 .setConnectionRequestTimeout(timeout.getConnectionRequest())
@@ -43,19 +42,19 @@ public class CaptchaConfiguration {
                 .setSocketTimeout(timeout.getRead())
                 .build();
 
-        return HttpClientBuilder
+        final CloseableHttpClient httpClient = HttpClientBuilder
                 .create()
-                .setConnectionManager(poolingHttpClientConnectionManager)
+                .setConnectionManager(connectionManager)
                 .setDefaultRequestConfig(requestConfig)
                 .build();
+
+        return new HttpComponentsClientHttpRequestFactory(httpClient);
     }
 
 
     @Bean("captchaRestTemplate")
     @ConditionalOnMissingBean(name = "captchaRestTemplate")
-    @ConditionalOnBean(HttpClient.class)
-    public RestTemplate restTemplate(HttpClient httpClient) {
-        final HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory(httpClient);
+    public RestTemplate restTemplate(ClientHttpRequestFactory requestFactory) {
         return new RestTemplate(requestFactory);
     }
 
@@ -72,10 +71,9 @@ public class CaptchaConfiguration {
     }
 
     @Bean
-//    @ConditionalOnEnabledEndpoint(endpoint = CaptchaEndpoint.class) TODO consider if needed
+//    @ConditionalOnEnabledEndpoint(endpoint = CaptchaEndpoint.class) // TODO consider if needed
     @ConditionalOnBean(CaptchaChecker.class)
     @ConditionalOnMissingBean
-    @ConditionalOnProperty(value = "nixer.login.captcha.enabled", havingValue = "true", matchIfMissing = true)
     public CaptchaEndpoint captchaEndpoint(CaptchaChecker captchaChecker, StrategyRegistry strategyRegistry) {
         return new CaptchaEndpoint(captchaChecker, strategyRegistry);
     }
@@ -88,7 +86,6 @@ public class CaptchaConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean
     public CaptchaChecker captchaChecker(CaptchaServiceFactory captchaServiceFactory, NixerProperties properties, StrategyRegistry strategyRegistry) {
         final CaptchaLoginProperties captchaLoginProperties = properties.getCaptcha();
         final CaptchaStrategy captchaStrategy = strategyRegistry.valueOf(captchaLoginProperties.getStrategy());
