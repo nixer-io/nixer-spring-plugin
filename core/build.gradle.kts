@@ -7,8 +7,8 @@ fun <T : Any> Closure<*>.toAction(): Action<T> =
         ConfigureUtil.configureUsing(this)
 
 plugins {
-    //    `java-library`
-    java
+    `java-library`
+//    java
     id("io.spring.dependency-management") version "1.0.6.RELEASE"
     id("nebula.optional-base") version "5.0.3"
     `maven-publish`
@@ -28,24 +28,24 @@ dependencies {
     annotationProcessor("org.springframework.boot", "spring-boot-autoconfigure-processor")
     annotationProcessor("org.springframework.boot", "spring-boot-configuration-processor")
 
-    implementation("com.google.guava", "guava", "28.0-jre") // remove (cache, immutable collections)
+    implementation("com.google.guava", "guava", "28.0-jre") // consider removing (cache, immutable collections)
     implementation("org.apache.httpcomponents", "httpclient", "4.5.9", dependencyConfiguration = optional.toAction()) // optional 
-    implementation("com.nimbusds", "nimbus-jose-jwt", "7.5.1") // required for stigma tokens optional
-    implementation("javax.servlet", "javax.servlet-api", "3.1.0")
-    implementation("javax.validation", "validation-api")
-    implementation("com.fasterxml.jackson.core", "jackson-annotations")
+    api("com.nimbusds", "nimbus-jose-jwt", "7.5.1") // required for stigma tokens optional
+    api("javax.servlet", "javax.servlet-api", "3.1.0")
+    api("javax.validation", "validation-api") // for captcha validator
+    api("com.fasterxml.jackson.core", "jackson-annotations") // for captcha api
 
-    implementation("org.springframework.boot", "spring-boot-autoconfigure")
-    implementation("org.springframework.boot", "spring-boot-actuator", dependencyConfiguration = optional.toAction()) // optional
+    api("org.springframework.boot", "spring-boot-autoconfigure")
+    api("org.springframework.boot", "spring-boot-actuator", dependencyConfiguration = optional.toAction()) // optional
 
-    implementation("org.springframework", "spring-web")
+    api("org.springframework", "spring-web")
 
-    implementation("org.springframework", "spring-jdbc") // optional, required for stigma jdbc storage
+    api("org.springframework", "spring-jdbc") // optional, required for stigma jdbc storage
 
-    implementation("org.springframework.security", "spring-security-web")
-    implementation("org.springframework.security", "spring-security-config")
+    api("org.springframework.security", "spring-security-web")
+    api("org.springframework.security", "spring-security-config")
 
-    implementation("io.micrometer", "micrometer-core", "1.2.0", dependencyConfiguration = optional.toAction())
+    api("io.micrometer", "micrometer-core", "1.2.0", dependencyConfiguration = optional.toAction())
 
     testImplementation("org.springframework", "spring-test")
     testImplementation("org.springframework.boot", "spring-boot-starter-validation")
