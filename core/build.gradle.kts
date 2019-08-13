@@ -11,6 +11,8 @@ plugins {
     java
     id("io.spring.dependency-management") version "1.0.6.RELEASE"
     id("nebula.optional-base") version "5.0.3"
+    `maven-publish`
+    signing
 }
 
 tasks.named("compileJava") {
@@ -52,4 +54,42 @@ dependencies {
         exclude(module = "junit")
     }
     testImplementation("org.springframework.security", "spring-security-test")
+}
+
+tasks.register<Jar>("sourcesJar") {
+    archiveClassifier.set("sources")
+    from(sourceSets.main.get().allJava)
+}
+
+tasks.register<Jar>("javadocJar") {
+    archiveClassifier.set("javadoc")
+    from(tasks.javadoc.get().destinationDir)
+}
+
+
+publishing {
+
+    publications {
+        create<MavenPublication>("nixer-spring-plugin") {
+            from(components["java"])
+
+            artifact(tasks["sourcesJar"])
+            artifact(tasks["javadocJar"])
+        }
+    }
+
+    repositories {
+
+        maven {
+            name = "myRepo"
+            url = uri("file://${buildDir}/repo")
+        }
+    }
+//    repositories {
+//        mavenLocal()
+//    }
+}
+
+signing {
+    sign(publishing.publications["nixer-spring-plugin"])
 }
