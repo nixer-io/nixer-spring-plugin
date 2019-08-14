@@ -33,13 +33,13 @@ public class CaptchaConfiguration {
     @ConditionalOnClass(HttpClient.class)
     public ClientHttpRequestFactory apacheClientHttpRequestFactory(RecaptchaProperties recaptcha) {
         final PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
-        connectionManager.setMaxTotal(20); // TODO make configurable
+        connectionManager.setMaxTotal(recaptcha.getHttp().getMaxConnections());
 
-        final RecaptchaProperties.Timeout timeout = recaptcha.getTimeout();
+        final RecaptchaProperties.Http http = recaptcha.getHttp();
         RequestConfig requestConfig = RequestConfig.custom()
-                .setConnectionRequestTimeout(timeout.getConnectionRequest())
-                .setConnectTimeout(timeout.getConnect())
-                .setSocketTimeout(timeout.getRead())
+                .setConnectionRequestTimeout(http.getTimeout().getConnectionRequest())
+                .setConnectTimeout(http.getTimeout().getConnect())
+                .setSocketTimeout(http.getTimeout().getRead())
                 .build();
 
         final CloseableHttpClient httpClient = HttpClientBuilder
@@ -71,7 +71,8 @@ public class CaptchaConfiguration {
     }
 
     @Bean
-//    @ConditionalOnEnabledEndpoint(endpoint = CaptchaEndpoint.class) // TODO consider if needed
+//    @ConditionalOnEnabledEndpoint(endpoint = CaptchaEndpoint.class)
+// TODO consider if needed. Check if endpoint registered if not explicitly enabled
     @ConditionalOnBean(CaptchaChecker.class)
     @ConditionalOnMissingBean
     public CaptchaEndpoint captchaEndpoint(CaptchaChecker captchaChecker, StrategyRegistry strategyRegistry) {

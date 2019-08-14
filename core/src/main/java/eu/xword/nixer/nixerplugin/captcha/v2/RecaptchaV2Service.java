@@ -32,7 +32,6 @@ public class RecaptchaV2Service implements CaptchaService {
     private String recaptchaSecret;
     private FallbackMode fallbackMode;
 
-
     public RecaptchaV2Service(final RestOperations restTemplate, final MetricsReporter metricsReporter, final RecaptchaProperties config) {
         this.restTemplate = restTemplate;
         this.metricsReporter = metricsReporter;
@@ -45,12 +44,9 @@ public class RecaptchaV2Service implements CaptchaService {
         return StringUtils.hasLength(response) && RESPONSE_PATTERN.matcher(response).matches();
     }
 
-    // TODO create annotation to protect rest call with captcha
-
     @Override
     public void processResponse(final String captcha) {
         if (!isInValidFormat(captcha)) {
-            //TODO report failure
             metricsReporter.reportFailedCaptcha(); // TODO rethink
             throw CaptchaErrors.invalidCaptchaFormat("Response contains invalid characters");
         }
@@ -86,7 +82,6 @@ public class RecaptchaV2Service implements CaptchaService {
         final Map<String, String> params = new HashMap<>();
         params.put("secret", recaptchaSecret);
         params.put("response", captcha);
-        // TODO report metrics success/failure - DONE
         // TODO report service metrics (timeout/response time)
         // TODO extract captcha client
         // TODO remember captcha results per user basis (token, ip) - requires cache/db

@@ -10,7 +10,7 @@ public class RecaptchaProperties {
 
     private String verifyUrl;
 
-    private Timeout timeout = new Timeout();
+    private Http http = new Http();
     private RecaptchaKeys key = new RecaptchaKeys();
 
     private String param = "g-recaptcha-response";
@@ -41,14 +41,13 @@ public class RecaptchaProperties {
         this.param = param;
     }
 
-    public Timeout getTimeout() {
-        return timeout;
+    public Http getHttp() {
+        return http;
     }
 
-    public void setTimeout(final Timeout timeout) {
-        this.timeout = timeout;
+    public void setHttp(final Http http) {
+        this.http = http;
     }
-
 
     public FallbackMode getFallback() {
         return fallback;
@@ -56,6 +55,27 @@ public class RecaptchaProperties {
 
     public void setFallback(final FallbackMode fallback) {
         this.fallback = fallback;
+    }
+
+    public static class Http {
+        private Timeout timeout = new Timeout();
+        private int maxConnections = 10;
+
+        public Timeout getTimeout() {
+            return timeout;
+        }
+
+        public int getMaxConnections() {
+            return maxConnections;
+        }
+
+        public void setTimeout(final Timeout timeout) {
+            this.timeout = timeout;
+        }
+
+        public void setMaxConnections(final int maxConnections) {
+            this.maxConnections = maxConnections;
+        }
     }
 
     public static class Timeout {

@@ -15,7 +15,6 @@ import org.springframework.util.Assert;
 public class CaptchaChecker implements UserDetailsChecker {
 
     // TODO convert to Blocking policy
-    //TODO split config of captcha blocking policy from captch itself
     private static final String LOGIN_ACTION = "login";
 
     @Autowired
