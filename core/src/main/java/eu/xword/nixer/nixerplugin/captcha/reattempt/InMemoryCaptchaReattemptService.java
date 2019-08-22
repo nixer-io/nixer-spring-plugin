@@ -17,7 +17,6 @@ public class InMemoryCaptchaReattemptService implements CaptchaInterceptor {
     private LoadingCache<String, Integer> captchaCache;
 
     public InMemoryCaptchaReattemptService(int maxAttempts, Duration blockingDuration, IdentityCreator identityCreator) {
-        // TODO make config
         this.maxAttempts = maxAttempts;
         this.blockingDuration = blockingDuration;
         this.identityCreator = identityCreator;

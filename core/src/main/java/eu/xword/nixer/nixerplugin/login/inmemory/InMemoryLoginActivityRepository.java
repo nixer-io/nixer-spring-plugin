@@ -8,14 +8,23 @@ import eu.xword.nixer.nixerplugin.login.LoginActivityRepository;
 import eu.xword.nixer.nixerplugin.login.LoginContext;
 import eu.xword.nixer.nixerplugin.login.LoginFailureType;
 import eu.xword.nixer.nixerplugin.login.LoginResult;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Repository;
 
-//@Repository
+@Repository
 public class InMemoryLoginActivityRepository implements LoginActivityRepository {
 
     private final Counter failedLoginByIp = new Counter<>(LoginContext::getIpAddress);
     private final Counter unknownUserByIp = new Counter<>(LoginContext::getIpAddress);
     private final Counter failedLoginByUsername = new Counter<>(LoginContext::getUsername);
+
+    //TODO make thresholds configurable
+    private static final int LOGIN_FAILED_BY_IP_THRESHOLD = 50;
+    private static final int LOGIN_FAILED_BY_USER_THRESHOLD = 5;
+
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
 
     @Override
     public void reportLoginActivity(final LoginResult result, final LoginContext context) {
