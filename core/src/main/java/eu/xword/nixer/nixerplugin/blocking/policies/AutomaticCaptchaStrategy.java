@@ -1,19 +1,20 @@
 package eu.xword.nixer.nixerplugin.blocking.policies;
 
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 
 import eu.xword.nixer.nixerplugin.blocking.events.ActivateCaptchaEvent;
 import eu.xword.nixer.nixerplugin.captcha.strategy.CaptchaStrategy;
 import org.springframework.context.ApplicationListener;
 
+// TODO should we move it to eu.xword.nixer.nixerplugin.captcha.strategy
+//TODO think how to rewrite. Currently it has to me spring bean to work
 public class AutomaticCaptchaStrategy implements CaptchaStrategy, ApplicationListener<ActivateCaptchaEvent> {
 
-    //TODO think how to rewrite. Currently it has to me spring bean to work
-    private final AtomicBoolean captchaEnabled = new AtomicBoolean(true);
+    private final AtomicLong enableCaptchaAfter = new AtomicLong(Long.MAX_VALUE);
 
     @Override
-    public boolean applies() {
-        return captchaEnabled.get();
+    public boolean applies(long sessionCreationTime) {
+        return sessionCreationTime > enableCaptchaAfter.get();
     }
 
     @Override
@@ -24,6 +25,6 @@ public class AutomaticCaptchaStrategy implements CaptchaStrategy, ApplicationLis
     @Override
     public void onApplicationEvent(final ActivateCaptchaEvent event) {
         //TODO schedule unlock after sometime/expect DropCaptcha event
-        captchaEnabled.set(true);
+        enableCaptchaAfter.set(event.getTimestamp());
     }
 }

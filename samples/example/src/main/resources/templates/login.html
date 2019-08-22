@@ -2,7 +2,7 @@
 <head>
     <title>Please Login</title>
     <!--    TODO conditional load of captcha depending whether in CS mode and captcha enabled-->
-    <script th:if="${@captchaChecker.applies()}" src='https://www.google.com/recaptcha/api.js' async defer>
+    <script th:if="${@captchaChecker.shouldDisplayCaptcha()}" src='https://www.google.com/recaptcha/api.js' async defer>
 
     </script>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" rel="stylesheet"
@@ -29,7 +29,7 @@
             <input type="password" id="password" name="password" class="form-control" placeholder="Password" required/>
         </p>
         <!--            TODO conditional rendering of captcha depending whether in CS mode and captcha enabled-->
-        <div th:if="${@captchaChecker.applies()}" class="g-recaptcha"
+        <div th:if="${@captchaChecker.shouldDisplayCaptcha()}" class="g-recaptcha"
              th:attr="data-sitekey=${@recaptchaProperties.getKey().getSite()}"></div>
 
         <button type="submit" class="btn btn-lg btn-primary btn-block">Log in</button>

@@ -4,7 +4,7 @@ public class CaptchaStrategies {
 
     public static final CaptchaStrategy ALWAYS = new CaptchaStrategy() {
         @Override
-        public boolean applies() {
+        public boolean applies(long sessionCreationTime) {
             return Boolean.TRUE;
         }
 
@@ -16,7 +16,7 @@ public class CaptchaStrategies {
 
     public static final CaptchaStrategy NEVER = new CaptchaStrategy() {
         @Override
-        public boolean applies() {
+        public boolean applies(long sessionCreationTime) {
             return Boolean.FALSE;
         }
 

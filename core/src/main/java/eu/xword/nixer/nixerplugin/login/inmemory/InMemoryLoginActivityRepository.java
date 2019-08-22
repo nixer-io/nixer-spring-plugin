@@ -38,6 +38,9 @@ public class InMemoryLoginActivityRepository implements LoginActivityRepository 
                 })
                 .onFailure(failure -> {
                     final Integer failedByIp = failedLoginByIp.increment(context);
+//                    if (failedByIp > 2) {
+//                        eventPublisher.publishEvent(new ActivateCaptchaEvent());
+//                    }
                     // TODO make sure we don't trigger block event twice
 //                    if (failedByIp > LOGIN_FAILED_BY_IP_THRESHOLD) {
 //                        eventPublisher.publishEvent(new BlockSourceIPEvent(context.getIpAddress()));
