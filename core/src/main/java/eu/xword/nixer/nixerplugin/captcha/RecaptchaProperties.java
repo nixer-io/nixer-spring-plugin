@@ -1,5 +1,7 @@
 package eu.xword.nixer.nixerplugin.captcha;
 
+import java.time.Duration;
+
 import eu.xword.nixer.nixerplugin.captcha.error.FallbackMode;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
@@ -16,6 +18,8 @@ public class RecaptchaProperties {
     private String param = "g-recaptcha-response";
 
     private FallbackMode fallback = FallbackMode.FAIL;
+
+    private BlockingProperties blocking = new BlockingProperties();
 
     public String getVerifyUrl() {
         return verifyUrl;
@@ -55,6 +59,14 @@ public class RecaptchaProperties {
 
     public void setFallback(final FallbackMode fallback) {
         this.fallback = fallback;
+    }
+
+    public BlockingProperties getBlocking() {
+        return blocking;
+    }
+
+    public void setBlocking(final BlockingProperties blocking) {
+        this.blocking = blocking;
     }
 
     public static class Http {
@@ -126,6 +138,39 @@ public class RecaptchaProperties {
 
         public void setSecret(final String secret) {
             this.secret = secret;
+        }
+    }
+
+    public static class BlockingProperties {
+        private static final int DEFAULT_MAX_ATTEMPTS = 4;
+        private static final Duration DEFAULT_BLOCKING_DURATION = Duration.ofHours(1);
+
+        private boolean enabled = false;
+        private int maxAttempts = DEFAULT_MAX_ATTEMPTS;
+        private Duration duration = DEFAULT_BLOCKING_DURATION;
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(final boolean enabled) {
+            this.enabled = enabled;
+        }
+
+        public int getMaxAttempts() {
+            return maxAttempts;
+        }
+
+        public void setMaxAttempts(final int maxAttempts) {
+            this.maxAttempts = maxAttempts;
+        }
+
+        public Duration getDuration() {
+            return duration;
+        }
+
+        public void setDuration(final String duration) {
+            this.duration = Duration.parse(duration);
         }
     }
 }

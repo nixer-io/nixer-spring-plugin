@@ -5,13 +5,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import eu.xword.nixer.nixerplugin.captcha.metrics.MetricsReporter;
-import eu.xword.nixer.nixerplugin.captcha.error.CaptchaErrors;
+import eu.xword.nixer.nixerplugin.captcha.CaptchaInterceptor;
 import eu.xword.nixer.nixerplugin.captcha.CaptchaService;
 import eu.xword.nixer.nixerplugin.captcha.CaptchaVerifyResponse;
+import eu.xword.nixer.nixerplugin.captcha.RecaptchaProperties;
+import eu.xword.nixer.nixerplugin.captcha.error.CaptchaErrors;
 import eu.xword.nixer.nixerplugin.captcha.error.FallbackMode;
 import eu.xword.nixer.nixerplugin.captcha.error.RecaptchaClientException;
-import eu.xword.nixer.nixerplugin.captcha.RecaptchaProperties;
 import eu.xword.nixer.nixerplugin.captcha.error.RecaptchaServiceException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -26,15 +26,15 @@ public class RecaptchaV2Service implements CaptchaService {
     private static Pattern RESPONSE_PATTERN = Pattern.compile("[A-Za-z0-9_-]+");
 
     private RestOperations restTemplate;
-    private MetricsReporter metricsReporter;
+    private CaptchaInterceptor captchaInterceptor;
 
     private String verifyUrl;
     private String recaptchaSecret;
     private FallbackMode fallbackMode;
 
-    public RecaptchaV2Service(final RestOperations restTemplate, final MetricsReporter metricsReporter, final RecaptchaProperties config) {
+    public RecaptchaV2Service(final RestOperations restTemplate, final CaptchaInterceptor captchaInterceptor, final RecaptchaProperties config) {
         this.restTemplate = restTemplate;
-        this.metricsReporter = metricsReporter;
+        this.captchaInterceptor = captchaInterceptor;
         this.fallbackMode = config.getFallback();
         this.recaptchaSecret = config.getKey().getSecret();
         this.verifyUrl = config.getVerifyUrl();
@@ -46,21 +46,23 @@ public class RecaptchaV2Service implements CaptchaService {
 
     @Override
     public void processResponse(final String captcha) {
+        captchaInterceptor.onCheck();
+        
         if (!isInValidFormat(captcha)) {
-            metricsReporter.reportFailedCaptcha(); // TODO rethink
+            captchaInterceptor.onFailure(); // TODO rethink
             throw CaptchaErrors.invalidCaptchaFormat("Response contains invalid characters");
         }
 
         try {
             verify(captcha);
 
-            metricsReporter.reportPassedCaptcha();
+            captchaInterceptor.onSuccess();
         } catch (RecaptchaServiceException e) {
-            metricsReporter.reportFailedCaptcha(); // TODO rethink
+            captchaInterceptor.onFailure(); // TODO rethink
             fallbackMode.handle(e);
         } catch (RecaptchaClientException e) {
             // TODO think of retry fallback mode (which exception are retryable?) TIMEOUT
-            metricsReporter.reportFailedCaptcha();
+            captchaInterceptor.onFailure();
             throw e;
         }
     }

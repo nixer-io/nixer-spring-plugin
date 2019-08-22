@@ -6,6 +6,9 @@ import eu.xword.nixer.nixerplugin.captcha.endpoint.CaptchaEndpoint;
 import eu.xword.nixer.nixerplugin.captcha.metrics.MetricsReporterFactory;
 import eu.xword.nixer.nixerplugin.captcha.metrics.MicrometerMetricsReporterFactory;
 import eu.xword.nixer.nixerplugin.captcha.metrics.NOPMetricsReporter;
+import eu.xword.nixer.nixerplugin.captcha.reattempt.InMemoryCaptchaReattemptService;
+import eu.xword.nixer.nixerplugin.captcha.reattempt.IpIdentityCreator;
+import eu.xword.nixer.nixerplugin.captcha.reattempt.IdentityCreator;
 import eu.xword.nixer.nixerplugin.captcha.strategy.CaptchaStrategy;
 import eu.xword.nixer.nixerplugin.captcha.strategy.StrategyRegistry;
 import io.micrometer.core.instrument.MeterRegistry;
@@ -99,5 +102,18 @@ public class CaptchaConfiguration {
     @Bean
     public AutomaticCaptchaStrategy automaticCaptchaStrategy() {
         return new AutomaticCaptchaStrategy();
+    }
+
+    @Bean
+    //TODO conditional on property or expression
+    public InMemoryCaptchaReattemptService reattemptService(RecaptchaProperties recaptcha, IdentityCreator identityCreator) {
+        final RecaptchaProperties.BlockingProperties blocking = recaptcha.getBlocking();
+
+        return new InMemoryCaptchaReattemptService(blocking.getMaxAttempts(), blocking.getDuration(), identityCreator);
+    }
+
+    @Bean
+    public IdentityCreator subjectIpIdentityCreator() {
+        return new IpIdentityCreator();
     }
 }

@@ -15,7 +15,6 @@ public enum LoginFailureType {
     UNKNOWN_USER,
     BAD_PASSWORD,
     INVALID_CAPTCHA,
-    MFA, // TODO future
     LOCKED,
     EXPIRED,
     DISABLED,

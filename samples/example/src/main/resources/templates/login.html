@@ -14,7 +14,8 @@
     <form name="form-signin" th:action="@{/login}" method="post">
         <h2 class="form-signin-heading">Please Login</h2>
         <div th:if="${param.error}" class="alert alert-danger" role="alert">
-            Invalid username and password.
+            <span th:if="${{param.error}} == 'LOCKED'">Account locked.</span>
+            <span th:if="${{param.error}} != 'LOCKED'">Invalid username and password.</span>
         </div>
         <div th:if="${param.logout}" class="alert alert-success">
             You have been logged out.
