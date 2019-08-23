@@ -6,6 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 // TODO make it possible to configure identity creator using config (type of creator)
 // TODO define enums for types and factories/creators for each
+
+/**
+ * Identifies request based on IP
+ */
 public class IpIdentityCreator implements IdentityCreator {
 
     @Autowired

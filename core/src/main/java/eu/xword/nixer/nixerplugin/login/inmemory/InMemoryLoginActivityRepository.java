@@ -12,6 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Repository;
 
+/**
+ * Stores user login results in memory.
+ */
 @Repository
 public class InMemoryLoginActivityRepository implements LoginActivityRepository {
 

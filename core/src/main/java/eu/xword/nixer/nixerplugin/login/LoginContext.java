@@ -2,6 +2,9 @@ package eu.xword.nixer.nixerplugin.login;
 
 import com.google.common.base.Objects;
 
+/**
+ * Stores data about user making login request.
+ */
 public class LoginContext {
 
     private final String username;

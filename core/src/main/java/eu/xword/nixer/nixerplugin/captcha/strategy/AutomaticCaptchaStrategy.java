@@ -1,8 +1,7 @@
-package eu.xword.nixer.nixerplugin.blocking.policies;
+package eu.xword.nixer.nixerplugin.captcha.strategy;
 
 import javax.servlet.http.HttpSession;
 
-import eu.xword.nixer.nixerplugin.captcha.strategy.CaptchaStrategy;
 import eu.xword.nixer.nixerplugin.detection.GlobalCredentialStuffing;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;

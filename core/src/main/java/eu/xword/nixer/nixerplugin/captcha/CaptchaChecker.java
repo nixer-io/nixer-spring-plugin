@@ -14,6 +14,9 @@ import org.springframework.util.Assert;
 
 // TODO convert to Blocking policy
 
+/**
+ * Integrates captcha verification capability in spring-security authentication process.
+ */
 public class CaptchaChecker implements UserDetailsChecker {
 
     private static final String LOGIN_ACTION = "login";

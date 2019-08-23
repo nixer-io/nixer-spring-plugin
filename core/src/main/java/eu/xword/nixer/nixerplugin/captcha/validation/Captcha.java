@@ -8,6 +8,9 @@ import javax.validation.Constraint;
 
 import com.nimbusds.jose.Payload;
 
+/**
+ * The string has to be a valid captcha response. Exactly what captcha provider is used for verification is left for validator.
+ */
 @Target({ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = CaptchaValidator.class)

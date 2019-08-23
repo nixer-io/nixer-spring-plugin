@@ -11,6 +11,9 @@ import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
+/**
+ * Defines reason of login failure.
+ */
 public enum LoginFailureType {
     UNKNOWN_USER,
     BAD_PASSWORD,

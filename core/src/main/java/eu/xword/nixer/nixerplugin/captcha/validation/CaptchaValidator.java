@@ -9,6 +9,9 @@ import eu.xword.nixer.nixerplugin.captcha.error.RecaptchaException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+/**
+ * Checks that a given string is valid captcha response.
+ */
 @Component
 public class CaptchaValidator implements ConstraintValidator<Captcha, String> {
 

@@ -6,6 +6,9 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
+/**
+ * Represents result of authentication
+ */
 public class LoginResult {
     private final Status status;
     private final LoginFailureType reason;

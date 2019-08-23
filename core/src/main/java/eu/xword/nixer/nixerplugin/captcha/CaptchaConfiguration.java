@@ -1,7 +1,7 @@
 package eu.xword.nixer.nixerplugin.captcha;
 
 import eu.xword.nixer.nixerplugin.NixerProperties;
-import eu.xword.nixer.nixerplugin.blocking.policies.AutomaticCaptchaStrategy;
+import eu.xword.nixer.nixerplugin.captcha.strategy.AutomaticCaptchaStrategy;
 import eu.xword.nixer.nixerplugin.captcha.endpoint.CaptchaEndpoint;
 import eu.xword.nixer.nixerplugin.captcha.metrics.MetricsReporterFactory;
 import eu.xword.nixer.nixerplugin.captcha.metrics.MicrometerMetricsReporterFactory;

@@ -11,6 +11,9 @@ import eu.xword.nixer.nixerplugin.login.LoginResult;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 
+/**
+ * Records metrics about user login in micrometer.
+ */
 public class LoginMetricsReporter implements LoginActivityRepository {
 
     private final Counter loginSuccessCounter;

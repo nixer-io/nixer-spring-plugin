@@ -9,6 +9,15 @@ import eu.xword.nixer.nixerplugin.captcha.CaptchaInterceptor;
 import org.springframework.security.authentication.LockedException;
 
 //TODO consider creative another implementation with external storage
+
+/**
+ * Intercepts captcha processing to keep track for failure counts .
+ * If user failed to solve captcha too many times it will be blocked for period of time. Successful solving captcha resets attempts counter.
+ * <p/>
+ * Both max number of attempts and blocking period could be configured.
+ * <p/>
+ * Identity of user that will be blocked is return by {@link IdentityCreator}.
+ */
 public class InMemoryCaptchaReattemptService implements CaptchaInterceptor {
 
     private final int maxAttempts;

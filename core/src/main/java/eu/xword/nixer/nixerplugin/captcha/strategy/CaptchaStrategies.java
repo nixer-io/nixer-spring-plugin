@@ -1,9 +1,12 @@
 package eu.xword.nixer.nixerplugin.captcha.strategy;
 
+/**
+ * Contains constant definitions for simple implementations of {@link CaptchaStrategy}.
+ */
 public class CaptchaStrategies {
 
     /**
-     * Results with captcha challenge
+     * Strategy that always challenges
      */
     public static final CaptchaStrategy ALWAYS = new CaptchaStrategy() {
         @Override
@@ -23,7 +26,7 @@ public class CaptchaStrategies {
     };
 
     /**
-     * Results with captcha challenge
+     * Strategy that never challenges
      */
     public static final CaptchaStrategy NEVER = new CaptchaStrategy() {
         @Override

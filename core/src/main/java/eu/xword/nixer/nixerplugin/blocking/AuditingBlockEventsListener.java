@@ -6,6 +6,9 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
+/**
+ * Writes {@link BlockEvent}s to logs.
+ */
 @Component
 public class AuditingBlockEventsListener implements ApplicationListener<BlockEvent> {
 

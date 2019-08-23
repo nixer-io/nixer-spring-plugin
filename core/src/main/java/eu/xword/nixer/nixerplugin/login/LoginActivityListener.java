@@ -16,6 +16,9 @@ import org.springframework.security.authentication.event.AuthenticationSuccessEv
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
 
+/**
+ * Listens for Spring {@link AbstractAuthenticationEvent} and stores it in configured repositories
+ */
 @Component
 public class LoginActivityListener implements ApplicationListener<AbstractAuthenticationEvent> {
 
