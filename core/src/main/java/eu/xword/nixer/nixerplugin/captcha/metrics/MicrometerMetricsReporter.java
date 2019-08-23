@@ -3,6 +3,9 @@ package eu.xword.nixer.nixerplugin.captcha.metrics;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 
+/**
+ * Reports captcha metrics to micrometer's {@link MeterRegistry}.
+ */
 public class MicrometerMetricsReporter implements MetricsReporter {
 
     private final Counter captchaPassedCounter;

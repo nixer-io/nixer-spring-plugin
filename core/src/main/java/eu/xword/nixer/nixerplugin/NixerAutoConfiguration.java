@@ -3,6 +3,7 @@ package eu.xword.nixer.nixerplugin;
 import javax.sql.DataSource;
 
 import eu.xword.nixer.nixerplugin.blocking.BlockingConfiguration;
+import eu.xword.nixer.nixerplugin.detection.GlobalCredentialStuffing;
 import eu.xword.nixer.nixerplugin.login.LoginActivityRepository;
 import eu.xword.nixer.nixerplugin.login.jdbc.JdbcDAO;
 import eu.xword.nixer.nixerplugin.login.metrics.LoginMetricsReporter;
@@ -31,5 +32,10 @@ public class NixerAutoConfiguration {
         final JdbcDAO jdbcDAO = new JdbcDAO();
         jdbcDAO.setDataSource(dataSource);
         return jdbcDAO;
+    }
+
+    @Bean
+    public GlobalCredentialStuffing credentialStuffing() {
+        return new GlobalCredentialStuffing();
     }
 }

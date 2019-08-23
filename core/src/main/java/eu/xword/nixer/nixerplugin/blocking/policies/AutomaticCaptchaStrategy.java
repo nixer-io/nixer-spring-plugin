@@ -1,20 +1,46 @@
 package eu.xword.nixer.nixerplugin.blocking.policies;
 
-import java.util.concurrent.atomic.AtomicLong;
+import javax.servlet.http.HttpSession;
 
-import eu.xword.nixer.nixerplugin.blocking.events.ActivateCaptchaEvent;
 import eu.xword.nixer.nixerplugin.captcha.strategy.CaptchaStrategy;
-import org.springframework.context.ApplicationListener;
+import eu.xword.nixer.nixerplugin.detection.GlobalCredentialStuffing;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 // TODO should we move it to eu.xword.nixer.nixerplugin.captcha.strategy
 //TODO think how to rewrite. Currently it has to me spring bean to work
-public class AutomaticCaptchaStrategy implements CaptchaStrategy, ApplicationListener<ActivateCaptchaEvent> {
 
-    private final AtomicLong enableCaptchaAfter = new AtomicLong(Long.MAX_VALUE);
+/**
+ * Decides whether user should be challenged with captcha depending if Credential Stuffing is active.
+ */
+public class AutomaticCaptchaStrategy implements CaptchaStrategy {
+
+    private GlobalCredentialStuffing globalCredentialStuffing;
+
+    public AutomaticCaptchaStrategy(final GlobalCredentialStuffing globalCredentialStuffing) {
+        this.globalCredentialStuffing = globalCredentialStuffing;
+    }
+
+    private long sessionCreationTimeOrZero() {
+        //TODO extract
+        ServletRequestAttributes attr = (ServletRequestAttributes)
+                RequestContextHolder.currentRequestAttributes();
+        HttpSession session = attr.getRequest().getSession(false);
+
+        return session != null
+                ? session.getCreationTime()
+                : 0;
+    }
 
     @Override
-    public boolean applies(long sessionCreationTime) {
-        return sessionCreationTime > enableCaptchaAfter.get();
+    public boolean challenge() {
+        return globalCredentialStuffing.isCredentialStuffingActive();
+    }
+
+    @Override
+    public boolean verifyChallenge() {
+        final long timestamp = sessionCreationTimeOrZero();
+        return globalCredentialStuffing.hasHappenDuringCredentialStuffing(timestamp);
     }
 
     @Override
@@ -22,9 +48,4 @@ public class AutomaticCaptchaStrategy implements CaptchaStrategy, ApplicationLis
         return "AUTOMATIC";
     }
 
-    @Override
-    public void onApplicationEvent(final ActivateCaptchaEvent event) {
-        //TODO schedule unlock after sometime/expect DropCaptcha event
-        enableCaptchaAfter.set(event.getTimestamp());
-    }
 }

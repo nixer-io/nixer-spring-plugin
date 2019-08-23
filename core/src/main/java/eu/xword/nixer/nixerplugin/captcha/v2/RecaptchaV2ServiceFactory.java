@@ -7,13 +7,16 @@ import eu.xword.nixer.nixerplugin.captcha.CaptchaInterceptor;
 import eu.xword.nixer.nixerplugin.captcha.CaptchaService;
 import eu.xword.nixer.nixerplugin.captcha.CaptchaServiceFactory;
 import eu.xword.nixer.nixerplugin.captcha.CompositeCaptchaInterceptor;
-import eu.xword.nixer.nixerplugin.captcha.reattempt.InMemoryCaptchaReattemptService;
 import eu.xword.nixer.nixerplugin.captcha.RecaptchaProperties;
 import eu.xword.nixer.nixerplugin.captcha.metrics.MetricsReporter;
 import eu.xword.nixer.nixerplugin.captcha.metrics.MetricsReporterFactory;
+import eu.xword.nixer.nixerplugin.captcha.reattempt.InMemoryCaptchaReattemptService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+/**
+ * Returns configured instance of {@link RecaptchaV2Service}.
+ */
 @Component
 public class RecaptchaV2ServiceFactory implements CaptchaServiceFactory {
 

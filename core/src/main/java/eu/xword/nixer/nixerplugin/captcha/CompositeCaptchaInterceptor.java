@@ -2,6 +2,9 @@ package eu.xword.nixer.nixerplugin.captcha;
 
 import java.util.List;
 
+/**
+ * Composite implementation for {@link CaptchaInterceptor}
+ */
 public class CompositeCaptchaInterceptor implements CaptchaInterceptor {
 
     private List<CaptchaInterceptor> interceptors;

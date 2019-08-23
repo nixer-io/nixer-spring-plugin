@@ -2,9 +2,17 @@ package eu.xword.nixer.nixerplugin.captcha.strategy;
 
 public class CaptchaStrategies {
 
+    /**
+     * Results with captcha challenge
+     */
     public static final CaptchaStrategy ALWAYS = new CaptchaStrategy() {
         @Override
-        public boolean applies(long sessionCreationTime) {
+        public boolean challenge() {
+            return Boolean.TRUE;
+        }
+
+        @Override
+        public boolean verifyChallenge() {
             return Boolean.TRUE;
         }
 
@@ -14,9 +22,17 @@ public class CaptchaStrategies {
         }
     };
 
+    /**
+     * Results with captcha challenge
+     */
     public static final CaptchaStrategy NEVER = new CaptchaStrategy() {
         @Override
-        public boolean applies(long sessionCreationTime) {
+        public boolean challenge() {
+            return Boolean.FALSE;
+        }
+
+        @Override
+        public boolean verifyChallenge() {
             return Boolean.FALSE;
         }
 

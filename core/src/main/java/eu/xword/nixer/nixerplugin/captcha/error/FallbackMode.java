@@ -1,5 +1,6 @@
 package eu.xword.nixer.nixerplugin.captcha.error;
 
+//TODO to be used for retries. Do we need it ?
 public enum FallbackMode {
     ACCEPT {
         @Override

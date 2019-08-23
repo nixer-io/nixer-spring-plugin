@@ -19,6 +19,11 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestOperations;
 
+/**
+ * Implementation of {@link CaptchaService} for Google's ReCaptcha V2.
+ * <p>
+ * Uses Google REST API to verify captcha
+ */
 public class RecaptchaV2Service implements CaptchaService {
 
     private final Log logger = LogFactory.getLog(getClass());
@@ -47,7 +52,7 @@ public class RecaptchaV2Service implements CaptchaService {
     @Override
     public void processResponse(final String captcha) {
         captchaInterceptor.onCheck();
-        
+
         if (!isInValidFormat(captcha)) {
             captchaInterceptor.onFailure(); // TODO rethink
             throw CaptchaErrors.invalidCaptchaFormat("Response contains invalid characters");

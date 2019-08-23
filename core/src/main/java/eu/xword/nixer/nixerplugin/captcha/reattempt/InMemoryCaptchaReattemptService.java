@@ -8,6 +8,7 @@ import com.google.common.cache.LoadingCache;
 import eu.xword.nixer.nixerplugin.captcha.CaptchaInterceptor;
 import org.springframework.security.authentication.LockedException;
 
+//TODO consider creative another implementation with external storage
 public class InMemoryCaptchaReattemptService implements CaptchaInterceptor {
 
     private final int maxAttempts;

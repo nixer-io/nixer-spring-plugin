@@ -6,6 +6,9 @@ import eu.xword.nixer.nixerplugin.captcha.error.FallbackMode;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
+/**
+ * {@link ConfigurationProperties} for configuring captcha challange.
+ */
 @ConfigurationProperties(prefix = "recaptcha")
 @Component
 public class RecaptchaProperties {

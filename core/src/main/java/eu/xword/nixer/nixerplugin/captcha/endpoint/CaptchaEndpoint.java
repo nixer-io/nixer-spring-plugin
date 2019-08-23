@@ -11,6 +11,9 @@ import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.boot.actuate.endpoint.annotation.WriteOperation;
 import org.springframework.util.Assert;
 
+/**
+ * An {@link Endpoint} for exposing {@link CaptchaChecker}.
+ */
 @Endpoint(id = "captcha")
 public class CaptchaEndpoint {
 

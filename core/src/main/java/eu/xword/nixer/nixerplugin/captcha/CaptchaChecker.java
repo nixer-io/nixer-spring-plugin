@@ -3,7 +3,6 @@ package eu.xword.nixer.nixerplugin.captcha;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import eu.xword.nixer.nixerplugin.captcha.error.RecaptchaException;
 import eu.xword.nixer.nixerplugin.captcha.strategy.CaptchaStrategies;
@@ -12,10 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsChecker;
 import org.springframework.util.Assert;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 // TODO convert to Blocking policy
+
 public class CaptchaChecker implements UserDetailsChecker {
 
     private static final String LOGIN_ACTION = "login";
@@ -57,26 +55,15 @@ public class CaptchaChecker implements UserDetailsChecker {
         }
     }
 
-    private long sessionCreationTimeOrZero() {
-        ServletRequestAttributes attr = (ServletRequestAttributes)
-                RequestContextHolder.currentRequestAttributes();
-        HttpSession session = attr.getRequest().getSession(false);
-
-        return session != null
-                ? session.getCreationTime()
-                : 0;
-    }
 
     private boolean shouldVerifyCaptcha() {
-        final long timestamp = sessionCreationTimeOrZero();
-
-        return captchaStrategy.get().applies(timestamp);
+        return captchaStrategy.get().verifyChallenge();
     }
 
-    // Needs to be public for templates to check if captcha should be displayed.
+    // Needs to be public for template engine to check if captcha should be displayed.
     // TODO Re-implement check so it doesn't have to be public
     public boolean shouldDisplayCaptcha() {
-        return captchaStrategy.get().applies(System.currentTimeMillis()); //TODO refactor
+        return captchaStrategy.get().challenge();
     }
 
     public void setCaptchaStrategy(final CaptchaStrategy captchaStrategy) {

@@ -6,11 +6,12 @@ import eu.xword.nixer.nixerplugin.captcha.endpoint.CaptchaEndpoint;
 import eu.xword.nixer.nixerplugin.captcha.metrics.MetricsReporterFactory;
 import eu.xword.nixer.nixerplugin.captcha.metrics.MicrometerMetricsReporterFactory;
 import eu.xword.nixer.nixerplugin.captcha.metrics.NOPMetricsReporter;
+import eu.xword.nixer.nixerplugin.captcha.reattempt.IdentityCreator;
 import eu.xword.nixer.nixerplugin.captcha.reattempt.InMemoryCaptchaReattemptService;
 import eu.xword.nixer.nixerplugin.captcha.reattempt.IpIdentityCreator;
-import eu.xword.nixer.nixerplugin.captcha.reattempt.IdentityCreator;
 import eu.xword.nixer.nixerplugin.captcha.strategy.CaptchaStrategy;
 import eu.xword.nixer.nixerplugin.captcha.strategy.StrategyRegistry;
+import eu.xword.nixer.nixerplugin.detection.GlobalCredentialStuffing;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
@@ -100,8 +101,8 @@ public class CaptchaConfiguration {
     }
 
     @Bean
-    public AutomaticCaptchaStrategy automaticCaptchaStrategy() {
-        return new AutomaticCaptchaStrategy();
+    public AutomaticCaptchaStrategy automaticCaptchaStrategy(GlobalCredentialStuffing globalCredentialStuffing) {
+        return new AutomaticCaptchaStrategy(globalCredentialStuffing);
     }
 
     @Bean

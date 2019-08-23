@@ -1,5 +1,8 @@
 package eu.xword.nixer.nixerplugin.captcha.error;
 
+/**
+ * Helper factory methods for creating variants of {@link RecaptchaException}.
+ */
 public class CaptchaErrors {
 
     public static RecaptchaClientException invalidCaptchaFormat(String message) {

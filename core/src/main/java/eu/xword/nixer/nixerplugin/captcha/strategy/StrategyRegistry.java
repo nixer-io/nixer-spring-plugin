@@ -3,8 +3,9 @@ package eu.xword.nixer.nixerplugin.captcha.strategy;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.stereotype.Component;
-
+/**
+ * Stores available {@link CaptchaStrategy} allowing to lookup them by name.
+ */
 public class StrategyRegistry {
 
     private Map<String, CaptchaStrategy> mapping = new HashMap<>();

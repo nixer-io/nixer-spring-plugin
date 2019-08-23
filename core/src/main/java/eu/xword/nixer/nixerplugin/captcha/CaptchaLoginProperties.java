@@ -1,5 +1,10 @@
 package eu.xword.nixer.nixerplugin.captcha;
 
+import org.springframework.boot.context.properties.ConfigurationProperties;
+
+/**
+ * Nested in {@link ConfigurationProperties} for configuring login captcha
+ */
 public class CaptchaLoginProperties {
 
     private boolean enabled = true;
