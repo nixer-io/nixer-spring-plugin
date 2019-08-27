@@ -1,4 +1,4 @@
-package eu.xword.nixer.nixerplugin.captcha;
+package eu.xword.nixer.nixerplugin.captcha.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

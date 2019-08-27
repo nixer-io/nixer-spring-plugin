@@ -2,19 +2,20 @@ package eu.xword.nixer.nixerplugin.example;
 
 import java.util.LinkedHashMap;
 
+import javax.sql.DataSource;
+
+import eu.xword.nixer.nixerplugin.captcha.security.CaptchaChecker;
+import eu.xword.nixer.nixerplugin.captcha.config.CaptchaConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.filter.OrderedRequestContextFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.LockedException;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.ObjectPostProcessor;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UserDetailsChecker;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
@@ -30,13 +31,15 @@ import org.springframework.web.filter.RequestContextFilter;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    private UserDetailsChecker captchaChecker;
+    private CaptchaChecker captchaChecker;
+
+    @Autowired
+    private DataSource dataSource;
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         final LinkedHashMap<Class<? extends AuthenticationException>, AuthenticationFailureHandler> loginFailureHandlers = new LinkedHashMap<>();
         loginFailureHandlers.put(LockedException.class, new SimpleUrlAuthenticationFailureHandler("/login?error=LOCKED")); // TODO pass info
-
         httpSecurity
                 .authorizeRequests()
                 .antMatchers("/login").permitAll()
@@ -56,19 +59,23 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
         PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
-        auth.inMemoryAuthentication()
-                .passwordEncoder(encoder)
-                .withUser("user").password(encoder.encode("user")).roles("USER")
-                .and()
-                //.apply() TODO consider creating custom Configurer for Recaptcha
-                .addObjectPostProcessor(new ObjectPostProcessor<DaoAuthenticationProvider>() {
-                    @Override
-                    public DaoAuthenticationProvider postProcess(final DaoAuthenticationProvider object) {
-                        object.setPreAuthenticationChecks(captchaChecker);
-                        object.setHideUserNotFoundExceptions(false);
-                        return object;
-                    }
-                });
+//        auth.userDetailsService(null)
+//                .addObjectPostProcessor(new CaptchaConfigurer(captchaChecker));
+//
+        auth.jdbcAuthentication()
+                .dataSource(dataSource)
+                .withDefaultSchema()
+                .withUser("user").password(encoder.encode("user")).roles("USER").and()
+                .withObjectPostProcessor(new CaptchaConfigurer(captchaChecker));
+
+//        auth.inMemoryAuthentication()
+//                .passwordEncoder(encoder)
+//                .withUser("user").password(encoder.encode("user")).roles("USER")
+//                .and()
+//                //.apply() TODO consider creating custom Configurer for Recaptcha
+//                .withObjectPostProcessor(new CaptchaConfigurer(captchaChecker))
+////                .addObjectPostProcessor(new CaptchaConfigurer(captchaChecker))
+//                ;
 
     }
 

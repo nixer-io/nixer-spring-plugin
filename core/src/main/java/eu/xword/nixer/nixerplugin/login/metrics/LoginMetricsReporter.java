@@ -40,7 +40,6 @@ public class LoginMetricsReporter implements LoginActivityRepository {
 
     }
 
-
     private void reportLoginFail(final LoginFailureType loginFailureType) {
         final Counter failureCounter = failureCounters.get(loginFailureType);
 

@@ -20,7 +20,7 @@ public class AutomaticCaptchaStrategy implements CaptchaStrategy {
         this.globalCredentialStuffing = globalCredentialStuffing;
     }
 
-    private long sessionCreationTimeOrZero() {
+    private Long sessionCreationTimeOrNull() {
         //TODO extract
         ServletRequestAttributes attr = (ServletRequestAttributes)
                 RequestContextHolder.currentRequestAttributes();
@@ -28,7 +28,7 @@ public class AutomaticCaptchaStrategy implements CaptchaStrategy {
 
         return session != null
                 ? session.getCreationTime()
-                : 0;
+                : null;
     }
 
     @Override
@@ -38,8 +38,11 @@ public class AutomaticCaptchaStrategy implements CaptchaStrategy {
 
     @Override
     public boolean verifyChallenge() {
-        final long timestamp = sessionCreationTimeOrZero();
-        return globalCredentialStuffing.hasHappenDuringCredentialStuffing(timestamp);
+        final Long timestamp = sessionCreationTimeOrNull();
+
+        return timestamp != null
+                ? globalCredentialStuffing.hasHappenDuringCredentialStuffing(timestamp)
+                : globalCredentialStuffing.isCredentialStuffingActive();
     }
 
     @Override

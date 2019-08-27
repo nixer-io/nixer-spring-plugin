@@ -5,11 +5,11 @@ import java.time.Duration;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.google.common.base.MoreObjects;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import eu.xword.nixer.nixerplugin.blocking.events.BlockSourceIPEvent;
 import org.springframework.context.ApplicationListener;
+import org.springframework.util.Assert;
 
 public class SourceIpBlockingPolicy extends BlockingPolicy implements ApplicationListener<BlockSourceIPEvent> {
 
@@ -17,10 +17,11 @@ public class SourceIpBlockingPolicy extends BlockingPolicy implements Applicatio
             .expireAfterWrite(Duration.ofMinutes(5))
             .build();
 
-    private final MitigationStrategy mitigationStrategy;
+    private MitigationStrategy mitigationStrategy;
 
     public SourceIpBlockingPolicy(final MitigationStrategy mitigationStrategy) {
-        this.mitigationStrategy = MoreObjects.firstNonNull(mitigationStrategy, new ObserveOnlyMitigationStrategy());
+        Assert.notNull(mitigationStrategy, "mitigationStrategy cannot be null");
+        this.mitigationStrategy = mitigationStrategy;
     }
 
     @Override

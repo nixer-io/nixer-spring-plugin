@@ -1,7 +1,7 @@
-package eu.xword.nixer.nixerplugin.captcha;
+package eu.xword.nixer.nixerplugin.captcha.config;
 
 import eu.xword.nixer.nixerplugin.NixerProperties;
-import eu.xword.nixer.nixerplugin.captcha.strategy.AutomaticCaptchaStrategy;
+import eu.xword.nixer.nixerplugin.captcha.CaptchaServiceFactory;
 import eu.xword.nixer.nixerplugin.captcha.endpoint.CaptchaEndpoint;
 import eu.xword.nixer.nixerplugin.captcha.metrics.MetricsReporterFactory;
 import eu.xword.nixer.nixerplugin.captcha.metrics.MicrometerMetricsReporterFactory;
@@ -9,8 +9,12 @@ import eu.xword.nixer.nixerplugin.captcha.metrics.NOPMetricsReporter;
 import eu.xword.nixer.nixerplugin.captcha.reattempt.IdentityCreator;
 import eu.xword.nixer.nixerplugin.captcha.reattempt.InMemoryCaptchaReattemptService;
 import eu.xword.nixer.nixerplugin.captcha.reattempt.IpIdentityCreator;
+import eu.xword.nixer.nixerplugin.captcha.security.CaptchaChecker;
+import eu.xword.nixer.nixerplugin.captcha.strategy.AutomaticCaptchaStrategy;
 import eu.xword.nixer.nixerplugin.captcha.strategy.CaptchaStrategy;
 import eu.xword.nixer.nixerplugin.captcha.strategy.StrategyRegistry;
+import eu.xword.nixer.nixerplugin.captcha.recaptcha.RecaptchaClient;
+import eu.xword.nixer.nixerplugin.captcha.recaptcha.RecaptchaRestClient;
 import eu.xword.nixer.nixerplugin.detection.GlobalCredentialStuffing;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.apache.http.client.HttpClient;
@@ -116,5 +120,10 @@ public class CaptchaConfiguration {
     @Bean
     public IdentityCreator subjectIpIdentityCreator() {
         return new IpIdentityCreator();
+    }
+
+    @Bean
+    public RecaptchaClient captchaClient(RestTemplate restTemplate, RecaptchaProperties recaptchaProperties) {
+        return new RecaptchaRestClient(restTemplate, recaptchaProperties);
     }
 }

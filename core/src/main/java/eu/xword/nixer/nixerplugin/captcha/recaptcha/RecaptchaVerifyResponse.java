@@ -1,4 +1,4 @@
-package eu.xword.nixer.nixerplugin.captcha;
+package eu.xword.nixer.nixerplugin.captcha.recaptcha;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,7 +23,7 @@ import com.google.common.base.Objects;
         "hostname",
         "error-codes"
 })
-public class CaptchaVerifyResponse {
+public class RecaptchaVerifyResponse {
 
     private boolean success;
 
@@ -34,10 +34,10 @@ public class CaptchaVerifyResponse {
     private ErrorCode[] errorCodes;
 
     @JsonCreator
-    public CaptchaVerifyResponse(@JsonProperty("success") final boolean success,
-                                 @JsonProperty("challenge_ts") final String challengeTs,
-                                 @JsonProperty("hostname") final String hostname,
-                                 @JsonProperty("error-codes") final ErrorCode[] errorCodes) {
+    public RecaptchaVerifyResponse(@JsonProperty("success") final boolean success,
+                                   @JsonProperty("challenge_ts") final String challengeTs,
+                                   @JsonProperty("hostname") final String hostname,
+                                   @JsonProperty("error-codes") final ErrorCode[] errorCodes) {
         this.success = success;
         this.challengeTs = challengeTs;
         this.hostname = hostname;
@@ -105,7 +105,7 @@ public class CaptchaVerifyResponse {
     public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        final CaptchaVerifyResponse that = (CaptchaVerifyResponse) o;
+        final RecaptchaVerifyResponse that = (RecaptchaVerifyResponse) o;
         return success == that.success &&
                 Objects.equal(challengeTs, that.challengeTs) &&
                 Objects.equal(hostname, that.hostname) &&

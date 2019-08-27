@@ -1,23 +1,20 @@
-package eu.xword.nixer.nixerplugin.captcha.v2;
+package eu.xword.nixer.nixerplugin.captcha.recaptcha;
 
-import eu.xword.nixer.nixerplugin.captcha.metrics.MicrometerMetricsReporter;
-import eu.xword.nixer.nixerplugin.captcha.CaptchaVerifyResponse;
-import eu.xword.nixer.nixerplugin.captcha.CaptchaVerifyResponse.ErrorCode;
-import eu.xword.nixer.nixerplugin.captcha.RecaptchaProperties;
+import eu.xword.nixer.nixerplugin.captcha.recaptcha.RecaptchaVerifyResponse.ErrorCode;
+import eu.xword.nixer.nixerplugin.captcha.error.CaptchaErrors;
 import eu.xword.nixer.nixerplugin.captcha.error.RecaptchaClientException;
 import eu.xword.nixer.nixerplugin.captcha.error.RecaptchaServiceException;
+import eu.xword.nixer.nixerplugin.captcha.metrics.MicrometerMetricsReporter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.stubbing.OngoingStubbing;
 import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestOperations;
 
-import static eu.xword.nixer.nixerplugin.captcha.CaptchaVerifyResponse.ErrorCode.InvalidResponse;
+import static eu.xword.nixer.nixerplugin.captcha.recaptcha.RecaptchaVerifyResponse.ErrorCode.InvalidResponse;
+import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 class RecaptchaV2ServiceTest {
@@ -25,16 +22,14 @@ class RecaptchaV2ServiceTest {
     RecaptchaV2Service captchaService;
 
     @Mock
-    RestOperations restOperations;
+    RecaptchaClient recaptchaClient;
 
     @Mock
     MicrometerMetricsReporter captchaMetricsReporter;
 
     @BeforeEach
     public void init() {
-        final RecaptchaProperties props = new RecaptchaProperties();
-
-        captchaService = new RecaptchaV2Service(restOperations, captchaMetricsReporter, props);
+        captchaService = new RecaptchaV2Service(recaptchaClient, captchaMetricsReporter);
     }
 
     @Test
@@ -49,29 +44,26 @@ class RecaptchaV2ServiceTest {
 
     @Test
     public void should_throw_exception_when_got_timeout() {
-        whenRestCalled(restOperations)
-                .thenThrow(new RestClientException("timeout"));
+        given(recaptchaClient.call("good"))
+                .willThrow(CaptchaErrors.serviceFailure("timeout", new RestClientException("timeout")));
 
         Assertions.assertThrows(RecaptchaServiceException.class, () -> captchaService.processResponse("good"));
     }
 
     @Test
     public void should_throw_exception_when_error_received() {
-        whenRestCalled(restOperations)
-                .thenReturn(new CaptchaVerifyResponse(false, "", "host", new ErrorCode[]{InvalidResponse}));
+        given(recaptchaClient.call("bad"))
+                .willReturn(new RecaptchaVerifyResponse(false, "", "host", new ErrorCode[]{InvalidResponse}));
 
         Assertions.assertThrows(RecaptchaClientException.class, () -> captchaService.processResponse("bad"));
     }
 
     @Test
     public void should_not_throw_exception_if_ok() {
-        whenRestCalled(restOperations)
-                .thenReturn(new CaptchaVerifyResponse(true, "", "host", new ErrorCode[]{}));
+        given(recaptchaClient.call("good"))
+                .willReturn(new RecaptchaVerifyResponse(true, "", "host", new ErrorCode[]{}));
 
         captchaService.processResponse("good");
     }
 
-    private OngoingStubbing<CaptchaVerifyResponse> whenRestCalled(final RestOperations restOperations) {
-        return Mockito.when(restOperations.getForObject(Mockito.anyString(), Mockito.eq(CaptchaVerifyResponse.class), Mockito.anyMap()));
-    }
 }

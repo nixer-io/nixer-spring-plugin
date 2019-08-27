@@ -11,7 +11,7 @@ public interface CaptchaService {
     /** Verifies captcha response
      *
      * @param captcha captcha response supplied by user.
-     * @throws {@link RecaptchaException} if incorrect captcha was supplied or verification failed.
+     * @throws RecaptchaException if incorrect captcha was supplied or verification failed.
      */
     void processResponse(String captcha) throws RecaptchaException;
 }

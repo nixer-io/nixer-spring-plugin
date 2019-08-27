@@ -8,6 +8,40 @@ plugins {
     id("io.spring.dependency-management") version "1.0.6.RELEASE"
 }
 
+
+sourceSets {
+    create("integration-test") {
+        java {
+            compileClasspath += sourceSets.main.get().output
+            runtimeClasspath += sourceSets.main.get().output
+
+            srcDir("src/integration-test/java")
+        }
+    }
+}
+
+val integrationTestImplementation by configurations.getting {
+    extendsFrom(configurations.testImplementation.get())
+}
+
+configurations["integrationTestRuntimeOnly"].extendsFrom(configurations.testRuntimeOnly.get())
+
+val integrationTest = task<Test>("integrationTest") {
+    description = "Runs integration tests."
+    group = "verification"
+
+    testClassesDirs = sourceSets["integration-test"].output.classesDirs
+    classpath = sourceSets["integration-test"].runtimeClasspath
+    shouldRunAfter("test")
+
+    useJUnitPlatform()
+    testLogging {
+        events("passed", "skipped", "failed")
+    }
+}
+
+tasks.check { dependsOn(integrationTest) }
+
 dependencyManagement {
     imports {
         mavenBom("org.springframework.boot:spring-boot-dependencies:2.1.6.RELEASE")
@@ -24,6 +58,13 @@ dependencies {
 
     implementation("io.micrometer", "micrometer-registry-influx", "1.2.0")
     runtimeOnly("com.h2database", "h2")
+
+    testImplementation("org.springframework", "spring-test")
+    testImplementation("org.springframework.security", "spring-security-test")
+    testImplementation("org.springframework.boot", "spring-boot-starter-test") {
+        exclude(module = "junit")
+    }
+    testRuntimeOnly("org.junit.jupiter", "junit-jupiter-engine", "5.3.2")
 }
 
 tasks.getByName<BootJar>("bootJar") {

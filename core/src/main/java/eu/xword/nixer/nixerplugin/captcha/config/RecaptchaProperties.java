@@ -1,13 +1,12 @@
-package eu.xword.nixer.nixerplugin.captcha;
+package eu.xword.nixer.nixerplugin.captcha.config;
 
 import java.time.Duration;
 
-import eu.xword.nixer.nixerplugin.captcha.error.FallbackMode;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 /**
- * {@link ConfigurationProperties} for configuring captcha challange.
+ * {@link ConfigurationProperties} for configuring captcha challenge.
  */
 @ConfigurationProperties(prefix = "recaptcha")
 @Component
@@ -19,8 +18,6 @@ public class RecaptchaProperties {
     private RecaptchaKeys key = new RecaptchaKeys();
 
     private String param = "g-recaptcha-response";
-
-    private FallbackMode fallback = FallbackMode.FAIL;
 
     private BlockingProperties blocking = new BlockingProperties();
 
@@ -54,14 +51,6 @@ public class RecaptchaProperties {
 
     public void setHttp(final Http http) {
         this.http = http;
-    }
-
-    public FallbackMode getFallback() {
-        return fallback;
-    }
-
-    public void setFallback(final FallbackMode fallback) {
-        this.fallback = fallback;
     }
 
     public BlockingProperties getBlocking() {

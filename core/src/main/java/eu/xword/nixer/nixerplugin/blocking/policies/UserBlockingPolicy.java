@@ -12,7 +12,7 @@ import eu.xword.nixer.nixerplugin.UserUtils;
 import eu.xword.nixer.nixerplugin.blocking.events.LockUserEvent;
 import org.springframework.context.ApplicationListener;
 
-public class UserLockBlockingPolicy extends BlockingPolicy implements ApplicationListener<LockUserEvent> {
+public class UserBlockingPolicy extends BlockingPolicy implements ApplicationListener<LockUserEvent> {
 
     private final Cache<String, String> blockedUsers = CacheBuilder.newBuilder()
             .expireAfterWrite(Duration.ofMinutes(5))
@@ -20,7 +20,7 @@ public class UserLockBlockingPolicy extends BlockingPolicy implements Applicatio
 
     private final MitigationStrategy mitigationStrategy;
 
-    public UserLockBlockingPolicy(final MitigationStrategy mitigationStrategy) {
+    public UserBlockingPolicy(final MitigationStrategy mitigationStrategy) {
         this.mitigationStrategy = MoreObjects.firstNonNull(mitigationStrategy, new ObserveOnlyMitigationStrategy());
     }
 

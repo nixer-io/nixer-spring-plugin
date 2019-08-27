@@ -1,6 +1,6 @@
 package eu.xword.nixer.nixerplugin;
 
-import eu.xword.nixer.nixerplugin.captcha.CaptchaLoginProperties;
+import eu.xword.nixer.nixerplugin.captcha.config.CaptchaLoginProperties;
 import eu.xword.nixer.nixerplugin.stigma.StigmaProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;

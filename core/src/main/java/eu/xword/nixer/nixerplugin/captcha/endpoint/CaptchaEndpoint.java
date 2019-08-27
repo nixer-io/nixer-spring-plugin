@@ -3,7 +3,7 @@ package eu.xword.nixer.nixerplugin.captcha.endpoint;
 import java.util.HashMap;
 import java.util.Map;
 
-import eu.xword.nixer.nixerplugin.captcha.CaptchaChecker;
+import eu.xword.nixer.nixerplugin.captcha.security.CaptchaChecker;
 import eu.xword.nixer.nixerplugin.captcha.strategy.CaptchaStrategy;
 import eu.xword.nixer.nixerplugin.captcha.strategy.StrategyRegistry;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;

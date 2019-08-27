@@ -1,9 +1,12 @@
-package eu.xword.nixer.nixerplugin.captcha;
+package eu.xword.nixer.nixerplugin.captcha.security;
 
 import java.util.concurrent.atomic.AtomicReference;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
+import eu.xword.nixer.nixerplugin.captcha.config.CaptchaLoginProperties;
+import eu.xword.nixer.nixerplugin.captcha.CaptchaService;
+import eu.xword.nixer.nixerplugin.captcha.CaptchaServiceFactory;
 import eu.xword.nixer.nixerplugin.captcha.error.RecaptchaException;
 import eu.xword.nixer.nixerplugin.captcha.strategy.CaptchaStrategies;
 import eu.xword.nixer.nixerplugin.captcha.strategy.CaptchaStrategy;
@@ -42,7 +45,9 @@ public class CaptchaChecker implements UserDetailsChecker {
 
     @PostConstruct
     public void postInit() {
-        this.captchaService = captchaServiceFactory.createCaptchaService(LOGIN_ACTION);
+        if (captchaService == null) {
+            this.captchaService = captchaServiceFactory.createCaptchaService(LOGIN_ACTION);
+        }
     }
 
     @Override
@@ -77,5 +82,11 @@ public class CaptchaChecker implements UserDetailsChecker {
 
     public CaptchaStrategy getCaptchaStrategy() {
         return captchaStrategy.get();
+    }
+
+    public void setCaptchaService(final CaptchaService captchaService) {
+        Assert.notNull(captchaService, "CaptchaService must not be null");
+
+        this.captchaService = captchaService;
     }
 }

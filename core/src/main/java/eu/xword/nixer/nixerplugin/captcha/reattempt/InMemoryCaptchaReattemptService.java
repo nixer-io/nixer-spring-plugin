@@ -34,7 +34,7 @@ public class InMemoryCaptchaReattemptService implements CaptchaInterceptor {
                 .expireAfterWrite(this.blockingDuration)
                 .build(new CacheLoader<String, Integer>() {
                     @Override
-                    public Integer load(final String key) throws Exception {
+                    public Integer load(final String key) {
                         return 0;
                     }
                 });
@@ -43,7 +43,7 @@ public class InMemoryCaptchaReattemptService implements CaptchaInterceptor {
     public boolean shouldBlock() {
         final String key = key();
         final Integer attempts = captchaCache.getIfPresent(key);
-        return attempts != null && attempts > maxAttempts;
+        return attempts != null && attempts >= maxAttempts;
     }
 
     @Override
