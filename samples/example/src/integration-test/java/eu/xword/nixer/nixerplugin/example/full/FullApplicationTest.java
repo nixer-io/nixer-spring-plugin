@@ -1,5 +1,6 @@
 package eu.xword.nixer.nixerplugin.example.full;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.xword.nixer.nixerplugin.captcha.recaptcha.RecaptchaClientStub;
 import eu.xword.nixer.nixerplugin.captcha.security.CaptchaChecker;
 import eu.xword.nixer.nixerplugin.captcha.strategy.AutomaticCaptchaStrategy;
@@ -13,17 +14,21 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import static eu.xword.nixer.nixerplugin.example.CaptchaRequestBuilder.from;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.containsString;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.formLogin;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.unauthenticated;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -35,6 +40,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @Import(FullApplicationTest.TestConfig.class)
 public class FullApplicationTest {
+
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     @Autowired
     private MockMvc mockMvc;
@@ -173,5 +180,25 @@ public class FullApplicationTest {
         this.mockMvc.perform(get("/").session(httpSession))
                 .andExpect(status().isOk());
         // @formatter:on
+    }
+
+    @Test
+    public void captchaEndpointToReturnCurrentStrategy() throws Exception {
+        this.mockMvc.perform(get("/actuator/captcha"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.strategy", is("NEVER")));
+    }
+
+    @Test
+    public void captchaEndpointToUpdateStrategy() throws Exception {
+        final String newStrategy = "{ \"strategy\": \"ALWAYS\"}";
+        this.mockMvc.perform(post("/actuator/captcha")
+                .content(newStrategy)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful());
+
+        this.mockMvc.perform(get("/actuator/captcha"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.strategy", is("ALWAYS")));
     }
 }

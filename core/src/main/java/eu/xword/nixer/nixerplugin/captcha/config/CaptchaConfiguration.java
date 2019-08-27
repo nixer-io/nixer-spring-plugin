@@ -81,7 +81,7 @@ public class CaptchaConfiguration {
     @Bean
 //    @ConditionalOnEnabledEndpoint(endpoint = CaptchaEndpoint.class)
 // TODO consider if needed. Check if endpoint registered if not explicitly enabled
-    @ConditionalOnBean(CaptchaChecker.class)
+//    @ConditionalOnBean(CaptchaChecker.class)
     @ConditionalOnMissingBean
     public CaptchaEndpoint captchaEndpoint(CaptchaChecker captchaChecker, StrategyRegistry strategyRegistry) {
         return new CaptchaEndpoint(captchaChecker, strategyRegistry);
