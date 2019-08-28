@@ -6,7 +6,6 @@ import eu.xword.nixer.nixerplugin.detection.GlobalCredentialStuffing;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-// TODO should we move it to eu.xword.nixer.nixerplugin.captcha.strategy
 //TODO think how to rewrite. Currently it has to me spring bean to work
 
 /**

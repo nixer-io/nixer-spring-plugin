@@ -1,11 +1,13 @@
 package eu.xword.nixer.nixerplugin.example.full;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.xword.nixer.nixerplugin.captcha.recaptcha.RecaptchaClientStub;
 import eu.xword.nixer.nixerplugin.captcha.security.CaptchaChecker;
 import eu.xword.nixer.nixerplugin.captcha.strategy.AutomaticCaptchaStrategy;
 import eu.xword.nixer.nixerplugin.captcha.strategy.CaptchaStrategies;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -20,6 +22,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import static eu.xword.nixer.nixerplugin.example.CaptchaRequestBuilder.from;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.containsString;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.formLogin;
@@ -41,8 +44,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import(FullApplicationTest.TestConfig.class)
 public class FullApplicationTest {
 
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
-
     @Autowired
     private MockMvc mockMvc;
 
@@ -55,6 +56,8 @@ public class FullApplicationTest {
     @Autowired
     private RecaptchaClientStub recaptchaClientStub;
 
+    @Autowired
+    private MeterRegistry meterRegistry;
 
     @TestConfiguration
     public static class TestConfig {
@@ -73,16 +76,10 @@ public class FullApplicationTest {
         recaptchaClientStub.recordInvalidCaptcha("bad-captcha");
     }
 
-//    @AfterEach
-//    public void teardown() {
-//        recaptchaV2Service.setCaptchaClient(new FakeRecaptchaClient());
-//    }
-
     @Test
     public void loginUser() throws Exception {
         // @formatter:off
-        this.mockMvc.perform(formLogin().user("user").password("user"))
-                .andExpect(authenticated());
+        loginSuccessfully();
         // @formatter:on
     }
 
@@ -151,6 +148,21 @@ public class FullApplicationTest {
     }
 
     @Test
+    public void protectEndpointWithCaptcha() throws  Exception {
+        this.mockMvc.perform(post("/subscribeUser")
+                .param("g-recaptcha-response", "good-captcha"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void protectEndpointWithCaptchaFailed() throws  Exception {
+        this.mockMvc.perform(post("/subscribeUser")
+                .param("g-recaptcha-response", "bad-captcha"))
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    @Disabled
     public void blockIpForTimeIfToManyCaptchaFailed() throws  Exception {
         //enable captcha
         this.captchaChecker.setCaptchaStrategy(CaptchaStrategies.ALWAYS);
@@ -201,4 +213,44 @@ public class FullApplicationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.strategy", is("ALWAYS")));
     }
+
+    @Test
+    public void shouldReportLoginSuccessMetric() throws Exception {
+        final Counter successLoginCounter = meterRegistry.get("login")
+                .tag("result", "success")
+                .counter();
+        double successLoginCount = successLoginCounter.count();
+
+        loginSuccessfully();
+
+        assertThat(successLoginCounter.count()).isEqualTo(successLoginCount + 1);
+    }
+
+    @Test
+    public void shouldReportLoginFailedMetric() throws Exception {
+        final Counter failLoginCounter = meterRegistry.get("login")
+                .tag("result", "failed")
+                .counter();
+        double failedLoginCount = failLoginCounter.count();
+
+        loginFailure();
+
+        assertThat(failLoginCounter.count()).isEqualTo(failedLoginCount + 1);
+    }
+
+    private void loginSuccessfully() throws Exception {
+        // @formatter:off
+        this.mockMvc.perform(formLogin().user("user").password("user"))
+                .andExpect(authenticated());
+        // @formatter:on
+    }
+
+    private void loginFailure() throws Exception {
+        // @formatter:off
+        this.mockMvc.perform(formLogin().user("user").password("bad-password"))
+                .andExpect(unauthenticated());
+        // @formatter:on
+    }
+
+
 }

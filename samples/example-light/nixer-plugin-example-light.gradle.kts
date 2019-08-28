@@ -17,11 +17,10 @@ dependencyManagement {
 
 dependencies {
     implementation(project(":nixer-plugin-core"))
-    compile("org.springframework.boot", "spring-boot")
+    implementation("org.springframework.boot", "spring-boot")
     implementation("org.springframework.boot", "spring-boot-starter-thymeleaf")
     implementation("org.springframework.boot", "spring-boot-starter-security")
     implementation("org.springframework.boot", "spring-boot-starter-web")
-    implementation("org.apache.httpcomponents", "httpclient", "4.5.9")
     runtimeOnly("com.h2database", "h2")
 }
 

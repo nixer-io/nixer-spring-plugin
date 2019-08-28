@@ -1,11 +1,10 @@
 package eu.xword.nixer.nixerplugin.example;
 
 import java.util.LinkedHashMap;
-
 import javax.sql.DataSource;
 
-import eu.xword.nixer.nixerplugin.captcha.security.CaptchaChecker;
 import eu.xword.nixer.nixerplugin.captcha.config.CaptchaConfigurer;
+import eu.xword.nixer.nixerplugin.captcha.security.CaptchaChecker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.filter.OrderedRequestContextFilter;
 import org.springframework.context.annotation.Bean;
@@ -22,6 +21,8 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import org.springframework.security.web.authentication.DelegatingAuthenticationFailureHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.web.filter.RequestContextFilter;
+
+import static org.springframework.http.HttpMethod.POST;
 
 /**
  * Very basic in-memory single user IAM.
@@ -41,8 +42,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         final LinkedHashMap<Class<? extends AuthenticationException>, AuthenticationFailureHandler> loginFailureHandlers = new LinkedHashMap<>();
         loginFailureHandlers.put(LockedException.class, new SimpleUrlAuthenticationFailureHandler("/login?error=LOCKED")); // TODO pass info
         httpSecurity
+                .anonymous().and()
                 .authorizeRequests()
                 .antMatchers("/login").permitAll()
+                .antMatchers(POST, "/subscribeUser").anonymous()
+                .antMatchers("/userSubscribe").permitAll()
                 .antMatchers("/actuator/**").permitAll()
                 .antMatchers("/assets/**").permitAll()
                 .anyRequest().authenticated()
@@ -52,7 +56,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //                    .failureHandler(new SimpleUrlAuthenticationFailureHandler("/login?error"))
                 .and()
                 .logout().logoutUrl("/logout").permitAll()
-                .and().csrf().ignoringAntMatchers("/actuator/**")
+                .and().csrf()
+                .ignoringAntMatchers("/actuator/**", "/subscribeUser")
         ;
     }
 
@@ -71,14 +76,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //        auth.inMemoryAuthentication()
 //                .passwordEncoder(encoder)
 //                .withUser("user").password(encoder.encode("user")).roles("USER")
-//                .and()
-//                //.apply() TODO consider creating custom Configurer for Recaptcha
-//                .withObjectPostProcessor(new CaptchaConfigurer(captchaChecker))
-////                .addObjectPostProcessor(new CaptchaConfigurer(captchaChecker))
-//                ;
-
+//                .withObjectPostProcessor(new CaptchaConfigurer(captchaChecker));
     }
-
 
     //TODO should we expect it to be registered or should we register it if missing. What about other methods to register request context
 
@@ -92,7 +91,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //    public RequestContextFilter requestContextFilter() {
 //        return new RequestContextFilter();
 //    }
-
 
     @Bean
     public RequestContextFilter requestContextFilter() {

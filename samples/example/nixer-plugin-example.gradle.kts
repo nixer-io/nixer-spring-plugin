@@ -3,7 +3,6 @@ import org.springframework.boot.gradle.tasks.run.BootRun
 
 plugins {
     id("java")
-//    id("com.gradle.build-scan") version "2.0.2"
     id("org.springframework.boot") version "2.0.5.RELEASE"
     id("io.spring.dependency-management") version "1.0.6.RELEASE"
 }
@@ -50,13 +49,13 @@ dependencyManagement {
 
 dependencies {
     implementation(project(":nixer-plugin-core"))
-    compile("org.springframework.boot", "spring-boot")
+    implementation("org.springframework.boot", "spring-boot")
     implementation("org.springframework.boot", "spring-boot-starter-thymeleaf")
     implementation("org.springframework.boot", "spring-boot-starter-actuator")
     implementation("org.springframework.boot", "spring-boot-starter-security")
     implementation("org.springframework.boot", "spring-boot-starter-web")
 
-    implementation("io.micrometer", "micrometer-registry-influx", "1.2.0")
+//    implementation("io.micrometer", "micrometer-registry-influx", "1.2.0")
     runtimeOnly("com.h2database", "h2")
 
     testImplementation("org.springframework", "spring-test")
@@ -64,7 +63,6 @@ dependencies {
     testImplementation("org.springframework.boot", "spring-boot-starter-test") {
         exclude(module = "junit")
     }
-    testRuntimeOnly("org.junit.jupiter", "junit-jupiter-engine", "5.3.2")
 }
 
 tasks.getByName<BootJar>("bootJar") {
