@@ -2,9 +2,9 @@ package eu.xword.nixer.nixerplugin.login.jdbc;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.init.DataSourceInitializer;
@@ -13,7 +13,7 @@ import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.stereotype.Component;
 
 @Component
-public class JdbcDAOConfigurer {
+public class JdbcDAOConfigurer implements InitializingBean {
 
     private DataSource dataSource;
 
@@ -23,10 +23,9 @@ public class JdbcDAOConfigurer {
         this.dataSource = dataSource;
     }
 
-    @PostConstruct
-    public void postInit() {
-        this.initScripts.add(new ClassPathResource(
-                "eu/xword/nixer/nixerplugin/login/jdbc/schema.ddl"));
+    @Override
+    public void afterPropertiesSet() {
+        this.initScripts.add(new ClassPathResource("eu/xword/nixer/nixerplugin/login/jdbc/schema.ddl"));
         getDataSourceInit().afterPropertiesSet();
     }
 
