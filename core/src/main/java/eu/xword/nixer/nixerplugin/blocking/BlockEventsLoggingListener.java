@@ -9,8 +9,7 @@ import org.springframework.stereotype.Component;
 /**
  * Writes {@link BlockEvent}s to logs.
  */
-@Component
-public class AuditingBlockEventsListener implements ApplicationListener<BlockEvent> {
+public class BlockEventsLoggingListener implements ApplicationListener<BlockEvent> {
 
     private final Log logger = LogFactory.getLog(getClass());
 

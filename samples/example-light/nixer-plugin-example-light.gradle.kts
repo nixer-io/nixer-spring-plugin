@@ -22,6 +22,7 @@ dependencies {
     implementation("org.springframework.boot", "spring-boot-starter-thymeleaf")
     implementation("org.springframework.boot", "spring-boot-starter-security")
     implementation("org.springframework.boot", "spring-boot-starter-web")
+    implementation("org.springframework.boot", "spring-boot-actuator")
     runtimeOnly("com.h2database", "h2")
 
     testImplementation("org.springframework", "spring-test")

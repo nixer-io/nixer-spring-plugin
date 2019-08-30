@@ -4,7 +4,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import eu.xword.nixer.nixerplugin.blocking.events.CredentialStuffingEvent;
+import eu.xword.nixer.nixerplugin.blocking.events.GlobalCredentialStuffingEvent;
 import eu.xword.nixer.nixerplugin.login.LoginActivityRepository;
 import eu.xword.nixer.nixerplugin.login.LoginContext;
 import eu.xword.nixer.nixerplugin.login.LoginFailureType;
@@ -44,7 +44,7 @@ public class InMemoryLoginActivityRepository implements LoginActivityRepository 
                     final Integer failedByIp = failedLoginByIp.increment(context);
                     if (failedByIp > 2) {
                         // TODO make sure we don't trigger block event twice
-                        eventPublisher.publishEvent(new CredentialStuffingEvent());
+                        eventPublisher.publishEvent(new GlobalCredentialStuffingEvent());
                     }
 //                    if (failedByIp > LOGIN_FAILED_BY_IP_THRESHOLD) {
 //                        eventPublisher.publishEvent(new BlockSourceIPEvent(context.getIpAddress()));
@@ -59,6 +59,12 @@ public class InMemoryLoginActivityRepository implements LoginActivityRepository 
 //                        }
                     }
                 });
+    }
+
+    public void reset() {
+        this.failedLoginByIp.reset();
+        this.failedLoginByUsername.reset();
+        this.unknownUserByIp.reset();
     }
 
     public static class Counter<T> {
@@ -77,6 +83,10 @@ public class InMemoryLoginActivityRepository implements LoginActivityRepository 
 
         public Integer reset(LoginContext key) {
             return counts.remove(keyFunction.apply(key));
+        }
+
+        public void reset() {
+            counts.clear();
         }
     }
 }

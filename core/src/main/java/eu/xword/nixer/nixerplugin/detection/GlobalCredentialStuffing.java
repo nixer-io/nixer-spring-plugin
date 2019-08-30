@@ -1,18 +1,21 @@
 package eu.xword.nixer.nixerplugin.detection;
 
+import java.time.Duration;
+
 import com.google.common.collect.Range;
 import com.google.common.collect.RangeSet;
 import com.google.common.collect.TreeRangeSet;
-import eu.xword.nixer.nixerplugin.blocking.events.CredentialStuffingEvent;
+import eu.xword.nixer.nixerplugin.blocking.events.GlobalCredentialStuffingEvent;
 import org.springframework.context.ApplicationListener;
 
 /**
  * Provides information about global credential stuffing attacks detected.
  *
  */
-public class GlobalCredentialStuffing implements ApplicationListener<CredentialStuffingEvent> {
+public class GlobalCredentialStuffing implements ApplicationListener<GlobalCredentialStuffingEvent> {
 
     // TODO for non-overlaping ranges such as this. BST could be used with O(log n) search time.
+    private final Duration credentialStuffingDuration = Duration.ofMinutes(15);
 
     private final RangeSet<Long> credentialStuffingWindows = TreeRangeSet.create();
 
@@ -25,8 +28,10 @@ public class GlobalCredentialStuffing implements ApplicationListener<CredentialS
     }
 
     @Override
-    public void onApplicationEvent(final CredentialStuffingEvent event) {
+    public void onApplicationEvent(final GlobalCredentialStuffingEvent event) {
         //TODO schedule unlock after sometime/expect DropCaptcha event
-        credentialStuffingWindows.add(Range.open(event.getTimestamp(), Long.MAX_VALUE));
+        if (!isCredentialStuffingActive()) {
+            credentialStuffingWindows.add(Range.open(event.getTimestamp(), event.getTimestamp() + credentialStuffingDuration.toMillis()));
+        }
     }
 }
