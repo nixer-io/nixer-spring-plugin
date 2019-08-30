@@ -7,6 +7,7 @@ plugins {
     id("io.spring.dependency-management") version "1.0.6.RELEASE"
 }
 
+apply(from = "../../config/it-config.gradle.kts")
 apply(plugin = "io.spring.dependency-management")
 
 dependencyManagement {
@@ -22,6 +23,12 @@ dependencies {
     implementation("org.springframework.boot", "spring-boot-starter-security")
     implementation("org.springframework.boot", "spring-boot-starter-web")
     runtimeOnly("com.h2database", "h2")
+
+    testImplementation("org.springframework", "spring-test")
+    testImplementation("org.springframework.security", "spring-security-test")
+    testImplementation("org.springframework.boot", "spring-boot-starter-test") {
+        exclude(module = "junit")
+    }
 }
 
 

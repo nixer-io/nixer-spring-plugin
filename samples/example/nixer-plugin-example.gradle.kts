@@ -7,39 +7,8 @@ plugins {
     id("io.spring.dependency-management") version "1.0.6.RELEASE"
 }
 
-
-sourceSets {
-    create("integration-test") {
-        java {
-            compileClasspath += sourceSets.main.get().output
-            runtimeClasspath += sourceSets.main.get().output
-
-            srcDir("src/integration-test/java")
-        }
-    }
-}
-
-val integrationTestImplementation by configurations.getting {
-    extendsFrom(configurations.testImplementation.get())
-}
-
-configurations["integrationTestRuntimeOnly"].extendsFrom(configurations.testRuntimeOnly.get())
-
-val integrationTest = task<Test>("integrationTest") {
-    description = "Runs integration tests."
-    group = "verification"
-
-    testClassesDirs = sourceSets["integration-test"].output.classesDirs
-    classpath = sourceSets["integration-test"].runtimeClasspath
-    shouldRunAfter("test")
-
-    useJUnitPlatform()
-    testLogging {
-        events("passed", "skipped", "failed")
-    }
-}
-
-tasks.check { dependsOn(integrationTest) }
+apply(from = "../../config/it-config.gradle.kts")
+apply(plugin = "io.spring.dependency-management")
 
 dependencyManagement {
     imports {

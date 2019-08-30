@@ -9,7 +9,7 @@ rootProject.name = "nixer-spring-plugin"
 
 var buildFiles: ConfigurableFileTree = fileTree(rootDir) {
     include("**/*.gradle.kts")
-    exclude("build", "**/gradle", "settings.gradle.kts", "buildSrc", "/build.gradle.kts", ".*", "out")
+    exclude("build", "**/gradle", "settings.gradle.kts", "buildSrc", "/build.gradle.kts", ".*", "out", "config")
     exclude("**/grails3")
 }
 
