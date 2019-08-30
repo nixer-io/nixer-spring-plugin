@@ -1,15 +1,15 @@
 package eu.xword.nixer.nixerplugin.captcha.security;
 
 import java.util.concurrent.atomic.AtomicReference;
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
-import eu.xword.nixer.nixerplugin.captcha.config.CaptchaLoginProperties;
 import eu.xword.nixer.nixerplugin.captcha.CaptchaService;
 import eu.xword.nixer.nixerplugin.captcha.CaptchaServiceFactory;
+import eu.xword.nixer.nixerplugin.captcha.config.CaptchaLoginProperties;
 import eu.xword.nixer.nixerplugin.captcha.error.RecaptchaException;
 import eu.xword.nixer.nixerplugin.captcha.strategy.CaptchaStrategies;
 import eu.xword.nixer.nixerplugin.captcha.strategy.CaptchaStrategy;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsChecker;
@@ -20,7 +20,7 @@ import org.springframework.util.Assert;
 /**
  * Integrates captcha verification capability in spring-security authentication process.
  */
-public class CaptchaChecker implements UserDetailsChecker {
+public class CaptchaChecker implements UserDetailsChecker, InitializingBean {
 
     private static final String LOGIN_ACTION = "login";
 
@@ -43,8 +43,8 @@ public class CaptchaChecker implements UserDetailsChecker {
         this.captchaParam = captchaLoginProperties.getParam();
     }
 
-    @PostConstruct
-    public void postInit() {
+    @Override
+    public void afterPropertiesSet() {
         if (captchaService == null) {
             this.captchaService = captchaServiceFactory.createCaptchaService(LOGIN_ACTION);
         }
@@ -67,9 +67,9 @@ public class CaptchaChecker implements UserDetailsChecker {
     private boolean shouldVerifyCaptcha() {
         return captchaStrategy.get().verifyChallenge();
     }
-
     // Needs to be public for template engine to check if captcha should be displayed.
     // TODO Re-implement check so it doesn't have to be public
+
     public boolean shouldDisplayCaptcha() {
         return captchaStrategy.get().challenge();
     }
