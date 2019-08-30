@@ -67,7 +67,7 @@ public class CaptchaConfiguration {
     }
 
     @Bean
-    @ConditionalOnBean(MeterRegistry.class)
+    @ConditionalOnClass(MeterRegistry.class)
     public MetricsReporterFactory metricsReporterFactory(MeterRegistry meterRegistry) {
         return new MicrometerMetricsReporterFactory(meterRegistry);
     }
