@@ -4,7 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import com.google.common.collect.ImmutableList;
 import eu.xword.nixer.nixerplugin.captcha.error.CaptchaErrors;
+
+import static eu.xword.nixer.nixerplugin.captcha.recaptcha.RecaptchaVerifyResponse.ErrorCode.InvalidResponse;
 
 /**
  * RecaptchaClient Stub for recording responses for given captcha
@@ -23,13 +26,13 @@ public class RecaptchaClientStub implements RecaptchaClient {
     }
 
     public void recordValidCaptcha(String captcha) {
-        responses.put(captcha, () -> new RecaptchaVerifyResponse(true, "", "", new RecaptchaVerifyResponse.ErrorCode[0]));
+        responses.put(captcha, () -> new RecaptchaVerifyResponse(true, "", "",
+                ImmutableList.of()));
     }
 
     public void recordInvalidCaptcha(String captcha) {
-        responses.put(captcha, () -> new RecaptchaVerifyResponse(false, "", "", new RecaptchaVerifyResponse.ErrorCode[]{
-                RecaptchaVerifyResponse.ErrorCode.InvalidResponse
-        }));
+        responses.put(captcha, () -> new RecaptchaVerifyResponse(false, "", "",
+                ImmutableList.of(InvalidResponse)));
     }
 
     public void recordFailedCaptchaCheck(String captcha) {

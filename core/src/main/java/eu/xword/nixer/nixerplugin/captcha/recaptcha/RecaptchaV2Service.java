@@ -61,7 +61,7 @@ public class RecaptchaV2Service implements CaptchaService {
 
         if (!verifyResponse.isSuccess()) {
             if (!verifyResponse.hasClientError()) {
-                logger.warn("Got captcha verify error: " + Arrays.toString(verifyResponse.getErrorCodes()));
+                logger.warn("Got captcha verify error: " + verifyResponse.getErrorCodes());
             }
             throw CaptchaErrors.invalidRecaptcha("reCaptcha was not successfully validated");
         }

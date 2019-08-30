@@ -1,5 +1,6 @@
 package eu.xword.nixer.nixerplugin.example.full;
 
+import eu.xword.nixer.nixerplugin.captcha.reattempt.InMemoryCaptchaReattemptService;
 import eu.xword.nixer.nixerplugin.captcha.recaptcha.RecaptchaClientStub;
 import eu.xword.nixer.nixerplugin.captcha.security.CaptchaChecker;
 import eu.xword.nixer.nixerplugin.captcha.strategy.AutomaticCaptchaStrategy;
@@ -58,6 +59,9 @@ public class FullApplicationTest {
 
     @Autowired
     private MeterRegistry meterRegistry;
+
+    @Autowired
+    private InMemoryCaptchaReattemptService inMemoryCaptchaReattemptService;
 
     @TestConfiguration
     public static class TestConfig {
@@ -162,8 +166,10 @@ public class FullApplicationTest {
     }
 
     @Test
-    @Disabled
+//    @Disabled
     public void blockIpForTimeIfToManyCaptchaFailed() throws  Exception {
+        inMemoryCaptchaReattemptService.clean();
+
         //enable captcha
         this.captchaChecker.setCaptchaStrategy(CaptchaStrategies.ALWAYS);
 
@@ -175,6 +181,7 @@ public class FullApplicationTest {
                 .andExpect(redirectedUrl("/login?error"));
         this.mockMvc.perform(from(formLogin().user("user").password("user")).withCaptcha("bad-captcha"))
                 .andExpect(redirectedUrl("/login?error"));
+
         this.mockMvc.perform(from(formLogin().user("user").password("user")).withCaptcha("bad-captcha"))
                 .andExpect(redirectedUrl("/login?error=LOCKED"));
     }

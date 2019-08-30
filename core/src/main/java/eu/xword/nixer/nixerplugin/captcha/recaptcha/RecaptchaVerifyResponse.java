@@ -1,6 +1,7 @@
 package eu.xword.nixer.nixerplugin.captcha.recaptcha;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -9,7 +10,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
+import com.google.common.collect.ImmutableList;
 
 /**
  * Describes Google Recaptcha verification response
@@ -31,26 +34,22 @@ public class RecaptchaVerifyResponse {
 
     private String hostname;
 
-    private ErrorCode[] errorCodes;
+    private List<ErrorCode> errorCodes;
 
     @JsonCreator
     public RecaptchaVerifyResponse(@JsonProperty("success") final boolean success,
                                    @JsonProperty("challenge_ts") final String challengeTs,
                                    @JsonProperty("hostname") final String hostname,
-                                   @JsonProperty("error-codes") final ErrorCode[] errorCodes) {
+                                   @JsonProperty("error-codes") final List<ErrorCode> errorCodes) {
         this.success = success;
         this.challengeTs = challengeTs;
         this.hostname = hostname;
-        this.errorCodes = errorCodes != null ? errorCodes.clone() : null;
+        this.errorCodes = errorCodes != null ? ImmutableList.copyOf(errorCodes) : ImmutableList.of();
     }
 
     @JsonIgnore
     public boolean hasClientError() {
-        ErrorCode[] errors = getErrorCodes();
-        if (errors == null) {
-            return false;
-        }
-        for (ErrorCode error : errors) {
+        for (ErrorCode error : getErrorCodes()) {
             switch (error) {
                 case InvalidResponse:
                 case MissingResponse:
@@ -97,7 +96,7 @@ public class RecaptchaVerifyResponse {
         return hostname;
     }
 
-    public ErrorCode[] getErrorCodes() {
+    public List<ErrorCode> getErrorCodes() {
         return errorCodes;
     }
 
@@ -115,5 +114,15 @@ public class RecaptchaVerifyResponse {
     @Override
     public int hashCode() {
         return Objects.hashCode(success, challengeTs, hostname, errorCodes);
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("success", success)
+                .add("challengeTs", challengeTs)
+                .add("hostname", hostname)
+                .add("errorCodes", errorCodes)
+                .toString();
     }
 }

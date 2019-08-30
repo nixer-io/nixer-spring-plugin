@@ -2,6 +2,7 @@ package eu.xword.nixer.nixerplugin.captcha.reattempt;
 
 import java.time.Duration;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -71,4 +72,8 @@ public class InMemoryCaptchaReattemptService implements CaptchaInterceptor {
         return identityCreator.key();
     }
 
+    @VisibleForTesting
+    public void clean(){
+        this.captchaCache.invalidateAll();
+    }
 }

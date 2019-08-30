@@ -1,6 +1,6 @@
 package eu.xword.nixer.nixerplugin.captcha.recaptcha;
 
-import eu.xword.nixer.nixerplugin.captcha.recaptcha.RecaptchaVerifyResponse.ErrorCode;
+import com.google.common.collect.ImmutableList;
 import eu.xword.nixer.nixerplugin.captcha.error.CaptchaErrors;
 import eu.xword.nixer.nixerplugin.captcha.error.RecaptchaClientException;
 import eu.xword.nixer.nixerplugin.captcha.error.RecaptchaServiceException;
@@ -53,7 +53,7 @@ class RecaptchaV2ServiceTest {
     @Test
     public void should_throw_exception_when_error_received() {
         given(recaptchaClient.call("bad"))
-                .willReturn(new RecaptchaVerifyResponse(false, "", "host", new ErrorCode[]{InvalidResponse}));
+                .willReturn(new RecaptchaVerifyResponse(false, "", "host", ImmutableList.of(InvalidResponse)));
 
         Assertions.assertThrows(RecaptchaClientException.class, () -> captchaService.processResponse("bad"));
     }
@@ -61,7 +61,7 @@ class RecaptchaV2ServiceTest {
     @Test
     public void should_not_throw_exception_if_ok() {
         given(recaptchaClient.call("good"))
-                .willReturn(new RecaptchaVerifyResponse(true, "", "host", new ErrorCode[]{}));
+                .willReturn(new RecaptchaVerifyResponse(true, "", "host", ImmutableList.of()));
 
         captchaService.processResponse("good");
     }
