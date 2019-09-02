@@ -42,11 +42,11 @@ public class InMemoryLoginActivityRepository implements LoginActivityRepository 
                 })
                 .onFailure(failure -> {
                     final Integer failedByIp = failedLoginByIp.increment(context);
-                    if (failedByIp > 2) {
+                    if (failedByIp == 2) {
                         // TODO make sure we don't trigger block event twice
                         eventPublisher.publishEvent(new GlobalCredentialStuffingEvent());
                     }
-//                    if (failedByIp > LOGIN_FAILED_BY_IP_THRESHOLD) {
+//                  if (failedByIp == LOGIN_FAILED_BY_IP_THRESHOLD) {
 //                        eventPublisher.publishEvent(new BlockSourceIPEvent(context.getIpAddress()));
 //                    }
                     if (failure.getFailureType() == LoginFailureType.UNKNOWN_USER) {
@@ -54,7 +54,7 @@ public class InMemoryLoginActivityRepository implements LoginActivityRepository 
                     }
                     if (context.getUsername() != null) {
                         final Integer failedByUser = failedLoginByUsername.increment(context);
-//                        if (failedByUser > LOGIN_FAILED_BY_USER_THRESHOLD) {
+//                        if (failedByUser == LOGIN_FAILED_BY_USER_THRESHOLD) {
 //                            eventPublisher.publishEvent(new LockUserEvent(context.getUsername()));
 //                        }
                     }

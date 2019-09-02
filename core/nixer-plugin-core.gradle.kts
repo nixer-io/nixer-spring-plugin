@@ -8,7 +8,6 @@ fun <T : Any> Closure<*>.toAction(): Action<T> =
 
 plugins {
     `java-library`
-//    java
     `maven-publish`
     signing
     id("io.spring.dependency-management") version "1.0.6.RELEASE"
