@@ -33,6 +33,7 @@ dependencies {
     api("javax.servlet", "javax.servlet-api", "3.1.0")
     api("javax.validation", "validation-api") // for captcha validator
     api("com.fasterxml.jackson.core", "jackson-annotations") // for captcha api
+    api("com.fasterxml.jackson.core", "jackson-databind") // for captcha api
 
     api("org.springframework.boot", "spring-boot-autoconfigure")
     api("org.springframework.boot", "spring-boot-actuator", dependencyConfiguration = optional.toAction()) // optional
@@ -45,6 +46,7 @@ dependencies {
     api("org.springframework.security", "spring-security-config")
 
     api("io.micrometer", "micrometer-core", "1.2.0", dependencyConfiguration = optional.toAction())
+    api("io.searchbox:jest:6.3.1", dependencyConfiguration = optional.toAction())
 
     testImplementation("org.springframework", "spring-test")
     testImplementation("org.springframework.boot", "spring-boot-starter-validation")

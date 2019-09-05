@@ -9,6 +9,8 @@ public class CaptchaLoginProperties {
 
     private boolean enabled = true;
 
+    private boolean enableMetrics;
+
     private String strategy;
 
     private String param;
@@ -19,6 +21,14 @@ public class CaptchaLoginProperties {
 
     public void setEnabled(final boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public boolean isEnableMetrics() {
+        return enableMetrics;
+    }
+
+    public void setEnableMetrics(final boolean enableMetrics) {
+        this.enableMetrics = enableMetrics;
     }
 
     public String getStrategy() {

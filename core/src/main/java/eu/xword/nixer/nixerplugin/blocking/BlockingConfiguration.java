@@ -22,4 +22,5 @@ public class BlockingConfiguration {
     public MitigationStrategy mitigationStrategy() {
         return new RedirectMitigationStrategy("/login?blockedError");
     }
+
 }

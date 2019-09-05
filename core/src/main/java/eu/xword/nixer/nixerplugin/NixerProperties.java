@@ -14,9 +14,6 @@ public class NixerProperties {
     @NestedConfigurationProperty
     private CaptchaLoginProperties captcha = new CaptchaLoginProperties();
 
-    @NestedConfigurationProperty
-    private EventLogConfiguration events = new EventLogConfiguration();
-
     public StigmaProperties getStigma() {
         return stigma;
     }
@@ -33,11 +30,4 @@ public class NixerProperties {
         this.captcha = captcha;
     }
 
-    public EventLogConfiguration getEvents() {
-        return events;
-    }
-
-    public void setEvents(final EventLogConfiguration events) {
-        this.events = events;
-    }
 }

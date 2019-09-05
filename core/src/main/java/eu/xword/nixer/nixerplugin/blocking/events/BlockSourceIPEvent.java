@@ -1,5 +1,7 @@
 package eu.xword.nixer.nixerplugin.blocking.events;
 
+import eu.xword.nixer.nixerplugin.blocking.EventVisitor;
+
 public class BlockSourceIPEvent extends BlockEvent {
     /**
      * Create a new ApplicationEvent.
@@ -16,5 +18,15 @@ public class BlockSourceIPEvent extends BlockEvent {
     @Override
     public String toString() {
         return "BlockSourceIpEvent ip:" + getIp();
+    }
+
+    @Override
+    public String type() {
+        return "BLOCK_SOURCE_IP";
+    }
+
+    @Override
+    public void accept(final EventVisitor visitor) {
+        visitor.accept(this);
     }
 }

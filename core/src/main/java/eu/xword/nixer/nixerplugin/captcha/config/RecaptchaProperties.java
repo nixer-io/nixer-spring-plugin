@@ -21,6 +21,8 @@ public class RecaptchaProperties {
 
     private BlockingProperties blocking = new BlockingProperties();
 
+    private boolean enableMetrics;
+
     public String getVerifyUrl() {
         return verifyUrl;
     }
@@ -59,6 +61,14 @@ public class RecaptchaProperties {
 
     public void setBlocking(final BlockingProperties blocking) {
         this.blocking = blocking;
+    }
+
+    public boolean isEnableMetrics() {
+        return enableMetrics;
+    }
+
+    public void setEnableMetrics(final boolean enableMetrics) {
+        this.enableMetrics = enableMetrics;
     }
 
     public static class Http {

@@ -1,5 +1,7 @@
 package eu.xword.nixer.nixerplugin.blocking.events;
 
+import eu.xword.nixer.nixerplugin.blocking.EventVisitor;
+
 public class LockUserEvent extends BlockEvent {
     /**
      * Create a new ApplicationEvent.
@@ -16,5 +18,15 @@ public class LockUserEvent extends BlockEvent {
     @Override
     public String toString() {
         return "LockUserEvent username:" + getUsername();
+    }
+
+    @Override
+    public String type() {
+        return "LOCK_USER";
+    }
+
+    @Override
+    public void accept(final EventVisitor visitor) {
+        visitor.accept(this);
     }
 }

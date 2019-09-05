@@ -9,12 +9,12 @@ import eu.xword.nixer.nixerplugin.captcha.metrics.NOPMetricsReporter;
 import eu.xword.nixer.nixerplugin.captcha.reattempt.IdentityCreator;
 import eu.xword.nixer.nixerplugin.captcha.reattempt.InMemoryCaptchaReattemptService;
 import eu.xword.nixer.nixerplugin.captcha.reattempt.IpIdentityCreator;
+import eu.xword.nixer.nixerplugin.captcha.recaptcha.RecaptchaClient;
+import eu.xword.nixer.nixerplugin.captcha.recaptcha.RecaptchaRestClient;
 import eu.xword.nixer.nixerplugin.captcha.security.CaptchaChecker;
 import eu.xword.nixer.nixerplugin.captcha.strategy.AutomaticCaptchaStrategy;
 import eu.xword.nixer.nixerplugin.captcha.strategy.CaptchaStrategy;
 import eu.xword.nixer.nixerplugin.captcha.strategy.StrategyRegistry;
-import eu.xword.nixer.nixerplugin.captcha.recaptcha.RecaptchaClient;
-import eu.xword.nixer.nixerplugin.captcha.recaptcha.RecaptchaRestClient;
 import eu.xword.nixer.nixerplugin.detection.GlobalCredentialStuffing;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.apache.http.client.HttpClient;
@@ -22,7 +22,6 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -34,7 +33,6 @@ import org.springframework.web.client.RestTemplate;
 
 @Configuration
 @ConditionalOnProperty(value = "nixer.login.captcha.enabled", havingValue = "true", matchIfMissing = false)
-//@ConditionalOnExpression(value = "#{@nixerProperties.getCaptcha().isEnabled()}")
 public class CaptchaConfiguration {
 
     @Bean
@@ -67,7 +65,7 @@ public class CaptchaConfiguration {
     }
 
     @Bean
-    @ConditionalOnClass(MeterRegistry.class)
+    @ConditionalOnProperty(value = "recaptcha.enable-metrics", havingValue = "true", matchIfMissing = true)
     public MetricsReporterFactory metricsReporterFactory(MeterRegistry meterRegistry) {
         return new MicrometerMetricsReporterFactory(meterRegistry);
     }
