@@ -55,7 +55,7 @@ def unique_sorted(elements):
     unique = set(elements)
     sorted = list(unique)
     sorted.sort()
-    
+
     return sorted
 
 
@@ -75,7 +75,7 @@ def fetchAwsIpRanges():
 
     return {
         "name": "aws",
-        "ipv4_prefixes": ipv4_ranges, 
+        "ipv4_prefixes": ipv4_ranges,
         "ipv6_prefixes": ipv6_ranges
     }
 
@@ -111,15 +111,15 @@ def fetchAzureIpRanges():
         ipv4_ranges.extend(prefixes)
 
     ipv6_ranges = []
-    
+
     print(f'Found prefixes IPv4: {len(ipv4_ranges)} IPv6: {len(ipv6_ranges)}')
-    
+
     ipv4_ranges = unique_sorted(ipv4_ranges)
     ipv6_ranges = unique_sorted(ipv6_ranges)
 
     return {
         "name": "Azure",
-        "ipv4_prefixes": ipv4_ranges, 
+        "ipv4_prefixes": ipv4_ranges,
         "ipv6_prefixes": ipv6_ranges
     }
 
@@ -135,15 +135,15 @@ def fetchCloudflareIpRanges():
 
     ipv4_ranges = [ line for line in ipv4_text.splitlines() ]
     ipv6_ranges = [ line for line in ipv6_text.splitlines() ]
-    
+
     print(f'Found prefixes IPv4: {len(ipv4_ranges)} IPv6: {len(ipv6_ranges)}')
-    
+
     ipv4_ranges = unique_sorted(ipv4_ranges)
     ipv6_ranges = unique_sorted(ipv6_ranges)
 
     return {
         "name": "cloudflare",
-        "ipv4_prefixes": ipv4_ranges, 
+        "ipv4_prefixes": ipv4_ranges,
         "ipv6_prefixes": ipv6_ranges
     }
 
@@ -157,32 +157,32 @@ def fetchGceIpRanges():
     print("Fetching IP ranges from GCE")
 
     output = str(run(["dig", "@8.8.8.8", "-t", "TXT", "_cloud-netblocks.googleusercontent.com"]).stdout)
-    
+
     answer = [line for line in output.splitlines() if "v=spf1" in line]
     servers = [ section.replace("include:", "") for section in answer[0].split(" ") if section.startswith("include:")]
-    
+
     ipv4_ranges = [ ]
     ipv6_ranges = [ ]
 
     for server in servers:
         answer = str(run(["dig", "@8.8.8.8", "-t", "TXT", server]).stdout)
         tokens = answer.split(" ")
-        
+
         ipv4_prefixes = [ token.replace("ip4:", "") for token in tokens if token.startswith("ip4:") ]
         ipv4_ranges.extend(ipv4_prefixes)
 
         ipv6_prefixes = [ token.replace("ip6:", "") for token in tokens if token.startswith("ip6:") ]
         ipv6_ranges.extend(ipv6_prefixes)
-    
-    
+
+
     print(f'Found prefixes IPv4: {len(ipv4_ranges)} IPv6: {len(ipv6_ranges)}')
-    
+
     ipv4_ranges = unique_sorted(ipv4_ranges)
     ipv6_ranges = unique_sorted(ipv6_ranges)
 
     return {
         "name": "gce",
-        "ipv4_prefixes": ipv4_ranges, 
+        "ipv4_prefixes": ipv4_ranges,
         "ipv6_prefixes": ipv6_ranges
     }
 
@@ -213,13 +213,13 @@ def main(args):
     sets = []
     for fetcher in fetchers:
         ip_ranges = fetcher()
-        ip_ranges['timestamp'] = datetime.utcnow().isoformat()
+        ip_ranges['timestamp'] = datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
         if not ipv4:
             ip_ranges['ipv4_prefixes'] = []
         if not ipv6:
             ip_ranges['ipv6_prefixes'] = []
         sets.append(ip_ranges)
-    
+
     file_object = open(args['--output'], 'w')
     json.dump({ "ranges": sets}, file_object, indent=4)
 
