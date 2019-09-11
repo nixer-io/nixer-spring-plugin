@@ -7,8 +7,8 @@ import eu.xword.nixer.nixerplugin.captcha.strategy.AutomaticCaptchaStrategy;
 import eu.xword.nixer.nixerplugin.captcha.strategy.CaptchaStrategies;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -21,12 +21,14 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.SmartRequestBuilder;
+import org.springframework.test.web.servlet.request.RequestPostProcessor;
 
-import static eu.xword.nixer.nixerplugin.example.CaptchaRequestBuilder.from;
+import static eu.xword.nixer.nixerplugin.example.LoginRequestBuilder.formLogin;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.containsString;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.formLogin;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.logout;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.unauthenticated;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -80,6 +82,11 @@ public class FullApplicationTest {
         recaptchaClientStub.recordInvalidCaptcha("bad-captcha");
     }
 
+    @AfterEach
+    public void tearDown() throws Exception {
+        mockMvc.perform(logout());
+    }
+
     @Test
     public void loginUser() throws Exception {
         // @formatter:off
@@ -105,19 +112,18 @@ public class FullApplicationTest {
         this.captchaChecker.setCaptchaStrategy(automaticCaptchaStrategy);
 
         // @formatter:on
-        this.mockMvc.perform(formLogin().user("user").password("guess")).andExpect(unauthenticated());
-        this.mockMvc.perform(formLogin().user("user").password("guess")).andExpect(unauthenticated());
-        this.mockMvc.perform(formLogin().user("user").password("guess")).andExpect(unauthenticated());
-        this.mockMvc.perform(formLogin().user("user").password("guess")).andExpect(unauthenticated());
+        final SmartRequestBuilder loginRequest = formLogin().user("user").password("guess").build();
+        this.mockMvc.perform(loginRequest).andExpect(unauthenticated());
+        this.mockMvc.perform(loginRequest).andExpect(unauthenticated());
+        this.mockMvc.perform(loginRequest).andExpect(unauthenticated());
+        this.mockMvc.perform(loginRequest).andExpect(unauthenticated());
         // @formatter:off
 
         this.mockMvc.perform(get("/login"))
             .andExpect(status().isOk())
             .andExpect(content().string(containsString("class=\"g-recaptcha\"")));
 
-        this.mockMvc.perform(
-                from(formLogin().user("user").password("user"))
-                        .withCaptcha("good-captcha"))
+        this.mockMvc.perform(formLogin().user("user").password("user").captcha("good-captcha").build())
                 .andExpect(authenticated());
     }
 
@@ -130,9 +136,7 @@ public class FullApplicationTest {
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("class=\"g-recaptcha\"")));
 
-        this.mockMvc.perform(
-                from(formLogin().user("user").password("user"))
-                        .withCaptcha("good-captcha"))
+        this.mockMvc.perform(formLogin().user("user").password("user").captcha("good-captcha").build())
                 .andExpect(authenticated());
     }
 
@@ -145,9 +149,7 @@ public class FullApplicationTest {
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("class=\"g-recaptcha\"")));
 
-        this.mockMvc.perform(
-                from(formLogin().user("user").password("user"))
-                        .withCaptcha("bad-captcha"))
+        this.mockMvc.perform(formLogin().user("user").password("guess").captcha("bad-captcha").build())
                 .andExpect(unauthenticated());
     }
 
@@ -173,23 +175,25 @@ public class FullApplicationTest {
         //enable captcha
         this.captchaChecker.setCaptchaStrategy(CaptchaStrategies.ALWAYS);
 
-        this.mockMvc.perform(from(formLogin().user("user").password("user")).withCaptcha("bad-captcha"))
+        final SmartRequestBuilder loginRequest = formLogin().user("user").password("user").captcha("bad-captcha").build();
+        this.mockMvc.perform(loginRequest)
                 .andExpect(redirectedUrl("/login?error"));
-        this.mockMvc.perform(from(formLogin().user("user").password("user")).withCaptcha("bad-captcha"))
+        this.mockMvc.perform(loginRequest)
                 .andExpect(redirectedUrl("/login?error"));
-        this.mockMvc.perform(from(formLogin().user("user").password("user")).withCaptcha("bad-captcha"))
+        this.mockMvc.perform(loginRequest)
                 .andExpect(redirectedUrl("/login?error"));
-        this.mockMvc.perform(from(formLogin().user("user").password("user")).withCaptcha("bad-captcha"))
+        this.mockMvc.perform(loginRequest)
                 .andExpect(redirectedUrl("/login?error"));
 
-        this.mockMvc.perform(from(formLogin().user("user").password("user")).withCaptcha("bad-captcha"))
+        this.mockMvc.perform(loginRequest)
                 .andExpect(redirectedUrl("/login?error=LOCKED"));
     }
 
     @Test
     public void loginUserAccessProtected() throws Exception {
         // @formatter:off
-        MvcResult mvcResult = this.mockMvc.perform(formLogin().user("user").password("user"))
+        final SmartRequestBuilder loginRequest = formLogin().user("user").password("user").build();
+        MvcResult mvcResult = this.mockMvc.perform(loginRequest)
                 .andExpect(authenticated()).andReturn();
         // @formatter:on
 
@@ -245,16 +249,33 @@ public class FullApplicationTest {
         assertThat(failLoginCounter.count()).isEqualTo(failedLoginCount + 1);
     }
 
+    @Test
+    public void shouldFailLoginFromBlacklistedIp() throws Exception {
+        // @formatter:off
+        this.mockMvc.perform(
+                formLogin().user("user").password("user")
+                .build().with(remoteAddress("5.5.5.5")))
+                .andExpect(status().is(403));
+        // @formatter:on
+    }
+
+    private RequestPostProcessor remoteAddress(String ip) {
+        return request -> {
+            request.setRemoteAddr(ip);
+            return request;
+        };
+    }
+
     private void loginSuccessfully() throws Exception {
         // @formatter:off
-        this.mockMvc.perform(formLogin().user("user").password("user"))
+        this.mockMvc.perform(formLogin().user("user").password("user").build())
                 .andExpect(authenticated());
         // @formatter:on
     }
 
     private void loginFailure() throws Exception {
         // @formatter:off
-        this.mockMvc.perform(formLogin().user("user").password("bad-password"))
+        this.mockMvc.perform(formLogin().user("user").password("bad-password").build())
                 .andExpect(unauthenticated());
         // @formatter:on
     }

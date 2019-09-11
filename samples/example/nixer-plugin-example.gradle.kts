@@ -27,6 +27,8 @@ dependencies {
 //    implementation("io.micrometer", "micrometer-registry-influx", "1.2.0")
     runtimeOnly("com.h2database", "h2")
 
+    implementation("com.fasterxml.jackson.datatype", "jackson-datatype-jdk8")
+
     testImplementation("org.springframework", "spring-test")
     testImplementation("org.springframework.security", "spring-security-test")
     testImplementation("org.springframework.boot", "spring-boot-starter-test") {
