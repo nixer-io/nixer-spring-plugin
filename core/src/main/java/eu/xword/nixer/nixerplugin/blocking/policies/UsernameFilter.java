@@ -1,36 +1,25 @@
 package eu.xword.nixer.nixerplugin.blocking.policies;
 
-import java.io.IOException;
 import java.time.Duration;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import com.google.common.base.MoreObjects;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import eu.xword.nixer.nixerplugin.UserUtils;
 import eu.xword.nixer.nixerplugin.blocking.events.LockUserEvent;
 import org.springframework.context.ApplicationListener;
 
-public class UserBlockingPolicy extends BlockingPolicy implements ApplicationListener<LockUserEvent> {
+public class UsernameFilter extends NixerFilter implements ApplicationListener<LockUserEvent> {
 
     private final Cache<String, String> blockedUsers = CacheBuilder.newBuilder()
             .expireAfterWrite(Duration.ofMinutes(5))
             .build();
 
-    private final MitigationStrategy mitigationStrategy;
-
-    public UserBlockingPolicy(final MitigationStrategy mitigationStrategy) {
-        this.mitigationStrategy = MoreObjects.firstNonNull(mitigationStrategy, new ObserveOnlyMitigationStrategy());
-    }
-
-    @Override
-    public void apply(final HttpServletRequest request, final HttpServletResponse response) throws IOException {
+    public boolean applies(final HttpServletRequest request) {
         final String username = UserUtils.extractUsername(request);
         final String value = blockedUsers.getIfPresent(username);
-        if (value != null) {
-            mitigationStrategy.handle(request, response);
-        }
+
+        return value != null;
     }
 
     @Override

@@ -255,7 +255,7 @@ public class FullApplicationTest {
         this.mockMvc.perform(
                 formLogin().user("user").password("user")
                 .build().with(remoteAddress("5.5.5.5")))
-                .andExpect(status().is(403));
+                .andExpect(redirectedUrl("/login?blockedError"));
         // @formatter:on
     }
 

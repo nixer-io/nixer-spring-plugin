@@ -5,6 +5,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.common.net.HttpHeaders;
 import eu.xword.nixer.nixerplugin.UserUtils;
+import eu.xword.nixer.nixerplugin.ip.IpResolver;
+import eu.xword.nixer.nixerplugin.ip.IpResolvers;
 import eu.xword.nixer.nixerplugin.stigma.StigmaToken;
 import eu.xword.nixer.nixerplugin.stigma.StigmaUtils;
 import eu.xword.nixer.nixerplugin.stigma.embed.EmbeddedStigmaService;
@@ -21,6 +23,8 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class LoginActivityListener implements ApplicationListener<AbstractAuthenticationEvent> {
+
+    private IpResolver ipResolver = IpResolvers.REMOTE_ADDRESS;
 
     @Autowired
     private HttpServletRequest request;
@@ -55,13 +59,11 @@ public class LoginActivityListener implements ApplicationListener<AbstractAuthen
 
     private LoginContext buildContext() {
         final String userAgent = request.getHeader(HttpHeaders.USER_AGENT);
-        final String remoteAddr = request.getRemoteAddr();
-//        request.getHeader(HttpHeaders.X_FORWARDED_FOR);
-        //TODO handle x-forwarded-for and x-forwarded
+        final String ip = ipResolver.resolve(request);
 
         final String username = UserUtils.extractUsername(request);
 
-        return new LoginContext(username, remoteAddr, userAgent);
+        return new LoginContext(username, ip, userAgent);
     }
 
 

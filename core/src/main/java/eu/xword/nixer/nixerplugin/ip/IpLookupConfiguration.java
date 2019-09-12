@@ -3,6 +3,7 @@ package eu.xword.nixer.nixerplugin.ip;
 import java.io.File;
 import java.io.IOException;
 
+import eu.xword.nixer.nixerplugin.blocking.policies.MitigationStrategy;
 import eu.xword.nixer.nixerplugin.ip.tree.IpTree;
 import eu.xword.nixer.nixerplugin.ip.tree.IpTreeBuilder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -30,7 +31,9 @@ public class IpLookupConfiguration {
     }
 
     @Bean
-    public IpFilter ipFilter(IpLookup ipLookup) {
-        return new IpFilter(ipLookup);
+    public IpFilter ipFilter(IpLookup ipLookup, MitigationStrategy mitigationStrategy) {
+        final IpFilter filter = new IpFilter(ipLookup);
+        filter.setMitigationStrategy(mitigationStrategy);
+        return filter;
     }
 }
