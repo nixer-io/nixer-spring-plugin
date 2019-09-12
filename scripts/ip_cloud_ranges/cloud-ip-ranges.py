@@ -1,7 +1,7 @@
 """Cloud IP Ranges.
 
 Usage:
-  cloud_ip_ranges.py [--ipv4] [--ipv6][-o <file>] [--cloud <cloud>...]
+  cloud_ip_ranges.py [--ipv4] [--ipv6][-o <file>] [--cloud <cloud>...] [-v]
   cloud_ip_ranges.py (-h | --help)
   cloud_ip_ranges.py --version
 
@@ -12,6 +12,7 @@ Options:
   --ipv4            Fetch IPv4 addresses.
   --ipv6            Fetch IPv4 addresses.
   --cloud=<c>       Select cloud to fetch IP ranges from.
+  -v --verbose      Verbose mode.
 """
 import requests
 from requests.exceptions import HTTPError
@@ -21,6 +22,21 @@ import subprocess
 import json
 from datetime import datetime
 from docopt import docopt
+from bs4 import BeautifulSoup
+import re
+
+def fetchPage(url):
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+
+        return response.content
+    except HTTPError as http_err:
+        print(f'HTTP error occurred: {http_err}')  # Python 3.6
+    except Exception as err:
+        print(f'Other error occurred: {err}')  # Python 3.6
+    else:
+        print('Success!')
 
 
 def fetchJson(url):
@@ -188,14 +204,72 @@ def fetchGceIpRanges():
 
 
 # IBM https://cloud.ibm.com/docs/infrastructure/virtual-router-appliance?topic=hardware-firewall-dedicated-ibm-cloud-ip-ranges
+def fetchIBMIpRanges():
+    print("Fetching IP ranges from IBM")
+
+    url = "https://raw.githubusercontent.com/ibm-cloud-docs/hardware-firewall-dedicated/master/ips.md"
+    oracle_docs = fetchText(url)
+    
+    ipv4_ranges = []
+    for line in oracle_docs.splitlines():
+        for prefix in re.finditer(r'(\d{1,3}(\.\d{1,3}){3}/\d{1,2})', line):
+            ipv4_ranges.append(prefix.group(0))
+
+    
+    ipv6_ranges = []
+
+    print(f'Found prefixes IPv4: {len(ipv4_ranges)} IPv6: {len(ipv6_ranges)}')
+
+    ipv4_ranges = unique_sorted(ipv4_ranges)
+    ipv6_ranges = unique_sorted(ipv6_ranges)
+
+    return {
+        "name": "ibm",
+        "ipv4_prefixes": ipv4_ranges,
+        "ipv6_prefixes": ipv6_ranges
+    }
+
+
 # Oracle https://docs.cloud.oracle.com/iaas/Content/General/Concepts/addressranges.htm
+def fetchOracleCloudIpRanges():
+    print("Fetching IP ranges from Oracle Cloud")
+
+    url = "https://docs.cloud.oracle.com/iaas/Content/General/Concepts/addressranges.htm"
+    oracle_page = fetchPage(url)
+    soup = BeautifulSoup(oracle_page, 'html.parser')
+
+    items = soup.find_all('div', class_='uk-accordion-content')
+
+    prefix_li = [] 
+    for item in items:
+        prefix_li.extend(item.select("ul li"))
+
+    prefixes = [li.get_text().split()[0] for li in prefix_li]
+
+    ipv4_ranges = prefixes
+    ipv6_ranges = [ ]
+
+    print(f'Found prefixes IPv4: {len(ipv4_ranges)} IPv6: {len(ipv6_ranges)}')
+
+    ipv4_ranges = unique_sorted(ipv4_ranges)
+    ipv6_ranges = unique_sorted(ipv6_ranges)
+
+    return {
+        "name": "oracle",
+        "ipv4_prefixes": ipv4_ranges,
+        "ipv6_prefixes": ipv6_ranges
+    }
+
 
 CLOUDS = {
     "aws": fetchAwsIpRanges,
     "azure": fetchAzureIpRanges,
     "cloudflare": fetchCloudflareIpRanges,
-    "gce": fetchGceIpRanges
+    "gce": fetchGceIpRanges,
+    "oracle": fetchOracleCloudIpRanges,
+    "ibm": fetchIBMIpRanges
 }
+
 
 def cloud_fetchers(selected_clouds):
     selected_clouds = selected_clouds if selected_clouds else CLOUDS.keys()
@@ -204,6 +278,7 @@ def cloud_fetchers(selected_clouds):
             raise NameError(f'Unknown cloud {cloud}')
 
     return [CLOUDS[cloud] for cloud in selected_clouds]
+
 
 def main(args):
     fetchers = cloud_fetchers(args['--cloud'])
@@ -218,6 +293,9 @@ def main(args):
             ip_ranges['ipv4_prefixes'] = []
         if not ipv6:
             ip_ranges['ipv6_prefixes'] = []
+        
+        if args['--verbose']:
+            print(ip_ranges)
         sets.append(ip_ranges)
 
     file_object = open(args['--output'], 'w')
