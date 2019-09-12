@@ -6,13 +6,9 @@ import javax.servlet.http.HttpServletRequest;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import eu.xword.nixer.nixerplugin.blocking.events.BlockSourceIPEvent;
-import eu.xword.nixer.nixerplugin.ip.IpResolver;
-import eu.xword.nixer.nixerplugin.ip.IpResolvers;
 import org.springframework.context.ApplicationListener;
 
 public class SourceIpFilter extends NixerFilter implements ApplicationListener<BlockSourceIPEvent> {
-
-    private IpResolver ipResolver = IpResolvers.REMOTE_ADDRESS;
 
     private final Cache<String, String> blockedIps = CacheBuilder.newBuilder()
             .expireAfterWrite(Duration.ofMinutes(5))
@@ -26,7 +22,7 @@ public class SourceIpFilter extends NixerFilter implements ApplicationListener<B
     }
 
     public boolean applies(final HttpServletRequest request) {
-        final String ip = ipResolver.resolve(request);
+        final String ip = request.getRemoteAddr();
         final String ipMatch = blockedIps.getIfPresent(ip);
         return ipMatch != null;
     }

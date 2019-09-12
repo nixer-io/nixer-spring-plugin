@@ -32,7 +32,7 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
 @Configuration
-@ConditionalOnProperty(value = "nixer.login.captcha.enabled", havingValue = "true", matchIfMissing = false)
+@ConditionalOnProperty(prefix = "nixer.login.captcha", name = "enabled", havingValue = "true", matchIfMissing = false)
 public class CaptchaConfiguration {
 
     @Bean

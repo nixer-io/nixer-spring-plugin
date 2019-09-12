@@ -1,6 +1,7 @@
 package eu.xword.nixer.nixerplugin.login;
 
 import com.google.common.base.Objects;
+import eu.xword.nixer.nixerplugin.ip.IpMetadata;
 
 /**
  * Stores data about user making login request.
@@ -12,6 +13,8 @@ public class LoginContext {
     private final String ipAddress;
 
     private final String userAgent;
+
+    private IpMetadata ipMetadata;
 
     public LoginContext(final String username, final String ipAddress, final String userAgent) {
         this.username = username;
@@ -29,6 +32,14 @@ public class LoginContext {
 
     public String getUserAgent() {
         return userAgent;
+    }
+
+    public void setIpMetadata(final IpMetadata ipMetadata) {
+        this.ipMetadata = ipMetadata;
+    }
+
+    public IpMetadata getIpMetadata() {
+        return ipMetadata;
     }
 
     @Override

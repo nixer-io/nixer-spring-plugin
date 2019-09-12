@@ -10,8 +10,6 @@ public class IpFilter extends NixerFilter {
 
     private final Log logger = LogFactory.getLog(getClass());
 
-    private IpResolver ipResolver = IpResolvers.REMOTE_ADDRESS;
-
     private IpLookup ipLookup;
 
     public IpFilter(final IpLookup ipLookup) {
@@ -22,9 +20,10 @@ public class IpFilter extends NixerFilter {
 
     @Override
     protected boolean applies(final HttpServletRequest request) {
-        final String ip = ipResolver.resolve(request);
+        final String ip = request.getRemoteAddr();
         final IpAddress address = ipLookup.lookup(ip);
 
+        request.setAttribute(RequestAugmentation.IP_METADATA, new IpMetadata(address != null));
         return address != null;
     }
 }

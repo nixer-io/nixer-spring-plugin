@@ -5,8 +5,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.common.net.HttpHeaders;
 import eu.xword.nixer.nixerplugin.UserUtils;
-import eu.xword.nixer.nixerplugin.ip.IpResolver;
-import eu.xword.nixer.nixerplugin.ip.IpResolvers;
+import eu.xword.nixer.nixerplugin.ip.IpMetadata;
+import eu.xword.nixer.nixerplugin.ip.RequestAugmentation;
 import eu.xword.nixer.nixerplugin.stigma.StigmaToken;
 import eu.xword.nixer.nixerplugin.stigma.StigmaUtils;
 import eu.xword.nixer.nixerplugin.stigma.embed.EmbeddedStigmaService;
@@ -23,8 +23,6 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class LoginActivityListener implements ApplicationListener<AbstractAuthenticationEvent> {
-
-    private IpResolver ipResolver = IpResolvers.REMOTE_ADDRESS;
 
     @Autowired
     private HttpServletRequest request;
@@ -59,11 +57,14 @@ public class LoginActivityListener implements ApplicationListener<AbstractAuthen
 
     private LoginContext buildContext() {
         final String userAgent = request.getHeader(HttpHeaders.USER_AGENT);
-        final String ip = ipResolver.resolve(request);
+        final String ip = request.getRemoteAddr();
 
         final String username = UserUtils.extractUsername(request);
 
-        return new LoginContext(username, ip, userAgent);
+        final LoginContext context = new LoginContext(username, ip, userAgent);
+        final IpMetadata ipMetadata = (IpMetadata) request.getAttribute(RequestAugmentation.IP_METADATA);
+        context.setIpMetadata(ipMetadata);
+        return context;
     }
 
 
