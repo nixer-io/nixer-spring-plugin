@@ -117,7 +117,7 @@ def fetchAwsIpRanges():
 # }
 # https://docs.microsoft.com/en-us/azure/virtual-network/public-ip-address-prefix
 def fetchAzureIpRanges():
-    url = 'https://download.microsoft.com/download/7/1/D/71D86715-5596-4529-9B13-DA13A5DE5B63/ServiceTags_Public_20190905.json'
+    url = 'https://download.microsoft.com/download/7/1/D/71D86715-5596-4529-9B13-DA13A5DE5B63/ServiceTags_Public_20190909.json'
     print("Fetching IP ranges from Azure")
     ips = fetchJson(url)
 
