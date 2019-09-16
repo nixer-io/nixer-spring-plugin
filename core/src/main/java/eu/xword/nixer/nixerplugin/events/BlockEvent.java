@@ -1,6 +1,5 @@
-package eu.xword.nixer.nixerplugin.blocking.events;
+package eu.xword.nixer.nixerplugin.events;
 
-import eu.xword.nixer.nixerplugin.blocking.EventVisitor;
 import org.springframework.context.ApplicationEvent;
 
 public abstract class BlockEvent extends ApplicationEvent {

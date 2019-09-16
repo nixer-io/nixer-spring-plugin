@@ -1,13 +1,11 @@
-package eu.xword.nixer.nixerplugin.blocking.events;
+package eu.xword.nixer.nixerplugin.events;
 
-import eu.xword.nixer.nixerplugin.blocking.EventVisitor;
-
-public class BlockSourceIPEvent extends BlockEvent {
+public class BlockSourceIpEvent extends BlockEvent {
     /**
      * Create a new ApplicationEvent.
      * @param ip the object on which the event initially occurred (never {@code null})
      */
-    public BlockSourceIPEvent(final String ip) {
+    public BlockSourceIpEvent(final String ip) {
         super(ip);
     }
 

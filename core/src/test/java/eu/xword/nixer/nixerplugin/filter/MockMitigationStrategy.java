@@ -1,10 +1,12 @@
-package eu.xword.nixer.nixerplugin.blocking.policies;
+package eu.xword.nixer.nixerplugin.filter;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import eu.xword.nixer.nixerplugin.filter.strategy.MitigationStrategy;
 
 public class MockMitigationStrategy implements MitigationStrategy {
 

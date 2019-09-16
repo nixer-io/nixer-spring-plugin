@@ -1,4 +1,4 @@
-package eu.xword.nixer.nixerplugin.blocking.policies;
+package eu.xword.nixer.nixerplugin.filter.strategy;
 
 import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;

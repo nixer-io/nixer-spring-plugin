@@ -3,7 +3,7 @@ package eu.xword.nixer.nixerplugin.ip;
 import java.io.File;
 import java.io.IOException;
 
-import eu.xword.nixer.nixerplugin.blocking.policies.MitigationStrategy;
+import eu.xword.nixer.nixerplugin.filter.strategy.MitigationStrategy;
 import eu.xword.nixer.nixerplugin.ip.tree.IpTree;
 import eu.xword.nixer.nixerplugin.ip.tree.IpTreeBuilder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -13,13 +13,13 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.util.ResourceUtils;
 
 @Configuration
-@EnableConfigurationProperties({IpLookupProperties.class})
-@ConditionalOnProperty(prefix = "nixer.ip-lookup", name = "enabled", havingValue = "true")
-public class IpLookupConfiguration {
+@EnableConfigurationProperties({IpFilterProperties.class})
+@ConditionalOnProperty(prefix = "nixer.filter.ip", name = "enabled", havingValue = "true")
+public class IpFilterConfiguration {
 
     @Bean
-    public IpLookup ipLookup(IpLookupProperties ipLookupProperties) throws IOException {
-        final File ipPrefixFile = ResourceUtils.getFile(ipLookupProperties.getIpPrefixesPath());
+    public IpLookup ipLookup(IpFilterProperties ipFilterProperties) throws IOException {
+        final File ipPrefixFile = ResourceUtils.getFile(ipFilterProperties.getIpPrefixesPath());
 
         final IpTree ipv4Tree = IpTreeBuilder.fromFile(ipPrefixFile)
                 .buildIpv4Tree();

@@ -1,7 +1,7 @@
-package eu.xword.nixer.nixerplugin.blocking.elastic;
+package eu.xword.nixer.nixerplugin.events.elastic;
 
-import eu.xword.nixer.nixerplugin.blocking.JsonSerializer;
-import eu.xword.nixer.nixerplugin.blocking.events.BlockEvent;
+import eu.xword.nixer.nixerplugin.events.BlockEvent;
+import eu.xword.nixer.nixerplugin.events.JsonSerializer;
 import io.searchbox.client.JestClient;
 import io.searchbox.client.JestResultHandler;
 import io.searchbox.core.DocumentResult;

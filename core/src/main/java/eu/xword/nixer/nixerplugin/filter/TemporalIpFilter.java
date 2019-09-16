@@ -1,14 +1,14 @@
-package eu.xword.nixer.nixerplugin.blocking.policies;
+package eu.xword.nixer.nixerplugin.filter;
 
 import java.time.Duration;
 import javax.servlet.http.HttpServletRequest;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import eu.xword.nixer.nixerplugin.blocking.events.BlockSourceIPEvent;
+import eu.xword.nixer.nixerplugin.events.BlockSourceIpEvent;
 import org.springframework.context.ApplicationListener;
 
-public class SourceIpFilter extends NixerFilter implements ApplicationListener<BlockSourceIPEvent> {
+public class TemporalIpFilter extends NixerFilter implements ApplicationListener<BlockSourceIpEvent> {
 
     private final Cache<String, String> blockedIps = CacheBuilder.newBuilder()
             .expireAfterWrite(Duration.ofMinutes(5))
@@ -16,7 +16,7 @@ public class SourceIpFilter extends NixerFilter implements ApplicationListener<B
 
 
     @Override
-    public void onApplicationEvent(final BlockSourceIPEvent event) {
+    public void onApplicationEvent(final BlockSourceIpEvent event) {
         // TODO block for time
         blockedIps.put(event.getIp(), event.getIp());
     }

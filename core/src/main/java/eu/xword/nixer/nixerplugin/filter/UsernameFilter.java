@@ -1,4 +1,4 @@
-package eu.xword.nixer.nixerplugin.blocking.policies;
+package eu.xword.nixer.nixerplugin.filter;
 
 import java.time.Duration;
 import javax.servlet.http.HttpServletRequest;
@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import eu.xword.nixer.nixerplugin.UserUtils;
-import eu.xword.nixer.nixerplugin.blocking.events.LockUserEvent;
+import eu.xword.nixer.nixerplugin.events.LockUserEvent;
 import org.springframework.context.ApplicationListener;
 
 public class UsernameFilter extends NixerFilter implements ApplicationListener<LockUserEvent> {

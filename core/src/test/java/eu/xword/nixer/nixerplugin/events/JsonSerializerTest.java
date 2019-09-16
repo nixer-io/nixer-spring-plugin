@@ -1,7 +1,5 @@
-package eu.xword.nixer.nixerplugin.blocking;
+package eu.xword.nixer.nixerplugin.events;
 
-import eu.xword.nixer.nixerplugin.blocking.events.BlockSourceIPEvent;
-import eu.xword.nixer.nixerplugin.blocking.events.GlobalCredentialStuffingEvent;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -21,7 +19,7 @@ class JsonSerializerTest {
     @Test
     public void testSerializeBlockIpEvent() {
         final JsonSerializer serializer = new JsonSerializer();
-        final BlockSourceIPEvent event = new BlockSourceIPEvent("127.0.0.1");
+        final BlockSourceIpEvent event = new BlockSourceIpEvent("127.0.0.1");
 
         event.accept(serializer);
 

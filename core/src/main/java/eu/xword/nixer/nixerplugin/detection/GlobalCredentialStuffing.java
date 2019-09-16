@@ -5,7 +5,7 @@ import java.time.Duration;
 import com.google.common.collect.Range;
 import com.google.common.collect.RangeSet;
 import com.google.common.collect.TreeRangeSet;
-import eu.xword.nixer.nixerplugin.blocking.events.GlobalCredentialStuffingEvent;
+import eu.xword.nixer.nixerplugin.events.GlobalCredentialStuffingEvent;
 import org.springframework.context.ApplicationListener;
 
 /**

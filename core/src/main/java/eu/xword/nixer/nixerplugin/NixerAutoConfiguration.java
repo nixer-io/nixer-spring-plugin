@@ -2,9 +2,8 @@ package eu.xword.nixer.nixerplugin;
 
 import javax.sql.DataSource;
 
-import eu.xword.nixer.nixerplugin.blocking.BlockingConfiguration;
 import eu.xword.nixer.nixerplugin.detection.GlobalCredentialStuffing;
-import eu.xword.nixer.nixerplugin.login.LoginActivityRepository;
+import eu.xword.nixer.nixerplugin.filter.FilterConfiguration;
 import eu.xword.nixer.nixerplugin.login.jdbc.JdbcDAO;
 import eu.xword.nixer.nixerplugin.login.metrics.LoginMetricsReporter;
 import eu.xword.nixer.nixerplugin.stigma.StigmaConfiguration;
@@ -16,9 +15,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
+import eu.xword.nixer.nixerplugin.login.LoginActivityRepository;
+
 @EnableConfigurationProperties({NixerProperties.class})
 @Configuration
-@Import(value = {BlockingConfiguration.class, StigmaConfiguration.class})
+@Import(value = {FilterConfiguration.class, StigmaConfiguration.class})
 public class NixerAutoConfiguration {
 
     @Bean

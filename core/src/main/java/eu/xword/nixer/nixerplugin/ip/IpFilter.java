@@ -2,7 +2,7 @@ package eu.xword.nixer.nixerplugin.ip;
 
 import javax.servlet.http.HttpServletRequest;
 
-import eu.xword.nixer.nixerplugin.blocking.policies.NixerFilter;
+import eu.xword.nixer.nixerplugin.filter.NixerFilter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

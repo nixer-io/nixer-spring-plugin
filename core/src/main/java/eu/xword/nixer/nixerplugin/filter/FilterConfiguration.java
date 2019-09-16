@@ -1,12 +1,12 @@
-package eu.xword.nixer.nixerplugin.blocking;
+package eu.xword.nixer.nixerplugin.filter;
 
-import eu.xword.nixer.nixerplugin.blocking.policies.MitigationStrategy;
-import eu.xword.nixer.nixerplugin.blocking.policies.RedirectMitigationStrategy;
+import eu.xword.nixer.nixerplugin.filter.strategy.MitigationStrategy;
+import eu.xword.nixer.nixerplugin.filter.strategy.RedirectMitigationStrategy;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class BlockingConfiguration {
+public class FilterConfiguration {
 
     //    @Bean
 //    public UserLockBlockingPolicy userLockBlockingPolicy(MitigationStrategy mitigationStrategy) {

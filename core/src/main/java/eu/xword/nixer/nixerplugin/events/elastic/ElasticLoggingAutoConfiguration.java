@@ -1,4 +1,4 @@
-package eu.xword.nixer.nixerplugin.blocking.elastic;
+package eu.xword.nixer.nixerplugin.events.elastic;
 
 import io.searchbox.client.JestClient;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;

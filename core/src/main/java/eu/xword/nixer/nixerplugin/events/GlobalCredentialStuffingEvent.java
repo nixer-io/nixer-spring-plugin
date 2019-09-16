@@ -1,6 +1,4 @@
-package eu.xword.nixer.nixerplugin.blocking.events;
-
-import eu.xword.nixer.nixerplugin.blocking.EventVisitor;
+package eu.xword.nixer.nixerplugin.events;
 
 public class GlobalCredentialStuffingEvent extends BlockEvent {
     /**

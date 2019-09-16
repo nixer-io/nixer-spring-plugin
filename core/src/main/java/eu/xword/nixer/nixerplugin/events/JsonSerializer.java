@@ -1,14 +1,10 @@
-package eu.xword.nixer.nixerplugin.blocking;
+package eu.xword.nixer.nixerplugin.events;
 
 import java.io.IOException;
 import java.io.StringWriter;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
-import eu.xword.nixer.nixerplugin.blocking.events.BlockEvent;
-import eu.xword.nixer.nixerplugin.blocking.events.BlockSourceIPEvent;
-import eu.xword.nixer.nixerplugin.blocking.events.GlobalCredentialStuffingEvent;
-import eu.xword.nixer.nixerplugin.blocking.events.LockUserEvent;
 
 public class JsonSerializer implements EventVisitor {
 
@@ -35,7 +31,7 @@ public class JsonSerializer implements EventVisitor {
     }
 
     @Override
-    public void accept(final BlockSourceIPEvent event) {
+    public void accept(final BlockSourceIpEvent event) {
         apply(event, () -> writeStringField("ip", event.getIp()));
     }
 

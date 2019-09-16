@@ -4,7 +4,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import eu.xword.nixer.nixerplugin.blocking.events.GlobalCredentialStuffingEvent;
+import eu.xword.nixer.nixerplugin.events.GlobalCredentialStuffingEvent;
 import eu.xword.nixer.nixerplugin.login.LoginActivityRepository;
 import eu.xword.nixer.nixerplugin.login.LoginContext;
 import eu.xword.nixer.nixerplugin.login.LoginFailureType;

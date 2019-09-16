@@ -1,4 +1,4 @@
-package eu.xword.nixer.nixerplugin.blocking.log;
+package eu.xword.nixer.nixerplugin.events.log;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

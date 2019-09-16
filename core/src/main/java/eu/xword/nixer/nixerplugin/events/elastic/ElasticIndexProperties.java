@@ -1,4 +1,4 @@
-package eu.xword.nixer.nixerplugin.blocking.elastic;
+package eu.xword.nixer.nixerplugin.events.elastic;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

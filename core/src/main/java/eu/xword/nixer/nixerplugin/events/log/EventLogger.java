@@ -1,6 +1,6 @@
-package eu.xword.nixer.nixerplugin.blocking.log;
+package eu.xword.nixer.nixerplugin.events.log;
 
-import eu.xword.nixer.nixerplugin.blocking.events.BlockEvent;
+import eu.xword.nixer.nixerplugin.events.BlockEvent;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationListener;
