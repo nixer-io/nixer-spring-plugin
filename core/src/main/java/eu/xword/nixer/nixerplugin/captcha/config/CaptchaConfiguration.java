@@ -31,6 +31,8 @@ import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
+import static eu.xword.nixer.nixerplugin.captcha.config.RecaptchaProperties.MetricsProperties.DEFAULT;
+
 @Configuration
 @ConditionalOnProperty(prefix = "nixer.login.captcha", name = "enabled", havingValue = "true", matchIfMissing = false)
 public class CaptchaConfiguration {
@@ -65,7 +67,7 @@ public class CaptchaConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty(value = "recaptcha.enable-metrics", havingValue = "true", matchIfMissing = true)
+    @ConditionalOnProperty(prefix = "recaptcha.metrics", name = "enabled", havingValue = "true", matchIfMissing = DEFAULT)
     public MetricsReporterFactory metricsReporterFactory(MeterRegistry meterRegistry) {
         return new MicrometerMetricsReporterFactory(meterRegistry);
     }

@@ -87,7 +87,6 @@ public class LoginActivityListener implements ApplicationListener<AbstractAuthen
             final LoginFailureType failureType = LoginFailureType.fromException(exception);
             return LoginResult.failure(failureType);
         } else {
-            //TODO log/throw
             return null;
         }
     }

@@ -21,7 +21,7 @@ public class RecaptchaProperties {
 
     private BlockingProperties blocking = new BlockingProperties();
 
-    private boolean enableMetrics;
+    private MetricsProperties metrics = new MetricsProperties();
 
     public String getVerifyUrl() {
         return verifyUrl;
@@ -63,12 +63,12 @@ public class RecaptchaProperties {
         this.blocking = blocking;
     }
 
-    public boolean isEnableMetrics() {
-        return enableMetrics;
+    public MetricsProperties getMetrics() {
+        return metrics;
     }
 
-    public void setEnableMetrics(final boolean enableMetrics) {
-        this.enableMetrics = enableMetrics;
+    public void setMetrics(final MetricsProperties metrics) {
+        this.metrics = metrics;
     }
 
     public static class Http {
@@ -119,6 +119,19 @@ public class RecaptchaProperties {
 
         public void setConnectionRequest(final int connectionRequest) {
             this.connectionRequest = connectionRequest;
+        }
+    }
+
+    public static class MetricsProperties {
+        public static final boolean DEFAULT = true;
+        private boolean enabled = DEFAULT;
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(final boolean enabled) {
+            this.enabled = enabled;
         }
     }
 

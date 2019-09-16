@@ -9,7 +9,7 @@ public class CaptchaLoginProperties {
 
     private boolean enabled = true;
 
-    private boolean enableMetrics;
+    private MetricsProperties metrics = new MetricsProperties();
 
     private String strategy;
 
@@ -23,12 +23,12 @@ public class CaptchaLoginProperties {
         this.enabled = enabled;
     }
 
-    public boolean isEnableMetrics() {
-        return enableMetrics;
+    public MetricsProperties getMetrics() {
+        return metrics;
     }
 
-    public void setEnableMetrics(final boolean enableMetrics) {
-        this.enableMetrics = enableMetrics;
+    public void setMetrics(final MetricsProperties metrics) {
+        this.metrics = metrics;
     }
 
     public String getStrategy() {
@@ -47,4 +47,17 @@ public class CaptchaLoginProperties {
         this.param = param;
     }
 
+    public static class MetricsProperties {
+
+        public static final boolean DEFAULT = true;
+        private boolean enabled = DEFAULT;
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(final boolean enabled) {
+            this.enabled = enabled;
+        }
+    }
 }

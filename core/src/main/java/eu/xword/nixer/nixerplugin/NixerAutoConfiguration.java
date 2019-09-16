@@ -4,6 +4,7 @@ import javax.sql.DataSource;
 
 import eu.xword.nixer.nixerplugin.detection.GlobalCredentialStuffing;
 import eu.xword.nixer.nixerplugin.filter.FilterConfiguration;
+import eu.xword.nixer.nixerplugin.login.LoginActivityRepository;
 import eu.xword.nixer.nixerplugin.login.jdbc.JdbcDAO;
 import eu.xword.nixer.nixerplugin.login.metrics.LoginMetricsReporter;
 import eu.xword.nixer.nixerplugin.stigma.StigmaConfiguration;
@@ -15,7 +16,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
-import eu.xword.nixer.nixerplugin.login.LoginActivityRepository;
+import static eu.xword.nixer.nixerplugin.captcha.config.CaptchaLoginProperties.MetricsProperties.DEFAULT;
 
 @EnableConfigurationProperties({NixerProperties.class})
 @Configuration
@@ -23,7 +24,7 @@ import eu.xword.nixer.nixerplugin.login.LoginActivityRepository;
 public class NixerAutoConfiguration {
 
     @Bean
-    @ConditionalOnProperty(value = "nixer.login.enable-metrics", havingValue = "true", matchIfMissing = true)
+    @ConditionalOnProperty(prefix = "nixer.login.metrics", name = "enabled", havingValue = "true", matchIfMissing = DEFAULT)
     @ConditionalOnMissingBean(LoginMetricsReporter.class)
 //    @ConditionalOnBean(MeterRegistry.class) // TODO making this active breaks  program causing bean not being registered
     public LoginActivityRepository loginMetrics(MeterRegistry meterRegistry) {
