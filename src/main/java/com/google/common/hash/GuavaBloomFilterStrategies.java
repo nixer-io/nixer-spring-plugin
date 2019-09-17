@@ -101,7 +101,7 @@ public enum GuavaBloomFilterStrategies implements GuavaBloomFilter.Strategy {
     public <T> boolean put(
         T object, Funnel<? super T> funnel, int numHashFunctions, BitArray bits) {
       long bitSize = bits.bitSize();
-      byte[] bytes = Hashing.murmur3_128().hashObject(object, funnel).getBytesInternal();
+      byte[] bytes = Hashing.murmur3_128().hashObject(object, funnel).asBytes();
       long hash1 = lowerEight(bytes);
       long hash2 = upperEight(bytes);
 
@@ -119,7 +119,7 @@ public enum GuavaBloomFilterStrategies implements GuavaBloomFilter.Strategy {
     public <T> boolean mightContain(
         T object, Funnel<? super T> funnel, int numHashFunctions, BitArray bits) {
       long bitSize = bits.bitSize();
-      byte[] bytes = Hashing.murmur3_128().hashObject(object, funnel).getBytesInternal();
+      byte[] bytes = Hashing.murmur3_128().hashObject(object, funnel).asBytes();
       long hash1 = lowerEight(bytes);
       long hash2 = upperEight(bytes);
 
