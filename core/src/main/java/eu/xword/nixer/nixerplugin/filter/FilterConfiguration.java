@@ -18,9 +18,6 @@ public class FilterConfiguration {
 //        return new SourceIpBlockingPolicy(mitigationStrategy);
 //    }
 
-    @Bean
-    public MitigationStrategy mitigationStrategy() {
-        return new RedirectBehavior("/login?blockedError");
-    }
+
 
 }
