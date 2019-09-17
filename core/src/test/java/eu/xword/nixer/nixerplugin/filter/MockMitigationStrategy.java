@@ -13,7 +13,7 @@ public class MockMitigationStrategy implements MitigationStrategy {
     private List<HttpServletRequest> requests = new ArrayList<>();
 
     @Override
-    public void handle(final HttpServletRequest request, final HttpServletResponse response) throws IOException {
+    public void act(final HttpServletRequest request, final HttpServletResponse response) throws IOException {
         requests.add(request);
     }
 

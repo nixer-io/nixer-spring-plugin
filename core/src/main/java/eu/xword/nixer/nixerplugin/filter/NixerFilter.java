@@ -29,7 +29,7 @@ public abstract class NixerFilter extends OncePerRequestFilter {
     }
 
     protected void act(final HttpServletRequest request, final HttpServletResponse response) throws IOException {
-        mitigationStrategy.handle(request, response);
+        mitigationStrategy.act(request, response);
     }
 
     protected abstract boolean applies(final HttpServletRequest request) throws IOException;

@@ -6,11 +6,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public class ObserveOnlyMitigationStrategy implements MitigationStrategy {
+public class LogBehavior implements MitigationStrategy {
     private final Log logger = LogFactory.getLog(getClass());
 
     @Override
-    public void handle(final HttpServletRequest request, final HttpServletResponse response) {
+    public void act(final HttpServletRequest request, final HttpServletResponse response) {
         if (logger.isInfoEnabled()) {
             logger.info("Would block request " + request);
         }

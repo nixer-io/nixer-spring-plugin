@@ -1,7 +1,7 @@
 package eu.xword.nixer.nixerplugin.filter;
 
 import eu.xword.nixer.nixerplugin.filter.strategy.MitigationStrategy;
-import eu.xword.nixer.nixerplugin.filter.strategy.RedirectMitigationStrategy;
+import eu.xword.nixer.nixerplugin.filter.strategy.RedirectBehavior;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -20,7 +20,7 @@ public class FilterConfiguration {
 
     @Bean
     public MitigationStrategy mitigationStrategy() {
-        return new RedirectMitigationStrategy("/login?blockedError");
+        return new RedirectBehavior("/login?blockedError");
     }
 
 }

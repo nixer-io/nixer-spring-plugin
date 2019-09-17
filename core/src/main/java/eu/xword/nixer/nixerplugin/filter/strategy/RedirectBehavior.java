@@ -8,17 +8,17 @@ import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.RedirectStrategy;
 import org.springframework.util.Assert;
 
-public class RedirectMitigationStrategy implements MitigationStrategy {
+public class RedirectBehavior implements MitigationStrategy {
 
     private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
     private final String redirectUrl;
 
-    public RedirectMitigationStrategy(final String redirectUrl) {
+    public RedirectBehavior(final String redirectUrl) {
         this.redirectUrl = redirectUrl;
     }
 
-    public void handle(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void act(HttpServletRequest request, HttpServletResponse response) throws IOException {
         redirectStrategy.sendRedirect(request, response, redirectUrl);
     }
 
