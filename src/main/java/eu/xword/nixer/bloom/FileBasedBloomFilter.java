@@ -8,7 +8,7 @@ import javax.annotation.Nonnull;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Preconditions;
 import com.google.common.hash.Funnel;
-import com.google.common.hash.GuavaBloomFilter;
+import eu.xword.nixer.fork.com.google.common.hash.GuavaBloomFilter;
 
 /**
  * Offers methods to create and open file-based {@link BloomFilter}.

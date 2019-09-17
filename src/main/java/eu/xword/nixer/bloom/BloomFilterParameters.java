@@ -10,8 +10,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.hash.GuavaBloomFilter;
-import com.google.common.hash.GuavaBloomFilterStrategies;
+import eu.xword.nixer.fork.com.google.common.hash.GuavaBloomFilter;
+import eu.xword.nixer.fork.com.google.common.hash.GuavaBloomFilterStrategies;
 
 /**
  * A set of parameters describing {@link BloomFilter} when it was created.

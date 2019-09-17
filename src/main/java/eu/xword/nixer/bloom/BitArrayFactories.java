@@ -7,7 +7,7 @@ import java.nio.file.Path;
 import javax.annotation.Nonnull;
 
 import com.google.common.base.Preconditions;
-import com.google.common.hash.GuavaBloomFilterStrategies;
+import eu.xword.nixer.fork.com.google.common.hash.GuavaBloomFilterStrategies;
 
 /**
  * Offers various types of {@link BitArray.Factory BitArray factories}.

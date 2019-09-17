@@ -12,10 +12,12 @@
  * the License.
  */
 
-package com.google.common.hash;
+package eu.xword.nixer.fork.com.google.common.hash;
 
 import java.math.RoundingMode;
 
+import com.google.common.hash.Funnel;
+import com.google.common.hash.Hashing;
 import com.google.common.math.LongMath;
 import com.google.common.primitives.Ints;
 import com.google.common.primitives.Longs;

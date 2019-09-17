@@ -5,6 +5,7 @@ import javax.annotation.Nonnull;
 import com.google.common.base.Predicate;
 import com.google.common.hash.Funnel;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import eu.xword.nixer.fork.com.google.common.hash.GuavaBloomFilter;
 
 /**
  * An interface to a <a href="https://en.wikipedia.org/wiki/Bloom_filter">Bloom Filter</a> data structure.
@@ -13,7 +14,7 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
  * Created on 23/08/2018.
  *
  * @author cezary.biernacki@crosswordcybersecurity.com
- * @see com.google.common.hash.GuavaBloomFilter
+ * @see GuavaBloomFilter
  * @see BitArrayFactories
  *
  */

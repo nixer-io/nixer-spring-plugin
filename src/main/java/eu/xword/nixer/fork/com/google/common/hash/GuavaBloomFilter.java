@@ -12,7 +12,7 @@
  * the License.
  */
 
-package com.google.common.hash;
+package eu.xword.nixer.fork.com.google.common.hash;
 
 import java.io.Serializable;
 import java.math.RoundingMode;
@@ -21,6 +21,7 @@ import javax.annotation.Nonnull;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Predicate;
+import com.google.common.hash.Funnel;
 import com.google.common.math.DoubleMath;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
