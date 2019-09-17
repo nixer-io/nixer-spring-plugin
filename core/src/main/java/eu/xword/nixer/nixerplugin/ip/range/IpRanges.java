@@ -1,17 +1,23 @@
 package eu.xword.nixer.nixerplugin.ip.range;
 
 import java.time.Instant;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 
+/**
+ * Represents set of Ip ranges.
+ */
 public class IpRanges {
 
     @JsonProperty("ranges")
-    private List<IpRange> ranges;
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
+    private List<IpRange> ranges = Collections.emptyList();
 
     public List<IpRange> getRanges() {
         return ranges;
@@ -19,13 +25,13 @@ public class IpRanges {
 
     public List<String> getIpv4Prefixes() {
         return ranges.stream()
-                .flatMap(ipRange -> Stream.of(ipRange.getIpv4Prefixes()))
+                .flatMap(ipRange -> ipRange.getIpv4Prefixes().stream())
                 .collect(Collectors.toList());
     }
 
     public List<String> getIpv6Prefixes() {
         return ranges.stream()
-                .flatMap(ipRange -> Stream.of(ipRange.getIpv6Prefixes()))
+                .flatMap(ipRange -> ipRange.getIpv6Prefixes().stream())
                 .collect(Collectors.toList());
     }
 
@@ -37,9 +43,12 @@ public class IpRanges {
         private Instant timestamp;
 
         @JsonProperty("ipv4_prefixes")
-        private String[] ipv4Prefixes;
+        @JsonSetter(nulls = Nulls.AS_EMPTY)
+        private List<String> ipv4Prefixes = Collections.emptyList();
+
         @JsonProperty("ipv6_prefixes")
-        private String[] ipv6Prefixes;
+        @JsonSetter(nulls = Nulls.AS_EMPTY)
+        private List<String> ipv6Prefixes = Collections.emptyList();
 
         public String getName() {
             return name;
@@ -49,11 +58,11 @@ public class IpRanges {
             return timestamp;
         }
 
-        public String[] getIpv4Prefixes() {
+        public List<String> getIpv4Prefixes() {
             return ipv4Prefixes;
         }
 
-        public String[] getIpv6Prefixes() {
+        public List<String> getIpv6Prefixes() {
             return ipv6Prefixes;
         }
     }

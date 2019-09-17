@@ -3,9 +3,14 @@ package eu.xword.nixer.nixerplugin.ip;
 import javax.servlet.http.HttpServletRequest;
 
 import eu.xword.nixer.nixerplugin.filter.NixerFilter;
+import eu.xword.nixer.nixerplugin.ip.net.IpAddress;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+/**
+ * NixerFilter that matches request IP with IP ranges, executing action on match.
+ * In addition it augments request with {@link IpMetadata}.
+ */
 public class IpFilter extends NixerFilter {
 
     private final Log logger = LogFactory.getLog(getClass());

@@ -48,6 +48,8 @@ dependencies {
     api("io.micrometer", "micrometer-core", "1.2.0", dependencyConfiguration = optional.toAction())
     api("io.searchbox:jest:6.3.1", dependencyConfiguration = optional.toAction())
 
+    implementation("com.fasterxml.jackson.datatype", "jackson-datatype-jsr310", dependencyConfiguration = optional.toAction())
+
     testImplementation("org.springframework", "spring-test")
     testImplementation("org.springframework.boot", "spring-boot-starter-validation")
     testImplementation("org.springframework.boot", "spring-boot-starter-web")

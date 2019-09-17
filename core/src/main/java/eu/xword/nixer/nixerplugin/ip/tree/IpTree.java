@@ -1,12 +1,16 @@
 package eu.xword.nixer.nixerplugin.ip.tree;
 
-public interface IpTree {
+import eu.xword.nixer.nixerplugin.ip.net.IpAddress;
+import eu.xword.nixer.nixerplugin.ip.net.IpPrefix;
 
-    void put(IpPrefix ipPrefix);
+/**
+ * Represents tree of ip addresses.
+ * @param <T> type of ip address
+ */
+public interface IpTree<T extends IpAddress> {
 
-    boolean contains(int ip);
+    void put(IpPrefix<T> ipPrefix);
 
-    interface IpTreeFactory {
-        IpTree create();
-    }
+    boolean contains(T ip);
+
 }

@@ -21,6 +21,7 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.SmartRequestBuilder;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 
@@ -250,12 +251,22 @@ public class FullApplicationTest {
     }
 
     @Test
-    public void shouldFailLoginFromBlacklistedIp() throws Exception {
+    public void shouldFailLoginFromBlacklistedIpv4() throws Exception {
         // @formatter:off
         this.mockMvc.perform(
                 formLogin().user("user").password("user")
                 .build().with(remoteAddress("5.5.5.5")))
-                .andExpect(redirectedUrl("/login?blockedError"));
+                .andExpect(isBlocked());
+        // @formatter:on
+    }
+
+    @Test
+    public void shouldFailLoginFromBlacklistedIpv6() throws Exception {
+        // @formatter:off
+        this.mockMvc.perform(
+                formLogin().user("user").password("user")
+                .build().with(remoteAddress("5555:5555:5555:5555:5555:5555:5555:5555")))
+                .andExpect(isBlocked());
         // @formatter:on
     }
 
@@ -280,5 +291,8 @@ public class FullApplicationTest {
         // @formatter:on
     }
 
+    private ResultMatcher isBlocked() {
+        return redirectedUrl("/login?blockedError");
+    }
 
 }

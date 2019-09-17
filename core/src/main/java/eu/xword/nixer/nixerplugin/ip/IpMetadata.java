@@ -3,6 +3,10 @@ package eu.xword.nixer.nixerplugin.ip;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 
+/**
+ * Represents additional data about ip address.
+ * Such as if it was blacklisted, and possibly if that's proxy ip or country code
+ */
 public class IpMetadata {
 
     private boolean blacklisted;

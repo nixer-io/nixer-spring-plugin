@@ -1,6 +1,10 @@
 package eu.xword.nixer.nixerplugin.ip.tree;
 
-public class UnibitIpTrie implements IpTree {
+import eu.xword.nixer.nixerplugin.ip.net.IpAddress;
+import eu.xword.nixer.nixerplugin.ip.net.IpPrefix;
+import org.springframework.util.Assert;
+
+public class UnibitIpTrie<T extends IpAddress> implements IpTree<T> {
 
     private Node root;
 
@@ -10,11 +14,14 @@ public class UnibitIpTrie implements IpTree {
         private boolean leaf;
     }
 
-    public void put(IpPrefix prefix) {
+    // TODO consider detecting prefixes duplicates/over-lapping
+    public void put(IpPrefix<T> prefix) {
+        Assert.notNull(prefix, "Prefix must not be null");
+
         root = put(root, prefix, 0);
     }
 
-    private Node put(Node x, IpPrefix prefix, int counter) {
+    private Node put(Node x, IpPrefix<T> prefix, int counter) {
         if (x == null) {
             x = new Node();
         }
@@ -23,20 +30,23 @@ public class UnibitIpTrie implements IpTree {
             x.leaf = true;
             return x;
         }
-        if ((prefix.getAddress() & (1 << (31 - counter))) == 0) {
-            x.left = put(x.left, prefix, counter + 1);
-        } else {
+
+        if (prefix.getAddress().getBit(counter)) {
             x.right = put(x.right, prefix, counter + 1);
+        } else {
+            x.left = put(x.left, prefix, counter + 1);
         }
 
         return x;
     }
 
-    public boolean contains(int ip) {
+    public boolean contains(T ip) {
+        Assert.notNull(ip, "Ip must not be null");
+
         return search(root, ip, 0) != null;
     }
 
-    private Node search(Node x, int ip, int counter) {
+    private Node search(Node x, T ip, int counter) {
         if (x == null) {
             return null;
         }
@@ -44,10 +54,10 @@ public class UnibitIpTrie implements IpTree {
         if (x.leaf) {
             return x;
         }
-        if ((ip & (1 << (31 - counter))) == 0) {
-            return search(x.left, ip, counter + 1);
-        } else {
+        if (ip.getBit(counter)) {
             return search(x.right, ip, counter + 1);
+        } else {
+            return search(x.left, ip, counter + 1);
         }
 
     }
