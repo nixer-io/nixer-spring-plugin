@@ -4,10 +4,12 @@ import java.io.File;
 import java.io.IOException;
 
 import eu.xword.nixer.nixerplugin.filter.strategy.MitigationStrategy;
+import eu.xword.nixer.nixerplugin.filter.strategy.RedirectBehavior;
 import eu.xword.nixer.nixerplugin.ip.net.Ipv4Address;
 import eu.xword.nixer.nixerplugin.ip.net.Ipv6Address;
 import eu.xword.nixer.nixerplugin.ip.tree.IpTree;
 import eu.xword.nixer.nixerplugin.ip.tree.IpTreeBuilder;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -32,10 +34,18 @@ public class IpFilterConfiguration {
         return new IpLookup(ipv4Tree, ipv6Tree);
     }
 
-    @Bean
-    public IpFilter ipFilter(IpLookup ipLookup, MitigationStrategy mitigationStrategy) {
+
+    //todo: discuss naming filters and behaviors
+
+    @Bean("ipRangeFilter")
+    public IpFilter ipFilter(IpLookup ipLookup, @Qualifier("ipRangeBehavior") MitigationStrategy mitigationStrategy) {
         final IpFilter filter = new IpFilter(ipLookup);
         filter.setMitigationStrategy(mitigationStrategy);
         return filter;
+    }
+
+    @Bean("ipRangeBehavior")
+    public MitigationStrategy mitigationStrategy() {
+        return new RedirectBehavior("/login?blockedError");
     }
 }
