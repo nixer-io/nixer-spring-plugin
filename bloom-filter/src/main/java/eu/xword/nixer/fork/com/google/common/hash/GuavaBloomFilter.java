@@ -24,7 +24,6 @@ import com.google.common.base.Predicate;
 import com.google.common.hash.Funnel;
 import com.google.common.math.DoubleMath;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import eu.xword.nixer.bloom.BitArray;
 import eu.xword.nixer.bloom.BitArray.Factory;
 import eu.xword.nixer.bloom.BloomFilterParameters;
@@ -146,7 +145,6 @@ public final class GuavaBloomFilter<T> implements eu.xword.nixer.bloom.BloomFilt
   @Deprecated
   @Override
   //  --- CROSSWORD CHANGES - @SuppressFBWarnings
-  @SuppressFBWarnings("NP_PARAMETER_MUST_BE_NONNULL_BUT_MARKED_AS_NULLABLE")
   public boolean apply(T input) {
     return mightContain(input);
   }
