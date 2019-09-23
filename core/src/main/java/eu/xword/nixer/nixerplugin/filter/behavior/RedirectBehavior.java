@@ -1,4 +1,4 @@
-package eu.xword.nixer.nixerplugin.filter.strategy;
+package eu.xword.nixer.nixerplugin.filter.behavior;
 
 import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
@@ -8,7 +8,7 @@ import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.RedirectStrategy;
 import org.springframework.util.Assert;
 
-public class RedirectBehavior implements MitigationStrategy {
+public class RedirectBehavior implements Behavior {
 
     private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 

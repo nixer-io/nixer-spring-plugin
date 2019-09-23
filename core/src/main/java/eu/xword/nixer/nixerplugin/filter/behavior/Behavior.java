@@ -1,10 +1,10 @@
-package eu.xword.nixer.nixerplugin.filter.strategy;
+package eu.xword.nixer.nixerplugin.filter.behavior;
 
 import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public interface MitigationStrategy {
+public interface Behavior {
 
     void act(HttpServletRequest request, HttpServletResponse response) throws IOException;
 }

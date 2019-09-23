@@ -1,4 +1,4 @@
-package eu.xword.nixer.nixerplugin.filter.strategy;
+package eu.xword.nixer.nixerplugin.filter.behavior;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public class LogBehavior implements MitigationStrategy {
+public class LogBehavior implements Behavior {
     private final Log logger = LogFactory.getLog(getClass());
 
     @Override

@@ -6,9 +6,9 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import eu.xword.nixer.nixerplugin.filter.strategy.MitigationStrategy;
+import eu.xword.nixer.nixerplugin.filter.behavior.Behavior;
 
-public class MockMitigationStrategy implements MitigationStrategy {
+public class MockBehavior implements Behavior {
 
     private List<HttpServletRequest> requests = new ArrayList<>();
 

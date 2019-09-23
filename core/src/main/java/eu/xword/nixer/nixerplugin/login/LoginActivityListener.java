@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.common.net.HttpHeaders;
 import eu.xword.nixer.nixerplugin.UserUtils;
 import eu.xword.nixer.nixerplugin.ip.IpMetadata;
-import eu.xword.nixer.nixerplugin.ip.RequestAugmentation;
+import eu.xword.nixer.nixerplugin.filter.RequestAugmentation;
 import eu.xword.nixer.nixerplugin.stigma.StigmaToken;
 import eu.xword.nixer.nixerplugin.stigma.StigmaUtils;
 import eu.xword.nixer.nixerplugin.stigma.embed.EmbeddedStigmaService;
