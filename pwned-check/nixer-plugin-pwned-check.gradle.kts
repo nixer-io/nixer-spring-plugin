@@ -13,6 +13,7 @@ dependencyManagement {
 
 dependencies {
     implementation(project(":nixer-plugin-core"))
+    implementation(project(":bloom-filter"))
 
     implementation("org.springframework", "spring-web")
 }
