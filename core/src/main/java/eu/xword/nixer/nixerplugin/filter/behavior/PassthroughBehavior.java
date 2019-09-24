@@ -9,4 +9,9 @@ public class PassthroughBehavior implements Behavior {
     public void act(final HttpServletRequest request, final HttpServletResponse response) {
         // do nothing
     }
+
+    @Override
+    public Category category() {
+        return Category.EXCLUSIVE;
+    }
 }

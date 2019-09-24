@@ -22,6 +22,11 @@ public class RedirectBehavior implements Behavior {
         redirectStrategy.sendRedirect(request, response, redirectUrl);
     }
 
+    @Override
+    public Category category() {
+        return Category.EXCLUSIVE;
+    }
+
     /**
      * Sets the strategy to be used for redirecting to the required channel URL. A
      * {@code DefaultRedirectStrategy} instance will be used if not set.

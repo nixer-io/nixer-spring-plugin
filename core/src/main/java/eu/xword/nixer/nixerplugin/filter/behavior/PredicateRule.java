@@ -1,12 +1,11 @@
 package eu.xword.nixer.nixerplugin.filter.behavior;
 
-import java.util.Map;
 import java.util.function.Predicate;
 
 public class PredicateRule implements Rule {
 
     private String name;
-    private Predicate<Map<String, Object>> predicate;
+    private Predicate<Facts> predicate;
 
     @Override
     public String name() {
@@ -14,11 +13,11 @@ public class PredicateRule implements Rule {
     }
 
     @Override
-    public boolean condition(final Map<String, Object> attributes) {
-        return predicate.test(attributes);
+    public boolean condition(final Facts facts) {
+        return predicate.test(facts);
     }
 
-    public PredicateRule(final String name, final Predicate<Map<String, Object>> predicate) {
+    public PredicateRule(final String name, final Predicate<Facts> predicate) {
         this.name = name;
         this.predicate = predicate;
     }

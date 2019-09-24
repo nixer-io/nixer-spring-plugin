@@ -7,4 +7,11 @@ import javax.servlet.http.HttpServletResponse;
 public interface Behavior {
 
     void act(HttpServletRequest request, HttpServletResponse response) throws IOException;
+
+    Category category();
+
+    enum Category {
+        EXCLUSIVE,
+        STACKABLE
+    }
 }

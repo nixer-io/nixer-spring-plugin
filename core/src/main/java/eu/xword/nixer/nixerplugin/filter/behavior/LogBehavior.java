@@ -15,4 +15,9 @@ public class LogBehavior implements Behavior {
             logger.info("Would block request " + request);
         }
     }
+
+    @Override
+    public Category category() {
+        return Category.STACKABLE;
+    }
 }

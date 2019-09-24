@@ -18,6 +18,7 @@ dependencyManagement {
 
 dependencies {
     implementation(project(":nixer-plugin-core"))
+    implementation(project(":nixer-plugin-captcha"))
     implementation("org.springframework.boot", "spring-boot")
     implementation("org.springframework.boot", "spring-boot-starter-thymeleaf")
     implementation("org.springframework.boot", "spring-boot-starter-actuator")

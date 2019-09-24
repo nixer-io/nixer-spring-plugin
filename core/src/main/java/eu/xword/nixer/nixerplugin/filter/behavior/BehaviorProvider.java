@@ -2,12 +2,13 @@ package eu.xword.nixer.nixerplugin.filter.behavior;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import eu.xword.nixer.nixerplugin.filter.RequestAugmentation;
 import eu.xword.nixer.nixerplugin.ip.IpMetadata;
 import org.springframework.stereotype.Component;
+
+import static eu.xword.nixer.nixerplugin.filter.RequestAugmentation.GLOBAL_CREDENTIAL_STUFFING;
+import static eu.xword.nixer.nixerplugin.filter.RequestAugmentation.IP_METADATA;
 
 @Component
 public class BehaviorProvider {
@@ -17,18 +18,24 @@ public class BehaviorProvider {
     private List<Rule> rules = new ArrayList<>();
 
     {
-        rules.add(new PredicateRule("blacklistedIp", attributes -> {
-            IpMetadata ipMetadata = (IpMetadata) attributes.get(RequestAugmentation.IP_METADATA);
-            return ipMetadata != null && ipMetadata.isBlacklisted();
-        }));
+        rules.add(new PredicateRule("blacklistedIp",
+                facts -> {
+                    IpMetadata ipMetadata = (IpMetadata) facts.getFact(IP_METADATA);
+                    return ipMetadata != null && ipMetadata.isBlacklisted();
+                }));
+        rules.add(new PredicateRule("credentialStuffingActive",
+                facts -> Boolean.TRUE.equals(facts.getFact(GLOBAL_CREDENTIAL_STUFFING))));
+
+
         behaviors.put("blacklistedIp", new RedirectBehavior("/login?blockedError"));
+        behaviors.put("credentialStuffingActive", new CaptchaBehaviour());
     }
 
-    public List<Behavior> get(Map<String, Object> attributes) {
+    public List<Behavior> get(Facts facts) {
 
         List<Behavior> result = new ArrayList<>();
         for (Rule r : rules) {
-            if (r.condition(attributes)) {
+            if (r.condition(facts)) {
                 result.add(behaviors.get(r.name()));
             }
         }

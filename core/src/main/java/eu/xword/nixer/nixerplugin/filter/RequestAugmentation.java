@@ -7,4 +7,6 @@ public class RequestAugmentation {
 
     public static final String IP_BLOCKED = "nixer.ip.blocked";
     public static final String USERNAME_BLOCKED = "nixer.ip.blocked";
+
+    public static final String GLOBAL_CREDENTIAL_STUFFING = "nixer.cs.global";
 }

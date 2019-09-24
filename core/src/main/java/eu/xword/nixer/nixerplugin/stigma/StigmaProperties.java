@@ -1,5 +1,8 @@
 package eu.xword.nixer.nixerplugin.stigma;
 
+import org.springframework.boot.context.properties.ConfigurationProperties;
+
+@ConfigurationProperties(prefix = "nixer.stigma")
 public class StigmaProperties {
     private String cookie;
 

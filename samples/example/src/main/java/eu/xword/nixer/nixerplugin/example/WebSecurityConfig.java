@@ -53,7 +53,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .formLogin().loginPage("/login")
                 .failureHandler(new DelegatingAuthenticationFailureHandler(loginFailureHandlers, new SimpleUrlAuthenticationFailureHandler("/login?error")))
-//                    .failureHandler(new SimpleUrlAuthenticationFailureHandler("/login?error"))
+
                 .and()
                 .logout().logoutUrl("/logout").permitAll()
                 .and().csrf()

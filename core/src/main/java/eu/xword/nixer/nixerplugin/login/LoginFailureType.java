@@ -3,7 +3,6 @@ package eu.xword.nixer.nixerplugin.login;
 import java.util.Map;
 
 import com.google.common.collect.ImmutableMap;
-import eu.xword.nixer.nixerplugin.captcha.security.BadCaptchaException;
 import org.springframework.security.authentication.AccountExpiredException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
@@ -32,7 +31,7 @@ public enum LoginFailureType {
                 .put(LockedException.class, LOCKED)
                 .put(AccountExpiredException.class, EXPIRED)
                 .put(DisabledException.class, DISABLED)
-                .put(BadCaptchaException.class, INVALID_CAPTCHA) // TODO reported as BAD_PASSWORD
+//                .put(BadCaptchaException.class, INVALID_CAPTCHA) // TODO reported as BAD_PASSWORD
                 .build(); // TODO separated exception for credentials and account expired/disabled/locked
     }
 
