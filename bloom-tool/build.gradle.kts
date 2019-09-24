@@ -1,15 +1,18 @@
-import buildConfig.libraries
-
 plugins {
-    id("java-config-plugin")
+    java
 }
 
 dependencies {
-    compile(project(":bloom-lib"))
+    implementation(project(":bloom-filter"))
 
-    compile(libraries.docopt)        // see: https://github.com/docopt/docopt.java
+    implementation("com.offbytwo:docopt:0.6.0.20150202")    // CLI parsing, see: https://github.com/docopt/docopt.java
+    implementation("com.google.guava:guava:22.0")
+
+    testImplementation("junit:junit:4.12") // TODO junit5
+    testImplementation("pl.pragmatists:JUnitParams:1.0.6")
+    testImplementation("org.assertj:assertj-core:3.6.2")
 }
 
-rootProject.tasks.getByName<Sync>("copyDistribution") {
-    from(fileTree("src/main/dist"))
-}
+//rootProject.tasks.getByName<Sync>("copyDistribution") {
+//    from(fileTree("src/main/dist"))
+//}

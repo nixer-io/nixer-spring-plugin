@@ -7,7 +7,6 @@ import javax.annotation.concurrent.NotThreadSafe;
 import com.google.common.base.Preconditions;
 import com.google.common.hash.Funnel;
 import com.google.common.hash.PrimitiveSink;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * An implementation of {@link Funnel} for strings that tries to interpret incoming strings as hex characters and convert them to bytes.
@@ -44,7 +43,6 @@ public class HexFunnel implements Funnel<CharSequence> {
     }
 
     @Nullable
-    @SuppressFBWarnings(value = "PZLA_PREFER_ZERO_LENGTH_ARRAYS", justification = "null has special meaning here - invalid hex string")
     private byte[] convertHex(@Nonnull final CharSequence s) {
         final int len = s.length();
 
@@ -60,7 +58,7 @@ public class HexFunnel implements Funnel<CharSequence> {
                 : new byte[size];
 
         int destinationPosition = 0;
-        for (int i = 0; i < len; i += 2, ++ destinationPosition) {
+        for (int i = 0; i < len; i += 2, ++destinationPosition) {
             assert destinationPosition == i / 2;
 
             final int digitOne = Character.digit(s.charAt(i), 16);

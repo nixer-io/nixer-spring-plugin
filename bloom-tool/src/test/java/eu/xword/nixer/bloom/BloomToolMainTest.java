@@ -3,11 +3,9 @@ package eu.xword.nixer.bloom;
 import java.io.File;
 import java.io.IOException;
 
-import junitparams.JUnitParamsRunner;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.junit.runner.RunWith;
 
 import static eu.xword.nixer.bloom.BloomToolMain.main;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -19,7 +17,6 @@ import static org.assertj.core.api.Assertions.assertThat;
  *
  * @author cezary
  */
-@RunWith(JUnitParamsRunner.class)
 public class BloomToolMainTest {
 
     @Rule
@@ -32,7 +29,7 @@ public class BloomToolMainTest {
         delete(file);
 
         // when
-        main(new String[] {"create", "--size=100", "--fpp=1e-2", file.getAbsolutePath()});
+        main(new String[]{"create", "--size=100", "--fpp=1e-2", file.getAbsolutePath()});
 
         // then
         assertThat(file).exists();
