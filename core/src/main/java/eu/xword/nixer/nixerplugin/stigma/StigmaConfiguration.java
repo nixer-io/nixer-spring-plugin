@@ -6,7 +6,6 @@ import java.time.Duration;
 import java.time.Instant;
 import javax.annotation.Nonnull;
 
-import eu.xword.nixer.nixerplugin.NixerProperties;
 import eu.xword.nixer.nixerplugin.stigma.embed.EmbeddedStigmaService;
 import eu.xword.nixer.nixerplugin.stigma.storage.StigmaRepository;
 import eu.xword.nixer.nixerplugin.stigma.token.EncryptedStigmaTokenProvider;
@@ -19,13 +18,14 @@ import eu.xword.nixer.nixerplugin.stigma.token.crypto.KeysLoader;
 import eu.xword.nixer.nixerplugin.stigma.token.validation.EncryptedJwtValidator;
 import eu.xword.nixer.nixerplugin.stigma.token.validation.StigmaTokenPayloadValidator;
 import eu.xword.nixer.nixerplugin.stigma.token.validation.StigmaTokenValidator;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.ResourceUtils;
-
 import org.springframework.util.StringUtils;
 
 @Configuration
+@EnableConfigurationProperties(value = {StigmaProperties.class})
 public class StigmaConfiguration {
 
     @Bean
@@ -35,8 +35,7 @@ public class StigmaConfiguration {
     }
 
     @Bean
-    public KeysLoader buildKeysLoader(final NixerProperties nixerProperties) throws FileNotFoundException {
-        final StigmaProperties config = nixerProperties.getStigma();
+    public KeysLoader buildKeysLoader(final StigmaProperties config) throws FileNotFoundException {
 
         final File encryptionFile = ResourceUtils.getFile(config.getEncryptionKeyFile());
         final File decryptionFile = ResourceUtils.getFile(config.getDecryptionKeyFile());
@@ -54,8 +53,7 @@ public class StigmaConfiguration {
     }
 
     @Bean
-    public StigmaTokenPayloadValidator buildStigmaTokenPayloadValidator(final NixerProperties nixerProperties) {
-        final StigmaProperties stigmaProperties = nixerProperties.getStigma();
+    public StigmaTokenPayloadValidator buildStigmaTokenPayloadValidator(final StigmaProperties stigmaProperties) {
         final Duration tokenLifetime = !StringUtils.isEmpty(stigmaProperties.getTokenLifetime())
                 ? Duration.parse(stigmaProperties.getTokenLifetime())
                 : StigmaTokenConstants.DEFAULT_TOKEN_LIFETIME;
@@ -76,7 +74,7 @@ public class StigmaConfiguration {
     }
 
     @Bean
-    public EmbeddedStigmaService stigmaService(StigmaRepository stigmaRepository, StigmaTokenProvider tokenProvider, StigmaTokenValidator tokenValidator){
+    public EmbeddedStigmaService stigmaService(StigmaRepository stigmaRepository, StigmaTokenProvider tokenProvider, StigmaTokenValidator tokenValidator) {
         return new EmbeddedStigmaService(stigmaRepository, tokenProvider, tokenValidator);
     }
 }

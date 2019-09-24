@@ -28,10 +28,8 @@ dependencies {
     annotationProcessor("org.springframework.boot", "spring-boot-configuration-processor")
 
     implementation("com.google.guava", "guava", "28.0-jre") // consider removing (cache, immutable collections)
-    implementation("org.apache.httpcomponents", "httpclient", "4.5.9", dependencyConfiguration = optional.toAction()) // optional 
     api("com.nimbusds", "nimbus-jose-jwt", "7.5.1") // required for stigma tokens optional
     api("javax.servlet", "javax.servlet-api", "3.1.0")
-    api("javax.validation", "validation-api") // for captcha validator
     api("com.fasterxml.jackson.core", "jackson-annotations") // for captcha api
     api("com.fasterxml.jackson.core", "jackson-databind") // for captcha api
 
@@ -51,7 +49,6 @@ dependencies {
     implementation("com.fasterxml.jackson.datatype", "jackson-datatype-jsr310", dependencyConfiguration = optional.toAction())
 
     testImplementation("org.springframework", "spring-test")
-    testImplementation("org.springframework.boot", "spring-boot-starter-validation")
     testImplementation("org.springframework.boot", "spring-boot-starter-web")
     testImplementation("org.springframework.boot", "spring-boot-starter-test") {
         exclude(module = "junit")

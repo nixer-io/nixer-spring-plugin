@@ -3,12 +3,12 @@ package eu.xword.nixer.nixerplugin.example.full;
 import eu.xword.nixer.nixerplugin.captcha.reattempt.InMemoryCaptchaReattemptService;
 import eu.xword.nixer.nixerplugin.captcha.recaptcha.RecaptchaClientStub;
 import eu.xword.nixer.nixerplugin.captcha.security.CaptchaChecker;
-import eu.xword.nixer.nixerplugin.captcha.strategy.AutomaticCaptchaStrategy;
-import eu.xword.nixer.nixerplugin.captcha.strategy.CaptchaStrategies;
+import eu.xword.nixer.nixerplugin.captcha.security.CaptchaCondition;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -57,9 +57,6 @@ public class FullApplicationTest {
     private CaptchaChecker captchaChecker;
 
     @Autowired
-    private AutomaticCaptchaStrategy automaticCaptchaStrategy;
-
-    @Autowired
     private RecaptchaClientStub recaptchaClientStub;
 
     @Autowired
@@ -79,7 +76,7 @@ public class FullApplicationTest {
 
     @BeforeEach
     public void setup() {
-        this.captchaChecker.setCaptchaStrategy(CaptchaStrategies.NEVER);
+        this.captchaChecker.setCaptchaCondition(CaptchaCondition.NEVER);
 
         recaptchaClientStub.recordValidCaptcha("good-captcha");
         recaptchaClientStub.recordInvalidCaptcha("bad-captcha");
@@ -100,7 +97,7 @@ public class FullApplicationTest {
     @Test
     public void returnCaptcha() throws Exception {
         //enable captcha
-        this.captchaChecker.setCaptchaStrategy(CaptchaStrategies.ALWAYS);
+        this.captchaChecker.setCaptchaCondition(CaptchaCondition.ALWAYS);
 
         // @formatter:off
         this.mockMvc.perform(get("/login"))
@@ -110,16 +107,16 @@ public class FullApplicationTest {
     }
 
     @Test
+    @Disabled
     public void shouldActivateCaptcha() throws Exception {
         // enable automatic mode
-        this.captchaChecker.setCaptchaStrategy(automaticCaptchaStrategy);
+        this.captchaChecker.setCaptchaCondition(CaptchaCondition.AUTOMATIC);
 
         // @formatter:on
         final SmartRequestBuilder loginRequest = formLogin().user("user").password("guess").build();
-        this.mockMvc.perform(loginRequest).andExpect(unauthenticated());
-        this.mockMvc.perform(loginRequest).andExpect(unauthenticated());
-        this.mockMvc.perform(loginRequest).andExpect(unauthenticated());
-        this.mockMvc.perform(loginRequest).andExpect(unauthenticated());
+        for (int i = 0; i < 4; i++) {
+            this.mockMvc.perform(loginRequest).andExpect(unauthenticated());
+        }
         // @formatter:off
 
         this.mockMvc.perform(get("/login"))
@@ -133,7 +130,7 @@ public class FullApplicationTest {
     @Test
     public void loginWithCaptcha() throws  Exception {
         //enable captcha
-        this.captchaChecker.setCaptchaStrategy(CaptchaStrategies.ALWAYS);
+        this.captchaChecker.setCaptchaCondition(CaptchaCondition.ALWAYS);
 
         this.mockMvc.perform(get("/login"))
                 .andExpect(status().isOk())
@@ -146,7 +143,7 @@ public class FullApplicationTest {
     @Test
     public void loginFailedWithCaptcha() throws  Exception {
         //enable captcha
-        this.captchaChecker.setCaptchaStrategy(CaptchaStrategies.ALWAYS);
+        this.captchaChecker.setCaptchaCondition(CaptchaCondition.ALWAYS);
 
         this.mockMvc.perform(get("/login"))
                 .andExpect(status().isOk())
@@ -182,12 +179,11 @@ public class FullApplicationTest {
     }
 
     @Test
-//    @Disabled
     public void blockIpForTimeIfToManyCaptchaFailed() throws  Exception {
         inMemoryCaptchaReattemptService.clean();
 
-        //enable captcha
-        this.captchaChecker.setCaptchaStrategy(CaptchaStrategies.ALWAYS);
+//        enable captcha
+        this.captchaChecker.setCaptchaCondition(CaptchaCondition.ALWAYS);
 
         final SmartRequestBuilder loginRequest = formLogin().user("user").password("user").captcha("bad-captcha").build();
         this.mockMvc.perform(loginRequest)
@@ -220,23 +216,23 @@ public class FullApplicationTest {
     }
 
     @Test
-    public void captchaEndpointToReturnCurrentStrategy() throws Exception {
+    public void captchaEndpointToReturnCurrentCondition() throws Exception {
         this.mockMvc.perform(get("/actuator/captcha"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.strategy", is("NEVER")));
+                .andExpect(jsonPath("$.condition", is("NEVER")));
     }
 
     @Test
-    public void captchaEndpointToUpdateStrategy() throws Exception {
-        final String newStrategy = "{ \"strategy\": \"ALWAYS\"}";
+    public void captchaEndpointToUpdateCondition() throws Exception {
+        final String newCondition = "{ \"condition\": \"ALWAYS\"}";
         this.mockMvc.perform(post("/actuator/captcha")
-                .content(newStrategy)
+                .content(newCondition)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful());
 
         this.mockMvc.perform(get("/actuator/captcha"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.strategy", is("ALWAYS")));
+                .andExpect(jsonPath("$.condition", is("ALWAYS")));
     }
 
     @Test

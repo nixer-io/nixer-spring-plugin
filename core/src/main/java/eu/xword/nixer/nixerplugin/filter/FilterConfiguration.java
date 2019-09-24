@@ -1,8 +1,5 @@
 package eu.xword.nixer.nixerplugin.filter;
 
-import eu.xword.nixer.nixerplugin.filter.strategy.MitigationStrategy;
-import eu.xword.nixer.nixerplugin.filter.strategy.RedirectBehavior;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
@@ -17,7 +14,6 @@ public class FilterConfiguration {
 //    public SourceIpBlockingPolicy ipBlockingPolicy(MitigationStrategy mitigationStrategy) {
 //        return new SourceIpBlockingPolicy(mitigationStrategy);
 //    }
-
 
 
 }

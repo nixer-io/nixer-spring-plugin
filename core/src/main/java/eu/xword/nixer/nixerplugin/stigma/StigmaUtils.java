@@ -12,7 +12,7 @@ import org.springframework.web.util.WebUtils;
 @Component
 public class StigmaUtils {
 
-    @Value("${nixer.login.stigma.cookie}")
+    @Value("${nixer.stigma.cookie}")
     private String stigmaCookie;
 
     public StigmaToken findStigma(final HttpServletRequest request) {

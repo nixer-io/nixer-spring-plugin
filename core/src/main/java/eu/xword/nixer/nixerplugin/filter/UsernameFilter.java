@@ -1,30 +1,26 @@
 package eu.xword.nixer.nixerplugin.filter;
 
-import java.time.Duration;
 import javax.servlet.http.HttpServletRequest;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
 import eu.xword.nixer.nixerplugin.UserUtils;
-import eu.xword.nixer.nixerplugin.events.LockUserEvent;
-import org.springframework.context.ApplicationListener;
+import eu.xword.nixer.nixerplugin.registry.BlockedUserRegistry;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-public class UsernameFilter extends NixerFilter implements ApplicationListener<LockUserEvent> {
+import static eu.xword.nixer.nixerplugin.filter.RequestAugmentation.USERNAME_BLOCKED;
 
-    private final Cache<String, String> blockedUsers = CacheBuilder.newBuilder()
-            .expireAfterWrite(Duration.ofMinutes(5))
-            .build();
+//@Component
+public class UsernameFilter extends MetadataFilter {
 
-    public boolean applies(final HttpServletRequest request) {
-        final String username = UserUtils.extractUsername(request);
-        final String value = blockedUsers.getIfPresent(username);
-
-        return value != null;
-    }
+    @Autowired
+    private BlockedUserRegistry blockedUserRegistry;
 
     @Override
-    public void onApplicationEvent(final LockUserEvent event) {
-        // TODO block for time
-        blockedUsers.put(event.getUsername(), event.getUsername());
+    protected void apply(final HttpServletRequest request) {
+        final String username = UserUtils.extractUsername(request);
+        if (blockedUserRegistry.isBlocked(username)) {
+            request.setAttribute(USERNAME_BLOCKED, true);
+        }
     }
+
 }
