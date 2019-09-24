@@ -12,4 +12,6 @@ dependencies {
 
     testImplementation("junit:junit:4.12")
     testImplementation("org.assertj:assertj-core:3.6.2")
+
+    testRuntimeOnly("org.junit.vintage", "junit-vintage-engine","5.3.2")
 }
