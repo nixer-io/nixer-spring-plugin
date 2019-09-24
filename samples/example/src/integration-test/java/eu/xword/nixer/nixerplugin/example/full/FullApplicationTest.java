@@ -29,6 +29,7 @@ import static eu.xword.nixer.nixerplugin.example.LoginRequestBuilder.formLogin;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.nullValue;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.logout;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.unauthenticated;
@@ -37,6 +38,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.request;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -152,6 +154,17 @@ public class FullApplicationTest {
 
         this.mockMvc.perform(formLogin().user("user").password("guess").captcha("bad-captcha").build())
                 .andExpect(unauthenticated());
+    }
+
+    @Test
+    public void should_add_request_attribute_on_pwned_password() throws  Exception {
+
+        this.mockMvc.perform(formLogin().user("user").password("not-pwned-password").build())
+                .andExpect(request().attribute("nixer.pwned.password", nullValue()));
+
+        // using password from pwned-database
+        this.mockMvc.perform(formLogin().user("user").password("foobar1").build())
+                .andExpect(request().attribute("nixer.pwned.password", true));
     }
 
     @Test

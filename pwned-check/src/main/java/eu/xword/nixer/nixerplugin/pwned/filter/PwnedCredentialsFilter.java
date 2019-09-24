@@ -1,6 +1,7 @@
 package eu.xword.nixer.nixerplugin.pwned.filter;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import eu.xword.nixer.nixerplugin.filter.NixerFilter;
 import eu.xword.nixer.nixerplugin.pwned.check.PwnedCredentialsChecker;
@@ -20,7 +21,19 @@ public class PwnedCredentialsFilter extends NixerFilter {
 
     @Override
     protected boolean applies(final HttpServletRequest request) {
-        // TODO retrieve user/password from request
-        return pwnedCredentialsChecker.isPwned("usr", "password");
+
+        // TODO retrieve user/password from request properly
+        final String password = request.getParameter("password");
+
+        if (password != null) {
+            return pwnedCredentialsChecker.isPasswordPwned(password);
+        }
+
+        return false;
+    }
+
+    @Override
+    protected void act(final HttpServletRequest request, final HttpServletResponse response) {
+        request.setAttribute("nixer.pwned.password", true);
     }
 }
