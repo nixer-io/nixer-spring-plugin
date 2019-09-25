@@ -1,8 +1,13 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
+    kotlin("jvm") version "1.3.50"
     application
 }
 
 dependencies {
+    implementation(kotlin("stdlib-jdk8"))
+
     implementation(project(":bloom-filter"))
 
     implementation("com.offbytwo:docopt:0.6.0.20150202")    // CLI parsing, see: https://github.com/docopt/docopt.java
@@ -17,4 +22,8 @@ dependencies {
 
 application {
     mainClassName = "eu.xword.nixer.bloom.BloomToolMain"
+}
+
+tasks.withType<KotlinCompile> {
+    kotlinOptions.jvmTarget = "1.8"
 }
