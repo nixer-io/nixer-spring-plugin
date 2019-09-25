@@ -1,5 +1,5 @@
 plugins {
-    java
+    application
 }
 
 dependencies {
@@ -15,6 +15,6 @@ dependencies {
     testRuntimeOnly("org.junit.vintage", "junit-vintage-engine","5.3.2")
 }
 
-//rootProject.tasks.getByName<Sync>("copyDistribution") {
-//    from(fileTree("src/main/dist"))
-//}
+application {
+    mainClassName = "eu.xword.nixer.bloom.BloomToolMain"
+}
