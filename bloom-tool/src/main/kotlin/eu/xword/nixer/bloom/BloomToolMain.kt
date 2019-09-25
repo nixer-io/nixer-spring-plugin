@@ -1,157 +1,157 @@
-package eu.xword.nixer.bloom;
+package eu.xword.nixer.bloom
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.file.Paths;
-import java.util.Map;
-import javax.annotation.Nonnull;
-
-import com.google.common.base.Charsets;
-import com.google.common.base.Preconditions;
-import com.google.common.hash.Funnel;
-import com.google.common.hash.Funnels;
-import org.docopt.Docopt;
+import com.google.common.base.Charsets
+import com.google.common.base.Preconditions
+import com.google.common.hash.Funnel
+import com.google.common.hash.Funnels
+import org.docopt.Docopt
+import java.io.BufferedReader
+import java.io.IOException
+import java.io.InputStreamReader
+import java.nio.file.Paths
 
 /**
- * The entry class for a command utility to manipulate file-based bloom filters. See {@code bloom-docopt.txt} for usage information.
- * <br>
+ * The entry class for a command utility to manipulate file-based bloom filters. See `bloom-docopt.txt` for usage information.
+ * <br></br>
  * Created on 23/08/2018.
  *
  * @author cezary.biernacki@crosswordcybersecurity.com
  */
-public class BloomToolMain {
+class BloomToolMain(private val parsed: Map<String, Any>) {
 
-    @Nonnull
-    private final Map<String, Object> parsed;
+    private val funnel: Funnel<CharSequence>
+        get() {
+            val defaultFunnel = Funnels.unencodedCharsFunnel()
+            return if (isSet("--hex"))
+                HexFunnel(defaultFunnel)
+            else
+                defaultFunnel
+        }
 
-    public BloomToolMain(@Nonnull final Map<String, Object> parsed) {
-        Preconditions.checkNotNull(parsed, "parsed");
-        this.parsed = parsed;
+    init {
+        Preconditions.checkNotNull(parsed, "parsed")
     }
 
-    public static void main(final String argv[]) throws IOException {
-
-        final InputStream resourceAsStream = BloomToolMain.class.getResourceAsStream("bloom-docopt.txt");
-        final Docopt docopt = new Docopt(resourceAsStream);
-
-        final Map<String, Object> parsed = docopt.parse(argv);
-        new BloomToolMain(parsed).handle();
-    }
-
-    private void handle() throws IOException {
+    @Throws(IOException::class)
+    private fun handle() {
         if (isSet("create")) {
-            handleCreate();
-            return;
+            handleCreate()
+            return
         }
 
         if (isSet("insert")) {
-            handleInsert();
-            return;
+            handleInsert()
+            return
         }
 
         if (isSet("check")) {
-            handleCheck();
-            return;
+            handleCheck()
+            return
         }
 
         if (isSet("benchmark")) {
-            handleBenchmark();
-            return;
+            handleBenchmark()
+            return
         }
 
-        throw new IllegalArgumentException("Failed to understand arguments: " + parsed);
+        throw IllegalArgumentException("Failed to understand arguments: $parsed")
     }
 
-    private void handleCreate() {
-        final String name = (String) extract("NAME");
-        final long size = extractSize();
-        final double fpp = extractFpp();
+    private fun handleCreate() {
+        val name = extract("NAME") as String
+        val size = extractSize()
+        val fpp = extractFpp()
 
 
         FileBasedBloomFilter.create(
                 Paths.get(name),
-                getFunnel(),
+                funnel,
                 size,
                 fpp
-        );
+        )
     }
 
 
-    private void handleInsert() throws IOException {
-        final String name = (String) extract("NAME");
-        final BloomFilter<CharSequence> filter = FileBasedBloomFilter.open(
+    @Throws(IOException::class)
+    private fun handleInsert() {
+        val name = extract("NAME") as String
+        val filter = FileBasedBloomFilter.open(
                 Paths.get(name),
-                getFunnel()
-        );
+                funnel
+        )
 
-        try(BufferedReader reader = new BufferedReader(new InputStreamReader(System.in, Charsets.UTF_8.newDecoder()))) {
-            reader.lines().forEach(filter::put);
-        }
+        BufferedReader(InputStreamReader(System.`in`, Charsets.UTF_8.newDecoder())).use { reader -> reader.lines().forEach { filter.put(it) } }
     }
 
-    private void handleCheck() throws IOException {
-        final String name = (String) extract("NAME");
-        final BloomFilter<CharSequence> filter = FileBasedBloomFilter.open(
+    @Throws(IOException::class)
+    private fun handleCheck() {
+        val name = extract("NAME") as String
+        val filter = FileBasedBloomFilter.open(
                 Paths.get(name),
-                getFunnel()
-        );
+                funnel
+        )
 
-        try(BufferedReader reader = new BufferedReader(new InputStreamReader(System.in, Charsets.UTF_8.newDecoder()))) {
-            reader.lines().filter(filter::mightContain).forEach(System.out::println);
-        }
+        BufferedReader(InputStreamReader(System.`in`, Charsets.UTF_8.newDecoder())).use { reader -> reader.lines().filter { filter.mightContain(it) }.forEach { println(it) } }
     }
 
-    private void handleBenchmark() throws IOException {
-        final long size = extractSize();
-        final double fpp = extractFpp();
-        new Benchmark(size, fpp).run();
+    @Throws(IOException::class)
+    private fun handleBenchmark() {
+        val size = extractSize()
+        val fpp = extractFpp()
+        Benchmark(size, fpp).run()
     }
 
-    @Nonnull
-    private Funnel<CharSequence> getFunnel() {
-        final Funnel<CharSequence> defaultFunnel = Funnels.unencodedCharsFunnel();
-        return isSet("--hex")
-                ? new HexFunnel(defaultFunnel)
-                : defaultFunnel;
+    private fun extractSize(): Long {
+        val key = "--size"
+        val result = extractLong(key)
+        Preconditions.checkArgument(result > 0, "Parameter '%s' should be bigger then 0", key)
+        return result
     }
 
-    private long extractSize() {
-        final String key = "--size";
-        final long result = extractLong(key);
-        Preconditions.checkArgument(result > 0, "Parameter '%s' should be bigger then 0", key);
-        return result;
+    private fun extractFpp(): Double {
+        val key = "--fpp"
+        val result = extractDouble(key)
+        Preconditions.checkArgument(result > 0 && result < 1, "Parameter '%s' should be in range (0, 1) /exclusive/", key)
+        return result
     }
 
-    private double extractFpp() {
-        final String key = "--fpp";
-        final double result = extractDouble(key);
-        Preconditions.checkArgument(result > 0 && result < 1, "Parameter '%s' should be in range (0, 1) /exclusive/", key);
-        return result;
+    private fun isSet(key: String): Boolean {
+        return java.lang.Boolean.TRUE == extract(key)
     }
 
-    private boolean isSet(final String key) {
-        return Boolean.TRUE.equals(extract(key));
-    }
-
-    private long extractLong(@Nonnull final String key) {
+    private fun extractLong(key: String): Long {
         try {
-            return Long.parseLong((String) extract(key));
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException(String.format("Parameter '%s' should be an integer number", key));
+            return java.lang.Long.parseLong(extract(key) as String)
+        } catch (e: NumberFormatException) {
+            throw IllegalArgumentException(String.format("Parameter '%s' should be an integer number", key))
         }
+
     }
 
-    private Object extract(@Nonnull final String key) {
-        return Preconditions.checkNotNull(parsed.get(key), "Missing parameter '%s'", key);
+    private fun extract(key: String): Any {
+        return Preconditions.checkNotNull<Any>(parsed[key], "Missing parameter '%s'", key)
     }
 
-    private double extractDouble(@Nonnull final String key) {
+    private fun extractDouble(key: String): Double {
         try {
-            return Double.parseDouble((String) extract(key));
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException(String.format("Parameter '%s' should be a floating point number", key));
+            return java.lang.Double.parseDouble(extract(key) as String)
+        } catch (e: NumberFormatException) {
+            throw IllegalArgumentException(String.format("Parameter '%s' should be a floating point number", key))
+        }
+
+    }
+
+    companion object {
+
+        @Throws(IOException::class)
+        @JvmStatic
+        fun main(argv: Array<String>) {
+
+            val resourceAsStream = BloomToolMain::class.java.getResourceAsStream("bloom-docopt.txt")
+            val docopt = Docopt(resourceAsStream)
+
+            val parsed = docopt.parse(*argv)
+            BloomToolMain(parsed).handle()
         }
     }
 

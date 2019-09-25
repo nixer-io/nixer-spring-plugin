@@ -7,7 +7,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import static eu.xword.nixer.bloom.BloomToolMain.main;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -29,7 +28,7 @@ public class BloomToolMainTest {
         delete(file);
 
         // when
-        main(new String[]{"create", "--size=100", "--fpp=1e-2", file.getAbsolutePath()});
+        BloomToolMain.main(new String[]{"create", "--size=100", "--fpp=1e-2", file.getAbsolutePath()});
 
         // then
         assertThat(file).exists();
