@@ -1,158 +1,142 @@
 package eu.xword.nixer.bloom
 
+import com.github.ajalt.clikt.core.CliktCommand
+import com.github.ajalt.clikt.core.subcommands
+import com.github.ajalt.clikt.parameters.arguments.argument
+import com.github.ajalt.clikt.parameters.options.default
+import com.github.ajalt.clikt.parameters.options.flag
+import com.github.ajalt.clikt.parameters.options.option
+import com.github.ajalt.clikt.parameters.options.required
+import com.github.ajalt.clikt.parameters.types.double
+import com.github.ajalt.clikt.parameters.types.long
 import com.google.common.base.Charsets
-import com.google.common.base.Preconditions
 import com.google.common.hash.Funnel
 import com.google.common.hash.Funnels
-import org.docopt.Docopt
 import java.io.BufferedReader
-import java.io.IOException
 import java.io.InputStreamReader
 import java.nio.file.Paths
 
 /**
- * The entry class for a command utility to manipulate file-based bloom filters. See `bloom-docopt.txt` for usage information.
+ * The entry class for a command utility to manipulate file-based bloom filters.
  * <br></br>
  * Created on 23/08/2018.
  *
  * @author cezary.biernacki@crosswordcybersecurity.com
  */
-class BloomToolMain(private val parsed: Map<String, Any>) {
+class BloomToolMain : CliktCommand(name = "bloom-tool") {
+    override fun run() = Unit // Nothing here, the actual work is done by subcommands.
+}
 
-    private val funnel: Funnel<CharSequence>
-        get() {
-            val defaultFunnel = Funnels.unencodedCharsFunnel()
-            return if (isSet("--hex"))
-                HexFunnel(defaultFunnel)
-            else
-                defaultFunnel
-        }
+fun main(args: Array<String>) = BloomToolMain()
+        .subcommands(
+                Create(),
+                Insert(),
+                Check(),
+                BenchmarkCmd()
+        )
+        .main(args)
 
-    init {
-        Preconditions.checkNotNull(parsed, "parsed")
-    }
+class Create : BloomFilterAwareCommand(name = "create", help = "Creates a new bloom filter.") {
 
-    @Throws(IOException::class)
-    private fun handle() {
-        if (isSet("create")) {
-            handleCreate()
-            return
-        }
+    private val size: Long by option(help = "Expected number of elements to be inserted").long().required()
 
-        if (isSet("insert")) {
-            handleInsert()
-            return
-        }
+    private val fpp: Double by option(help = "Target maximum probability of false positives").double().default(1e-6)
 
-        if (isSet("check")) {
-            handleCheck()
-            return
-        }
-
-        if (isSet("benchmark")) {
-            handleBenchmark()
-            return
-        }
-
-        throw IllegalArgumentException("Failed to understand arguments: $parsed")
-    }
-
-    private fun handleCreate() {
-        val name = extract("NAME") as String
-        val size = extractSize()
-        val fpp = extractFpp()
-
-
+    override fun run() {
         FileBasedBloomFilter.create(
                 Paths.get(name),
-                funnel,
+                getFunnel(),
                 size,
                 fpp
         )
     }
+}
 
+class Insert : BloomFilterAwareCommand(name = "insert",
+        help = """
+        Inserts values to the filter from standard input.
+        Each line is a separate value.
+        
+        Example:
+        ```
+        bloom-tool insert my.bloom < entries.txt
+        cat entries.txt | bloom-tool insert my.bloom
+        # both variants insert lines from entries.txt to my.bloom
+        ```
+    """) { // TODO do not hardcode command names in help text
 
-    @Throws(IOException::class)
-    private fun handleInsert() {
-        val name = extract("NAME") as String
-        val filter = FileBasedBloomFilter.open(
-                Paths.get(name),
-                funnel
-        )
+    override fun run() {
+        val filter = openFilter()
 
-        BufferedReader(InputStreamReader(System.`in`, Charsets.UTF_8.newDecoder())).use { reader -> reader.lines().forEach { filter.put(it) } }
+        BufferedReader(
+                InputStreamReader(System.`in`, Charsets.UTF_8.newDecoder())
+        ).use { reader ->
+            reader.lines().forEach { filter.put(it) }
+        }
     }
+}
 
-    @Throws(IOException::class)
-    private fun handleCheck() {
-        val name = extract("NAME") as String
-        val filter = FileBasedBloomFilter.open(
-                Paths.get(name),
-                funnel
-        )
+class Check : BloomFilterAwareCommand(name = "check",
+        help = """
+        Checks if values provided in the standard input appear in the filter,
+        printing matches to the standard output, and skipping not matched values.
+        Each line is a separate value.
+        
+        Example:
+        ```
+        echo "example" | bloom-tool check my.bloom
+        # checks if string "example" might be inserted in my.bloom,
+        # printing it standard output if it might be true, and skipping it otherwise
+        ```
+    """) { // TODO do not hardcode command names in help text
 
-        BufferedReader(InputStreamReader(System.`in`, Charsets.UTF_8.newDecoder())).use { reader -> reader.lines().filter { filter.mightContain(it) }.forEach { println(it) } }
+    override fun run() {
+        val filter = openFilter()
+
+        BufferedReader(
+                InputStreamReader(System.`in`, Charsets.UTF_8.newDecoder())
+        ).use { reader ->
+            reader.lines().filter { filter.mightContain(it) }.forEach { println(it) }
+        }
     }
+}
 
-    @Throws(IOException::class)
-    private fun handleBenchmark() {
-        val size = extractSize()
-        val fpp = extractFpp()
+abstract class BloomFilterAwareCommand(name: String, help: String) : CliktCommand(name = name, help = help) {
+
+    protected val name: String by argument(help = """
+            Name of the bloom filter. Corresponds to name of the file with filter parameters and prefix of the data file.
+            """)
+
+    private val hex: Boolean by option(help = """
+            Interprets input values as hexadecimal string when inserting or checking.
+            Values are converted to bytes before inserting, if this conversion fail,
+            the string is inserted a normal way.
+            """)
+            .flag()
+
+    protected fun openFilter(): BloomFilter<CharSequence> = FileBasedBloomFilter.open(
+            Paths.get(name),
+            getFunnel()
+    )
+
+    protected fun getFunnel(): Funnel<CharSequence> = when {
+        hex -> HexFunnel(Funnels.unencodedCharsFunnel())
+        else -> Funnels.unencodedCharsFunnel()
+    }
+}
+
+class BenchmarkCmd : CliktCommand(name = "benchmark",
+        help = """
+        Runs performance benchmark and correctness verification
+        by creating a filter in a temporary directory,
+        populating it with random data and checking what can be found.
+    """) {
+
+    private val size: Long by option(help = "Expected number of elements to be inserted").long().required()
+
+    private val fpp: Double by option(help = "Target maximum probability of false positives").double().default(1e-6)
+
+    override fun run() {
         Benchmark(size, fpp).run()
     }
-
-    private fun extractSize(): Long {
-        val key = "--size"
-        val result = extractLong(key)
-        Preconditions.checkArgument(result > 0, "Parameter '%s' should be bigger then 0", key)
-        return result
-    }
-
-    private fun extractFpp(): Double {
-        val key = "--fpp"
-        val result = extractDouble(key)
-        Preconditions.checkArgument(result > 0 && result < 1, "Parameter '%s' should be in range (0, 1) /exclusive/", key)
-        return result
-    }
-
-    private fun isSet(key: String): Boolean {
-        return java.lang.Boolean.TRUE == extract(key)
-    }
-
-    private fun extractLong(key: String): Long {
-        try {
-            return java.lang.Long.parseLong(extract(key) as String)
-        } catch (e: NumberFormatException) {
-            throw IllegalArgumentException(String.format("Parameter '%s' should be an integer number", key))
-        }
-
-    }
-
-    private fun extract(key: String): Any {
-        return Preconditions.checkNotNull<Any>(parsed[key], "Missing parameter '%s'", key)
-    }
-
-    private fun extractDouble(key: String): Double {
-        try {
-            return java.lang.Double.parseDouble(extract(key) as String)
-        } catch (e: NumberFormatException) {
-            throw IllegalArgumentException(String.format("Parameter '%s' should be a floating point number", key))
-        }
-
-    }
-
-    companion object {
-
-        @Throws(IOException::class)
-        @JvmStatic
-        fun main(argv: Array<String>) {
-
-            val resourceAsStream = BloomToolMain::class.java.getResourceAsStream("bloom-docopt.txt")
-            val docopt = Docopt(resourceAsStream)
-
-            val parsed = docopt.parse(*argv)
-            BloomToolMain(parsed).handle()
-        }
-    }
-
 }

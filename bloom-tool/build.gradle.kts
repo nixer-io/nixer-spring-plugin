@@ -10,20 +10,26 @@ dependencies {
 
     implementation(project(":bloom-filter"))
 
-    implementation("com.offbytwo:docopt:0.6.0.20150202")    // CLI parsing, see: https://github.com/docopt/docopt.java
+    implementation("com.github.ajalt:clikt:2.1.0") // CLI parsing, see: https://ajalt.github.io/clikt/
     implementation("com.google.guava:guava:22.0")
 
     testImplementation("junit:junit:4.12")
     testImplementation("pl.pragmatists:JUnitParams:1.0.6")
     testImplementation("org.assertj:assertj-core:3.6.2")
 
-    testRuntimeOnly("org.junit.vintage", "junit-vintage-engine","5.3.2")
+    testRuntimeOnly("org.junit.vintage", "junit-vintage-engine", "5.3.2")
 }
 
 application {
-    mainClassName = "eu.xword.nixer.bloom.BloomToolMain"
+    mainClassName = "eu.xword.nixer.bloom.BloomToolMainKt"
 }
 
 tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "1.8"
+}
+
+tasks.jar {
+    manifest {
+        attributes["Main-Class"] = "eu.xword.nixer.bloom.BloomToolMainKt"
+    }
 }

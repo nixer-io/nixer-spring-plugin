@@ -28,7 +28,8 @@ public class BloomToolMainTest {
         delete(file);
 
         // when
-        BloomToolMain.main(new String[]{"create", "--size=100", "--fpp=1e-2", file.getAbsolutePath()});
+        BloomToolMainKt.main(new String[]{"create", "--size=100", "--fpp=1e-2", file.getAbsolutePath()});
+//        BloomToolMain.main(new String[]{"create", "--size=100", "--fpp=1e-2", file.getAbsolutePath()});
 
         // then
         assertThat(file).exists();
