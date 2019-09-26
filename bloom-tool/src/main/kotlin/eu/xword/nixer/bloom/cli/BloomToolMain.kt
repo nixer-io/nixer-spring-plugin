@@ -9,14 +9,13 @@ import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.options.required
 import com.github.ajalt.clikt.parameters.types.double
 import com.github.ajalt.clikt.parameters.types.long
-import com.google.common.base.Charsets
+import com.google.common.base.Charsets.UTF_8
 import com.google.common.hash.Funnel
 import com.google.common.hash.Funnels
 import eu.xword.nixer.bloom.Benchmark
 import eu.xword.nixer.bloom.BloomFilter
 import eu.xword.nixer.bloom.FileBasedBloomFilter
 import eu.xword.nixer.bloom.HexFunnel
-import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.nio.file.Paths
 
@@ -60,22 +59,13 @@ class Insert : BloomFilterAwareCommand(name = "insert",
         help = """
         Inserts values to the filter from standard input.
         Each line is a separate value.
-        
-        Example:
-        ```
-        bloom-tool insert my.bloom < entries.txt
-        cat entries.txt | bloom-tool insert my.bloom
-        # both variants insert lines from entries.txt to my.bloom
-        ```
-    """) { // TODO do not hardcode command names in help text
+    """) {
 
     override fun run() {
-        val filter = openFilter()
+        val bloomFilter = openFilter()
 
-        BufferedReader(
-                InputStreamReader(System.`in`, Charsets.UTF_8.newDecoder())
-        ).use { reader ->
-            reader.lines().forEach { filter.put(it) }
+        InputStreamReader(System.`in`, UTF_8.newDecoder()).buffered().use { reader ->
+            reader.lines().forEach { bloomFilter.put(it) }
         }
     }
 }
@@ -85,22 +75,15 @@ class Check : BloomFilterAwareCommand(name = "check",
         Checks if values provided in the standard input appear in the filter,
         printing matches to the standard output, and skipping not matched values.
         Each line is a separate value.
-        
-        Example:
-        ```
-        echo "example" | bloom-tool check my.bloom
-        # checks if string "example" might be inserted in my.bloom,
-        # printing it standard output if it might be true, and skipping it otherwise
-        ```
-    """) { // TODO do not hardcode command names in help text
+    """) {
 
     override fun run() {
-        val filter = openFilter()
+        val bloomFilter = openFilter()
 
-        BufferedReader(
-                InputStreamReader(System.`in`, Charsets.UTF_8.newDecoder())
-        ).use { reader ->
-            reader.lines().filter { filter.mightContain(it) }.forEach { println(it) }
+        InputStreamReader(System.`in`, UTF_8.newDecoder()).buffered().use { reader ->
+            reader.lines()
+                    .filter { bloomFilter.mightContain(it) }
+                    .forEach { println(it) }
         }
     }
 }
