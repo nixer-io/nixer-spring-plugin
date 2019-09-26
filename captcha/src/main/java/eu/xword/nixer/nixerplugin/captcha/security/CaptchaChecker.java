@@ -4,9 +4,10 @@ import java.util.concurrent.atomic.AtomicReference;
 import javax.servlet.http.HttpServletRequest;
 
 import eu.xword.nixer.nixerplugin.captcha.CaptchaService;
-import eu.xword.nixer.nixerplugin.captcha.CaptchaServiceFactory;
-import eu.xword.nixer.nixerplugin.captcha.config.LoginCaptchaProperties;
+import eu.xword.nixer.nixerplugin.captcha.config.RecaptchaProperties;
 import eu.xword.nixer.nixerplugin.captcha.error.RecaptchaException;
+import eu.xword.nixer.nixerplugin.login.LoginFailureType;
+import eu.xword.nixer.nixerplugin.login.LoginFailures;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,32 +19,29 @@ import org.springframework.util.Assert;
  */
 public class CaptchaChecker implements UserDetailsChecker, InitializingBean {
 
-    private static final String LOGIN_ACTION = "login";
-
     @Autowired
     private HttpServletRequest request;
 
-    private CaptchaServiceFactory captchaServiceFactory;
-
-    private String captchaParam;
+    private String captchaParam = RecaptchaProperties.DEFAULT_CAPTCHA_PARAM;
 
     private CaptchaService captchaService;
 
     private AtomicReference<CaptchaCondition> condition = new AtomicReference<>(CaptchaCondition.AUTOMATIC);
 
-    public CaptchaChecker(final CaptchaServiceFactory captchaServiceFactory, final LoginCaptchaProperties loginCaptchaProperties) {
-        Assert.notNull(captchaServiceFactory, "CaptchaServiceFactory must not be null");
-        this.captchaServiceFactory = captchaServiceFactory;
+    private LoginFailures loginFailures;
 
-        Assert.notNull(loginCaptchaProperties, "RecaptchaProperties must not be null");
-        this.captchaParam = loginCaptchaProperties.getParam();
+    public CaptchaChecker(final CaptchaService captchaService,
+                          final LoginFailures loginFailures) {
+        Assert.notNull(captchaService, "CaptchaService must not be null");
+        this.captchaService = captchaService;
+
+        Assert.notNull(loginFailures, "LoginFailure must not be null");
+        this.loginFailures = loginFailures;
     }
 
     @Override
     public void afterPropertiesSet() {
-        if (captchaService == null) {
-            this.captchaService = captchaServiceFactory.createCaptchaService(LOGIN_ACTION);
-        }
+        loginFailures.addMapping(BadCaptchaException.class, LoginFailureType.INVALID_CAPTCHA);
     }
 
     @Override
@@ -85,5 +83,17 @@ public class CaptchaChecker implements UserDetailsChecker, InitializingBean {
         Assert.notNull(captchaService, "CaptchaService must not be null");
 
         this.captchaService = captchaService;
+    }
+
+    public void setRequest(final HttpServletRequest request) {
+        Assert.notNull(captchaParam, "CaptchaParam must not be null");
+
+        this.request = request;
+    }
+
+    public void setCaptchaParam(final String captchaParam) {
+        Assert.notNull(captchaParam, "CaptchaParam must not be null");
+
+        this.captchaParam = captchaParam;
     }
 }

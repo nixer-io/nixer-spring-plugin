@@ -27,6 +27,8 @@ dependencies {
     annotationProcessor("org.springframework.boot", "spring-boot-autoconfigure-processor")
     annotationProcessor("org.springframework.boot", "spring-boot-configuration-processor")
 
+    implementation(project(":nixer-plugin-core"))
+
     implementation("com.google.guava", "guava", "28.0-jre") // consider removing (cache, immutable collections)
     api("javax.validation", "validation-api")
     api("javax.servlet", "javax.servlet-api", "3.1.0")

@@ -1,5 +1,6 @@
 package eu.xword.nixer.nixerplugin.captcha.config;
 
+import eu.xword.nixer.nixerplugin.captcha.CaptchaService;
 import eu.xword.nixer.nixerplugin.captcha.CaptchaServiceFactory;
 import eu.xword.nixer.nixerplugin.captcha.endpoint.CaptchaEndpoint;
 import eu.xword.nixer.nixerplugin.captcha.metrics.MetricsReporterFactory;
@@ -12,6 +13,7 @@ import eu.xword.nixer.nixerplugin.captcha.recaptcha.RecaptchaClient;
 import eu.xword.nixer.nixerplugin.captcha.recaptcha.RecaptchaRestClient;
 import eu.xword.nixer.nixerplugin.captcha.security.CaptchaChecker;
 import eu.xword.nixer.nixerplugin.captcha.security.CaptchaCondition;
+import eu.xword.nixer.nixerplugin.login.LoginFailures;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
@@ -34,6 +36,8 @@ import static eu.xword.nixer.nixerplugin.captcha.config.RecaptchaProperties.Metr
 @EnableConfigurationProperties(value = {LoginCaptchaProperties.class})
 @ConditionalOnProperty(value = "nixer.login.captcha.enabled", havingValue = "true", matchIfMissing = LoginCaptchaProperties.DEFAULT)
 public class CaptchaConfiguration {
+
+    private static final String LOGIN_ACTION = "login";
 
     @Bean
     @ConditionalOnClass(HttpClient.class)
@@ -82,9 +86,14 @@ public class CaptchaConfiguration {
     }
 
     @Bean
-    public CaptchaChecker captchaChecker(CaptchaServiceFactory captchaServiceFactory, LoginCaptchaProperties loginCaptchaProperties) {
+    public CaptchaChecker captchaChecker(CaptchaServiceFactory captchaServiceFactory,
+                                         LoginCaptchaProperties loginCaptchaProperties,
+                                         LoginFailures loginFailures) {
         final CaptchaCondition captchaCondition = CaptchaCondition.valueOf(loginCaptchaProperties.getCondition());
-        final CaptchaChecker captchaChecker = new CaptchaChecker(captchaServiceFactory, loginCaptchaProperties);
+        final CaptchaService captchaService = captchaServiceFactory.createCaptchaService(LOGIN_ACTION);
+
+        final CaptchaChecker captchaChecker = new CaptchaChecker(captchaService, loginFailures);
+        captchaChecker.setCaptchaParam(loginCaptchaProperties.getParam());
         captchaChecker.setCaptchaCondition(captchaCondition);
         return captchaChecker;
     }

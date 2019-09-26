@@ -5,8 +5,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.common.net.HttpHeaders;
 import eu.xword.nixer.nixerplugin.UserUtils;
-import eu.xword.nixer.nixerplugin.ip.IpMetadata;
 import eu.xword.nixer.nixerplugin.filter.RequestAugmentation;
+import eu.xword.nixer.nixerplugin.ip.IpMetadata;
 import eu.xword.nixer.nixerplugin.stigma.StigmaToken;
 import eu.xword.nixer.nixerplugin.stigma.StigmaUtils;
 import eu.xword.nixer.nixerplugin.stigma.embed.EmbeddedStigmaService;
@@ -33,13 +33,18 @@ public class LoginActivityListener implements ApplicationListener<AbstractAuthen
     private StigmaUtils stigmaUtils;
     private EmbeddedStigmaService stigmaService;
 
-    @Autowired
     private LoginActivityService loginActivityService;
 
+    private LoginFailures loginFailures;
+
     public LoginActivityListener(final EmbeddedStigmaService stigmaService,
-                                 final StigmaUtils stigmaUtils) {
+                                 final StigmaUtils stigmaUtils,
+                                 final LoginActivityService loginActivityService,
+                                 final LoginFailures loginFailures) {
         this.stigmaUtils = stigmaUtils;
         this.stigmaService = stigmaService;
+        this.loginActivityService = loginActivityService;
+        this.loginFailures = loginFailures;
     }
 
     private void handleStigma(LoginResult loginResult, LoginContext context) {
@@ -84,7 +89,7 @@ public class LoginActivityListener implements ApplicationListener<AbstractAuthen
             return LoginResult.success();
         } else if (event instanceof AbstractAuthenticationFailureEvent) {
             final AuthenticationException exception = ((AbstractAuthenticationFailureEvent) event).getException();
-            final LoginFailureType failureType = LoginFailureType.fromException(exception);
+            final LoginFailureType failureType = loginFailures.fromException(exception);
             return LoginResult.failure(failureType);
         } else {
             return null;
