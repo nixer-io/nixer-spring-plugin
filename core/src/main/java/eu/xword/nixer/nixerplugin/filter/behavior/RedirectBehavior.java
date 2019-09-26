@@ -13,9 +13,11 @@ public class RedirectBehavior implements Behavior {
     private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
     private final String redirectUrl;
+    private final String name;
 
-    public RedirectBehavior(final String redirectUrl) {
+    public RedirectBehavior(final String redirectUrl, final String name) {
         this.redirectUrl = redirectUrl;
+        this.name = name;
     }
 
     public void act(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -27,6 +29,11 @@ public class RedirectBehavior implements Behavior {
         return Category.EXCLUSIVE;
     }
 
+    @Override
+    public String name() {
+        return name;
+    }
+
     /**
      * Sets the strategy to be used for redirecting to the required channel URL. A
      * {@code DefaultRedirectStrategy} instance will be used if not set.
@@ -36,5 +43,10 @@ public class RedirectBehavior implements Behavior {
     public void setRedirectStrategy(RedirectStrategy redirectStrategy) {
         Assert.notNull(redirectStrategy, "redirectStrategy cannot be null");
         this.redirectStrategy = redirectStrategy;
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName();
     }
 }

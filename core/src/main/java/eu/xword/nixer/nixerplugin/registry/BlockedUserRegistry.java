@@ -11,8 +11,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class BlockedUserRegistry implements ApplicationListener<LockUserEvent> {
 
+    private Duration blockDuration = Duration.ofMinutes(5);
+
     private final Cache<String, String> blockedUsers = CacheBuilder.newBuilder()
-            .expireAfterWrite(Duration.ofMinutes(5))
+            .expireAfterWrite(blockDuration)
             .build();
 
 
@@ -24,5 +26,9 @@ public class BlockedUserRegistry implements ApplicationListener<LockUserEvent> {
     public void onApplicationEvent(final LockUserEvent event) {
         // TODO block for time
         blockedUsers.put(event.getUsername(), event.getUsername());
+    }
+
+    public void setBlockDuration(final Duration blockDuration) {
+        this.blockDuration = blockDuration;
     }
 }

@@ -1,6 +1,6 @@
 package eu.xword.nixer.nixerplugin.filter;
 
-import eu.xword.nixer.nixerplugin.registry.BlockedIpRegistry;
+import eu.xword.nixer.nixerplugin.registry.BlockedUserRegistry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,28 +12,30 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
-class TemporalIpFilterTest {
+class UsernameLoginFilterTest {
 
-    TemporalIpFilter filter;
+    UsernameLoginFilter filter;
 
     @Mock
-    BlockedIpRegistry blockedIpRegistry;
+    BlockedUserRegistry blockedUserRegistry;
 
     @BeforeEach
     public void setup() {
-        filter = new TemporalIpFilter(blockedIpRegistry);
+        filter = new UsernameLoginFilter(blockedUserRegistry);
     }
 
     @Test
-    public void shouldMarkRequestBasedOnIp() {
-        given(blockedIpRegistry.isBlocked("127.0.0.1")).willReturn(Boolean.TRUE);
+    public void shouldMarkRequestBasedOnUsername() {
+        given(blockedUserRegistry.isBlocked("user")).willReturn(Boolean.TRUE);
 
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setRemoteAddr("127.0.0.1");
+        request.setServletPath("/login");
+        request.setMethod("POST");
+        request.setParameter("username", "user");
 
         filter.apply(request);
 
-        assertThat(request.getAttribute(RequestAugmentation.IP_BLOCKED)).isEqualTo(Boolean.TRUE);
+        assertThat(request.getAttribute(RequestAugmentation.USERNAME_BLOCKED)).isEqualTo(Boolean.TRUE);
     }
 
 }
