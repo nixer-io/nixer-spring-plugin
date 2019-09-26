@@ -1,4 +1,4 @@
-package eu.xword.nixer.bloom;
+package eu.xword.nixer.bloom.cli;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,8 +10,6 @@ import org.junit.rules.TemporaryFolder;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Unit tests for {@link BloomToolMain}.
- * <br>
  * Created on 23/08/2018.
  *
  * @author cezary
@@ -29,7 +27,6 @@ public class BloomToolMainTest {
 
         // when
         BloomToolMainKt.main(new String[]{"create", "--size=100", "--fpp=1e-2", file.getAbsolutePath()});
-//        BloomToolMain.main(new String[]{"create", "--size=100", "--fpp=1e-2", file.getAbsolutePath()});
 
         // then
         assertThat(file).exists();

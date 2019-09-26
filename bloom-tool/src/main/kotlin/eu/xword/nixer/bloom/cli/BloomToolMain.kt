@@ -1,4 +1,4 @@
-package eu.xword.nixer.bloom
+package eu.xword.nixer.bloom.cli
 
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.subcommands
@@ -12,6 +12,10 @@ import com.github.ajalt.clikt.parameters.types.long
 import com.google.common.base.Charsets
 import com.google.common.hash.Funnel
 import com.google.common.hash.Funnels
+import eu.xword.nixer.bloom.Benchmark
+import eu.xword.nixer.bloom.BloomFilter
+import eu.xword.nixer.bloom.FileBasedBloomFilter
+import eu.xword.nixer.bloom.HexFunnel
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.nio.file.Paths

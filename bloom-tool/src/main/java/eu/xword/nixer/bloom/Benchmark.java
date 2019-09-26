@@ -19,7 +19,7 @@ import com.google.common.hash.Funnels;
  *
  * @author cezary.biernacki@crosswordcybersecurity.com
  */
-class Benchmark {
+public class Benchmark {
     private static final long SEED_INSERTION = 20180827L;
     private static final long SEED_NEGATIVE = 20180710L;
 
@@ -27,12 +27,12 @@ class Benchmark {
     private final double fpp;
     private final Stopwatch watch = Stopwatch.createUnstarted();
 
-    Benchmark(final long size, final double fpp) {
+    public Benchmark(final long size, final double fpp) {
         this.size = size;
         this.fpp = fpp;
     }
 
-    void run() throws IOException {
+    public void run() throws IOException {
         final Path directory = Files.createTempDirectory("bloom-benchmark-tmp");
         final Path name = directory.resolve("test.bloom");
         try {
