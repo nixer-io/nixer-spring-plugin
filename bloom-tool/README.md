@@ -5,7 +5,7 @@ It can efficiently handle bloom filters that require multi-GB data storage (e.g.
 
 ## Building
 
-The tool is build using Gradle [application plugin](https://docs.gradle.org/current/userguide/application_plugin.html).
+The tool is built using Gradle [application plugin](https://docs.gradle.org/current/userguide/application_plugin.html).
 ```
 ./gradlew
 ```
