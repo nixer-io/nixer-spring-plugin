@@ -9,6 +9,7 @@ import com.google.common.hash.Funnels
 import eu.xword.nixer.bloom.BloomFilter
 import eu.xword.nixer.bloom.FileBasedBloomFilter
 import eu.xword.nixer.bloom.HexFunnel
+import java.nio.file.Files
 import java.nio.file.Paths
 
 abstract class BloomFilterAwareCommand(name: String, help: String) : CliktCommand(name = name, help = help) {
@@ -25,7 +26,7 @@ abstract class BloomFilterAwareCommand(name: String, help: String) : CliktComman
             .flag()
 
     protected fun openFilter(): BloomFilter<CharSequence> = FileBasedBloomFilter.open(
-            Paths.get(name),
+            Paths.get(name).also { require(Files.exists(it)) { "Bloom filter metadata file '$it' does not exist" } },
             getFunnel()
     )
 

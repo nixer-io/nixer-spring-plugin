@@ -6,6 +6,7 @@ import com.github.ajalt.clikt.parameters.options.required
 import com.github.ajalt.clikt.parameters.types.double
 import com.github.ajalt.clikt.parameters.types.long
 import eu.xword.nixer.bloom.FileBasedBloomFilter
+import java.nio.file.Files
 import java.nio.file.Paths
 
 class Create : BloomFilterAwareCommand(name = "create",
@@ -20,7 +21,7 @@ class Create : BloomFilterAwareCommand(name = "create",
 
     override fun run() {
         FileBasedBloomFilter.create(
-                Paths.get(name),
+                Paths.get(name).also { require(Files.notExists(it)) { "Bloom filter metadata file '$it' already exist" } },
                 getFunnel(),
                 size,
                 fpp
