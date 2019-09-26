@@ -21,15 +21,9 @@ dependencies {
 }
 
 application {
-    mainClassName = "eu.xword.nixer.bloom.BloomToolMainKt"
+    mainClassName = "eu.xword.nixer.bloom.cli.BloomToolMainKt"
 }
 
 tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "1.8"
-}
-
-tasks.jar {
-    manifest {
-        attributes["Main-Class"] = "eu.xword.nixer.bloom.BloomToolMainKt"
-    }
 }
