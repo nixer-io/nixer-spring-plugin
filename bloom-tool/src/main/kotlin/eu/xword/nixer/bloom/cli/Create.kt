@@ -8,7 +8,11 @@ import com.github.ajalt.clikt.parameters.types.long
 import eu.xword.nixer.bloom.FileBasedBloomFilter
 import java.nio.file.Paths
 
-class Create : BloomFilterAwareCommand(name = "create", help = "Creates a new bloom filter.") {
+class Create : BloomFilterAwareCommand(name = "create",
+        help = """
+        Creates a new bloom filter represented by two files. 
+        The first file contains filter parameters, the second one is data file sized to fit the provided number of expected insertions.
+    """) {
 
     private val size: Long by option(help = "Expected number of elements to be inserted").long().required()
 
