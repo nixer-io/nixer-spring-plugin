@@ -1,8 +1,5 @@
 package eu.xword.nixer.bloom.cli
 
-import com.google.common.base.Charsets
-import java.io.InputStreamReader
-
 class Check : BloomFilterAwareCommand(name = "check",
         help = """
         Checks if values provided in the standard input appear in the filter,
@@ -13,10 +10,6 @@ class Check : BloomFilterAwareCommand(name = "check",
     override fun run() {
         val bloomFilter = openFilter(name, hex)
 
-        InputStreamReader(System.`in`, Charsets.UTF_8.newDecoder()).buffered().use { reader ->
-            reader.lines()
-                    .filter { bloomFilter.mightContain(it) }
-                    .forEach { println(it) }
-        }
+        checkAgainstStandardInput(bloomFilter)
     }
 }

@@ -1,7 +1,6 @@
 package eu.xword.nixer.bloom.cli
 
-import com.google.common.base.Charsets
-import java.io.InputStreamReader
+import com.github.ajalt.clikt.parameters.groups.cooccurring
 
 class Insert : BloomFilterAwareCommand(name = "insert",
         help = """
@@ -9,11 +8,15 @@ class Insert : BloomFilterAwareCommand(name = "insert",
         Each line is a separate value.
     """) {
 
+    private val preprocessOptions by PreprocessOptions().cooccurring()
+
     override fun run() {
         val bloomFilter = openFilter(name, hex)
 
-        InputStreamReader(System.`in`, Charsets.UTF_8.newDecoder()).buffered().use { reader ->
-            reader.lines().forEach { bloomFilter.put(it) }
-        }
+        val entryTransformer = preprocessOptions
+                ?.run { fieldExtractor(separator, field) }
+                ?: { it }
+
+        insertFromStandardInput(bloomFilter, entryTransformer)
     }
 }
