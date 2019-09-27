@@ -26,6 +26,7 @@ public class CaptchaChecker implements UserDetailsChecker, InitializingBean {
 
     private CaptchaService captchaService;
 
+    // TODO consider removing condition and controlling it with request param + default actions
     private AtomicReference<CaptchaCondition> condition = new AtomicReference<>(CaptchaCondition.AUTOMATIC);
 
     private LoginFailures loginFailures;

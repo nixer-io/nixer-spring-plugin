@@ -6,19 +6,21 @@ import javax.validation.ConstraintValidatorContext;
 import eu.xword.nixer.nixerplugin.captcha.CaptchaService;
 import eu.xword.nixer.nixerplugin.captcha.CaptchaServiceFactory;
 import eu.xword.nixer.nixerplugin.captcha.error.RecaptchaException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 /**
  * Checks that a given string is valid captcha response.
  */
-@Component
 public class CaptchaValidator implements ConstraintValidator<Captcha, String> {
 
     private CaptchaService captchaService;
 
-    @Autowired
     private CaptchaServiceFactory captchaServiceFactory;
+
+    public CaptchaValidator(final CaptchaServiceFactory captchaServiceFactory) {
+        Assert.notNull(captchaServiceFactory, "CaptchaServiceFactory must not be null");
+        this.captchaServiceFactory = captchaServiceFactory;
+    }
 
     @Override
     public void initialize(final Captcha annotation) {

@@ -34,7 +34,7 @@ public class RecaptchaRestClient implements RecaptchaClient {
         try {
             return restTemplate.getForObject(url, RecaptchaVerifyResponse.class, params);
         } catch (RestClientException e) {
-            throw CaptchaErrors.serviceFailure("Failed calling eu.xword.nixer.nixerplugin.captcha verify", e);
+            throw CaptchaErrors.serviceFailure("Failed calling captcha verify", e);
         }
     }
 }

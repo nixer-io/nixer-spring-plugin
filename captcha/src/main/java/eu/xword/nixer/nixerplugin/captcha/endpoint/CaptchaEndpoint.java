@@ -18,10 +18,6 @@ public class CaptchaEndpoint {
 
     private CaptchaChecker captchaChecker;
 
-    public CaptchaEndpoint() {
-
-    }
-
     public CaptchaEndpoint(final CaptchaChecker captchaChecker) {
         Assert.notNull(captchaChecker, "CaptchaChecker must not be null");
         this.captchaChecker = captchaChecker;

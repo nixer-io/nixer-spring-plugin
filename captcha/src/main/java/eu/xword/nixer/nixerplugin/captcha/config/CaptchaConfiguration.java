@@ -13,6 +13,7 @@ import eu.xword.nixer.nixerplugin.captcha.recaptcha.RecaptchaClient;
 import eu.xword.nixer.nixerplugin.captcha.recaptcha.RecaptchaRestClient;
 import eu.xword.nixer.nixerplugin.captcha.security.CaptchaChecker;
 import eu.xword.nixer.nixerplugin.captcha.security.CaptchaCondition;
+import eu.xword.nixer.nixerplugin.captcha.validation.CaptchaValidator;
 import eu.xword.nixer.nixerplugin.login.LoginFailures;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.apache.http.client.HttpClient;
@@ -96,6 +97,11 @@ public class CaptchaConfiguration {
         captchaChecker.setCaptchaParam(loginCaptchaProperties.getParam());
         captchaChecker.setCaptchaCondition(captchaCondition);
         return captchaChecker;
+    }
+
+    @Bean
+    public CaptchaValidator captchaValidator(CaptchaServiceFactory captchaServiceFactory) {
+        return new CaptchaValidator(captchaServiceFactory);
     }
 
     @Bean

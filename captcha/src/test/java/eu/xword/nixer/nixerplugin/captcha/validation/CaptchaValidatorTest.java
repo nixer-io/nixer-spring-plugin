@@ -70,7 +70,7 @@ public class CaptchaValidatorTest {
         this.mockMvc.perform(MockMvcRequestBuilders
                 .post("/captchaTestDefault")
                 .param("g-recaptcha-response", "eu.xword.nixer.nixerplugin.captcha")).andDo(print())
-                .andExpect(content().string(containsString("{eu.xword.nixer.nixerplugin.eu.xword.nixer.nixerplugin.captcha.validation.Captcha.message}")))
+                .andExpect(content().string(containsString("{eu.xword.nixer.nixerplugin.captcha.validation.Captcha.message}")))
                 .andExpect(status().isBadRequest());
     }
 }
