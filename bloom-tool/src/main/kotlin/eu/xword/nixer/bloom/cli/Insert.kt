@@ -10,7 +10,7 @@ class Insert : BloomFilterAwareCommand(name = "insert",
     """) {
 
     override fun run() {
-        val bloomFilter = openFilter()
+        val bloomFilter = openFilter(name, hex)
 
         InputStreamReader(System.`in`, Charsets.UTF_8.newDecoder()).buffered().use { reader ->
             reader.lines().forEach { bloomFilter.put(it) }

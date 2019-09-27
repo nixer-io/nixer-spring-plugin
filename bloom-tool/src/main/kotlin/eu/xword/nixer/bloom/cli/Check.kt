@@ -11,7 +11,7 @@ class Check : BloomFilterAwareCommand(name = "check",
     """) {
 
     override fun run() {
-        val bloomFilter = openFilter()
+        val bloomFilter = openFilter(name, hex)
 
         InputStreamReader(System.`in`, Charsets.UTF_8.newDecoder()).buffered().use { reader ->
             reader.lines()

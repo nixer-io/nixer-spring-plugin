@@ -18,6 +18,7 @@ fun main(args: Array<String>) = BloomToolMain()
         .subcommands(
                 Create(),
                 Insert(),
+                Build(),
                 Check(),
                 BenchmarkCmd()
         )

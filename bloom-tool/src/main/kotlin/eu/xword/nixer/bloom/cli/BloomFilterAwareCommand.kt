@@ -2,15 +2,12 @@ package eu.xword.nixer.bloom.cli
 
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.parameters.arguments.argument
+import com.github.ajalt.clikt.parameters.options.default
 import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.option
-import com.google.common.hash.Funnel
-import com.google.common.hash.Funnels
-import eu.xword.nixer.bloom.BloomFilter
-import eu.xword.nixer.bloom.FileBasedBloomFilter
-import eu.xword.nixer.bloom.HexFunnel
-import java.nio.file.Files
-import java.nio.file.Paths
+import com.github.ajalt.clikt.parameters.options.required
+import com.github.ajalt.clikt.parameters.types.double
+import com.github.ajalt.clikt.parameters.types.long
 
 abstract class BloomFilterAwareCommand(name: String, help: String) : CliktCommand(name = name, help = help) {
 
@@ -18,20 +15,17 @@ abstract class BloomFilterAwareCommand(name: String, help: String) : CliktComman
             Name of the bloom filter. Corresponds to name of the file with filter parameters and prefix of the data file.
             """)
 
-    private val hex: Boolean by option(help = """
+    protected val hex: Boolean by option(help = """
             Interprets input values as hexadecimal string when inserting or checking.
             Values are converted to bytes before inserting, if this conversion fail,
             the string is inserted a normal way.
             """)
-            .flag()
+            .flag(default = true)
+}
 
-    protected fun openFilter(): BloomFilter<CharSequence> = FileBasedBloomFilter.open(
-            Paths.get(name).also { require(Files.exists(it)) { "Bloom filter metadata file '$it' does not exist" } },
-            getFunnel()
-    )
+abstract class BloomFilterCreatingCommand(name: String, help: String) : BloomFilterAwareCommand(name = name, help = help) {
 
-    protected fun getFunnel(): Funnel<CharSequence> = when {
-        hex -> HexFunnel(Funnels.unencodedCharsFunnel())
-        else -> Funnels.unencodedCharsFunnel()
-    }
+    protected val size: Long by option(help = "Expected number of elements to be inserted").long().required()
+
+    protected val fpp: Double by option(help = "Target maximum probability of false positives").double().default(1e-6)
 }
