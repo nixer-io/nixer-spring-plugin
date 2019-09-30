@@ -10,8 +10,8 @@ public interface CaptchaService {
 
     /** Verifies captcha response
      *
-     * @param captcha eu.xword.nixer.nixerplugin.captcha response supplied by user.
-     * @throws RecaptchaException if incorrect eu.xword.nixer.nixerplugin.captcha was supplied or verification failed.
+     * @param captcha captcha response supplied by user.
+     * @throws RecaptchaException if incorrect captcha was supplied or verification failed.
      */
     void processResponse(String captcha) throws RecaptchaException;
 }

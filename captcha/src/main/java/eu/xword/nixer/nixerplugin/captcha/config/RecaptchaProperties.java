@@ -12,12 +12,14 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "recaptcha")
 public class RecaptchaProperties {
 
+    public static final String DEFAULT_CAPTCHA_PARAM = "g-recaptcha-response";
+
     private String verifyUrl;
 
     private Http http = new Http();
     private RecaptchaKeys key = new RecaptchaKeys();
 
-    private String param = "g-recaptcha-response";
+    private String param = DEFAULT_CAPTCHA_PARAM;
 
     private BlockingProperties blocking = new BlockingProperties();
 

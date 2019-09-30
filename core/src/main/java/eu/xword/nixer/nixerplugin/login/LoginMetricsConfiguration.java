@@ -20,4 +20,8 @@ public class LoginMetricsConfiguration {
         return new LoginMetricsReporter(meterRegistry);
     }
 
+    @Bean
+    public LoginFailures loginFailures() {
+        return new LoginFailures();
+    }
 }

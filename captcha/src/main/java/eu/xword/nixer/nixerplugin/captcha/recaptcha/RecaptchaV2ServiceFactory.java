@@ -12,6 +12,7 @@ import eu.xword.nixer.nixerplugin.captcha.metrics.MetricsReporter;
 import eu.xword.nixer.nixerplugin.captcha.metrics.MetricsReporterFactory;
 import eu.xword.nixer.nixerplugin.captcha.reattempt.InMemoryCaptchaReattemptService;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 /**
  * Returns configured instance of {@link RecaptchaV2Service}.
@@ -28,9 +29,16 @@ public class RecaptchaV2ServiceFactory implements CaptchaServiceFactory {
                                      final MetricsReporterFactory metricsReporterFactory,
                                      final RecaptchaProperties recaptchaProperties,
                                      final InMemoryCaptchaReattemptService captchaReattemptService) {
+        Assert.notNull(recaptchaClient, "RecaptchaClient must not be null");
         this.recaptchaClient = recaptchaClient;
+
+        Assert.notNull(metricsReporterFactory, "MetricsReporterFactory must not be null");
         this.metricsReporterFactory = metricsReporterFactory;
+
+        Assert.notNull(recaptchaProperties, "RecaptchaProperties must not be null");
         this.recaptchaProperties = recaptchaProperties;
+
+        Assert.notNull(captchaReattemptService, "CaptchaReattemptService must not be null");
         this.captchaReattemptService = captchaReattemptService;
     }
 

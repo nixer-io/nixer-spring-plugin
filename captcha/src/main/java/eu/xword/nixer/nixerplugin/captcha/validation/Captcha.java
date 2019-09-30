@@ -8,13 +8,13 @@ import javax.validation.Constraint;
 import javax.validation.Payload;
 
 /**
- * The string has to be a valid eu.xword.nixer.nixerplugin.captcha response. Exactly what eu.xword.nixer.nixerplugin.captcha provider is used for verification is left for validator.
+ * The string has to be a valid captcha response. Exactly what captcha provider is used for verification is left for validator.
  */
 @Target({ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = CaptchaValidator.class)
 public @interface Captcha {
-    String message() default "{eu.xword.nixer.nixerplugin.eu.xword.nixer.nixerplugin.captcha.validation.Captcha.message}";
+    String message() default "{eu.xword.nixer.nixerplugin.captcha.validation.Captcha.message}";
 
     Class<?>[] groups() default {};
 
