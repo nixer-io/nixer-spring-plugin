@@ -11,12 +11,14 @@ import org.springframework.stereotype.Component;
 @Component
 public class BlockedIpRegistry implements ApplicationListener<BlockSourceIpEvent> {
 
+    private Duration blockDuration = Duration.ofMinutes(5);
+
     public boolean isBlocked(String ip) {
         return blockedIps.getIfPresent(ip) != null;
     }
 
     private final Cache<String, String> blockedIps = CacheBuilder.newBuilder()
-            .expireAfterWrite(Duration.ofMinutes(5))
+            .expireAfterWrite(blockDuration)
             .build();
 
 
@@ -26,4 +28,7 @@ public class BlockedIpRegistry implements ApplicationListener<BlockSourceIpEvent
         blockedIps.put(event.getIp(), event.getIp());
     }
 
+    public void setBlockDuration(final Duration blockDuration) {
+        this.blockDuration = blockDuration;
+    }
 }

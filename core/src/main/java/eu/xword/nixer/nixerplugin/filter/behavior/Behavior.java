@@ -10,6 +10,8 @@ public interface Behavior {
 
     Category category();
 
+    String name();
+
     enum Category {
         EXCLUSIVE,
         STACKABLE

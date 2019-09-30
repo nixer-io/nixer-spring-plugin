@@ -15,30 +15,31 @@ import eu.xword.nixer.nixerplugin.detection.GlobalCredentialStuffing;
 import eu.xword.nixer.nixerplugin.filter.behavior.Behavior;
 import eu.xword.nixer.nixerplugin.filter.behavior.BehaviorProvider;
 import eu.xword.nixer.nixerplugin.filter.behavior.Facts;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
-import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import static eu.xword.nixer.nixerplugin.filter.RequestAugmentation.GLOBAL_CREDENTIAL_STUFFING;
 
 
-@Component
 @Order(value = Ordered.HIGHEST_PRECEDENCE + 20)
 public class BehaviorExecutionFilter extends OncePerRequestFilter {
 
-    @Autowired
     private BehaviorProvider behaviorProvider;
 
-    @Autowired
     private GlobalCredentialStuffing globalCredentialStuffing;
 
     private boolean dryRun;
 
+    // TODO externalize
     private RequestMatcher requestMatcher = new AntPathRequestMatcher("/login", "POST");
+
+    public BehaviorExecutionFilter(final BehaviorProvider behaviorProvider, final GlobalCredentialStuffing globalCredentialStuffing) {
+        this.behaviorProvider = behaviorProvider;
+        this.globalCredentialStuffing = globalCredentialStuffing;
+    }
 
     @Override
     protected void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response, final FilterChain filterChain) throws ServletException, IOException {
@@ -51,10 +52,8 @@ public class BehaviorExecutionFilter extends OncePerRequestFilter {
             //filter/sanitize
             List<Behavior> sanitized = sanitize(behaviors);
 
-            if (!dryRun) {
-                //execute
-                execute(request, response, sanitized);
-            }
+            //execute
+            execute(request, response, sanitized);
         }
 
         filterChain.doFilter(request, response);
@@ -77,7 +76,7 @@ public class BehaviorExecutionFilter extends OncePerRequestFilter {
 
     private void execute(final HttpServletRequest request, final HttpServletResponse response, final List<Behavior> behaviors) throws IOException {
         for (Behavior behavior : behaviors) {
-            logger.info(dryRun ? "[dryRun]" : "" + "Executing behaviour " + behavior.toString());
+            logger.info((dryRun ? "[dry-run]" : "") + "Executing behaviour: " + behavior.name());
             if (!dryRun) {
                 behavior.act(request, response);
             }

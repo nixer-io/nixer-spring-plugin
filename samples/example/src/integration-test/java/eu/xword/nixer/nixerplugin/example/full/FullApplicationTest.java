@@ -18,6 +18,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.MediaType;
+import org.springframework.integration.test.matcher.MapContentMatchers;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -27,6 +28,7 @@ import org.springframework.test.web.servlet.request.RequestPostProcessor;
 
 import static eu.xword.nixer.nixerplugin.example.LoginRequestBuilder.formLogin;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.nullValue;
@@ -278,6 +280,29 @@ public class FullApplicationTest {
                 .andExpect(isBlocked());
         // @formatter:on
     }
+
+    @Test
+    public void behaviorsEndpointToReturnBehaviorsAndRules() throws Exception {
+        this.mockMvc.perform(get("/actuator/behaviors"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.behaviors", hasItems("captcha", "log")))
+                .andExpect(jsonPath("$.rules", MapContentMatchers.hasEntry("credentialStuffingActive", "captcha")))
+        ;
+    }
+
+    @Test
+    public void behaviorsEndpointToUpdateBehavior() throws Exception {
+        final String newBehavior = "{ \"behavior\": \"log\"}";
+        this.mockMvc.perform(post("/actuator/behaviors/credentialStuffingActive")
+                .content(newBehavior)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful());
+
+        this.mockMvc.perform(get("/actuator/behaviors"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.rules", MapContentMatchers.hasEntry("credentialStuffingActive", "log")));
+    }
+
 
     private RequestPostProcessor remoteAddress(String ip) {
         return request -> {

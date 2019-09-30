@@ -32,6 +32,7 @@ dependencies {
     implementation("com.fasterxml.jackson.datatype", "jackson-datatype-jsr310")
 
     testImplementation("org.springframework", "spring-test")
+    testImplementation("org.springframework.integration", "spring-integration-test")
     testImplementation("org.springframework.security", "spring-security-test")
     testImplementation("org.springframework.boot", "spring-boot-starter-test") {
         exclude(module = "junit")

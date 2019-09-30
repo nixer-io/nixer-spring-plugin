@@ -5,7 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 import eu.xword.nixer.nixerplugin.registry.BlockedIpRegistry;
 import org.springframework.stereotype.Component;
 
-//@Component
+@Component
 public class TemporalIpFilter extends MetadataFilter {
 
     private BlockedIpRegistry blockedIpRegistry;
