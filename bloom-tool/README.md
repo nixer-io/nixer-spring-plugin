@@ -13,7 +13,7 @@ builds whole project and places the tool package under `build/distributions` dir
 
 ## Using
 
-Unzip the application package and invoke:
+Unzip the application package and invoke in order to see all commands and options:
 
 ```
 bin/bloom-tool --help
@@ -26,30 +26,33 @@ Create a new filter `my.bloom` for 1M insertions and 1 to 1M false positive rate
 ```
 bloom-tool create --size=1000000 --fpp=1e-6 --name=my.bloom
 ```
+The created filter is represented by two files:
+- `my.bloom` contains filter parameters, 
+- `my.bloom-data` is data file sized to fit the provided number of expected insertions.
 
 #### Insert
-Insert lines from `entries.txt` into `my.bloom` filter.
+Insert lines from `entries.txt` into `my.bloom` filter, populating `my.bloom-data` file.
 ```
 bloom-tool insert --name=my.bloom --input-file=entries.txt
 ```
 or from input stream 
 ```
-cat entries.txt | bloom-tool insert --name=my.bloom
+cat entries.txt | bloom-tool insert --name=my.bloom --stdin
 ```
 alternatively
 ```
-bloom-tool insert --name=my.bloom < entries.txt
+bloom-tool insert --name=my.bloom --stdin < entries.txt
 ```
 
 Insert hexadecimal from `hashes.txt` to `my.bloom`. Useful if the filter is intended to be use from Java code generating some hashes.
 ```
-bloom-tool insert --hex --name=my.bloom < hashes.txt
+bloom-tool insert --hex --name=my.bloom --input-file=hashes.txt
 ```
 
 #### Check
 Check if string `example` might be inserted in `my.bloom` filter, printing it to standard output if it might be true or skipping otherwise.
 ```
-echo example | bloom-tool check --name=my.bloom
+echo example | bloom-tool check --name=my.bloom --stdin
 ```
 
 #### Benchmark
