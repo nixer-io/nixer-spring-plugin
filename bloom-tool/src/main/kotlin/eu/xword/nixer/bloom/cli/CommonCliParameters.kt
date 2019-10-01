@@ -17,10 +17,10 @@ import java.io.InputStream
 
 abstract class InputStreamingCommand(name: String, help: String) : CliktCommand(name = name, help = help) {
 
-    private val stdin: Boolean by option(help = "Indicates that data for insertion should be read from standard input.")
+    private val stdin: Boolean by option(help = "Indicates that data should be read from standard input.")
             .flag(default = false)
 
-    private val inputFile: File? by option(help = "Name of the file with data for insertion.")
+    private val inputFile: File? by option(help = "Name of the file with input data.")
             .file(exists = true, folderOkay = false, fileOkay = true)
 
     protected fun inputStream(): InputStream = when {
