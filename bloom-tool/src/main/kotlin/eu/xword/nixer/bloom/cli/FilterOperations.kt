@@ -16,7 +16,7 @@ import java.nio.file.Paths
  *
  * @author gcwiak
  */
-fun createFilter(name: String, size: Long, fpp: Double, hex: Boolean): BloomFilter<CharSequence> = FileBasedBloomFilter.create(
+fun createFilter(name: String, hex: Boolean, size: Long, fpp: Double): BloomFilter<CharSequence> = FileBasedBloomFilter.create(
         Paths.get(name).also { require(Files.notExists(it)) { "Bloom filter metadata file '$it' already exist" } },
         getFunnel(hex),
         size,

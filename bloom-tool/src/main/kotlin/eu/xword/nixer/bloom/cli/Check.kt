@@ -1,17 +1,19 @@
 package eu.xword.nixer.bloom.cli
 
+import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.types.file
 import java.io.File
 import java.io.InputStream
 
-class Check : BloomFilterAwareCommand(name = "check",
-        help = """
+class Check : CliktCommand(help = """
         Checks if values provided in the standard input appear in the filter,
         printing matches to the standard output, and skipping not matched values.
         Each line is a separate value.
     """) {
+
+    private val basicFilterOptions by BasicFilterOptions().required()
 
     private val stdin: Boolean by option(help = "Indicates that data for insertion should be read from standard input.")
             .flag(default = false)
@@ -31,7 +33,9 @@ class Check : BloomFilterAwareCommand(name = "check",
             )
         }
 
-        val bloomFilter = openFilter(name, hex)
+        val bloomFilter = with(basicFilterOptions) {
+            openFilter(name, hex)
+        }
 
         checkAgainstFilter(bloomFilter, inputStream)
     }

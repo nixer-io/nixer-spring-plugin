@@ -1,5 +1,6 @@
 package eu.xword.nixer.bloom.cli
 
+import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.parameters.groups.cooccurring
 import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.option
@@ -12,8 +13,7 @@ import java.io.InputStream
  *
  * @author gcwiak
  */
-class Build : BloomFilterCreatingCommand(name = "build",
-        help = """
+class Build : CliktCommand(help = """
         Combination of 'create' and 'insert' commands.    
         Creates a new bloom filter and inserts values from standard input. 
         Each line is a separate value.
@@ -24,6 +24,9 @@ class Build : BloomFilterCreatingCommand(name = "build",
 
     private val inputFile: File? by option(help = "Name of the file with data for insertion.")
             .file(exists = true, folderOkay = false, fileOkay = true)
+
+    private val basicFilterOptions by BasicFilterOptions().required()
+    private val detailedFilterOptions by DetailedFilterOptions().required()
 
     private val preprocessOptions by PreprocessOptions().cooccurring()
 
@@ -39,7 +42,12 @@ class Build : BloomFilterCreatingCommand(name = "build",
             )
         }
 
-        val bloomFilter = createFilter(name, size, fpp, hex)
+        val bloomFilter = createFilter(
+                basicFilterOptions.name,
+                basicFilterOptions.hex,
+                detailedFilterOptions.size,
+                detailedFilterOptions.fpp
+        )
 
         val entryTransformer = preprocessOptions
                 ?.run { fieldExtractor(separator, field) }

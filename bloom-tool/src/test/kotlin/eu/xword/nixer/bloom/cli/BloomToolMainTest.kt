@@ -44,7 +44,7 @@ class BloomToolMainTest {
         val filterFile = givenFile("test.bloom")
 
         // when
-        executeCommand("create", "--size=100", "--fpp=1e-2", filterFile.absolutePath)
+        executeCommand("create", "--size=100", "--fpp=1e-2", "--name=${filterFile.absolutePath}")
 
         // then
         assertThat(filterFile).exists()
@@ -54,7 +54,7 @@ class BloomToolMainTest {
     fun `should insert values into bloom filter and execute successful check`() {
         // given
         val filterFile = givenFile("test.bloom")
-        executeCommand("create", "--size=3", "--fpp=1e-2", filterFile.absolutePath)
+        executeCommand("create", "--size=3", "--fpp=1e-2", "--name=${filterFile.absolutePath}")
         assertThat(filterFile).exists()
 
         val hashToLookFor = "FFFFFFF8A0382AA9C8D9536EFBA77F261815334D"
@@ -72,9 +72,9 @@ class BloomToolMainTest {
         val checkFile = givenFile("check.txt").apply { writeText(hashToLookFor) }
 
         // when
-        executeCommand("insert", "--input-file=${valuesFile.absolutePath}", filterFile.absolutePath)
+        executeCommand("insert", "--input-file=${valuesFile.absolutePath}", "--name=${filterFile.absolutePath}")
 
-        executeCommand("check", "--input-file=${checkFile.absolutePath}", filterFile.absolutePath)
+        executeCommand("check", "--input-file=${checkFile.absolutePath}", "--name=${filterFile.absolutePath}")
 
         // then
         assertThat(commandOutput.toString()).contains(hashToLookFor)
@@ -102,9 +102,9 @@ class BloomToolMainTest {
         // when
         executeCommand("build",
                 "--size=3", "--fpp=1e-2", "--input-file=${valuesFile.absolutePath}", "--separator=:", "--field=0",
-                filterFile.absolutePath)
+                "--name=${filterFile.absolutePath}")
 
-        executeCommand("check", "--input-file=${checkFile.absolutePath}", filterFile.absolutePath)
+        executeCommand("check", "--input-file=${checkFile.absolutePath}", "--name=${filterFile.absolutePath}")
 
         // then
         assertThat(commandOutput.toString()).contains(hashToLookFor)

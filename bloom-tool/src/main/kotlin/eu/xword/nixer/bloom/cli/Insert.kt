@@ -1,5 +1,6 @@
 package eu.xword.nixer.bloom.cli
 
+import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.parameters.groups.cooccurring
 import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.option
@@ -7,11 +8,12 @@ import com.github.ajalt.clikt.parameters.types.file
 import java.io.File
 import java.io.InputStream
 
-class Insert : BloomFilterAwareCommand(name = "insert",
-        help = """
+class Insert : CliktCommand(help = """
         Inserts values to the filter from standard input.
         Each line is a separate value.
     """) {
+
+    private val basicFilterOptions by BasicFilterOptions().required()
 
     private val stdin: Boolean by option(help = "Indicates that data for insertion should be read from standard input.")
             .flag(default = false)
@@ -33,7 +35,9 @@ class Insert : BloomFilterAwareCommand(name = "insert",
             )
         }
 
-        val bloomFilter = openFilter(name, hex)
+        val bloomFilter = with(basicFilterOptions) {
+            openFilter(name, hex)
+        }
 
         val entryTransformer = preprocessOptions
                 ?.run { fieldExtractor(separator, field) }
