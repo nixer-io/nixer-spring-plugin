@@ -24,28 +24,32 @@ bin/bloom-tool --help
 #### Create
 Create a new filter `my.bloom` for 1M insertions and 1 to 1M false positive rate.
 ```
-bloom-tool create --size=1000000 --fpp=1e-6 my.bloom
+bloom-tool create --size=1000000 --fpp=1e-6 --name=my.bloom
 ```
 
 #### Insert
 Insert lines from `entries.txt` into `my.bloom` filter.
 ```
-bloom-tool insert my.bloom < entries.txt
+bloom-tool insert --name=my.bloom --input-file=entries.txt
 ```
-or
+or from input stream 
 ```
-cat entries.txt | bloom-tool insert my.bloom
+cat entries.txt | bloom-tool insert --name=my.bloom
+```
+alternatively
+```
+bloom-tool insert --name=my.bloom < entries.txt
 ```
 
 Insert hexadecimal from `hashes.txt` to `my.bloom`. Useful if the filter is intended to be use from Java code generating some hashes.
 ```
-bloom-tool insert --hex my.bloom < hashes.txt
+bloom-tool insert --hex --name=my.bloom < hashes.txt
 ```
 
 #### Check
 Check if string `example` might be inserted in `my.bloom` filter, printing it to standard output if it might be true or skipping otherwise.
 ```
-echo example | bloom-tool check my.bloom
+echo example | bloom-tool check --name=my.bloom
 ```
 
 #### Benchmark
