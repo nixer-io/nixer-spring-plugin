@@ -12,7 +12,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class PwnedCheckProperties {
 
-    private boolean enabled;
+    static final boolean ENABLED_BY_DEFAULT = true;
+
+    private boolean enabled = ENABLED_BY_DEFAULT;
 
     private String pwnedFilePath;
 
@@ -23,7 +25,6 @@ public class PwnedCheckProperties {
     public void setPwnedFilePath(final String pwnedFilePath) {
         this.pwnedFilePath = pwnedFilePath;
     }
-
 
     public boolean isEnabled() {
         return enabled;

@@ -4,14 +4,12 @@ import com.google.common.base.Charsets;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 import eu.xword.nixer.bloom.BloomFilter;
-import org.springframework.stereotype.Component;
 
 /**
  * Created on 23/09/2019.
  *
  * @author gcwiak
  */
-@Component
 public class PwnedCredentialsChecker {
 
     private final HashFunction hashFunction = Hashing.sha1(); // TODO make this configurable
