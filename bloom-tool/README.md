@@ -1,7 +1,18 @@
 # bloom-tool
 
-A simple command line utility to manipulate file-based bloom filters. 
-It can efficiently handle bloom filters that require multi-GB data storage (e.g. with billions of insertions and low false positive rates).
+A simple command line utility to manipulate file-based Bloom filters. 
+
+## Concepts
+
+A [Bloom filter](https://en.wikipedia.org/wiki/Bloom_filter) is a probabilistic data structure designed to tell, rapidly and efficiently, 
+whether an element is a member of a set. False positives are possible, but false negatives are not, which means query returns either 
+"possibly in set" or "definitely not in set".
+
+Our Bloom filter implementation is backed by two files:
+- `filter_name.bloom` is metadata file containing filter parameters (e.g. false positive probability, number of insertions), 
+- `filter_name.bloom-data` is data set file sized to fit the provided number of expected insertions.
+
+It can efficiently handle sets that require multi-GB data storage, e.g. with billions of entries, and low false positive rates.
 
 ## Building
 
@@ -26,9 +37,7 @@ Create a new filter `my.bloom` for 1M insertions and 1 to 1M false positive rate
 ```
 bloom-tool create --size=1000000 --fpp=1e-6 --name=my.bloom
 ```
-The created filter is represented by two files:
-- `my.bloom` contains filter parameters, 
-- `my.bloom-data` is data file sized to fit the provided number of expected insertions.
+Results in creating `my.bloom` metadata file and empty `my.bloom-data` data file.
 
 #### Insert
 Insert lines from `entries.txt` into `my.bloom` filter, populating `my.bloom-data` file.
