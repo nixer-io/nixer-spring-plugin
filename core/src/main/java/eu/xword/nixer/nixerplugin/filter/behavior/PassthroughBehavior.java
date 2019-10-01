@@ -5,6 +5,8 @@ import javax.servlet.http.HttpServletResponse;
 
 public class PassthroughBehavior implements Behavior {
 
+    public static final String PASSTHROUGH = "passthrough";
+
     @Override
     public void act(final HttpServletRequest request, final HttpServletResponse response) {
         // do nothing
@@ -13,5 +15,15 @@ public class PassthroughBehavior implements Behavior {
     @Override
     public Category category() {
         return Category.EXCLUSIVE;
+    }
+
+    @Override
+    public String name() {
+        return PASSTHROUGH;
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName();
     }
 }

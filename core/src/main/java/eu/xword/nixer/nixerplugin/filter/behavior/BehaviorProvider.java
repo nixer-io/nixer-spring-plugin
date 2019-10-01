@@ -2,47 +2,57 @@ package eu.xword.nixer.nixerplugin.filter.behavior;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Predicate;
 
-import eu.xword.nixer.nixerplugin.ip.IpMetadata;
-import org.springframework.stereotype.Component;
+import com.google.common.collect.ImmutableMap;
+import org.springframework.util.Assert;
 
-import static eu.xword.nixer.nixerplugin.filter.RequestAugmentation.GLOBAL_CREDENTIAL_STUFFING;
-import static eu.xword.nixer.nixerplugin.filter.RequestAugmentation.IP_METADATA;
-
-@Component
 public class BehaviorProvider {
 
-    private ConcurrentHashMap<String, Behavior> behaviors = new ConcurrentHashMap<>();
+    private BehaviorRegistry behaviorRegistry;
+
+    private ConcurrentHashMap<String, String> behaviors = new ConcurrentHashMap<>();
 
     private List<Rule> rules = new ArrayList<>();
 
-    {
-        rules.add(new PredicateRule("blacklistedIp",
-                facts -> {
-                    IpMetadata ipMetadata = (IpMetadata) facts.getFact(IP_METADATA);
-                    return ipMetadata != null && ipMetadata.isBlacklisted();
-                }));
-        rules.add(new PredicateRule("credentialStuffingActive",
-                facts -> Boolean.TRUE.equals(facts.getFact(GLOBAL_CREDENTIAL_STUFFING))));
+    public BehaviorProvider(final BehaviorRegistry behaviorRegistry) {
+        this.behaviorRegistry = behaviorRegistry;
+    }
 
-
-        behaviors.put("blacklistedIp", new RedirectBehavior("/login?blockedError"));
-        behaviors.put("credentialStuffingActive", new CaptchaBehaviour());
+    public void addRule(String name, Predicate<Facts> predicate, String behaviorName) {
+        behaviors.put(name, behaviorName);
+        rules.add(new PredicateRule(name, predicate));
     }
 
     public List<Behavior> get(Facts facts) {
+        Assert.notNull(facts, "Facts must not be null");
 
         List<Behavior> result = new ArrayList<>();
         for (Rule r : rules) {
             if (r.condition(facts)) {
-                result.add(behaviors.get(r.name()));
+                String behaviorName = behaviors.get(r.name());
+                final Behavior behavior = behaviorRegistry.findByName(behaviorName);
+
+                result.add(behavior);
             }
         }
         return result;
     }
 
-    public void setBehavior(String name, Behavior behavior) {
-        behaviors.put(name, behavior);
+    public Map<String, String> getRuleBehaviors() {
+        return ImmutableMap.copyOf(behaviors);
+    }
+
+
+    public void setBehavior(String ruleName, String behaviorName) {
+        Assert.notNull(ruleName, "RuleName must not be null");
+        Assert.notNull(behaviorName, "BehaviorName must not be null");
+
+        final Behavior behavior = behaviorRegistry.findByName(behaviorName);
+        Assert.notNull(behavior, "Behavior must not be null");
+
+        behaviors.put(ruleName, behaviorName);
     }
 }

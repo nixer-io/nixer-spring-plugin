@@ -8,6 +8,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import eu.xword.nixer.nixerplugin.captcha.CaptchaInterceptor;
 import org.springframework.security.authentication.LockedException;
+import org.springframework.util.Assert;
 
 //TODO consider creative another implementation with external storage
 
@@ -29,8 +30,13 @@ public class InMemoryCaptchaReattemptService implements CaptchaInterceptor {
 
     public InMemoryCaptchaReattemptService(int maxAttempts, Duration blockingDuration, IdentityCreator identityCreator) {
         this.maxAttempts = maxAttempts;
+
+        Assert.notNull(blockingDuration, "BlockingDuration must not be null");
         this.blockingDuration = blockingDuration;
+
+        Assert.notNull(identityCreator, "IdentityCreator must not be null");
         this.identityCreator = identityCreator;
+
         this.captchaCache = CacheBuilder.newBuilder()
                 .expireAfterWrite(this.blockingDuration)
                 .build(new CacheLoader<String, Integer>() {

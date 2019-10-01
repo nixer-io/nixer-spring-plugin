@@ -28,7 +28,10 @@ public class RecaptchaV2Service implements CaptchaService {
     private RecaptchaClient recaptchaClient;
 
     public RecaptchaV2Service(final RecaptchaClient recaptchaClient, final CaptchaInterceptor captchaInterceptor) {
+        Assert.notNull(recaptchaClient, "RecaptchaClient must not be null");
         this.recaptchaClient = recaptchaClient;
+
+        Assert.notNull(captchaInterceptor, "CaptchaInterceptor must not be null");
         this.captchaInterceptor = captchaInterceptor;
     }
 
@@ -41,7 +44,7 @@ public class RecaptchaV2Service implements CaptchaService {
         captchaInterceptor.onCheck();
 
         if (!isInValidFormat(captcha)) {
-            captchaInterceptor.onFailure(); // TODO rethink
+            captchaInterceptor.onFailure();
             throw CaptchaErrors.invalidCaptchaFormat("Response contains invalid characters");
         }
 
@@ -50,7 +53,7 @@ public class RecaptchaV2Service implements CaptchaService {
 
             captchaInterceptor.onSuccess();
         } catch (RecaptchaServiceException | RecaptchaClientException e) {
-            captchaInterceptor.onFailure(); // TODO rethink
+            captchaInterceptor.onFailure();
             throw e;
         }
     }
@@ -66,8 +69,4 @@ public class RecaptchaV2Service implements CaptchaService {
         }
     }
 
-    public void setRecaptchaClient(final RecaptchaClient recaptchaClient) {
-        Assert.notNull(recaptchaClient, "captchaClient must not be null");
-        this.recaptchaClient = recaptchaClient;
-    }
 }
