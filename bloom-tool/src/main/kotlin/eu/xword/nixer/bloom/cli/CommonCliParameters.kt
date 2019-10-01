@@ -1,5 +1,6 @@
 package eu.xword.nixer.bloom.cli
 
+import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.UsageError
 import com.github.ajalt.clikt.parameters.groups.CoOccurringOptionGroup
 import com.github.ajalt.clikt.parameters.groups.OptionGroup
@@ -8,8 +9,30 @@ import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.options.required
 import com.github.ajalt.clikt.parameters.types.double
+import com.github.ajalt.clikt.parameters.types.file
 import com.github.ajalt.clikt.parameters.types.int
 import com.github.ajalt.clikt.parameters.types.long
+import java.io.File
+import java.io.InputStream
+
+abstract class InputStreamingCommand(name: String, help: String) : CliktCommand(name = name, help = help) {
+
+    private val stdin: Boolean by option(help = "Indicates that data for insertion should be read from standard input.")
+            .flag(default = false)
+
+    private val inputFile: File? by option(help = "Name of the file with data for insertion.")
+            .file(exists = true, folderOkay = false, fileOkay = true)
+
+    protected fun inputStream(): InputStream = when {
+        stdin && inputFile == null -> System.`in`
+
+        !stdin && inputFile != null -> inputFile!!.inputStream()
+
+        else -> throw IllegalArgumentException(
+                "Either standard input or input file must be chosen, but was: '--stdin=$stdin', '--inputFile=$inputFile'"
+        )
+    }
+}
 
 class BasicFilterOptions : OptionGroup(name = "Basic filter options") {
     val name: String by option(help = """
@@ -27,7 +50,7 @@ class BasicFilterOptions : OptionGroup(name = "Basic filter options") {
 
 private const val DEFAULT_FPP = 1e-6
 
-class DetailedFilterOptions : OptionGroup() {
+class DetailedFilterOptions : OptionGroup(name = "Detailed filter options") {
     val size: Long by option(help = "Expected number of elements to be inserted").long().required()
 
     val fpp: Double by option(help = "Target maximum probability of false positives. (DEFAULT: $DEFAULT_FPP)")
@@ -46,6 +69,12 @@ class PreprocessOptions : OptionGroup() {
 fun <T : OptionGroup> T.required(): CoOccurringOptionGroup<T, T> {
     return CoOccurringOptionGroup(this) { occurred, g, _ ->
         if (occurred == true) g
-        else throw UsageError("Missing options: ${this.groupName.toString()}. Check help for details")
+        else {
+            val groupName = when {
+                this.groupName != null -> this.groupName.toString()
+                else -> this.javaClass.simpleName
+            }
+            throw UsageError("Missing options: $groupName. Check help for details.")
+        }
     }
 }
