@@ -181,6 +181,7 @@ public class FullApplicationTest {
     }
 
     @Test
+    @Disabled
     public void blockIpForTimeIfToManyCaptchaFailed() throws  Exception {
         inMemoryCaptchaReattemptService.clean();
 
@@ -292,8 +293,8 @@ public class FullApplicationTest {
 
     @Test
     public void behaviorsEndpointToUpdateBehavior() throws Exception {
-        final String newBehavior = "{ \"behavior\": \"log\"}";
-        this.mockMvc.perform(post("/actuator/behaviors/credentialStuffingActive")
+        final String newBehavior = "{ \"rule\": \"credentialStuffingActive\", \"behavior\": \"log\"}";
+        this.mockMvc.perform(post("/actuator/behaviors")
                 .content(newBehavior)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful());

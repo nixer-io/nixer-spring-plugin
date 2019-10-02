@@ -1,6 +1,6 @@
 package eu.xword.nixer.nixerplugin.captcha;
 
-import eu.xword.nixer.nixerplugin.captcha.error.RecaptchaException;
+import eu.xword.nixer.nixerplugin.captcha.error.CaptchaException;
 
 /**
  * Allows to verify correctness of captcha response.
@@ -11,7 +11,7 @@ public interface CaptchaService {
     /** Verifies captcha response
      *
      * @param captcha captcha response supplied by user.
-     * @throws RecaptchaException if incorrect captcha was supplied or verification failed.
+     * @throws CaptchaException if incorrect captcha was supplied or verification failed.
      */
-    void processResponse(String captcha) throws RecaptchaException;
+    void verifyResponse(String captcha) throws CaptchaException;
 }

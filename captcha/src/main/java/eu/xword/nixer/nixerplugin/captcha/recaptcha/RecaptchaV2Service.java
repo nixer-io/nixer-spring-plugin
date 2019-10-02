@@ -5,8 +5,8 @@ import java.util.regex.Pattern;
 import eu.xword.nixer.nixerplugin.captcha.CaptchaInterceptor;
 import eu.xword.nixer.nixerplugin.captcha.CaptchaService;
 import eu.xword.nixer.nixerplugin.captcha.error.CaptchaErrors;
-import eu.xword.nixer.nixerplugin.captcha.error.RecaptchaClientException;
-import eu.xword.nixer.nixerplugin.captcha.error.RecaptchaServiceException;
+import eu.xword.nixer.nixerplugin.captcha.error.CaptchaClientException;
+import eu.xword.nixer.nixerplugin.captcha.error.CaptchaServiceException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.util.Assert;
@@ -40,7 +40,7 @@ public class RecaptchaV2Service implements CaptchaService {
     }
 
     @Override
-    public void processResponse(final String captcha) {
+    public void verifyResponse(final String captcha) {
         captchaInterceptor.onCheck();
 
         if (!isInValidFormat(captcha)) {
@@ -52,7 +52,7 @@ public class RecaptchaV2Service implements CaptchaService {
             verify(captcha);
 
             captchaInterceptor.onSuccess();
-        } catch (RecaptchaServiceException | RecaptchaClientException e) {
+        } catch (CaptchaServiceException | CaptchaClientException e) {
             captchaInterceptor.onFailure();
             throw e;
         }
@@ -65,7 +65,7 @@ public class RecaptchaV2Service implements CaptchaService {
             if (!verifyResponse.hasClientError()) {
                 logger.warn("Got captcha verify error: " + verifyResponse.getErrorCodes());
             }
-            throw CaptchaErrors.invalidRecaptcha("reCaptcha was not successfully validated");
+            throw CaptchaErrors.invalidCaptcha("reCaptcha was not successfully validated");
         }
     }
 

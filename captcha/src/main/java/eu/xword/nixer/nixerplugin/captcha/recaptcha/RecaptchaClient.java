@@ -1,7 +1,7 @@
 package eu.xword.nixer.nixerplugin.captcha.recaptcha;
 
 /**
- * Interface for
+ * Interface for Recaptcha verification service
  */
 public interface RecaptchaClient {
 
