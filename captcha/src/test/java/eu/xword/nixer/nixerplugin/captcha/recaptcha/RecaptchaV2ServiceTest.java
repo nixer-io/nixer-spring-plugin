@@ -2,8 +2,8 @@ package eu.xword.nixer.nixerplugin.captcha.recaptcha;
 
 import com.google.common.collect.ImmutableList;
 import eu.xword.nixer.nixerplugin.captcha.error.CaptchaErrors;
-import eu.xword.nixer.nixerplugin.captcha.error.RecaptchaClientException;
-import eu.xword.nixer.nixerplugin.captcha.error.RecaptchaServiceException;
+import eu.xword.nixer.nixerplugin.captcha.error.CaptchaClientException;
+import eu.xword.nixer.nixerplugin.captcha.error.CaptchaServiceException;
 import eu.xword.nixer.nixerplugin.captcha.metrics.MicrometerMetricsReporter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,12 +34,12 @@ class RecaptchaV2ServiceTest {
 
     @Test
     public void should_throw_exception_when_captcha_empty() {
-        Assertions.assertThrows(RecaptchaClientException.class, () -> captchaService.processResponse(""));
+        Assertions.assertThrows(CaptchaClientException.class, () -> captchaService.verifyResponse(""));
     }
 
     @Test
     public void should_throw_exception_when_captcha_misformatted() {
-        Assertions.assertThrows(RecaptchaClientException.class, () -> captchaService.processResponse("!"));
+        Assertions.assertThrows(CaptchaClientException.class, () -> captchaService.verifyResponse("!"));
     }
 
     @Test
@@ -47,7 +47,7 @@ class RecaptchaV2ServiceTest {
         given(recaptchaClient.call("good"))
                 .willThrow(CaptchaErrors.serviceFailure("timeout", new RestClientException("timeout")));
 
-        Assertions.assertThrows(RecaptchaServiceException.class, () -> captchaService.processResponse("good"));
+        Assertions.assertThrows(CaptchaServiceException.class, () -> captchaService.verifyResponse("good"));
     }
 
     @Test
@@ -55,7 +55,7 @@ class RecaptchaV2ServiceTest {
         given(recaptchaClient.call("bad"))
                 .willReturn(new RecaptchaVerifyResponse(false, "", "host", ImmutableList.of(InvalidResponse)));
 
-        Assertions.assertThrows(RecaptchaClientException.class, () -> captchaService.processResponse("bad"));
+        Assertions.assertThrows(CaptchaClientException.class, () -> captchaService.verifyResponse("bad"));
     }
 
     @Test
@@ -63,7 +63,7 @@ class RecaptchaV2ServiceTest {
         given(recaptchaClient.call("good"))
                 .willReturn(new RecaptchaVerifyResponse(true, "", "host", ImmutableList.of()));
 
-        captchaService.processResponse("good");
+        captchaService.verifyResponse("good");
     }
 
 }

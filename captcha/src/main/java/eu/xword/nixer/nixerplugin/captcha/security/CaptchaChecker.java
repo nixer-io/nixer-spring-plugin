@@ -4,8 +4,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import javax.servlet.http.HttpServletRequest;
 
 import eu.xword.nixer.nixerplugin.captcha.CaptchaService;
-import eu.xword.nixer.nixerplugin.captcha.config.RecaptchaProperties;
-import eu.xword.nixer.nixerplugin.captcha.error.RecaptchaException;
+import eu.xword.nixer.nixerplugin.captcha.error.CaptchaException;
 import eu.xword.nixer.nixerplugin.login.LoginFailureType;
 import eu.xword.nixer.nixerplugin.login.LoginFailures;
 import org.springframework.beans.factory.InitializingBean;
@@ -22,7 +21,7 @@ public class CaptchaChecker implements UserDetailsChecker, InitializingBean {
     @Autowired
     private HttpServletRequest request;
 
-    private String captchaParam = RecaptchaProperties.DEFAULT_CAPTCHA_PARAM;
+    private String captchaParam;
 
     private CaptchaService captchaService;
 
@@ -51,8 +50,8 @@ public class CaptchaChecker implements UserDetailsChecker, InitializingBean {
             final String captchaValue = request.getParameter(captchaParam);
 
             try {
-                captchaService.processResponse(captchaValue);
-            } catch (RecaptchaException e) {
+                captchaService.verifyResponse(captchaValue);
+            } catch (CaptchaException e) {
                 throw new BadCaptchaException("Invalid captcha", e);
             }
         }
@@ -87,7 +86,7 @@ public class CaptchaChecker implements UserDetailsChecker, InitializingBean {
     }
 
     public void setRequest(final HttpServletRequest request) {
-        Assert.notNull(captchaParam, "CaptchaParam must not be null");
+        Assert.notNull(request, "HttpServletRequest must not be null");
 
         this.request = request;
     }
