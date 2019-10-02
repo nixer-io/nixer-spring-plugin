@@ -8,12 +8,16 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "nixer.login.captcha")
 public class LoginCaptchaProperties {
 
+    public static final String DEFAULT_CAPTCHA_PARAM = "g-recaptcha-response";
+
     public static final boolean DEFAULT = true;
     private boolean enabled = DEFAULT;
 
     private String condition;
-
-    private String param;
+    /**
+     * Name of Http parameter name containing captcha response
+     */
+    private String param = DEFAULT_CAPTCHA_PARAM;
 
     public boolean isEnabled() {
         return enabled;

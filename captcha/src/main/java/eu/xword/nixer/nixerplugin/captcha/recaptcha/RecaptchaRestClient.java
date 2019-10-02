@@ -3,7 +3,6 @@ package eu.xword.nixer.nixerplugin.captcha.recaptcha;
 import java.util.HashMap;
 import java.util.Map;
 
-import eu.xword.nixer.nixerplugin.captcha.config.RecaptchaProperties;
 import eu.xword.nixer.nixerplugin.captcha.error.CaptchaErrors;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestOperations;

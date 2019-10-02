@@ -10,73 +10,44 @@ import eu.xword.nixer.nixerplugin.captcha.reattempt.IdentityCreator;
 import eu.xword.nixer.nixerplugin.captcha.reattempt.InMemoryCaptchaReattemptService;
 import eu.xword.nixer.nixerplugin.captcha.reattempt.IpIdentityCreator;
 import eu.xword.nixer.nixerplugin.captcha.recaptcha.RecaptchaClient;
-import eu.xword.nixer.nixerplugin.captcha.recaptcha.RecaptchaRestClient;
+import eu.xword.nixer.nixerplugin.captcha.recaptcha.RecaptchaConfiguration;
+import eu.xword.nixer.nixerplugin.captcha.recaptcha.RecaptchaProperties;
+import eu.xword.nixer.nixerplugin.captcha.recaptcha.RecaptchaV2ServiceFactory;
 import eu.xword.nixer.nixerplugin.captcha.security.CaptchaChecker;
 import eu.xword.nixer.nixerplugin.captcha.security.CaptchaCondition;
 import eu.xword.nixer.nixerplugin.captcha.validation.CaptchaValidator;
 import eu.xword.nixer.nixerplugin.login.LoginFailures;
 import io.micrometer.core.instrument.MeterRegistry;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.client.ClientHttpRequestFactory;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.context.annotation.Import;
 
-import static eu.xword.nixer.nixerplugin.captcha.config.RecaptchaProperties.MetricsProperties.DEFAULT;
+import static eu.xword.nixer.nixerplugin.captcha.config.CaptchaProperties.MetricsProperties.DEFAULT;
+import static eu.xword.nixer.nixerplugin.captcha.metrics.CaptchaMetrics.LOGIN_ACTION;
 
+/**
+ * {@link org.springframework.boot.autoconfigure.EnableAutoConfiguration Auto-configuration} for Captcha.
+ *
+ */
 @Configuration
 @EnableConfigurationProperties(value = {LoginCaptchaProperties.class})
 @ConditionalOnProperty(value = "nixer.login.captcha.enabled", havingValue = "true", matchIfMissing = LoginCaptchaProperties.DEFAULT)
+@Import(RecaptchaConfiguration.class)
 public class CaptchaConfiguration {
 
-    private static final String LOGIN_ACTION = "login";
-
     @Bean
-    @ConditionalOnClass(HttpClient.class)
-    public ClientHttpRequestFactory apacheClientHttpRequestFactory(RecaptchaProperties recaptcha) {
-        final PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
-        connectionManager.setMaxTotal(recaptcha.getHttp().getMaxConnections());
-
-        final RecaptchaProperties.Http http = recaptcha.getHttp();
-        RequestConfig requestConfig = RequestConfig.custom()
-                .setConnectionRequestTimeout(http.getTimeout().getConnectionRequest())
-                .setConnectTimeout(http.getTimeout().getConnect())
-                .setSocketTimeout(http.getTimeout().getRead())
-                .build();
-
-        final CloseableHttpClient httpClient = HttpClientBuilder
-                .create()
-                .setConnectionManager(connectionManager)
-                .setDefaultRequestConfig(requestConfig)
-                .build();
-
-        return new HttpComponentsClientHttpRequestFactory(httpClient);
-    }
-
-
-    @Bean("captchaRestTemplate")
-    @ConditionalOnMissingBean(name = "captchaRestTemplate")
-    public RestTemplate restTemplate(ClientHttpRequestFactory requestFactory) {
-        return new RestTemplate(requestFactory);
-    }
-
-    @Bean
-    @ConditionalOnProperty(prefix = "recaptcha.metrics", name = "enabled", havingValue = "true", matchIfMissing = DEFAULT)
+    @ConditionalOnProperty(prefix = "captcha.metrics", name = "enabled", havingValue = "true", matchIfMissing = DEFAULT)
     public MetricsReporterFactory metricsReporterFactory(MeterRegistry meterRegistry) {
         return new MicrometerMetricsReporterFactory(meterRegistry);
     }
 
     @Bean
     @ConditionalOnMissingBean
+    @ConditionalOnProperty(prefix = "captcha.metrics", name = "enabled", havingValue = "false")
     public MetricsReporterFactory nopMetricsReporterFactory() {
         return action -> new NOPMetricsReporter();
     }
@@ -106,8 +77,8 @@ public class CaptchaConfiguration {
 
     @Bean
     //TODO conditional on property or expression
-    public InMemoryCaptchaReattemptService reattemptService(RecaptchaProperties recaptcha, IdentityCreator identityCreator) {
-        final RecaptchaProperties.BlockingProperties blocking = recaptcha.getBlocking();
+    public InMemoryCaptchaReattemptService reattemptService(CaptchaProperties captcha, IdentityCreator identityCreator) {
+        final CaptchaProperties.BlockingProperties blocking = captcha.getBlocking();
 
         return new InMemoryCaptchaReattemptService(blocking.getMaxAttempts(), blocking.getDuration(), identityCreator);
     }
@@ -118,7 +89,10 @@ public class CaptchaConfiguration {
     }
 
     @Bean
-    public RecaptchaClient captchaClient(RestTemplate restTemplate, RecaptchaProperties recaptchaProperties) {
-        return new RecaptchaRestClient(restTemplate, recaptchaProperties);
+    @ConditionalOnBean(value = {RecaptchaClient.class})
+    public RecaptchaV2ServiceFactory recaptchaV2ServiceFactory(RecaptchaClient recaptchaClient, RecaptchaProperties recaptchaProperties,
+                                                               MetricsReporterFactory metricsReporterFactory) {
+        return new RecaptchaV2ServiceFactory(recaptchaClient, metricsReporterFactory);
     }
+
 }
