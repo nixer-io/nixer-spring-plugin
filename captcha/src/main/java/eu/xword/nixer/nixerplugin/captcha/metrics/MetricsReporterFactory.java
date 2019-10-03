@@ -2,5 +2,5 @@ package eu.xword.nixer.nixerplugin.captcha.metrics;
 
 public interface MetricsReporterFactory {
 
-    MetricsReporter createMetricsReporter(String action);
+    MetricsReporter createMetricsReporter(final String action);
 }

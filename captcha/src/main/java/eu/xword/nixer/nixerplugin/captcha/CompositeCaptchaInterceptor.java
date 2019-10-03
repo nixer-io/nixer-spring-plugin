@@ -9,7 +9,7 @@ import org.springframework.util.Assert;
  */
 public class CompositeCaptchaInterceptor implements CaptchaInterceptor {
 
-    private List<CaptchaInterceptor> interceptors;
+    private final List<CaptchaInterceptor> interceptors;
 
     public CompositeCaptchaInterceptor(final List<CaptchaInterceptor> interceptors) {
         Assert.notNull(interceptors, "Interceptors must not be null");

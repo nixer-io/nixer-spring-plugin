@@ -5,7 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 import static eu.xword.nixer.nixerplugin.captcha.Marker.CAPTCHA_ENABLED;
 
 public enum CaptchaCondition {
-    AUTOMATIC {
+    RULES_CONTROLLED {
         @Override
         public boolean test(HttpServletRequest request) {
             final Object captchaMitigation = request.getAttribute(CAPTCHA_ENABLED);

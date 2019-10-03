@@ -26,7 +26,7 @@ public class CaptchaChecker implements UserDetailsChecker, InitializingBean {
     private CaptchaService captchaService;
 
     // TODO consider removing condition and controlling it with request param + default actions
-    private AtomicReference<CaptchaCondition> condition = new AtomicReference<>(CaptchaCondition.AUTOMATIC);
+    private AtomicReference<CaptchaCondition> condition = new AtomicReference<>(CaptchaCondition.RULES_CONTROLLED);
 
     private LoginFailures loginFailures;
 
@@ -41,12 +41,15 @@ public class CaptchaChecker implements UserDetailsChecker, InitializingBean {
 
     @Override
     public void afterPropertiesSet() {
+        Assert.notNull(request, "HttpServletRequest must not be null");
+        Assert.notNull(captchaParam, "CaptchaParam must not be null");
+
         loginFailures.addMapping(BadCaptchaException.class, LoginFailureType.INVALID_CAPTCHA);
     }
 
     @Override
     public void check(final UserDetails toCheck) {
-        if (condition.get().test(request)) {
+        if (shouldVerifyCaptcha()) {
             final String captchaValue = request.getParameter(captchaParam);
 
             try {
@@ -57,14 +60,14 @@ public class CaptchaChecker implements UserDetailsChecker, InitializingBean {
         }
     }
 
-    //    private boolean shouldVerifyCaptcha() {
-//        return captchaStrategy.get().verifyChallenge();
-//    }
-//    // Needs to be public for template engine to check if captcha should be displayed.
+    private boolean shouldVerifyCaptcha() {
+        return condition.get().test(request);
+    }
+
+    //    // Needs to be public for template engine to check if captcha should be displayed.
 //    // TODO Re-implement check so it doesn't have to be public
 //
     public boolean shouldDisplayCaptcha() {
-//        return captchaStrategy.get().challenge();
         return condition.get().test(request);
     }
 
