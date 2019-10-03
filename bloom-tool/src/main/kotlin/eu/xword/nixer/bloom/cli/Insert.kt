@@ -4,12 +4,12 @@ import com.github.ajalt.clikt.parameters.groups.cooccurring
 
 class Insert : InputStreamingCommand(name = "insert",
         help = """
-        Inserts values to the filter from standard input.
+        Inserts values to the Bloom filter from the given input.
         Each line is a separate value.
     """) {
 
     private val basicFilterOptions by BasicFilterOptions().required()
-    private val preprocessOptions by PreprocessOptions().cooccurring()
+    private val entryParsingOptions by EntryParsingOptions().cooccurring()
 
     override fun run() {
 
@@ -19,10 +19,10 @@ class Insert : InputStreamingCommand(name = "insert",
             openFilter(name, hex)
         }
 
-        val entryTransformer = preprocessOptions
+        val entryParser = entryParsingOptions
                 ?.run { fieldExtractor(separator, field) }
                 ?: { it }
 
-        insertIntoFilter(bloomFilter, entryTransformer, inputStream)
+        insertIntoFilter(bloomFilter, entryParser, inputStream)
     }
 }
