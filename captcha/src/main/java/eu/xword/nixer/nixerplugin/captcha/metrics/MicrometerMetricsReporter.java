@@ -46,18 +46,4 @@ public class MicrometerMetricsReporter implements MetricsReporter {
         this.captchaPassedCounter.increment();
     }
 
-    @Override
-    public void onCheck() {
-
-    }
-
-    @Override
-    public void onSuccess() {
-        reportPassedCaptcha();
-    }
-
-    @Override
-    public void onFailure() {
-        reportFailedCaptcha();
-    }
 }

@@ -21,7 +21,7 @@ public class LoginMetricsConfiguration {
     }
 
     @Bean
-    public LoginFailures loginFailures() {
-        return new LoginFailures();
+    public LoginFailureTypeRegistry loginFailures() {
+        return new LoginFailureTypeRegistry();
     }
 }

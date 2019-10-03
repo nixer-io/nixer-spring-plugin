@@ -10,22 +10,14 @@ public class LoginCaptchaProperties {
 
     public static final String DEFAULT_CAPTCHA_PARAM = "g-recaptcha-response";
 
-    public static final boolean DEFAULT = true;
-    private boolean enabled = DEFAULT;
-
+    /**
+     * Determines at what condition captcha applies
+     */
     private String condition;
     /**
      * Name of Http parameter name containing captcha response
      */
     private String param = DEFAULT_CAPTCHA_PARAM;
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(final boolean enabled) {
-        this.enabled = enabled;
-    }
 
     public String getCondition() {
         return condition;

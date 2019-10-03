@@ -2,7 +2,7 @@ package eu.xword.nixer.nixerplugin.captcha.security;
 
 import eu.xword.nixer.nixerplugin.captcha.CaptchaService;
 import eu.xword.nixer.nixerplugin.captcha.error.CaptchaServiceException;
-import eu.xword.nixer.nixerplugin.login.LoginFailures;
+import eu.xword.nixer.nixerplugin.login.LoginFailureTypeRegistry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,13 +26,13 @@ class CaptchaCheckerTest {
     CaptchaService captchaService;
 
     @Mock
-    LoginFailures loginFailures;
+    LoginFailureTypeRegistry loginFailureTypeRegistry;
 
     CaptchaChecker captchaChecker;
 
     @BeforeEach
     public void setup() {
-        captchaChecker = new CaptchaChecker(captchaService, loginFailures);
+        captchaChecker = new CaptchaChecker(captchaService, loginFailureTypeRegistry);
         captchaChecker.setCaptchaParam(CAPTCHA_PARAM);
     }
 

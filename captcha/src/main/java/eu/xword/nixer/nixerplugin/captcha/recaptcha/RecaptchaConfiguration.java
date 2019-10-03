@@ -1,5 +1,6 @@
 package eu.xword.nixer.nixerplugin.captcha.recaptcha;
 
+import eu.xword.nixer.nixerplugin.captcha.metrics.MetricsReporterFactory;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -8,6 +9,7 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
@@ -16,6 +18,7 @@ import org.springframework.web.client.RestTemplate;
  * Configuration class for ReCaptcha.
  *
  */
+@Configuration
 public class RecaptchaConfiguration {
 
     @Bean
@@ -50,6 +53,12 @@ public class RecaptchaConfiguration {
     @Bean
     public RecaptchaClient captchaClient(RestTemplate restTemplate, RecaptchaProperties recaptchaProperties) {
         return new RecaptchaRestClient(restTemplate, recaptchaProperties);
+    }
+
+    @Bean
+    public RecaptchaV2ServiceFactory recaptchaV2ServiceFactory(RecaptchaClient recaptchaClient, RecaptchaProperties recaptchaProperties,
+                                                               MetricsReporterFactory metricsReporterFactory) {
+        return new RecaptchaV2ServiceFactory(recaptchaClient, metricsReporterFactory);
     }
 
 }

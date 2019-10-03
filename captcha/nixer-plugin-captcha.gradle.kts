@@ -29,7 +29,6 @@ dependencies {
 
     implementation(project(":nixer-plugin-core"))
 
-    implementation("com.google.guava", "guava", "28.0-jre") // consider removing (cache, immutable collections)
     implementation("javax.validation", "validation-api")
     implementation("javax.servlet", "javax.servlet-api", "3.1.0")
     implementation("com.fasterxml.jackson.core", "jackson-annotations") // for captcha api
