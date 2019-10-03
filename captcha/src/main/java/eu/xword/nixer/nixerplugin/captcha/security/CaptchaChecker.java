@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import eu.xword.nixer.nixerplugin.captcha.CaptchaService;
 import eu.xword.nixer.nixerplugin.captcha.error.CaptchaException;
 import eu.xword.nixer.nixerplugin.login.LoginFailureType;
-import eu.xword.nixer.nixerplugin.login.LoginFailures;
+import eu.xword.nixer.nixerplugin.login.LoginFailureTypeRegistry;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -28,15 +28,15 @@ public class CaptchaChecker implements UserDetailsChecker, InitializingBean {
     // TODO consider removing condition and controlling it with request param + default actions
     private AtomicReference<CaptchaCondition> condition = new AtomicReference<>(CaptchaCondition.RULES_CONTROLLED);
 
-    private LoginFailures loginFailures;
+    private LoginFailureTypeRegistry loginFailureTypeRegistry;
 
     public CaptchaChecker(final CaptchaService captchaService,
-                          final LoginFailures loginFailures) {
+                          final LoginFailureTypeRegistry loginFailureTypeRegistry) {
         Assert.notNull(captchaService, "CaptchaService must not be null");
         this.captchaService = captchaService;
 
-        Assert.notNull(loginFailures, "LoginFailure must not be null");
-        this.loginFailures = loginFailures;
+        Assert.notNull(loginFailureTypeRegistry, "LoginFailure must not be null");
+        this.loginFailureTypeRegistry = loginFailureTypeRegistry;
     }
 
     @Override
@@ -44,7 +44,7 @@ public class CaptchaChecker implements UserDetailsChecker, InitializingBean {
         Assert.notNull(request, "HttpServletRequest must not be null");
         Assert.notNull(captchaParam, "CaptchaParam must not be null");
 
-        loginFailures.addMapping(BadCaptchaException.class, LoginFailureType.INVALID_CAPTCHA);
+        loginFailureTypeRegistry.addMapping(BadCaptchaException.class, LoginFailureType.INVALID_CAPTCHA);
     }
 
     @Override

@@ -35,16 +35,16 @@ public class LoginActivityListener implements ApplicationListener<AbstractAuthen
 
     private LoginActivityService loginActivityService;
 
-    private LoginFailures loginFailures;
+    private LoginFailureTypeRegistry loginFailureTypeRegistry;
 
     public LoginActivityListener(final EmbeddedStigmaService stigmaService,
                                  final StigmaUtils stigmaUtils,
                                  final LoginActivityService loginActivityService,
-                                 final LoginFailures loginFailures) {
+                                 final LoginFailureTypeRegistry loginFailureTypeRegistry) {
         this.stigmaUtils = stigmaUtils;
         this.stigmaService = stigmaService;
         this.loginActivityService = loginActivityService;
-        this.loginFailures = loginFailures;
+        this.loginFailureTypeRegistry = loginFailureTypeRegistry;
     }
 
     private void handleStigma(LoginResult loginResult, LoginContext context) {
@@ -89,7 +89,7 @@ public class LoginActivityListener implements ApplicationListener<AbstractAuthen
             return LoginResult.success();
         } else if (event instanceof AbstractAuthenticationFailureEvent) {
             final AuthenticationException exception = ((AbstractAuthenticationFailureEvent) event).getException();
-            final LoginFailureType failureType = loginFailures.fromException(exception);
+            final LoginFailureType failureType = loginFailureTypeRegistry.fromException(exception);
             return LoginResult.failure(failureType);
         } else {
             return null;
