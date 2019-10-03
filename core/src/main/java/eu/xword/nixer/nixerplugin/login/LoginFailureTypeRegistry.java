@@ -17,7 +17,10 @@ import static eu.xword.nixer.nixerplugin.login.LoginFailureType.LOCKED;
 import static eu.xword.nixer.nixerplugin.login.LoginFailureType.OTHER;
 import static eu.xword.nixer.nixerplugin.login.LoginFailureType.UNKNOWN_USER;
 
-public class LoginFailures {
+/**
+ * Maps {@link AuthenticationException} to {@link LoginFailureType}
+ */
+public class LoginFailureTypeRegistry {
 
     private final Map<Class<? extends AuthenticationException>, LoginFailureType> failureTypeByException = new HashMap<>();
 
@@ -34,7 +37,7 @@ public class LoginFailures {
         return failureTypeByException.getOrDefault(ex.getClass(), OTHER);
     }
 
-    public LoginFailures addMapping(Class<? extends AuthenticationException> clazz, LoginFailureType loginFailureType) {
+    public LoginFailureTypeRegistry addMapping(Class<? extends AuthenticationException> clazz, LoginFailureType loginFailureType) {
         failureTypeByException.put(clazz, loginFailureType);
         return this;
     }

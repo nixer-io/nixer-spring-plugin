@@ -14,18 +14,4 @@ public class NOPMetricsReporter implements MetricsReporter {
 
     }
 
-    @Override
-    public void onCheck() {
-
-    }
-
-    @Override
-    public void onSuccess() {
-
-    }
-
-    @Override
-    public void onFailure() {
-
-    }
 }

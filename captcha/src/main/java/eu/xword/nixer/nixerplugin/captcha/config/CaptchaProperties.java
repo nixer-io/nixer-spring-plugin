@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
  * {@link ConfigurationProperties} for configuring captcha protection.
  */
 @Component
-@ConfigurationProperties(prefix = "captcha")
+@ConfigurationProperties(prefix = "nixer.captcha")
 public class CaptchaProperties {
 
     private BlockingProperties blocking = new BlockingProperties();
