@@ -14,7 +14,7 @@ import static eu.xword.nixer.nixerplugin.captcha.recaptcha.RecaptchaVerifyRespon
  */
 public class RecaptchaClientStub implements RecaptchaClient {
 
-    private Map<String, Supplier<RecaptchaVerifyResponse>> responses = new HashMap<>();
+    private final Map<String, Supplier<RecaptchaVerifyResponse>> responses = new HashMap<>();
 
     @Override
     public RecaptchaVerifyResponse call(final String captcha) {

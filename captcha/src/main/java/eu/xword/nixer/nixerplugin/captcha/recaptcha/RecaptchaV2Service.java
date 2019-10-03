@@ -23,9 +23,9 @@ public class RecaptchaV2Service implements CaptchaService {
 
     private static Pattern RESPONSE_PATTERN = Pattern.compile("[A-Za-z0-9_-]+");
 
-    private CaptchaInterceptor captchaInterceptor;
+    private final CaptchaInterceptor captchaInterceptor;
 
-    private RecaptchaClient recaptchaClient;
+    private final RecaptchaClient recaptchaClient;
 
     public RecaptchaV2Service(final RecaptchaClient recaptchaClient, final CaptchaInterceptor captchaInterceptor) {
         Assert.notNull(recaptchaClient, "RecaptchaClient must not be null");
@@ -35,7 +35,7 @@ public class RecaptchaV2Service implements CaptchaService {
         this.captchaInterceptor = captchaInterceptor;
     }
 
-    private boolean isInValidFormat(String response) {
+    private boolean isInValidFormat(final String response) {
         return StringUtils.hasLength(response) && RESPONSE_PATTERN.matcher(response).matches();
     }
 
