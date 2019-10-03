@@ -15,7 +15,7 @@ public class CaptchaValidator implements ConstraintValidator<Captcha, String> {
 
     private CaptchaService captchaService;
 
-    private CaptchaServiceFactory captchaServiceFactory;
+    private final CaptchaServiceFactory captchaServiceFactory;
 
     public CaptchaValidator(final CaptchaServiceFactory captchaServiceFactory) {
         Assert.notNull(captchaServiceFactory, "CaptchaServiceFactory must not be null");

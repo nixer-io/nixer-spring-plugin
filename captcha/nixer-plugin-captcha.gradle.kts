@@ -30,23 +30,23 @@ dependencies {
     implementation(project(":nixer-plugin-core"))
 
     implementation("com.google.guava", "guava", "28.0-jre") // consider removing (cache, immutable collections)
-    api("javax.validation", "validation-api")
-    api("javax.servlet", "javax.servlet-api", "3.1.0")
-    api("com.fasterxml.jackson.core", "jackson-annotations") // for captcha api
-    api("com.fasterxml.jackson.core", "jackson-databind") // for captcha api
+    implementation("javax.validation", "validation-api")
+    implementation("javax.servlet", "javax.servlet-api", "3.1.0")
+    implementation("com.fasterxml.jackson.core", "jackson-annotations") // for captcha api
+    implementation("com.fasterxml.jackson.core", "jackson-databind") // for captcha api
 
-    api("org.springframework.boot", "spring-boot-autoconfigure")
-    api("org.springframework.boot", "spring-boot-actuator", dependencyConfiguration = optional.toAction()) // optional
+    implementation("org.springframework.boot", "spring-boot-autoconfigure")
+    implementation("org.springframework.boot", "spring-boot-actuator", dependencyConfiguration = optional.toAction()) // optional
 
-    api("org.springframework", "spring-web")
+    implementation("org.springframework", "spring-web")
 
-    api("org.springframework.security", "spring-security-web")
-    api("org.springframework.security", "spring-security-config")
+    implementation("org.springframework.security", "spring-security-web")
+    implementation("org.springframework.security", "spring-security-config")
     implementation("org.apache.httpcomponents", "httpclient", "4.5.9")
 
     implementation("org.springframework.boot", "spring-boot-starter-validation")
 
-    api("io.micrometer", "micrometer-core", "1.2.0", dependencyConfiguration = optional.toAction())
+    implementation("io.micrometer", "micrometer-core", "1.2.0", dependencyConfiguration = optional.toAction())
 
     testImplementation("org.springframework", "spring-test")
     testImplementation("org.springframework.boot", "spring-boot-starter-web")
