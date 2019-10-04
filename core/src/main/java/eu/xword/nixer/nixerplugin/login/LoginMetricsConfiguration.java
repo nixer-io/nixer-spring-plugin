@@ -24,4 +24,5 @@ public class LoginMetricsConfiguration {
     public LoginFailureTypeRegistry loginFailures() {
         return new LoginFailureTypeRegistry();
     }
+
 }
