@@ -20,7 +20,7 @@ import org.springframework.util.ResourceUtils;
  */
 @Configuration
 @EnableConfigurationProperties(value = {PwnedCheckProperties.class})
-@ConditionalOnProperty(value = "nixer.pwned.check.enabled", havingValue = "true", matchIfMissing = PwnedCheckProperties.ENABLED_BY_DEFAULT)
+@ConditionalOnProperty(value = "nixer.pwned.check.enabled", matchIfMissing = true)
 public class PwnedCheckAutoConfiguration {
 
     @Bean
