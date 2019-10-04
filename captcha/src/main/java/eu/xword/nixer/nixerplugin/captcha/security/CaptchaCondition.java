@@ -1,15 +1,17 @@
 package eu.xword.nixer.nixerplugin.captcha.security;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
-import static eu.xword.nixer.nixerplugin.captcha.Marker.CAPTCHA_ENABLED;
+import static eu.xword.nixer.nixerplugin.captcha.CaptchaBehavior.CAPTCHA_CHALLENGE;
 
 public enum CaptchaCondition {
-    RULES_CONTROLLED {
+
+    SESSION_CONTROLLED {
         @Override
         public boolean test(HttpServletRequest request) {
-            final Object captchaMitigation = request.getAttribute(CAPTCHA_ENABLED);
-            return Boolean.TRUE.equals(captchaMitigation);
+            final HttpSession session = request.getSession(false);
+            return session != null && Boolean.TRUE.equals(session.getAttribute(CAPTCHA_CHALLENGE));
         }
 
     },
@@ -27,4 +29,5 @@ public enum CaptchaCondition {
     };
 
     public abstract boolean test(HttpServletRequest request);
+
 }

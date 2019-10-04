@@ -108,7 +108,7 @@ public class FullApplicationTest {
     @Disabled
     public void shouldActivateCaptcha() throws Exception {
         // enable automatic mode
-        this.captchaChecker.setCaptchaCondition(CaptchaCondition.RULES_CONTROLLED);
+        this.captchaChecker.setCaptchaCondition(CaptchaCondition.SESSION_CONTROLLED);
 
         // @formatter:on
         final SmartRequestBuilder loginRequest = formLogin().user("user").password("guess").build();
