@@ -5,10 +5,8 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.PostConstruct;
 
-import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
-@Component
 public class BehaviorRegistry {
 
     private Map<String, Behavior> behaviorByName = new ConcurrentHashMap<>();
@@ -16,7 +14,6 @@ public class BehaviorRegistry {
     @PostConstruct
     public void init() {
         this
-                .register(new CaptchaBehaviour())
                 .register(new LogBehavior())
                 .register(new PassthroughBehavior())
                 .register(new RedirectBehavior("/login?blockedError", "blockedError"));

@@ -4,7 +4,6 @@ import eu.xword.nixer.nixerplugin.captcha.CaptchaService;
 import eu.xword.nixer.nixerplugin.captcha.CaptchaServiceFactory;
 import eu.xword.nixer.nixerplugin.captcha.endpoint.CaptchaEndpoint;
 import eu.xword.nixer.nixerplugin.captcha.security.CaptchaChecker;
-import eu.xword.nixer.nixerplugin.captcha.security.CaptchaCondition;
 import eu.xword.nixer.nixerplugin.captcha.validation.CaptchaValidator;
 import eu.xword.nixer.nixerplugin.login.LoginFailureTypeRegistry;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -19,7 +18,6 @@ import static eu.xword.nixer.nixerplugin.captcha.metrics.CaptchaMetrics.LOGIN_AC
  */
 @Configuration
 @EnableConfigurationProperties(value = {LoginCaptchaProperties.class})
-//@ConditionalOnProperty(value = "nixer.login.captcha.enabled", havingValue = "true", matchIfMissing = LoginCaptchaProperties.DEFAULT)
 public class CaptchaConfiguration {
 
     @Bean
@@ -31,12 +29,11 @@ public class CaptchaConfiguration {
     public CaptchaChecker captchaChecker(CaptchaServiceFactory captchaServiceFactory,
                                          LoginCaptchaProperties loginCaptchaProperties,
                                          LoginFailureTypeRegistry loginFailureTypeRegistry) {
-        final CaptchaCondition captchaCondition = CaptchaCondition.valueOf(loginCaptchaProperties.getCondition());
         final CaptchaService captchaService = captchaServiceFactory.createCaptchaService(LOGIN_ACTION);
 
         final CaptchaChecker captchaChecker = new CaptchaChecker(captchaService, loginFailureTypeRegistry);
         captchaChecker.setCaptchaParam(loginCaptchaProperties.getParam());
-        captchaChecker.setCaptchaCondition(captchaCondition);
+        captchaChecker.setCaptchaCondition(loginCaptchaProperties.getCondition());
         return captchaChecker;
     }
 

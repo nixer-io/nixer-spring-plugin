@@ -1,5 +1,6 @@
 package eu.xword.nixer.nixerplugin.captcha.config;
 
+import eu.xword.nixer.nixerplugin.captcha.security.CaptchaCondition;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -8,22 +9,23 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "nixer.login.captcha")
 public class LoginCaptchaProperties {
 
+    //TODO refactor
     public static final String DEFAULT_CAPTCHA_PARAM = "g-recaptcha-response";
 
     /**
-     * Determines at what condition captcha applies
+     * Determines whether captcha challenge applies
      */
-    private String condition;
+    private CaptchaCondition condition;
     /**
      * Name of Http parameter name containing captcha response
      */
     private String param = DEFAULT_CAPTCHA_PARAM;
 
-    public String getCondition() {
+    public CaptchaCondition getCondition() {
         return condition;
     }
 
-    public void setCondition(final String condition) {
+    public void setCondition(final CaptchaCondition condition) {
         this.condition = condition;
     }
 

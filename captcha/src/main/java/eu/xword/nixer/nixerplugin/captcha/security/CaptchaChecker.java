@@ -25,8 +25,7 @@ public class CaptchaChecker implements UserDetailsChecker, InitializingBean {
 
     private CaptchaService captchaService;
 
-    // TODO consider removing condition and controlling it with request param + default actions
-    private AtomicReference<CaptchaCondition> condition = new AtomicReference<>(CaptchaCondition.RULES_CONTROLLED);
+    private AtomicReference<CaptchaCondition> condition = new AtomicReference<>(CaptchaCondition.ALWAYS);
 
     private LoginFailureTypeRegistry loginFailureTypeRegistry;
 
@@ -44,6 +43,7 @@ public class CaptchaChecker implements UserDetailsChecker, InitializingBean {
         Assert.notNull(request, "HttpServletRequest must not be null");
         Assert.notNull(captchaParam, "CaptchaParam must not be null");
 
+        //todo refactor
         loginFailureTypeRegistry.addMapping(BadCaptchaException.class, LoginFailureType.INVALID_CAPTCHA);
     }
 

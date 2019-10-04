@@ -1,11 +1,13 @@
 package eu.xword.nixer.nixerplugin.filter;
 
+import java.util.List;
+
 import eu.xword.nixer.nixerplugin.detection.GlobalCredentialStuffing;
+import eu.xword.nixer.nixerplugin.filter.behavior.Behavior;
 import eu.xword.nixer.nixerplugin.filter.behavior.BehaviorEndpoint;
 import eu.xword.nixer.nixerplugin.filter.behavior.BehaviorProvider;
 import eu.xword.nixer.nixerplugin.filter.behavior.BehaviorRegistry;
 import eu.xword.nixer.nixerplugin.filter.behavior.BehaviourProviderBuilder;
-import eu.xword.nixer.nixerplugin.filter.behavior.CaptchaBehaviour;
 import eu.xword.nixer.nixerplugin.filter.behavior.Facts;
 import eu.xword.nixer.nixerplugin.ip.IpMetadata;
 import org.apache.commons.logging.Log;
@@ -23,16 +25,6 @@ public class FilterConfiguration {
 
     private final Log logger = LogFactory.getLog(getClass());
 
-//    @Bean
-//    public UsernameLoginFilter userLockBlockingPolicy(BlockedUserRegistry blockedUserRegistry) {
-//        return new UsernameLoginFilter(blockedUserRegistry);
-//    }
-//
-//    @Bean
-//    public TemporalIpFilter temporalIpFilter(BlockedIpRegistry blockedIpRegistry) {
-//        return new TemporalIpFilter(blockedIpRegistry);
-//    }
-
     @Bean
     public BehaviorExecutionFilter executionFilter(FilterProperties filterProperties, BehaviorProvider behaviorProvider, GlobalCredentialStuffing credentialStuffing) {
         final BehaviorExecutionFilter executionFilter = new BehaviorExecutionFilter(behaviorProvider, credentialStuffing);
@@ -44,10 +36,19 @@ public class FilterConfiguration {
     }
 
     @Bean
+    public BehaviorRegistry behaviorRegistry(List<Behavior> behaviors) {
+        final BehaviorRegistry behaviorRegistry = new BehaviorRegistry();
+
+        behaviors.forEach(behaviorRegistry::register);
+
+        return behaviorRegistry;
+    }
+
+    @Bean
     public BehaviorProvider buildBehaviorProvider(BehaviorRegistry behaviorRegistry) {
         return BehaviourProviderBuilder.builder()
                 .addRule("blacklistedIp", this::isBlacklistedIp, "blockedError")
-                .addRule("credentialStuffingActive", this::isGlobalCredentialStuffing, CaptchaBehaviour.CAPTCHA)
+                .addRule("credentialStuffingActive", this::isGlobalCredentialStuffing, "captcha")
                 .build(behaviorRegistry);
     }
 
