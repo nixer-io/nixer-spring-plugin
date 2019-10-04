@@ -14,14 +14,6 @@ Our Bloom filter implementation is backed by two files:
 
 It can efficiently handle sets that require multi-GB data storage, e.g. with billions of entries, and low false positive rates.
 
-## Building
-
-The tool is built using Gradle [application plugin](https://docs.gradle.org/current/userguide/application_plugin.html).
-```
-./gradlew
-```
-builds whole project and places the tool package under `build/distributions` directory.
-
 ## Using
 
 Unzip the application package and invoke in order to see all commands and options:
@@ -30,16 +22,38 @@ Unzip the application package and invoke in order to see all commands and option
 bin/bloom-tool --help
 ```
 
-### Examples:
+### Basic use case:
 
-#### Create
+Suppose we have a text file containing list of leaked credentials (e.g. one from [here](https://haveibeenpwned.com))
+which we want to put into a Bloom filter. Each line in the file consist of a password hash (as hex strings) and additional info,
+like prevalence, separated by colon `:`, e.g.
+```
+0000000A1D4B746FAA3FD526FF6D5BC8052FDB38:16
+0000000CAEF405439D57847A8657218C618160B2:15
+0000000FC1C08E6454BED24F463EA2129E254D43:40
+```
+
+Let's call this file `entries.txt` and assume it contains `500 million` entries, which means around `20 GB` of data.
+
+In order to create a filter populated with all the hashes from this file use the following command:
+```
+bloom-tool build --name my.bloom --size 500000000 --separator : --field 0 --input-file entries.txt
+```
+Where `--field` says the hash should be taken the first value after splitting each line by the `:` separator. 
+Remember fields are counted starting from `0`.
+
+Note execution for this amount of data might take a while. For MacBook Pro Core i7 with 16GB RAM it was around 24 minutes.
+
+### Another examples:
+
+#### Create a Bloom filter
 Create a new filter `my.bloom` for 1M insertions and 1 to 1M false positive rate.
 ```
 bloom-tool create --size=1000000 --fpp=1e-6 --name=my.bloom
 ```
 Results in creating `my.bloom` metadata file and empty `my.bloom-data` data file.
 
-#### Insert
+#### Insert values into a Bloom filter
 Insert lines from `entries.txt` into `my.bloom` filter, populating `my.bloom-data` file.
 ```
 bloom-tool insert --name=my.bloom --input-file=entries.txt
@@ -58,15 +72,15 @@ Insert hexadecimal from `hashes.txt` to `my.bloom`. Useful if the filter is inte
 bloom-tool insert --hex --name=my.bloom --input-file=hashes.txt
 ```
 
-#### Check
+#### Check an element is present in a filter's dataset
 Check if string `example` might be inserted in `my.bloom` filter, printing it to standard output if it might be true or skipping otherwise.
 ```
 echo example | bloom-tool check --name=my.bloom --stdin
 ```
 
-#### Benchmark
+#### Performance benchmark
 
-Execute performance benchmark and correctness verification of the bloom filter implementation.
+Execute performance benchmark and correctness verification of the Bloom filter implementation.
 This might take a minute, or more for greater sizes.
 ```
 bloom-tool benchmark --size 10000000 --fpp=1e-7
@@ -90,3 +104,11 @@ False Positives     : 123
 False Positive rate : 0.00000012300000
 FP rate evaluation  : good (122.92% target)
 ```
+
+## Building from sources
+
+The tool is built using Gradle [application plugin](https://docs.gradle.org/current/userguide/application_plugin.html).
+```
+./gradlew
+```
+builds whole project and places the tool package under `build/distributions` directory.
