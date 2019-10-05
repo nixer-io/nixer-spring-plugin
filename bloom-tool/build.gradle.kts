@@ -11,7 +11,7 @@ dependencies {
     implementation(project(":bloom-filter"))
 
     implementation("com.github.ajalt:clikt:2.1.0") // CLI parsing, see: https://ajalt.github.io/clikt/
-    implementation("com.google.guava:guava:22.0")
+    implementation("com.google.guava:guava:28.0-jre")
 
     testImplementation("junit:junit:4.12")
     testImplementation("pl.pragmatists:JUnitParams:1.0.6")
