@@ -12,12 +12,17 @@ import com.github.ajalt.clikt.parameters.types.double
 import com.github.ajalt.clikt.parameters.types.file
 import com.github.ajalt.clikt.parameters.types.int
 import com.github.ajalt.clikt.parameters.types.long
+import com.google.common.hash.Hashing
 import java.io.File
 import java.io.InputStream
 
 abstract class InputStreamingCommand(name: String, help: String) : CliktCommand(name = name, help = help) {
 
     private val inputOptions by InputOptions().required()
+
+    private val sha1: Boolean by option(help = """
+            Flag indicating whether the input values should be converted to their SHA-1 checksums.
+            """).flag()
 
     protected fun inputStream(): InputStream = with(inputOptions) {
         when {
@@ -28,6 +33,16 @@ abstract class InputStreamingCommand(name: String, help: String) : CliktCommand(
             else -> throw IllegalArgumentException(
                     "Either standard input or input file must be chosen, but was: '--stdin=$stdin', '--inputFile=$inputFile'"
             )
+        }
+    }
+
+    protected fun hashingFunction(): (String) -> String {
+        return if (sha1) {
+            val hashFunction = Hashing.sha1()
+
+            return { it: String -> hashFunction.hashString(it, Charsets.UTF_8).toString().toUpperCase() }
+        } else {
+            { it }
         }
     }
 }

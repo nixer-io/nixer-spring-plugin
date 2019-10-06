@@ -81,7 +81,7 @@ class BloomToolMainTest {
     }
 
     @Test
-    fun `should build bloom filter with values and execute successful check`() {
+    fun `should build bloom filter from unparsed entries and execute successful check`() {
         // given
         val filterFile = givenFile("test.bloom")
 
@@ -103,6 +103,38 @@ class BloomToolMainTest {
         executeCommand("build",
                 "--size=3", "--fpp=1e-2", "--input-file=${valuesFile.absolutePath}", "--separator=:", "--field=0",
                 "--name=${filterFile.absolutePath}")
+
+        executeCommand("check", "--input-file=${checkFile.absolutePath}", "--name=${filterFile.absolutePath}")
+
+        // then
+        assertThat(commandOutput.toString()).contains(hashToLookFor)
+    }
+
+    @Test
+    fun `should build bloom filter from not hashed values and execute successful check`() {
+        // given
+        val filterFile = givenFile("test.bloom")
+
+        val hashToLookFor = "CBFDAC6008F9CAB4083784CBD1874F76618D2A97" // sha1 of password123
+
+        val notHashedValues = listOf(
+                "foobar1",
+                "password123",
+                "IamTheBest"
+        )
+
+        val valuesFile = givenFile("values.txt").apply {
+            printWriter().use { notHashedValues.forEach { hash -> it.println(hash) } }
+        }
+
+        val checkFile = givenFile("check.txt").apply { writeText(hashToLookFor) }
+
+        // when
+        executeCommand("build",
+                "--size=3", "--fpp=1e-2", "--input-file=${valuesFile.absolutePath}",
+                "--name=${filterFile.absolutePath}",
+                "--sha1"
+        )
 
         executeCommand("check", "--input-file=${checkFile.absolutePath}", "--name=${filterFile.absolutePath}")
 

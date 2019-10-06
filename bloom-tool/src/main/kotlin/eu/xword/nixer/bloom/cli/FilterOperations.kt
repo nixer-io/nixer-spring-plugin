@@ -34,19 +34,19 @@ private fun getFunnel(hex: Boolean): Funnel<CharSequence> = when {
 }
 
 fun insertIntoFilter(targetFilter: BloomFilter<CharSequence>,
-                     entryParser: (String) -> String,
+                     entryTransformer: (String) -> String,
                      entriesStream: InputStream) {
     InputStreamReader(entriesStream, Charsets.UTF_8.newDecoder()).buffered().use { reader ->
         reader.lines().forEach {
-            targetFilter.put(entryParser(it))
+            targetFilter.put(entryTransformer(it))
         }
     }
 }
 
-fun checkAgainstFilter(bloomFilter: BloomFilter<CharSequence>, entriesStream: InputStream) {
+fun checkAgainstFilter(bloomFilter: BloomFilter<CharSequence>, entriesStream: InputStream, entryTransformer: (String) -> String = { it }) {
     InputStreamReader(entriesStream, Charsets.UTF_8.newDecoder()).buffered().use { reader ->
         reader.lines()
-                .filter { bloomFilter.mightContain(it) }
+                .filter { bloomFilter.mightContain(entryTransformer(it)) }
                 .forEach { println(it) }
     }
 }

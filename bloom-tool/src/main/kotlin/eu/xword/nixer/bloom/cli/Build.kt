@@ -37,6 +37,10 @@ class Build : InputStreamingCommand(name = "build",
                 ?.run { fieldExtractor(separator, field) }
                 ?: { it }
 
-        insertIntoFilter(bloomFilter, entryParser, inputStream)
+        val entryHasher: (String) -> String = hashingFunction()
+
+        val entryTransformer: (String) -> String = { entryHasher(entryParser(it)) }
+
+        insertIntoFilter(bloomFilter, entryTransformer, inputStream)
     }
 }
