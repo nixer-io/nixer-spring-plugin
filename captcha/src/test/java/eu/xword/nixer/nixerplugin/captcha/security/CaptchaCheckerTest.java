@@ -25,14 +25,11 @@ class CaptchaCheckerTest {
     @Mock
     CaptchaService captchaService;
 
-    @Mock
-    LoginFailureTypeRegistry loginFailureTypeRegistry;
-
     CaptchaChecker captchaChecker;
 
     @BeforeEach
     public void setup() {
-        captchaChecker = new CaptchaChecker(captchaService, loginFailureTypeRegistry);
+        captchaChecker = new CaptchaChecker(captchaService);
         captchaChecker.setCaptchaParam(CAPTCHA_PARAM);
     }
 

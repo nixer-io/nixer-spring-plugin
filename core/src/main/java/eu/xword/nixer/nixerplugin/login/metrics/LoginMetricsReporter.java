@@ -1,15 +1,14 @@
 package eu.xword.nixer.nixerplugin.login.metrics;
 
-import java.util.EnumMap;
-import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
-import com.google.common.collect.Maps;
 import eu.xword.nixer.nixerplugin.login.LoginActivityRepository;
 import eu.xword.nixer.nixerplugin.login.LoginContext;
-import eu.xword.nixer.nixerplugin.login.LoginFailureType;
+import eu.xword.nixer.nixerplugin.login.LoginFailureTypeRegistry;
 import eu.xword.nixer.nixerplugin.login.LoginResult;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
+import org.springframework.util.Assert;
 
 /**
  * Records metrics about user login in micrometer.
@@ -18,20 +17,18 @@ public class LoginMetricsReporter implements LoginActivityRepository {
 
     private final Counter loginSuccessCounter;
 
-    private final Map<LoginFailureType, Counter> failureCounters;
+    private final ConcurrentHashMap<String, Counter> failureCounters = new ConcurrentHashMap<>();
 
-    public LoginMetricsReporter(final MeterRegistry meterRegistry) {
-        final EnumMap<LoginFailureType, Counter> result = Maps.newEnumMap(LoginFailureType.class);
+    private final MeterRegistry meterRegistry;
 
-        for (LoginFailureType it : LoginFailureType.values()) {
-            final Counter counter = Counter.builder("login")
-                    .description("User login failed")
-                    .tags("result", "failed")
-                    .tag("reason", it.name())
-                    .register(meterRegistry);
-            result.put(it, counter);
-        }
-        this.failureCounters = result;
+    public LoginMetricsReporter(final MeterRegistry meterRegistry, final LoginFailureTypeRegistry loginFailureTypeRegistry) {
+        Assert.notNull(meterRegistry, "MeterRegistry must not be null");
+        this.meterRegistry = meterRegistry;
+
+        Assert.notNull(loginFailureTypeRegistry, "LoginFailureTypeRegistry must not be null");
+
+        loginFailureTypeRegistry.getReasons()
+                .forEach(reason -> failureCounters.computeIfAbsent(reason, this::failureCounter));
 
         this.loginSuccessCounter = Counter.builder("login")
                 .description("User login succeeded")
@@ -40,8 +37,16 @@ public class LoginMetricsReporter implements LoginActivityRepository {
 
     }
 
-    private void reportLoginFail(final LoginFailureType loginFailureType) {
-        final Counter failureCounter = failureCounters.get(loginFailureType);
+    private Counter failureCounter(String reason) {
+        return Counter.builder("login")
+                .description("User login failed")
+                .tags("result", "failed")
+                .tag("reason", reason)
+                .register(meterRegistry);
+    }
+
+    private void reportLoginFail(final String loginFailureType) {
+        final Counter failureCounter = failureCounters.computeIfAbsent(loginFailureType, this::failureCounter);
 
         failureCounter.increment();
     }

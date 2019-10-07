@@ -49,7 +49,7 @@ public class InMemoryLoginActivityRepository implements LoginActivityRepository 
 //                  if (failedByIp == LOGIN_FAILED_BY_IP_THRESHOLD) {
 //                        eventPublisher.publishEvent(new BlockSourceIPEvent(context.getIpAddress()));
 //                    }
-                    if (failure.getFailureType() == LoginFailureType.UNKNOWN_USER) {
+                    if (failure.getFailureType().equals(LoginFailureType.UNKNOWN_USER.name())) {
                         unknownUserByIp.increment(context);
                     }
                     if (context.getUsername() != null) {
