@@ -11,9 +11,9 @@ import com.google.common.base.Preconditions;
  */
 public class LoginResult {
     private final Status status;
-    private final LoginFailureType reason;
+    private final String reason;
 
-    private LoginResult(final Status status, final LoginFailureType reason) {
+    private LoginResult(final Status status, final String reason) {
         this.status = Preconditions.checkNotNull(status, "status");
         this.reason = reason;
     }
@@ -22,7 +22,7 @@ public class LoginResult {
         return new LoginResult(Status.SUCCESS, null);
     }
 
-    public static LoginResult failure(LoginFailureType reason) {
+    public static LoginResult failure(String reason) {
         Preconditions.checkNotNull(reason, "reason");
 
         return new LoginResult(Status.FAILURE, reason);
@@ -36,7 +36,7 @@ public class LoginResult {
         return status == Status.SUCCESS;
     }
 
-    public LoginFailureType getFailureType() {
+    public String getFailureType() {
         return reason;
     }
 

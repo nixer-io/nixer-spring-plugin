@@ -6,6 +6,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import eu.xword.nixer.nixerplugin.filter.behavior.Behavior;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Component;
 
 /**
@@ -13,6 +15,8 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class CaptchaBehavior implements Behavior {
+
+    private final Log logger = LogFactory.getLog(getClass());
 
     public static final String CAPTCHA = "captcha";
     public static final String CAPTCHA_CHALLENGE = "nixer.captcha.challenge";
@@ -23,7 +27,7 @@ public class CaptchaBehavior implements Behavior {
         if (session != null) {
             session.setAttribute(CAPTCHA_CHALLENGE, true);
         } else {
-            // shouldn't happened
+            logger.warn("Expecting session to be created by this time");
         }
     }
 

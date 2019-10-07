@@ -16,8 +16,8 @@ public class LoginMetricsConfiguration {
     @ConditionalOnProperty(prefix = "nixer.login.metrics", name = "enabled", havingValue = "true", matchIfMissing = true)
     @ConditionalOnMissingBean(LoginMetricsReporter.class)
 //    @ConditionalOnBean(MeterRegistry.class) // TODO making this active breaks  program causing bean not being registered
-    public LoginActivityRepository loginMetrics(MeterRegistry meterRegistry) {
-        return new LoginMetricsReporter(meterRegistry);
+    public LoginActivityRepository loginMetrics(MeterRegistry meterRegistry, LoginFailureTypeRegistry failureTypeRegistry) {
+        return new LoginMetricsReporter(meterRegistry, failureTypeRegistry);
     }
 
     @Bean
