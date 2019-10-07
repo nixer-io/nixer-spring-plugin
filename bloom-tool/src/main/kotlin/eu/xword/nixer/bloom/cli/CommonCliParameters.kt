@@ -20,8 +20,9 @@ abstract class InputStreamingCommand(name: String, help: String) : CliktCommand(
 
     private val inputOptions by InputOptions().required()
 
+    // FIXME more this option outside this class
     private val sha1: Boolean by option(help = """
-            Flag indicating whether the input values should be converted to their SHA-1 checksums.
+            Flag indicating whether the input values should be hashed with SHA-1.
             """).flag()
 
     protected fun inputStream(): InputStream = with(inputOptions) {

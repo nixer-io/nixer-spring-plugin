@@ -4,12 +4,14 @@ import com.google.common.base.Charsets
 import com.google.common.hash.Funnel
 import com.google.common.hash.Funnels
 import eu.xword.nixer.bloom.BloomFilter
+import eu.xword.nixer.bloom.BloomFilterCheck
 import eu.xword.nixer.bloom.FileBasedBloomFilter
 import eu.xword.nixer.bloom.HexFunnel
 import java.io.InputStream
 import java.io.InputStreamReader
 import java.nio.file.Files
 import java.nio.file.Paths
+import java.util.function.Predicate
 
 /**
  * Created on 26/09/2019.
@@ -28,6 +30,17 @@ fun openFilter(name: String, hex: Boolean): BloomFilter<CharSequence> = FileBase
         getFunnel(hex)
 )
 
+fun openFilterForCheck(name: String, valuesAlreadyHashed: Boolean): Predicate<String> {
+
+    val filterFilePath = Paths.get(name).also { require(Files.exists(it)) { "Bloom filter metadata file '$it' does not exist" } }
+
+    return when {
+        valuesAlreadyHashed -> BloomFilterCheck.notHashingBeforeCheck(filterFilePath)
+
+        else -> BloomFilterCheck.hashingBeforeCheck(filterFilePath)
+    }
+}
+
 private fun getFunnel(hex: Boolean): Funnel<CharSequence> = when {
     hex -> HexFunnel(Funnels.unencodedCharsFunnel())
     else -> Funnels.unencodedCharsFunnel()
@@ -43,10 +56,10 @@ fun insertIntoFilter(targetFilter: BloomFilter<CharSequence>,
     }
 }
 
-fun checkAgainstFilter(bloomFilter: BloomFilter<CharSequence>, entriesStream: InputStream, entryTransformer: (String) -> String = { it }) {
+fun checkAgainstFilter(bloomFilter: Predicate<String>, entriesStream: InputStream) {
     InputStreamReader(entriesStream, Charsets.UTF_8.newDecoder()).buffered().use { reader ->
         reader.lines()
-                .filter { bloomFilter.mightContain(entryTransformer(it)) }
+                .filter { bloomFilter.test(it) }
                 .forEach { println(it) }
     }
 }

@@ -57,12 +57,12 @@ class BloomToolMainTest {
         executeCommand("create", "--size=3", "--fpp=1e-2", "--name=${filterFile.absolutePath}")
         assertThat(filterFile).exists()
 
-        val hashToLookFor = "FFFFFFF8A0382AA9C8D9536EFBA77F261815334D"
+        val hashToLookFor = "CBFDAC6008F9CAB4083784CBD1874F76618D2A97" // password123 SHA-1
 
         val hexHashes = listOf(
-                "FFFFFFF1A63ACC70BEA924C5DBABEE4B9B18C82D",
+                "BB928CA332F5F4FA2CDAEF238672E0FBCF5E7A0F", // foobar1 SHA-1
                 hashToLookFor,
-                "FFFFFFFEE791CBAC0F6305CAF0CEE06BBE131160"
+                "42E1D179E9781138DF3471EEF084F6622A0E7091" // IamTheBest SHA-1
         )
 
         val valuesFile = givenFile("values.txt").apply {
@@ -74,7 +74,7 @@ class BloomToolMainTest {
         // when
         executeCommand("insert", "--input-file=${valuesFile.absolutePath}", "--name=${filterFile.absolutePath}")
 
-        executeCommand("check", "--input-file=${checkFile.absolutePath}", "--name=${filterFile.absolutePath}")
+        executeCommand("check", "--input-file=${checkFile.absolutePath}", "--name=${filterFile.absolutePath}", "--hashed")
 
         // then
         assertThat(commandOutput.toString()).contains(hashToLookFor)
@@ -85,12 +85,12 @@ class BloomToolMainTest {
         // given
         val filterFile = givenFile("test.bloom")
 
-        val hashToLookFor = "FFFFFFF8A0382AA9C8D9536EFBA77F261815334D"
+        val hashToLookFor = "CBFDAC6008F9CAB4083784CBD1874F76618D2A97" // password123 SHA-1
 
         val hexHashesWithAdditionalColumn = listOf(
-                "FFFFFFF1A63ACC70BEA924C5DBABEE4B9B18C82D:54",
+                "BB928CA332F5F4FA2CDAEF238672E0FBCF5E7A0F:54", // foobar1 SHA-1
                 "$hashToLookFor:7",
-                "FFFFFFFEE791CBAC0F6305CAF0CEE06BBE131160:2"
+                "42E1D179E9781138DF3471EEF084F6622A0E7091:2" // IamTheBest SHA-1
         )
 
         val valuesFile = givenFile("values.txt").apply {
@@ -104,18 +104,18 @@ class BloomToolMainTest {
                 "--size=3", "--fpp=1e-2", "--input-file=${valuesFile.absolutePath}", "--separator=:", "--field=0",
                 "--name=${filterFile.absolutePath}")
 
-        executeCommand("check", "--input-file=${checkFile.absolutePath}", "--name=${filterFile.absolutePath}")
+        executeCommand("check", "--input-file=${checkFile.absolutePath}", "--name=${filterFile.absolutePath}", "--hashed")
 
         // then
         assertThat(commandOutput.toString()).contains(hashToLookFor)
     }
 
     @Test
-    fun `should build bloom filter from not hashed values and execute successful check`() {
+    fun `should build bloom filter from not hashed values and execute successful check using hash`() {
         // given
         val filterFile = givenFile("test.bloom")
 
-        val hashToLookFor = "CBFDAC6008F9CAB4083784CBD1874F76618D2A97" // sha1 of password123
+        val hashToLookFor = "CBFDAC6008F9CAB4083784CBD1874F76618D2A97" // password123 SHA-1
 
         val notHashedValues = listOf(
                 "foobar1",
@@ -136,10 +136,42 @@ class BloomToolMainTest {
                 "--sha1"
         )
 
-        executeCommand("check", "--input-file=${checkFile.absolutePath}", "--name=${filterFile.absolutePath}")
+        executeCommand("check", "--input-file=${checkFile.absolutePath}", "--name=${filterFile.absolutePath}", "--hashed")
 
         // then
         assertThat(commandOutput.toString()).contains(hashToLookFor)
+    }
+
+    @Test
+    fun `should build bloom filter from not hashed values and execute successful check using raw value`() {
+        // given
+        val filterFile = givenFile("test.bloom")
+
+        val valueToLookFor = "password123"
+
+        val notHashedValues = listOf(
+                "foobar1",
+                valueToLookFor,
+                "IamTheBest"
+        )
+
+        val valuesFile = givenFile("values.txt").apply {
+            printWriter().use { notHashedValues.forEach { hash -> it.println(hash) } }
+        }
+
+        val checkFile = givenFile("check.txt").apply { writeText(valueToLookFor) }
+
+        // when
+        executeCommand("build",
+                "--size=3", "--fpp=1e-2", "--input-file=${valuesFile.absolutePath}",
+                "--name=${filterFile.absolutePath}",
+                "--sha1"
+        )
+
+        executeCommand("check", "--input-file=${checkFile.absolutePath}", "--name=${filterFile.absolutePath}")
+
+        // then
+        assertThat(commandOutput.toString()).contains(valueToLookFor)
     }
 
     private fun executeCommand(vararg command: String) {
