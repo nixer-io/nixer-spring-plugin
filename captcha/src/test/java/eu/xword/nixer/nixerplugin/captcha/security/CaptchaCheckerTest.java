@@ -2,12 +2,8 @@ package eu.xword.nixer.nixerplugin.captcha.security;
 
 import eu.xword.nixer.nixerplugin.captcha.CaptchaService;
 import eu.xword.nixer.nixerplugin.captcha.error.CaptchaServiceException;
-import eu.xword.nixer.nixerplugin.login.LoginFailureTypeRegistry;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.BDDMockito;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -16,25 +12,17 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verifyZeroInteractions;
 
-@ExtendWith(MockitoExtension.class)
 class CaptchaCheckerTest {
 
-    public static final UserDetails ANY = null;
-    public static final String CAPTCHA_PARAM = "captcha-param";
+    private static final UserDetails ANY = null;
+    private static final String CAPTCHA_PARAM = "captcha-param";
 
-    @Mock
-    CaptchaService captchaService;
+    private CaptchaService captchaService = BDDMockito.mock(CaptchaService.class);
 
-    CaptchaChecker captchaChecker;
-
-    @BeforeEach
-    public void setup() {
-        captchaChecker = new CaptchaChecker(captchaService);
-        captchaChecker.setCaptchaParam(CAPTCHA_PARAM);
-    }
+    private CaptchaChecker captchaChecker = new CaptchaChecker(captchaService, CAPTCHA_PARAM);
 
     @Test
-    public void should_pass_validation() {
+    void should_pass_validation() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter(CAPTCHA_PARAM, "captcha");
         captchaChecker.setCaptchaCondition(CaptchaCondition.ALWAYS);
@@ -46,7 +34,7 @@ class CaptchaCheckerTest {
     }
 
     @Test
-    public void should_fail_validation() {
+    void should_fail_validation() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter(CAPTCHA_PARAM, "captcha");
         captchaChecker.setCaptchaCondition(CaptchaCondition.ALWAYS);
@@ -59,7 +47,7 @@ class CaptchaCheckerTest {
     }
 
     @Test
-    public void should_skip_validation() {
+    void should_skip_validation() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         captchaChecker.setCaptchaCondition(CaptchaCondition.NEVER);
         captchaChecker.setRequest(request);
