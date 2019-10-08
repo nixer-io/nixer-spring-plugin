@@ -6,20 +6,20 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import static eu.xword.nixer.nixerplugin.captcha.config.CaptchaProperties.MetricsProperties.DEFAULT;
+import static eu.xword.nixer.nixerplugin.captcha.config.CaptchaMetricsProperties.DEFAULT;
 
 @Configuration
 public class MetricsConfiguration {
 
     @Bean
-    @ConditionalOnProperty(prefix = "captcha.metrics", name = "enabled", havingValue = "true", matchIfMissing = DEFAULT)
+    @ConditionalOnProperty(prefix = "nixer.captcha.metrics", name = "enabled", havingValue = "true", matchIfMissing = DEFAULT)
     public MetricsReporterFactory metricsReporterFactory(MeterRegistry meterRegistry) {
         return new MicrometerMetricsReporterFactory(meterRegistry);
     }
 
     @Bean
     @ConditionalOnMissingBean
-    @ConditionalOnProperty(prefix = "captcha.metrics", name = "enabled", havingValue = "false")
+    @ConditionalOnProperty(prefix = "nixer.captcha.metrics", name = "enabled", havingValue = "false")
     public MetricsReporterFactory nopMetricsReporterFactory() {
         return action -> new NOPMetricsReporter();
     }

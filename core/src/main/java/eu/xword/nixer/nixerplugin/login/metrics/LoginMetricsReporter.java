@@ -1,9 +1,10 @@
 package eu.xword.nixer.nixerplugin.login.metrics;
 
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.HashMap;
 
 import eu.xword.nixer.nixerplugin.login.LoginActivityRepository;
 import eu.xword.nixer.nixerplugin.login.LoginContext;
+import eu.xword.nixer.nixerplugin.login.LoginFailureType;
 import eu.xword.nixer.nixerplugin.login.LoginFailureTypeRegistry;
 import eu.xword.nixer.nixerplugin.login.LoginResult;
 import io.micrometer.core.instrument.Counter;
@@ -17,7 +18,7 @@ public class LoginMetricsReporter implements LoginActivityRepository {
 
     private final Counter loginSuccessCounter;
 
-    private final ConcurrentHashMap<String, Counter> failureCounters = new ConcurrentHashMap<>();
+    private final HashMap<LoginFailureType, Counter> failureCounters = new HashMap<>();
 
     private final MeterRegistry meterRegistry;
 
@@ -28,7 +29,7 @@ public class LoginMetricsReporter implements LoginActivityRepository {
         Assert.notNull(loginFailureTypeRegistry, "LoginFailureTypeRegistry must not be null");
 
         loginFailureTypeRegistry.getReasons()
-                .forEach(reason -> failureCounters.computeIfAbsent(reason, this::failureCounter));
+                .forEach(reason -> failureCounters.put(reason, this.failureCounter(reason)));
 
         this.loginSuccessCounter = Counter.builder("login")
                 .description("User login succeeded")
@@ -37,16 +38,16 @@ public class LoginMetricsReporter implements LoginActivityRepository {
 
     }
 
-    private Counter failureCounter(String reason) {
+    private Counter failureCounter(final LoginFailureType reason) {
         return Counter.builder("login")
                 .description("User login failed")
                 .tags("result", "failed")
-                .tag("reason", reason)
+                .tag("reason", reason.name())
                 .register(meterRegistry);
     }
 
-    private void reportLoginFail(final String loginFailureType) {
-        final Counter failureCounter = failureCounters.computeIfAbsent(loginFailureType, this::failureCounter);
+    private void reportLoginFail(final LoginFailureType loginFailureType) {
+        final Counter failureCounter = failureCounters.get(loginFailureType);
 
         failureCounter.increment();
     }

@@ -13,10 +13,10 @@ import static eu.xword.nixer.nixerplugin.captcha.recaptcha.RecaptchaVerifyRespon
 
 class RecaptchaVerifyResponseTest {
 
-    ObjectMapper json = new ObjectMapper();
+    private ObjectMapper json = new ObjectMapper();
 
     @Test
-    public void testDeserializeOkMessage() throws IOException {
+    void testDeserializeOkMessage() throws IOException {
         final InputStream resource = getClass().getClassLoader().getResourceAsStream("ok-message.json");
         final RecaptchaVerifyResponse response = json.readValue(resource, RecaptchaVerifyResponse.class);
 
@@ -25,7 +25,7 @@ class RecaptchaVerifyResponseTest {
     }
 
     @Test
-    public void testDeserializeErrorMessage() throws IOException {
+    void testDeserializeErrorMessage() throws IOException {
         final InputStream resource = getClass().getClassLoader().getResourceAsStream("failed-message.json");
         final RecaptchaVerifyResponse response = json.readValue(resource, RecaptchaVerifyResponse.class);
 

@@ -89,7 +89,7 @@ public class LoginActivityListener implements ApplicationListener<AbstractAuthen
             return LoginResult.success();
         } else if (event instanceof AbstractAuthenticationFailureEvent) {
             final AuthenticationException exception = ((AbstractAuthenticationFailureEvent) event).getException();
-            final String failureType = loginFailureTypeRegistry.fromException(exception);
+            final LoginFailureType failureType = loginFailureTypeRegistry.fromException(exception);
             return LoginResult.failure(failureType);
         } else {
             return null;
