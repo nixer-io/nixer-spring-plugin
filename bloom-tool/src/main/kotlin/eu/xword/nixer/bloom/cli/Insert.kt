@@ -23,6 +23,13 @@ class Insert : InputStreamingCommand(name = "insert",
                 ?.run { fieldExtractor(separator, field) }
                 ?: { it }
 
-        insertIntoFilter(bloomFilter, entryParser, inputStream)
+        val entryHasher: (String) -> String = when {
+            hashInput -> ::sha1
+            else -> { it -> it }
+        }
+
+        val entryTransformer: (String) -> String = { entryHasher(entryParser(it)) }
+
+        insertIntoFilter(bloomFilter, entryTransformer, inputStream)
     }
 }

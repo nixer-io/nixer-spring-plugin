@@ -3,6 +3,7 @@ package eu.xword.nixer.bloom.cli
 import com.google.common.base.Charsets
 import com.google.common.hash.Funnel
 import com.google.common.hash.Funnels
+import com.google.common.hash.Hashing
 import eu.xword.nixer.bloom.BloomFilter
 import eu.xword.nixer.bloom.BloomFilterCheck
 import eu.xword.nixer.bloom.FileBasedBloomFilter
@@ -30,14 +31,13 @@ fun openFilter(name: String, hex: Boolean): BloomFilter<CharSequence> = FileBase
         getFunnel(hex)
 )
 
-fun openFilterForCheck(name: String, valuesAlreadyHashed: Boolean): Predicate<String> {
+fun openFilterForCheck(name: String, hashInputBeforeCheck: Boolean): Predicate<String> {
 
     val filterFilePath = Paths.get(name).also { require(Files.exists(it)) { "Bloom filter metadata file '$it' does not exist" } }
 
     return when {
-        valuesAlreadyHashed -> BloomFilterCheck.notHashingBeforeCheck(filterFilePath)
-
-        else -> BloomFilterCheck.hashingBeforeCheck(filterFilePath)
+        hashInputBeforeCheck -> BloomFilterCheck.hashingBeforeCheck(filterFilePath)
+        else -> BloomFilterCheck.notHashingBeforeCheck(filterFilePath)
     }
 }
 
@@ -65,3 +65,9 @@ fun checkAgainstFilter(bloomFilter: Predicate<String>, entriesStream: InputStrea
 }
 
 fun fieldExtractor(separator: String, fieldNumber: Int): (String) -> String = { line: String -> line.split(separator)[fieldNumber] }
+
+private val sha1HashFunction = Hashing.sha1()
+
+fun sha1(entry: String): String {
+    return sha1HashFunction.hashString(entry, kotlin.text.Charsets.UTF_8).toString().toUpperCase()
+}

@@ -74,7 +74,7 @@ class BloomToolMainTest {
         // when
         executeCommand("insert", "--input-file=${valuesFile.absolutePath}", "--name=${filterFile.absolutePath}")
 
-        executeCommand("check", "--input-file=${checkFile.absolutePath}", "--name=${filterFile.absolutePath}", "--hashed")
+        executeCommand("check", "--input-file=${checkFile.absolutePath}", "--name=${filterFile.absolutePath}")
 
         // then
         assertThat(commandOutput.toString()).contains(hashToLookFor)
@@ -104,7 +104,7 @@ class BloomToolMainTest {
                 "--size=3", "--fpp=1e-2", "--input-file=${valuesFile.absolutePath}", "--separator=:", "--field=0",
                 "--name=${filterFile.absolutePath}")
 
-        executeCommand("check", "--input-file=${checkFile.absolutePath}", "--name=${filterFile.absolutePath}", "--hashed")
+        executeCommand("check", "--input-file=${checkFile.absolutePath}", "--name=${filterFile.absolutePath}")
 
         // then
         assertThat(commandOutput.toString()).contains(hashToLookFor)
@@ -133,17 +133,17 @@ class BloomToolMainTest {
         executeCommand("build",
                 "--size=3", "--fpp=1e-2", "--input-file=${valuesFile.absolutePath}",
                 "--name=${filterFile.absolutePath}",
-                "--sha1"
+                "--hash-input"
         )
 
-        executeCommand("check", "--input-file=${checkFile.absolutePath}", "--name=${filterFile.absolutePath}", "--hashed")
+        executeCommand("check", "--input-file=${checkFile.absolutePath}", "--name=${filterFile.absolutePath}")
 
         // then
         assertThat(commandOutput.toString()).contains(hashToLookFor)
     }
 
     @Test
-    fun `should build bloom filter from not hashed values and execute successful check using raw value`() {
+    fun `should build bloom filter from not hashed values and execute successful check using not hashed value`() {
         // given
         val filterFile = givenFile("test.bloom")
 
@@ -165,10 +165,10 @@ class BloomToolMainTest {
         executeCommand("build",
                 "--size=3", "--fpp=1e-2", "--input-file=${valuesFile.absolutePath}",
                 "--name=${filterFile.absolutePath}",
-                "--sha1"
+                "--hash-input"
         )
 
-        executeCommand("check", "--input-file=${checkFile.absolutePath}", "--name=${filterFile.absolutePath}")
+        executeCommand("check", "--input-file=${checkFile.absolutePath}", "--name=${filterFile.absolutePath}", "--hash-input")
 
         // then
         assertThat(commandOutput.toString()).contains(valueToLookFor)

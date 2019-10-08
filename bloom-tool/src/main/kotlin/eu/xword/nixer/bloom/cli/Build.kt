@@ -37,7 +37,10 @@ class Build : InputStreamingCommand(name = "build",
                 ?.run { fieldExtractor(separator, field) }
                 ?: { it }
 
-        val entryHasher: (String) -> String = hashingFunction()
+        val entryHasher: (String) -> String = when {
+            hashInput -> ::sha1
+            else -> { it -> it }
+        }
 
         val entryTransformer: (String) -> String = { entryHasher(entryParser(it)) }
 
