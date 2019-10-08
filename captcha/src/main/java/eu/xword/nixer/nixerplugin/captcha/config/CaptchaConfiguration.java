@@ -1,7 +1,5 @@
 package eu.xword.nixer.nixerplugin.captcha.config;
 
-import javax.annotation.PostConstruct;
-
 import eu.xword.nixer.nixerplugin.captcha.CaptchaService;
 import eu.xword.nixer.nixerplugin.captcha.CaptchaServiceFactory;
 import eu.xword.nixer.nixerplugin.captcha.endpoint.CaptchaEndpoint;
@@ -22,19 +20,7 @@ import static eu.xword.nixer.nixerplugin.captcha.metrics.CaptchaMetrics.LOGIN_AC
  */
 @Configuration
 @EnableConfigurationProperties(value = {LoginCaptchaProperties.class})
-public class CaptchaConfiguration {
-
-    private LoginFailureTypeRegistry loginFailureTypeRegistry;
-
-    public CaptchaConfiguration(LoginFailureTypeRegistry loginFailureTypeRegistry) {
-        this.loginFailureTypeRegistry = loginFailureTypeRegistry;
-    }
-
-    @PostConstruct
-    public void setup() {
-        // register failure type for exception
-        loginFailureTypeRegistry.addMapping(BadCaptchaException.class, LoginFailureType.INVALID_CAPTCHA);
-    }
+public class CaptchaConfiguration implements LoginFailureTypeRegistry.Contributor {
 
     @Bean
     public CaptchaEndpoint captchaEndpoint(CaptchaChecker captchaChecker) {
@@ -55,5 +41,11 @@ public class CaptchaConfiguration {
     @Bean
     public CaptchaValidator captchaValidator(CaptchaServiceFactory captchaServiceFactory) {
         return new CaptchaValidator(captchaServiceFactory);
+    }
+
+    @Override
+    public void contribute(final LoginFailureTypeRegistry.Builder registryBuilder) {
+        // register failure type for exception
+        registryBuilder.addMapping(BadCaptchaException.class, LoginFailureType.INVALID_CAPTCHA);
     }
 }

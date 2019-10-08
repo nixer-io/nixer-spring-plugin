@@ -1,5 +1,7 @@
 package eu.xword.nixer.nixerplugin.login;
 
+import java.util.List;
+
 import eu.xword.nixer.nixerplugin.login.metrics.LoginMetricsReporter;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -21,8 +23,13 @@ public class LoginMetricsConfiguration {
     }
 
     @Bean
-    public LoginFailureTypeRegistry loginFailures() {
-        return new LoginFailureTypeRegistry();
+    public LoginFailureTypeRegistry loginFailuresRegistry(List<LoginFailureTypeRegistry.Contributor> consumers) {
+        final LoginFailureTypeRegistry.Builder builder = new LoginFailureTypeRegistry.Builder();
+
+        consumers.forEach(builderConsumer -> builderConsumer.contribute(builder));
+
+        return builder.build();
+
     }
 
 }
