@@ -16,30 +16,31 @@ import org.springframework.util.Assert;
  */
 public class CaptchaChecker implements UserDetailsChecker, InitializingBean {
 
-    @Autowired
     private HttpServletRequest request;
 
-    private String captchaParam;
+    private final String captchaParam;
 
     private final CaptchaService captchaService;
 
-    private AtomicReference<CaptchaCondition> condition = new AtomicReference<>(CaptchaCondition.ALWAYS);
+    private final AtomicReference<CaptchaCondition> condition = new AtomicReference<>(CaptchaCondition.ALWAYS);
 
-    public CaptchaChecker(final CaptchaService captchaService) {
+    public CaptchaChecker(final CaptchaService captchaService, final String captchaParam) {
         Assert.notNull(captchaService, "CaptchaService must not be null");
         this.captchaService = captchaService;
+
+        Assert.notNull(captchaParam, "CaptchaParam must not be null");
+        this.captchaParam = captchaParam;
     }
 
     @Override
     public void afterPropertiesSet() {
         Assert.notNull(request, "HttpServletRequest must not be null");
-        Assert.notNull(captchaParam, "CaptchaParam must not be null");
     }
 
     @Override
     public void check(final UserDetails toCheck) {
         if (shouldVerifyCaptcha()) {
-            final String captchaValue = request.getParameter(captchaParam);
+            final String captchaValue = getCaptchaParameter();
 
             try {
                 captchaService.verifyResponse(captchaValue);
@@ -49,10 +50,17 @@ public class CaptchaChecker implements UserDetailsChecker, InitializingBean {
         }
     }
 
+    private String getCaptchaParameter() {
+        return request.getParameter(captchaParam);
+    }
+
     private boolean shouldVerifyCaptcha() {
         return condition.get().test(request);
     }
 
+    /**
+     * Whether captcha should be displayed. To be used in view to control display of captcha.
+     */
     public boolean shouldDisplayCaptcha() {
         return condition.get().test(request);
     }
@@ -67,15 +75,10 @@ public class CaptchaChecker implements UserDetailsChecker, InitializingBean {
         return condition.get();
     }
 
+    @Autowired
     public void setRequest(final HttpServletRequest request) {
         Assert.notNull(request, "HttpServletRequest must not be null");
 
         this.request = request;
-    }
-
-    public void setCaptchaParam(final String captchaParam) {
-        Assert.notNull(captchaParam, "CaptchaParam must not be null");
-
-        this.captchaParam = captchaParam;
     }
 }

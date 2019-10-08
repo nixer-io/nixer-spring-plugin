@@ -24,7 +24,7 @@ import static eu.xword.nixer.nixerplugin.captcha.metrics.CaptchaMetrics.LOGIN_AC
 @EnableConfigurationProperties(value = {LoginCaptchaProperties.class})
 public class CaptchaConfiguration {
 
-    LoginFailureTypeRegistry loginFailureTypeRegistry;
+    private LoginFailureTypeRegistry loginFailureTypeRegistry;
 
     public CaptchaConfiguration(LoginFailureTypeRegistry loginFailureTypeRegistry) {
         this.loginFailureTypeRegistry = loginFailureTypeRegistry;
@@ -32,6 +32,7 @@ public class CaptchaConfiguration {
 
     @PostConstruct
     public void setup() {
+        // register failure type for exception
         loginFailureTypeRegistry.addMapping(BadCaptchaException.class, LoginFailureType.INVALID_CAPTCHA);
     }
 
@@ -44,9 +45,9 @@ public class CaptchaConfiguration {
     public CaptchaChecker captchaChecker(CaptchaServiceFactory captchaServiceFactory,
                                          LoginCaptchaProperties loginCaptchaProperties) {
         final CaptchaService captchaService = captchaServiceFactory.createCaptchaService(LOGIN_ACTION);
+        final String captchaParam = loginCaptchaProperties.getParam();
 
-        final CaptchaChecker captchaChecker = new CaptchaChecker(captchaService);
-        captchaChecker.setCaptchaParam(loginCaptchaProperties.getParam());
+        final CaptchaChecker captchaChecker = new CaptchaChecker(captchaService, captchaParam);
         captchaChecker.setCaptchaCondition(loginCaptchaProperties.getCondition());
         return captchaChecker;
     }

@@ -18,14 +18,14 @@ public class CaptchaBehavior implements Behavior {
 
     private final Log logger = LogFactory.getLog(getClass());
 
-    public static final String CAPTCHA = "captcha";
-    public static final String CAPTCHA_CHALLENGE = "nixer.captcha.challenge";
+    public static final String CAPTCHA_NAME = "captcha";
+    public static final String CAPTCHA_CHALLENGE_ATTR = "nixer.captcha.challenge";
 
     @Override
     public void act(final HttpServletRequest request, final HttpServletResponse response) throws IOException {
         final HttpSession session = request.getSession(false);
         if (session != null) {
-            session.setAttribute(CAPTCHA_CHALLENGE, true);
+            session.setAttribute(CAPTCHA_CHALLENGE_ATTR, true);
         } else {
             logger.warn("Expecting session to be created by this time");
         }
@@ -38,7 +38,7 @@ public class CaptchaBehavior implements Behavior {
 
     @Override
     public String name() {
-        return CAPTCHA;
+        return CAPTCHA_NAME;
     }
 
     @Override
