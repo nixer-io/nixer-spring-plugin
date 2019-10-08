@@ -75,6 +75,9 @@ public class CaptchaChecker implements UserDetailsChecker, InitializingBean {
         return condition.get();
     }
 
+    /**
+     * Spring is injecting proxy to actual request
+     */
     @Autowired
     public void setRequest(final HttpServletRequest request) {
         Assert.notNull(request, "HttpServletRequest must not be null");
