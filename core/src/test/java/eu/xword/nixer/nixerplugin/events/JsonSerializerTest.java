@@ -17,13 +17,13 @@ class JsonSerializerTest {
     }
 
     @Test
-    public void testSerializeBlockIpEvent() {
+    public void testSerializeIpFailedLoginOverThresholdEvent() {
         final JsonSerializer serializer = new JsonSerializer();
-        final BlockSourceIpEvent event = new BlockSourceIpEvent("127.0.0.1");
+        final IpFailedLoginOverThresholdEvent event = new IpFailedLoginOverThresholdEvent("127.0.0.1");
 
         event.accept(serializer);
 
-        assertThat(serializer.toString()).contains("\"type\":\"BLOCK_SOURCE_IP\"");
+        assertThat(serializer.toString()).contains("\"type\":\"IP_FAILED_LOGIN_OVER_THRESHOLD\"");
         assertThat(serializer.toString()).contains("\"ip\":\"127.0.0.1\"");
     }
 }

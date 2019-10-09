@@ -3,6 +3,7 @@ package eu.xword.nixer.nixerplugin.example.full;
 import eu.xword.nixer.nixerplugin.captcha.recaptcha.RecaptchaClientStub;
 import eu.xword.nixer.nixerplugin.captcha.security.CaptchaChecker;
 import eu.xword.nixer.nixerplugin.captcha.security.CaptchaCondition;
+import eu.xword.nixer.nixerplugin.rules.IpFailedLoginThresholdRuleProperties;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.junit.jupiter.api.AfterEach;
@@ -29,6 +30,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.logout;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated;
@@ -62,6 +64,9 @@ public class FullApplicationTest {
     @Autowired
     private MeterRegistry meterRegistry;
 
+    @Autowired
+    private IpFailedLoginThresholdRuleProperties ruleProperties;
+
     @TestConfiguration
     public static class TestConfig {
         @Bean
@@ -85,32 +90,32 @@ public class FullApplicationTest {
     }
 
     @Test
-    void loginUser() throws Exception {
+    void shouldLoginSuccessfully() throws Exception {
         // @formatter:off
         loginSuccessfully();
         // @formatter:on
     }
 
     @Test
-    void returnCaptcha() throws Exception {
+    void shouldReturnCaptchaChallengeIfActivated() throws Exception {
         //enable captcha
         this.captchaChecker.setCaptchaCondition(CaptchaCondition.ALWAYS);
 
         // @formatter:off
         this.mockMvc.perform(get("/login"))
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsString("class=\"g-recaptcha\"")));
+                .andExpect(captchaChallenge());
         // @formatter:on
     }
 
     @Test
-    void shouldActivateCaptcha() throws Exception {
+    void shouldActiveCaptchaChallengeOnIpDueToConsecutiveLoginFailures() throws Exception {
         // enable session controlled mode
         this.captchaChecker.setCaptchaCondition(CaptchaCondition.SESSION_CONTROLLED);
 
         MockHttpSession session = new MockHttpSession();
         // @formatter:on
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < ruleProperties.getThreshold() + 1; i++) {
             this.mockMvc.perform(formLogin().user("user").password("guess").build()
                     .session(session))
                     .andExpect(unauthenticated());
@@ -119,34 +124,40 @@ public class FullApplicationTest {
 
         this.mockMvc.perform(get("/login").session(session))
             .andExpect(status().isOk())
-            .andExpect(content().string(containsString("class=\"g-recaptcha\"")));
+            .andExpect(captchaChallenge());
 
         this.mockMvc.perform(formLogin().user("user").password("user").captcha("good-captcha").build()
                 .session(session))
                 .andExpect(authenticated());
+
+        this.mockMvc.perform(get("/login")
+                .session(new MockHttpSession())
+                .with(remoteAddress("192.168.1.1")))
+            .andExpect(status().isOk())
+            .andExpect(noCaptchaChallenge());
     }
 
     @Test
-    void loginWithCaptcha() throws  Exception {
+    void shouldLoginSuccessfullyWithGoodCaptcha() throws  Exception {
         //enable captcha
         this.captchaChecker.setCaptchaCondition(CaptchaCondition.ALWAYS);
 
         this.mockMvc.perform(get("/login"))
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsString("class=\"g-recaptcha\"")));
+                .andExpect(captchaChallenge());
 
         this.mockMvc.perform(formLogin().user("user").password("user").captcha("good-captcha").build())
                 .andExpect(authenticated());
     }
 
     @Test
-    void loginFailedWithCaptcha() throws  Exception {
+    void shouldFailLoginWithBadCaptcha() throws  Exception {
         //enable captcha
         this.captchaChecker.setCaptchaCondition(CaptchaCondition.ALWAYS);
 
         this.mockMvc.perform(get("/login"))
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsString("class=\"g-recaptcha\"")));
+                .andExpect(captchaChallenge());
 
         this.mockMvc.perform(formLogin().user("user").password("guess").captcha("bad-captcha").build())
                 .andExpect(unauthenticated());
@@ -305,4 +316,11 @@ public class FullApplicationTest {
         return redirectedUrl("/login?blockedError");
     }
 
+    private ResultMatcher captchaChallenge() {
+        return content().string(containsString("class=\"g-recaptcha\""));
+    }
+
+    private ResultMatcher noCaptchaChallenge() {
+        return content().string(not(containsString("class=\"g-recaptcha\"")));
+    }
 }

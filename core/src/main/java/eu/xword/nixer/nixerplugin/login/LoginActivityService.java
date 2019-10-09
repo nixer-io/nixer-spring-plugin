@@ -2,18 +2,26 @@ package eu.xword.nixer.nixerplugin.login;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import eu.xword.nixer.nixerplugin.rules.RulesEngine;
 import org.springframework.stereotype.Component;
 
 @Component
 public class LoginActivityService {
 
-    @Autowired
-    private List<LoginActivityRepository> loginActivityRepositories;
+    private final List<LoginActivityRepository> loginActivityRepositories;
+
+    private final RulesEngine rulesEngine;
+
+    public LoginActivityService(final List<LoginActivityRepository> loginActivityRepositories, final RulesEngine rulesEngine) {
+        this.loginActivityRepositories = loginActivityRepositories;
+        this.rulesEngine = rulesEngine;
+    }
 
     public void handle(final LoginResult loginResult, final LoginContext context) {
         //TODO extract keeping track of stats to dedicated place
         loginActivityRepositories.forEach(it -> it.reportLoginActivity(loginResult, context));
+
+        rulesEngine.onLogin(loginResult, context);
     }
 
 }

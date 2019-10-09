@@ -6,7 +6,7 @@ public interface EventVisitor {
 
     void accept(LockUserEvent event);
 
-    void accept(BlockSourceIpEvent event);
+    void accept(IpFailedLoginOverThresholdEvent event);
 
     void accept(GlobalCredentialStuffingEvent event);
 }

@@ -31,7 +31,7 @@ public class JsonSerializer implements EventVisitor {
     }
 
     @Override
-    public void accept(final BlockSourceIpEvent event) {
+    public void accept(final IpFailedLoginOverThresholdEvent event) {
         apply(event, () -> writeStringField("ip", event.getIp()));
     }
 

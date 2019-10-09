@@ -26,7 +26,7 @@ public class UsernameLoginFilter extends MetadataFilter {
     protected void apply(final HttpServletRequest request) {
         if (requestMatcher.matches(request)) {
             final String username = request.getParameter(usernameParameter);
-            if (username != null && blockedUserRegistry.isBlocked(username)) {
+            if (username != null && blockedUserRegistry.contains(username)) {
                 request.setAttribute(USERNAME_BLOCKED, true);
             }
         }
