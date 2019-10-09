@@ -9,14 +9,18 @@ import com.github.ajalt.clikt.parameters.groups.cooccurring
  */
 class Build : InputStreamingCommand(name = "build",
         help = """
-        Combination of 'create' and 'insert' commands.    
-        Creates a new bloom filter and inserts values from standard input. 
+        Creates a new Bloom filter and inserts values from the given input. 
         Each line is a separate value.
+        
+        Works as combination of 'create' and 'insert' commands.  
+        
+        The created filter is represented by two files, the first one contains filter parameters, 
+        the second one is data file sized to fit the provided number of expected insertions.
     """) {
 
     private val basicFilterOptions by BasicFilterOptions().required()
     private val detailedFilterOptions by DetailedFilterOptions().required()
-    private val preprocessOptions by PreprocessOptions().cooccurring()
+    private val entryParsingOptions by EntryParsingOptions().cooccurring()
 
     override fun run() {
 
@@ -29,10 +33,10 @@ class Build : InputStreamingCommand(name = "build",
                 detailedFilterOptions.fpp
         )
 
-        val entryTransformer = preprocessOptions
+        val entryParser = entryParsingOptions
                 ?.run { fieldExtractor(separator, field) }
                 ?: { it }
 
-        insertIntoFilter(bloomFilter, entryTransformer, inputStream)
+        insertIntoFilter(bloomFilter, entryParser, inputStream)
     }
 }

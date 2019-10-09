@@ -17,26 +17,33 @@ import java.io.InputStream
 
 abstract class InputStreamingCommand(name: String, help: String) : CliktCommand(name = name, help = help) {
 
-    private val stdin: Boolean by option(help = "Indicates that data should be read from standard input.")
+    private val inputOptions by InputOptions().required()
+
+    protected fun inputStream(): InputStream = with(inputOptions) {
+        when {
+            stdin && inputFile == null -> System.`in`
+
+            !stdin && inputFile != null -> inputFile!!.inputStream()
+
+            else -> throw IllegalArgumentException(
+                    "Either standard input or input file must be chosen, but was: '--stdin=$stdin', '--inputFile=$inputFile'"
+            )
+        }
+    }
+}
+
+class InputOptions : OptionGroup(name = "Input options", help = "Specify way of reading input entries. Pick one.") {
+
+    val stdin: Boolean by option(help = "Indicates that data should be read from standard input.")
             .flag(default = false)
 
-    private val inputFile: File? by option(help = "Name of the file with input data.")
+    val inputFile: File? by option(help = "Name of the file with input data.")
             .file(exists = true, folderOkay = false, fileOkay = true)
-
-    protected fun inputStream(): InputStream = when {
-        stdin && inputFile == null -> System.`in`
-
-        !stdin && inputFile != null -> inputFile!!.inputStream()
-
-        else -> throw IllegalArgumentException(
-                "Either standard input or input file must be chosen, but was: '--stdin=$stdin', '--inputFile=$inputFile'"
-        )
-    }
 }
 
 class BasicFilterOptions : OptionGroup(name = "Basic filter options") {
     val name: String by option(help = """
-            Name of the bloom filter. Corresponds to name of the file with filter parameters and prefix of the data file.
+            Name of the Bloom filter. Corresponds to name of the file with filter parameters and prefix of the data file.
             """)
             .required()
 
@@ -57,7 +64,14 @@ class DetailedFilterOptions : OptionGroup(name = "Detailed filter options") {
             .double().default(DEFAULT_FPP)
 }
 
-class PreprocessOptions : OptionGroup() {
+class EntryParsingOptions : OptionGroup(name = "Entry parsing options",
+        help = """
+        Usable when input entries need to be parsed before inserting values into the filter, 
+        i.e. the values to be added have to be extracted from CSV-like structure: 
+            ```
+            <VALUE_TO_ADD>:<SOMETHING_IRRELEVANT>
+            ```
+        """) {
 
     val separator: String by option(help = "separator to be used for extracting values from the input entries").required()
     val field: Int by option(

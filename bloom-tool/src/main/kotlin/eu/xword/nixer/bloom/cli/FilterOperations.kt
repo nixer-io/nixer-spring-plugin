@@ -34,11 +34,11 @@ private fun getFunnel(hex: Boolean): Funnel<CharSequence> = when {
 }
 
 fun insertIntoFilter(targetFilter: BloomFilter<CharSequence>,
-                     entryTransformer: (String) -> String,
+                     entryParser: (String) -> String,
                      entriesStream: InputStream) {
     InputStreamReader(entriesStream, Charsets.UTF_8.newDecoder()).buffered().use { reader ->
         reader.lines().forEach {
-            targetFilter.put(entryTransformer(it))
+            targetFilter.put(entryParser(it))
         }
     }
 }
