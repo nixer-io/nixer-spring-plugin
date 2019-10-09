@@ -1,17 +1,15 @@
 package eu.xword.nixer.bloom.cli
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.contrib.java.lang.system.ExpectedSystemExit
 import org.junit.contrib.java.lang.system.SystemErrRule
+import org.junit.contrib.java.lang.system.SystemOutRule
 import org.junit.rules.TemporaryFolder
-import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
-import java.io.PrintStream
 
 
 /**
@@ -35,8 +33,9 @@ class BloomToolMainTest {
     @JvmField
     val systemErr: SystemErrRule = SystemErrRule().enableLog()
 
-    private val commandOutput = ByteArrayOutputStream()
-    private val originalOut = System.out
+    @Rule
+    @JvmField
+    val systemOut: SystemOutRule = SystemOutRule().enableLog()
 
     private lateinit var filterFile: File
     private lateinit var valuesFile: File
@@ -44,16 +43,9 @@ class BloomToolMainTest {
 
     @Before
     fun setUp() {
-        System.setOut(PrintStream(commandOutput))
-
         filterFile = givenFile("test.bloom")
         valuesFile = givenFile("values.txt")
         checkFile = givenFile("check.txt")
-    }
-
-    @After
-    fun tearDown() {
-        System.setOut(originalOut)
     }
 
     @Test
@@ -87,7 +79,7 @@ class BloomToolMainTest {
         executeCommand("check", "--input-file=${checkFile.absolutePath}", "--name=${filterFile.absolutePath}")
 
         // then
-        assertThat(commandOutput.toString()).contains(hashToLookFor)
+        assertThat(systemOut.log).contains(hashToLookFor)
     }
 
     @Test
@@ -112,7 +104,7 @@ class BloomToolMainTest {
         executeCommand("check", "--input-file=${checkFile.absolutePath}", "--name=${filterFile.absolutePath}")
 
         // then
-        assertThat(commandOutput.toString()).contains(hashToLookFor)
+        assertThat(systemOut.log).contains(hashToLookFor)
     }
 
     @Test
@@ -139,7 +131,7 @@ class BloomToolMainTest {
         executeCommand("check", "--input-file=${checkFile.absolutePath}", "--name=${filterFile.absolutePath}")
 
         // then
-        assertThat(commandOutput.toString()).contains(hashToLookFor)
+        assertThat(systemOut.log).contains(hashToLookFor)
     }
 
     @Test
@@ -165,7 +157,7 @@ class BloomToolMainTest {
         executeCommand("check", "--input-file=${checkFile.absolutePath}", "--name=${filterFile.absolutePath}", "--hash-input")
 
         // then
-        assertThat(commandOutput.toString()).contains(valueToLookFor)
+        assertThat(systemOut.log).contains(valueToLookFor)
     }
 
     @Test
