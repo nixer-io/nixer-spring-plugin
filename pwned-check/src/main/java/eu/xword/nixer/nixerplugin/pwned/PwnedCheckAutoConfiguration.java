@@ -25,7 +25,7 @@ public class PwnedCheckAutoConfiguration {
     @Bean
     public BloomFilterCheck bloomFilter(final PwnedCheckProperties pwnedCheckProperties) throws FileNotFoundException {
         return BloomFilterCheck.hashingBeforeCheck(
-                ResourceUtils.getFile(pwnedCheckProperties.getPwnedFilePath()).toPath() // TODO simplify path injection
+                ResourceUtils.getFile(pwnedCheckProperties.getPwnedFilePath()).toPath()
         );
     }
 }
