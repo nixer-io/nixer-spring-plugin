@@ -11,6 +11,11 @@ import com.google.common.hash.Hashing;
 import com.google.common.io.BaseEncoding;
 
 /**
+ * Convenience wrapper over a file-based bloom filter allowing to use the filter as a String predicate.
+ * Comes in two variants, {@link NotHashingInputs} that verifies the passed value is hex string before the check on filter
+ * and {@link HashingInputs} which computes SHA-1 hash of the passed value before doing the check.
+ *
+ * <br>
  * Created on 07/10/2019.
  *
  * @author gcwiak
@@ -19,36 +24,8 @@ public abstract class BloomFilterCheck implements Predicate<String> {
 
     private final BloomFilter<byte[]> bloomFilter;
 
-    // TODO javadoc
-    // FIXME refactor to non-anonymous classes
-    public static BloomFilterCheck hashingBeforeCheck(final Path filename) {
-
-        final HashFunction hashFunction = Hashing.sha1();  // TODO consider externalizing
-
-        return new BloomFilterCheck(openBloomFilter(filename)) {
-            @Override
-            protected byte[] convertToBytes(final String value) {
-                final byte[] valueBytes = value.getBytes(Charsets.UTF_8);
-                return hashFunction.hashBytes(valueBytes).asBytes();
-            }
-        };
-    }
-
-    public static BloomFilterCheck notHashingBeforeCheck(final Path filename) {
-        return new BloomFilterCheck(openBloomFilter(filename)) {
-            @Override
-            protected byte[] convertToBytes(final String value) {
-                if (BaseEncoding.base16().canDecode(value)) {
-                    return HashCode.fromString(value.toLowerCase()).asBytes();
-                } else {
-                    throw new NotHexStringException(value);
-                }
-            }
-        };
-    }
-
-    private BloomFilterCheck(final BloomFilter<byte[]> bloomFilter) {
-        this.bloomFilter = bloomFilter;
+    private BloomFilterCheck(final Path filename) {
+        this.bloomFilter = openBloomFilter(filename);
     }
 
     @Override
@@ -66,5 +43,47 @@ public abstract class BloomFilterCheck implements Predicate<String> {
                 filename,
                 Funnels.byteArrayFunnel()
         );
+    }
+
+    public static BloomFilterCheck hashingBeforeCheck(final Path filename) {
+        return new HashingInputs(filename);
+    }
+
+    public static BloomFilterCheck notHashingBeforeCheck(final Path filename) {
+        return new NotHashingInputs(filename);
+    }
+
+    /**
+     * Implementations:
+     */
+
+    private static class HashingInputs extends BloomFilterCheck {
+
+        private final HashFunction hashFunction = Hashing.sha1();  // TODO consider externalizing
+
+        HashingInputs(final Path filename) {
+            super(filename);
+        }
+
+        @Override
+        protected byte[] convertToBytes(final String value) {
+            final byte[] valueBytes = value.getBytes(Charsets.UTF_8);
+            return hashFunction.hashBytes(valueBytes).asBytes();
+        }
+    }
+
+    private static class NotHashingInputs extends BloomFilterCheck {
+        NotHashingInputs(final Path filename) {
+            super(filename);
+        }
+
+        @Override
+        protected byte[] convertToBytes(final String value) {
+            if (BaseEncoding.base16().canDecode(value)) {
+                return HashCode.fromString(value.toLowerCase()).asBytes();
+            } else {
+                throw new NotHexStringException(value);
+            }
+        }
     }
 }
