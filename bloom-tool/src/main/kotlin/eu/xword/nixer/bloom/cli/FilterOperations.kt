@@ -49,10 +49,12 @@ fun insertIntoFilter(targetFilter: BloomFilter<CharSequence>,
     }
 }
 
-fun checkAgainstFilter(bloomFilter: Predicate<String>, entriesStream: InputStream) {
+fun checkAgainstFilter(bloomFilter: Predicate<String>,
+                       entryTransformer: (String) -> String,
+                       entriesStream: InputStream) {
     InputStreamReader(entriesStream, Charsets.UTF_8.newDecoder()).buffered().use { reader ->
         reader.lines()
-                .filter { bloomFilter.test(it) }
+                .filter { bloomFilter.test(entryTransformer(it)) }
                 .forEach { println(it) }
     }
 }

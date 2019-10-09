@@ -71,7 +71,7 @@ class BloomToolMainTest {
         )
 
         givenValuesToInsert(hexHashes)
-        givenValueToCheck(hashToLookFor)
+        givenValuesToCheck(hashToLookFor)
 
         // when
         executeCommand("insert", "--input-file=${valuesFile.absolutePath}", "--name=${filterFile.absolutePath}")
@@ -94,7 +94,7 @@ class BloomToolMainTest {
         )
 
         givenValuesToInsert(hexHashesWithAdditionalColumn)
-        givenValueToCheck(hashToLookFor)
+        givenValuesToCheck(hashToLookFor)
 
         // when
         executeCommand("build",
@@ -119,7 +119,7 @@ class BloomToolMainTest {
         )
 
         givenValuesToInsert(notHashedValues)
-        givenValueToCheck(hashToLookFor)
+        givenValuesToCheck(hashToLookFor)
 
         // when
         executeCommand("build",
@@ -146,7 +146,7 @@ class BloomToolMainTest {
         )
 
         givenValuesToInsert(notHashedValues)
-        givenValueToCheck(valueToLookFor)
+        givenValuesToCheck(valueToLookFor)
 
         // when
         executeCommand("build",
@@ -158,6 +158,39 @@ class BloomToolMainTest {
 
         // then
         assertThat(systemOut.log).contains(valueToLookFor)
+    }
+
+    @Test
+    fun `should execute successful check on multiple values from unparsed entries`() {
+        // given
+        val notHashedCombos = listOf(
+                "username1:foobar1",
+                "username2:password123",
+                "username3:IamTheBest"
+        )
+
+        givenValuesToInsert(notHashedCombos)
+        givenValuesToCheck(notHashedCombos[0], notHashedCombos[1])
+
+        // when
+        executeCommand("build",
+                "--size=3",
+                "--name=${filterFile.absolutePath}",
+                "--input-file=${valuesFile.absolutePath}",
+                "--separator=:", "--field=1",
+                "--hash-input")
+
+        executeCommand("check",
+                "--name=${filterFile.absolutePath}",
+                "--input-file=${checkFile.absolutePath}",
+                "--separator=:", "--field=1",
+                "--hash-input")
+
+        // then
+        assertThat(systemOut.log).contains(
+                notHashedCombos[0],
+                notHashedCombos[1]
+        )
     }
 
     @Test
@@ -193,7 +226,7 @@ class BloomToolMainTest {
         )
 
         givenValuesToInsert(notHashedValues)
-        givenValueToCheck(valueToLookFor)
+        givenValuesToCheck(valueToLookFor)
 
         executeCommand("build",
                 "--size=3", "--input-file=${valuesFile.absolutePath}",
@@ -241,8 +274,10 @@ class BloomToolMainTest {
         }
     }
 
-    private fun givenValueToCheck(valueToCheck: String) {
-        checkFile.apply { writeText(valueToCheck) }
+    private fun givenValuesToCheck(vararg valuesToCheck: String) {
+        checkFile.apply{
+            printWriter().use { valuesToCheck.forEach { value -> it.println(value) } }
+        }
     }
 
     private fun givenValuesToInsert(valuesToInsert: List<String>) {

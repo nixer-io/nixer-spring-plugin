@@ -66,7 +66,7 @@ class DetailedFilterOptions : OptionGroup(name = "Detailed filter options") {
 
 class EntryParsingOptions : OptionGroup(name = "Entry parsing options",
         help = """
-        Usable when input entries need to be parsed before inserting values into the filter, 
+        Not mandatory. Usable when input entries need to be parsed before inserting values into the filter, 
         i.e. the values to be added have to be extracted from CSV-like structure: 
             ```
             <VALUE_TO_ADD>:<SOMETHING_IRRELEVANT>
