@@ -28,9 +28,17 @@ class BloomToolMainTest {
     private val commandOutput = ByteArrayOutputStream()
     private val originalOut = System.out
 
+    private lateinit var filterFile: File
+    private lateinit var valuesFile: File
+    private lateinit var checkFile: File
+
     @Before
     fun setUp() {
         System.setOut(PrintStream(commandOutput))
+
+        filterFile = givenFile("test.bloom")
+        valuesFile = givenFile("values.txt")
+        checkFile = givenFile("check.txt")
     }
 
     @After
@@ -40,9 +48,6 @@ class BloomToolMainTest {
 
     @Test
     fun `should create bloom filter`() {
-        // given
-        val filterFile = givenFile("test.bloom")
-
         // when
         executeCommand("create", "--size=100", "--fpp=1e-2", "--name=${filterFile.absolutePath}")
 
@@ -53,9 +58,7 @@ class BloomToolMainTest {
     @Test
     fun `should insert values into bloom filter and execute successful check`() {
         // given
-        val filterFile = givenFile("test.bloom")
         executeCommand("create", "--size=3", "--fpp=1e-2", "--name=${filterFile.absolutePath}")
-        assertThat(filterFile).exists()
 
         val hashToLookFor = "CBFDAC6008F9CAB4083784CBD1874F76618D2A97" // password123 SHA-1
 
@@ -65,11 +68,8 @@ class BloomToolMainTest {
                 "42E1D179E9781138DF3471EEF084F6622A0E7091" // IamTheBest SHA-1
         )
 
-        val valuesFile = givenFile("values.txt").apply {
-            printWriter().use { hexHashes.forEach { hash -> it.println(hash) } }
-        }
-
-        val checkFile = givenFile("check.txt").apply { writeText(hashToLookFor) }
+        givenValuesToInsert(hexHashes)
+        givenValueToCheck(hashToLookFor)
 
         // when
         executeCommand("insert", "--input-file=${valuesFile.absolutePath}", "--name=${filterFile.absolutePath}")
@@ -83,8 +83,6 @@ class BloomToolMainTest {
     @Test
     fun `should build bloom filter from unparsed entries and execute successful check`() {
         // given
-        val filterFile = givenFile("test.bloom")
-
         val hashToLookFor = "CBFDAC6008F9CAB4083784CBD1874F76618D2A97" // password123 SHA-1
 
         val hexHashesWithAdditionalColumn = listOf(
@@ -93,11 +91,8 @@ class BloomToolMainTest {
                 "42E1D179E9781138DF3471EEF084F6622A0E7091:2" // IamTheBest SHA-1
         )
 
-        val valuesFile = givenFile("values.txt").apply {
-            printWriter().use { hexHashesWithAdditionalColumn.forEach { hash -> it.println(hash) } }
-        }
-
-        val checkFile = givenFile("check.txt").apply { writeText(hashToLookFor) }
+        givenValuesToInsert(hexHashesWithAdditionalColumn)
+        givenValueToCheck(hashToLookFor)
 
         // when
         executeCommand("build",
@@ -113,8 +108,6 @@ class BloomToolMainTest {
     @Test
     fun `should build bloom filter from not hashed values and execute successful check using hash`() {
         // given
-        val filterFile = givenFile("test.bloom")
-
         val hashToLookFor = "CBFDAC6008F9CAB4083784CBD1874F76618D2A97" // password123 SHA-1
 
         val notHashedValues = listOf(
@@ -123,11 +116,8 @@ class BloomToolMainTest {
                 "IamTheBest"
         )
 
-        val valuesFile = givenFile("values.txt").apply {
-            printWriter().use { notHashedValues.forEach { hash -> it.println(hash) } }
-        }
-
-        val checkFile = givenFile("check.txt").apply { writeText(hashToLookFor) }
+        givenValuesToInsert(notHashedValues)
+        givenValueToCheck(hashToLookFor)
 
         // when
         executeCommand("build",
@@ -145,8 +135,6 @@ class BloomToolMainTest {
     @Test
     fun `should build bloom filter from not hashed values and execute successful check using not hashed value`() {
         // given
-        val filterFile = givenFile("test.bloom")
-
         val valueToLookFor = "password123"
 
         val notHashedValues = listOf(
@@ -155,11 +143,8 @@ class BloomToolMainTest {
                 "IamTheBest"
         )
 
-        val valuesFile = givenFile("values.txt").apply {
-            printWriter().use { notHashedValues.forEach { hash -> it.println(hash) } }
-        }
-
-        val checkFile = givenFile("check.txt").apply { writeText(valueToLookFor) }
+        givenValuesToInsert(notHashedValues)
+        givenValueToCheck(valueToLookFor)
 
         // when
         executeCommand("build",
@@ -172,6 +157,16 @@ class BloomToolMainTest {
 
         // then
         assertThat(commandOutput.toString()).contains(valueToLookFor)
+    }
+
+    private fun givenValueToCheck(valueToCheck: String) {
+        checkFile.apply { writeText(valueToCheck) }
+    }
+
+    private fun givenValuesToInsert(valuesToInsert: List<String>) {
+        valuesFile.apply {
+            printWriter().use { valuesToInsert.forEach { value -> it.println(value) } }
+        }
     }
 
     private fun executeCommand(vararg command: String) {
