@@ -16,7 +16,7 @@ class Insert : InputStreamingCommand(name = "insert",
         val inputStream = inputStream()
 
         val bloomFilter = with(basicFilterOptions) {
-            openFilter(name, hex)
+            openFilter(name)
         }
 
         val entryParser = entryParsingOptions
@@ -30,6 +30,8 @@ class Insert : InputStreamingCommand(name = "insert",
 
         val entryTransformer: (String) -> String = { entryHasher(entryParser(it)) }
 
-        insertIntoFilter(bloomFilter, entryTransformer, inputStream)
+        tryExecuting {
+            insertIntoFilter(bloomFilter, entryTransformer, inputStream)
+        }
     }
 }

@@ -12,6 +12,7 @@ import com.github.ajalt.clikt.parameters.types.double
 import com.github.ajalt.clikt.parameters.types.file
 import com.github.ajalt.clikt.parameters.types.int
 import com.github.ajalt.clikt.parameters.types.long
+import eu.xword.nixer.bloom.NotHexStringException
 import java.io.File
 import java.io.InputStream
 
@@ -21,7 +22,9 @@ abstract class InputStreamingCommand(name: String, help: String) : CliktCommand(
 
     protected val hashInput: Boolean by option(help = """
             Flag indicating whether the input values should be hashed with SHA-1.
-            """).flag()
+            
+            When not set (or '--no-input-hashing') it is expected the input values are already SHA-1 hashed and passed as hexadecimal strings. 
+            """).flag(default = false, secondaryNames = *arrayOf("--no-input-hashing"))
 
     protected fun inputStream(): InputStream = with(inputOptions) {
         when {
@@ -50,13 +53,6 @@ class BasicFilterOptions : OptionGroup(name = "Basic filter options") {
             Name of the Bloom filter. Corresponds to name of the file with filter parameters and prefix of the data file.
             """)
             .required()
-
-    val hex: Boolean by option(help = """
-            Flag indicating whether to interpret input values as hexadecimal string when inserting or checking.
-            Values are converted to bytes before inserting, if this conversion fail,
-            the string is inserted a normal way. (DEFAULT: HEX)
-            """)
-            .flag(default = true, secondaryNames = *arrayOf("--no-hex"))
 }
 
 private const val DEFAULT_FPP = 1e-6
@@ -94,5 +90,15 @@ fun <T : OptionGroup> T.required(): CoOccurringOptionGroup<T, T> {
             }
             throw UsageError("Missing options: $groupName. Check help for details.")
         }
+    }
+}
+
+fun tryExecuting(codeBlock: () -> Unit) {
+    try {
+        codeBlock()
+    } catch (e: NotHexStringException) {
+        throw UsageError(
+                "Invalid input: ${e.message}. Ensure input values are hashed or use hash-input option. Check help for details."
+        )
     }
 }

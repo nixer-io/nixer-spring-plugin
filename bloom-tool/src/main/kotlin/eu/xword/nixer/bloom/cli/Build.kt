@@ -28,7 +28,6 @@ class Build : InputStreamingCommand(name = "build",
 
         val bloomFilter = createFilter(
                 basicFilterOptions.name,
-                basicFilterOptions.hex,
                 detailedFilterOptions.size,
                 detailedFilterOptions.fpp
         )
@@ -44,6 +43,8 @@ class Build : InputStreamingCommand(name = "build",
 
         val entryTransformer: (String) -> String = { entryHasher(entryParser(it)) }
 
-        insertIntoFilter(bloomFilter, entryTransformer, inputStream)
+        tryExecuting {
+            insertIntoFilter(bloomFilter, entryTransformer, inputStream)
+        }
     }
 }

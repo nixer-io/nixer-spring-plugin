@@ -31,6 +31,12 @@ public class HexFunnel implements Funnel<CharSequence> {
         this.fallbackFunnel = fallbackFunnel;
     }
 
+    public HexFunnel() {
+        this.fallbackFunnel = (from, into) -> {
+            throw new NotHexStringException(from);
+        };
+    }
+
     @Override
     public void funnel(@Nonnull final CharSequence from, @Nonnull final PrimitiveSink into) {
         final byte[] decoded = convertHex(from);

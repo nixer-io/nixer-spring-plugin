@@ -1,7 +1,6 @@
 package eu.xword.nixer.bloom;
 
 import java.util.Arrays;
-import java.util.List;
 
 import com.google.common.hash.Funnel;
 import com.google.common.hash.PrimitiveSink;
@@ -15,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -38,13 +38,13 @@ public class HexFunnelTest {
     private HexFunnel funnel;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
         funnel = new HexFunnel(fallback);
     }
 
     @Test
-    public  void shouldConvertHexString() {
+    public void shouldConvertHexString() {
         // when
         funnel.funnel("01AbcD", sink);
 
@@ -68,7 +68,7 @@ public class HexFunnelTest {
     }
 
     @Test
-    public  void shouldConvertHexStringMultipleTimes() {
+    public void shouldConvertHexStringMultipleTimes() {
         // when
         funnel.funnel("FEDCBA01020304", sink);
 
@@ -90,7 +90,7 @@ public class HexFunnelTest {
     }
 
     @Test
-    public  void shouldFallbackOnNonEvenLengthString() {
+    public void shouldFallbackOnNonEvenLengthString() {
         // when
         funnel.funnel("01AbcD0", sink);
 
@@ -113,7 +113,7 @@ public class HexFunnelTest {
     }
 
     @Test
-    @Parameters({ "*12*", "11*12", "**"})
+    @Parameters({"*12*", "11*12", "**"})
     public void shouldFallbackOnStringWithSpaces(final String exampleTemplate) {
         final String example = exampleTemplate.replace('*', ' ');
         // when
@@ -125,4 +125,15 @@ public class HexFunnelTest {
         verifyNoMoreInteractions(fallback);
     }
 
+    @Test
+    public void should_not_allow_processing_non_hex_values_when_no_fallback_provided() {
+        // given hex-only funnel
+        funnel = new HexFunnel();
+
+        // when
+        final Throwable throwable = catchThrowable(() -> funnel.funnel("not-a-hex-value", sink));
+
+        // then
+        assertThat(throwable).isInstanceOf(NotHexStringException.class);
+    }
 }

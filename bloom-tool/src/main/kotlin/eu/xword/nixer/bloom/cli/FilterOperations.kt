@@ -1,8 +1,6 @@
 package eu.xword.nixer.bloom.cli
 
 import com.google.common.base.Charsets
-import com.google.common.hash.Funnel
-import com.google.common.hash.Funnels
 import com.google.common.hash.Hashing
 import eu.xword.nixer.bloom.BloomFilter
 import eu.xword.nixer.bloom.BloomFilterCheck
@@ -19,16 +17,16 @@ import java.util.function.Predicate
  *
  * @author gcwiak
  */
-fun createFilter(name: String, hex: Boolean, size: Long, fpp: Double): BloomFilter<CharSequence> = FileBasedBloomFilter.create(
+fun createFilter(name: String, size: Long, fpp: Double): BloomFilter<CharSequence> = FileBasedBloomFilter.create(
         Paths.get(name).also { require(Files.notExists(it)) { "Bloom filter metadata file '$it' already exist" } },
-        getFunnel(hex),
+        HexFunnel(),
         size,
         fpp
 )
 
-fun openFilter(name: String, hex: Boolean): BloomFilter<CharSequence> = FileBasedBloomFilter.open(
+fun openFilter(name: String): BloomFilter<CharSequence> = FileBasedBloomFilter.open(
         Paths.get(name).also { require(Files.exists(it)) { "Bloom filter metadata file '$it' does not exist" } },
-        getFunnel(hex)
+        HexFunnel()
 )
 
 fun openFilterForCheck(name: String, hashInputBeforeCheck: Boolean): Predicate<String> {
@@ -39,11 +37,6 @@ fun openFilterForCheck(name: String, hashInputBeforeCheck: Boolean): Predicate<S
         hashInputBeforeCheck -> BloomFilterCheck.hashingBeforeCheck(filterFilePath)
         else -> BloomFilterCheck.notHashingBeforeCheck(filterFilePath)
     }
-}
-
-private fun getFunnel(hex: Boolean): Funnel<CharSequence> = when {
-    hex -> HexFunnel(Funnels.unencodedCharsFunnel())
-    else -> Funnels.unencodedCharsFunnel()
 }
 
 fun insertIntoFilter(targetFilter: BloomFilter<CharSequence>,

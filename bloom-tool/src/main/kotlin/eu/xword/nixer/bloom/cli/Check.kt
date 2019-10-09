@@ -15,6 +15,8 @@ class Check : InputStreamingCommand(name = "check",
 
         val bloomFilter = openFilterForCheck(basicFilterOptions.name, hashInput)
 
-        checkAgainstFilter(bloomFilter, inputStream)
+        tryExecuting {
+            checkAgainstFilter(bloomFilter, inputStream)
+        }
     }
 }

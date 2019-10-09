@@ -5,6 +5,8 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.contrib.java.lang.system.ExpectedSystemExit
+import org.junit.contrib.java.lang.system.SystemErrRule
 import org.junit.rules.TemporaryFolder
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -24,6 +26,14 @@ class BloomToolMainTest {
     @Rule
     @JvmField
     val temporaryFolder = TemporaryFolder()
+
+    @Rule
+    @JvmField
+    val exit: ExpectedSystemExit = ExpectedSystemExit.none()
+
+    @Rule
+    @JvmField
+    val systemErr: SystemErrRule = SystemErrRule().enableLog()
 
     private val commandOutput = ByteArrayOutputStream()
     private val originalOut = System.out
@@ -58,7 +68,7 @@ class BloomToolMainTest {
     @Test
     fun `should insert values into bloom filter and execute successful check`() {
         // given
-        executeCommand("create", "--size=3", "--fpp=1e-2", "--name=${filterFile.absolutePath}")
+        executeCommand("create", "--size=3", "--name=${filterFile.absolutePath}")
 
         val hashToLookFor = "CBFDAC6008F9CAB4083784CBD1874F76618D2A97" // password123 SHA-1
 
@@ -86,9 +96,9 @@ class BloomToolMainTest {
         val hashToLookFor = "CBFDAC6008F9CAB4083784CBD1874F76618D2A97" // password123 SHA-1
 
         val hexHashesWithAdditionalColumn = listOf(
-                "BB928CA332F5F4FA2CDAEF238672E0FBCF5E7A0F:54", // foobar1 SHA-1
-                "$hashToLookFor:7",
-                "42E1D179E9781138DF3471EEF084F6622A0E7091:2" // IamTheBest SHA-1
+                "BB928CA332F5F4FA2CDAEF238672E0FBCF5E7A0F:irrelevant_column", // foobar1 SHA-1
+                "$hashToLookFor:another_irrelevant",
+                "42E1D179E9781138DF3471EEF084F6622A0E7091:and_one_more" // IamTheBest SHA-1
         )
 
         givenValuesToInsert(hexHashesWithAdditionalColumn)
@@ -96,7 +106,7 @@ class BloomToolMainTest {
 
         // when
         executeCommand("build",
-                "--size=3", "--fpp=1e-2", "--input-file=${valuesFile.absolutePath}", "--separator=:", "--field=0",
+                "--size=3", "--input-file=${valuesFile.absolutePath}", "--separator=:", "--field=0",
                 "--name=${filterFile.absolutePath}")
 
         executeCommand("check", "--input-file=${checkFile.absolutePath}", "--name=${filterFile.absolutePath}")
@@ -121,7 +131,7 @@ class BloomToolMainTest {
 
         // when
         executeCommand("build",
-                "--size=3", "--fpp=1e-2", "--input-file=${valuesFile.absolutePath}",
+                "--size=3", "--input-file=${valuesFile.absolutePath}",
                 "--name=${filterFile.absolutePath}",
                 "--hash-input"
         )
@@ -148,15 +158,95 @@ class BloomToolMainTest {
 
         // when
         executeCommand("build",
-                "--size=3", "--fpp=1e-2", "--input-file=${valuesFile.absolutePath}",
+                "--size=3", "--input-file=${valuesFile.absolutePath}",
                 "--name=${filterFile.absolutePath}",
-                "--hash-input"
-        )
+                "--hash-input")
 
         executeCommand("check", "--input-file=${checkFile.absolutePath}", "--name=${filterFile.absolutePath}", "--hash-input")
 
         // then
         assertThat(commandOutput.toString()).contains(valueToLookFor)
+    }
+
+    @Test
+    fun `should fail building bloom filter from not hashed values while expecting hashed ones`() {
+        // given
+        val notHashedValues = listOf(
+                "foobar1",
+                "password123",
+                "IamTheBest"
+        )
+
+        givenValuesToInsert(notHashedValues)
+
+        // system exit assertions must be defined before execution
+        assertErrorExit(notHashedValues[0])
+
+        // when
+        executeCommand("build",
+                "--size=3", "--input-file=${valuesFile.absolutePath}",
+                "--name=${filterFile.absolutePath}",
+                "--no-input-hashing")
+    }
+
+    @Test
+    fun `should build bloom filter and fail to execute check using not hashed value while expecting hashed one`() {
+        // given
+        val valueToLookFor = "password123"
+
+        val notHashedValues = listOf(
+                "foobar1",
+                valueToLookFor,
+                "IamTheBest"
+        )
+
+        givenValuesToInsert(notHashedValues)
+        givenValueToCheck(valueToLookFor)
+
+        executeCommand("build",
+                "--size=3", "--input-file=${valuesFile.absolutePath}",
+                "--name=${filterFile.absolutePath}",
+                "--hash-input")
+
+        // system exit assertions must be defined before execution
+        assertErrorExit(valueToLookFor)
+
+        // when
+        executeCommand("check",
+                "--input-file=${checkFile.absolutePath}",
+                "--name=${filterFile.absolutePath}",
+                "--no-input-hashing")
+    }
+
+    @Test
+    fun `should fail to insert not hashed values into bloom filter while expecting hashed ones`() {
+        // given
+        executeCommand("create", "--size=3", "--name=${filterFile.absolutePath}")
+
+        val notHashedValues = listOf(
+                "foobar1",
+                "password123",
+                "IamTheBest"
+        )
+
+        givenValuesToInsert(notHashedValues)
+
+        // system exit assertions must be defined before execution
+        assertErrorExit(notHashedValues[0])
+
+        // when
+        executeCommand("insert", "--input-file=${valuesFile.absolutePath}", "--name=${filterFile.absolutePath}")
+    }
+
+    private fun assertErrorExit(errMsgValue: String) {
+        exit.expectSystemExitWithStatus(1)
+        exit.checkAssertionAfterwards {
+            assertThat(systemErr.log).contains(
+                    "Error: Invalid input:",
+                    errMsgValue,
+                    "not a hexadecimal string"
+            )
+        }
     }
 
     private fun givenValueToCheck(valueToCheck: String) {

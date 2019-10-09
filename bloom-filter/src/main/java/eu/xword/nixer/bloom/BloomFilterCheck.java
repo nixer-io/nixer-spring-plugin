@@ -8,6 +8,7 @@ import com.google.common.hash.Funnels;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
+import com.google.common.io.BaseEncoding;
 
 /**
  * Created on 07/10/2019.
@@ -37,7 +38,11 @@ public abstract class BloomFilterCheck implements Predicate<String> {
         return new BloomFilterCheck(openBloomFilter(filename)) {
             @Override
             protected byte[] convertToBytes(final String value) {
-                return HashCode.fromString(value.toLowerCase()).asBytes();
+                if (BaseEncoding.base16().canDecode(value)) {
+                    return HashCode.fromString(value.toLowerCase()).asBytes();
+                } else {
+                    throw new NotHexStringException(value);
+                }
             }
         };
     }

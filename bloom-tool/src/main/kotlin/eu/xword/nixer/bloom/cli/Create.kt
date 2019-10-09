@@ -14,7 +14,6 @@ class Create : CliktCommand(help = """
 
         createFilter(
                 basicFilterOptions.name,
-                basicFilterOptions.hex,
                 detailedFilterOptions.size,
                 detailedFilterOptions.fpp
         )
