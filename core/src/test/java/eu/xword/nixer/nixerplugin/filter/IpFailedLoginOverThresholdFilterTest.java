@@ -1,6 +1,6 @@
 package eu.xword.nixer.nixerplugin.filter;
 
-import eu.xword.nixer.nixerplugin.registry.BlockedIpRegistry;
+import eu.xword.nixer.nixerplugin.registry.IpFailedLoginOverThresholdRegistry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,28 +12,28 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
-class TemporalIpFilterTest {
+class IpFailedLoginOverThresholdFilterTest {
 
-    TemporalIpFilter filter;
+    IpFailedLoginOverThresholdFilter filter;
 
     @Mock
-    BlockedIpRegistry blockedIpRegistry;
+    IpFailedLoginOverThresholdRegistry IPFailedLoginOverThresholdRegistry;
 
     @BeforeEach
     public void setup() {
-        filter = new TemporalIpFilter(blockedIpRegistry);
+        filter = new IpFailedLoginOverThresholdFilter(IPFailedLoginOverThresholdRegistry);
     }
 
     @Test
     public void shouldMarkRequestBasedOnIp() {
-        given(blockedIpRegistry.isBlocked("127.0.0.1")).willReturn(Boolean.TRUE);
+        given(IPFailedLoginOverThresholdRegistry.contains("127.0.0.1")).willReturn(Boolean.TRUE);
 
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setRemoteAddr("127.0.0.1");
 
         filter.apply(request);
 
-        assertThat(request.getAttribute(RequestAugmentation.IP_BLOCKED)).isEqualTo(Boolean.TRUE);
+        assertThat(request.getAttribute(RequestAugmentation.IP_FAILED_LOGIN_OVER_THRESHOLD)).isEqualTo(Boolean.TRUE);
     }
 
 }

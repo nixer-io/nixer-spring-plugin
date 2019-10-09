@@ -26,7 +26,7 @@ class UsernameLoginFilterTest {
 
     @Test
     public void shouldMarkRequestBasedOnUsername() {
-        given(blockedUserRegistry.isBlocked("user")).willReturn(Boolean.TRUE);
+        given(blockedUserRegistry.contains("user")).willReturn(Boolean.TRUE);
 
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setServletPath("/login");

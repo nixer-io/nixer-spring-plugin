@@ -17,6 +17,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import static eu.xword.nixer.nixerplugin.filter.RequestAugmentation.GLOBAL_CREDENTIAL_STUFFING;
+import static eu.xword.nixer.nixerplugin.filter.RequestAugmentation.IP_FAILED_LOGIN_OVER_THRESHOLD;
 import static eu.xword.nixer.nixerplugin.filter.RequestAugmentation.IP_METADATA;
 
 @Configuration
@@ -48,6 +49,7 @@ public class FilterConfiguration {
     public BehaviorProvider buildBehaviorProvider(BehaviorRegistry behaviorRegistry) {
         return BehaviourProviderBuilder.builder()
                 .addRule("blacklistedIp", this::isBlacklistedIp, "blockedError")
+                .addRule("ipLoginOverThreshold", this::isIpLoginOverThreshold, "captcha")
                 .addRule("credentialStuffingActive", this::isGlobalCredentialStuffing, "captcha")
                 .build(behaviorRegistry);
     }
@@ -64,5 +66,8 @@ public class FilterConfiguration {
 
     private boolean isGlobalCredentialStuffing(Facts facts) {
         return Boolean.TRUE.equals(facts.getFact(GLOBAL_CREDENTIAL_STUFFING));
+    }
+    private boolean isIpLoginOverThreshold(Facts facts) {
+        return Boolean.TRUE.equals(facts.getFact(IP_FAILED_LOGIN_OVER_THRESHOLD));
     }
 }
