@@ -1,7 +1,5 @@
 package eu.xword.nixer.bloom.cli
 
-import com.github.ajalt.clikt.parameters.groups.cooccurring
-
 class Insert : InputStreamingCommand(name = "insert",
         help = """
         Inserts values to the Bloom filter from the given input.
@@ -9,19 +7,14 @@ class Insert : InputStreamingCommand(name = "insert",
     """) {
 
     private val basicFilterOptions by BasicFilterOptions().required()
-    private val entryParsingOptions by EntryParsingOptions().cooccurring()
 
     override fun run() {
 
         val inputStream = inputStream()
 
-        val bloomFilter = with(basicFilterOptions) {
-            openFilter(name)
-        }
+        val bloomFilter = openFilter(basicFilterOptions.name)
 
-        val entryParser = entryParsingOptions
-                ?.run { fieldExtractor(separator, field) }
-                ?: { it }
+        val entryParser = entryParser()
 
         val entryHasher: (String) -> String = when {
             hashInput -> ::sha1

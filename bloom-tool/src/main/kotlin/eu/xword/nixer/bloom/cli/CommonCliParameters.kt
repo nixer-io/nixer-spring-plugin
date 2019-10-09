@@ -4,6 +4,7 @@ import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.UsageError
 import com.github.ajalt.clikt.parameters.groups.CoOccurringOptionGroup
 import com.github.ajalt.clikt.parameters.groups.OptionGroup
+import com.github.ajalt.clikt.parameters.groups.cooccurring
 import com.github.ajalt.clikt.parameters.options.default
 import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.option
@@ -19,6 +20,7 @@ import java.io.InputStream
 abstract class InputStreamingCommand(name: String, help: String) : CliktCommand(name = name, help = help) {
 
     private val inputOptions by InputOptions().required()
+    private val entryParsingOptions by EntryParsingOptions().cooccurring()
 
     protected val hashInput: Boolean by option(help = """
             Flag indicating whether the input values should be hashed with SHA-1.
@@ -37,6 +39,10 @@ abstract class InputStreamingCommand(name: String, help: String) : CliktCommand(
             )
         }
     }
+
+    protected fun entryParser() = entryParsingOptions
+            ?.run { fieldExtractor(separator, field) }
+            ?: { it }
 }
 
 class InputOptions : OptionGroup(name = "Input options", help = "Specify way of reading input entries. Pick one.") {
