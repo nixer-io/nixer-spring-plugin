@@ -5,7 +5,7 @@ package eu.xword.nixer.bloom;
  *
  * @author gcwiak
  */
-public class NotHexStringException extends RuntimeException {
+public class NotHexStringException extends IllegalArgumentException {
 
     public NotHexStringException(final CharSequence value) {
         super(String.format("(%s) is not a hexadecimal string", value));
