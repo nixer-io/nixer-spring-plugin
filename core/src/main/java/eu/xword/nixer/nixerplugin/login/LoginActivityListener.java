@@ -4,19 +4,21 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.common.net.HttpHeaders;
-import eu.xword.nixer.nixerplugin.UserUtils;
-import eu.xword.nixer.nixerplugin.filter.RequestAugmentation;
 import eu.xword.nixer.nixerplugin.ip.IpMetadata;
 import eu.xword.nixer.nixerplugin.stigma.StigmaToken;
 import eu.xword.nixer.nixerplugin.stigma.StigmaUtils;
 import eu.xword.nixer.nixerplugin.stigma.embed.EmbeddedStigmaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.event.AbstractAuthenticationEvent;
 import org.springframework.security.authentication.event.AbstractAuthenticationFailureEvent;
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+
+import static eu.xword.nixer.nixerplugin.filter.RequestAugmentation.IP_METADATA;
 
 /**
  * Listens for Spring {@link AbstractAuthenticationEvent} and stores it in configured repositories
@@ -60,25 +62,41 @@ public class LoginActivityListener implements ApplicationListener<AbstractAuthen
         loginActivityService.handle(loginResult, context);
     }
 
-    private LoginContext buildContext() {
+    private LoginContext buildContext(final AbstractAuthenticationEvent event) {
         final String userAgent = request.getHeader(HttpHeaders.USER_AGENT);
         final String ip = request.getRemoteAddr();
 
-        final String username = UserUtils.extractUsername(request);
+        final String username = extractUsername(event);
 
         final LoginContext context = new LoginContext(username, ip, userAgent);
-        final IpMetadata ipMetadata = (IpMetadata) request.getAttribute(RequestAugmentation.IP_METADATA);
+        final IpMetadata ipMetadata = (IpMetadata) request.getAttribute(IP_METADATA);
         context.setIpMetadata(ipMetadata);
         return context;
+    }
+
+    private String extractUsername(final AbstractAuthenticationEvent event) {
+        // consider other cases
+        final Object source = event.getSource();
+        if (source instanceof UsernamePasswordAuthenticationToken) {
+            UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) source;
+            final Object principal = token.getPrincipal();
+            if (principal instanceof String) {
+                return (String) principal;
+            }
+            if (principal instanceof UserDetails) {
+                return ((UserDetails) principal).getUsername();
+            }
+        }
+
+        return null;
     }
 
 
     @Override
     public void onApplicationEvent(final AbstractAuthenticationEvent event) {
         final LoginResult loginResult = getLoginResult(event);
-
         if (loginResult != null) {
-            final LoginContext context = buildContext();
+            final LoginContext context = buildContext(event);
             reportLogin(loginResult, context);
             handleStigma(loginResult, context);
         }

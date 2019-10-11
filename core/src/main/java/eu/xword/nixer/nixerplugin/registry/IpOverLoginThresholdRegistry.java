@@ -4,28 +4,30 @@ import java.time.Duration;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import eu.xword.nixer.nixerplugin.events.LockUserEvent;
+import eu.xword.nixer.nixerplugin.events.IpFailedLoginOverThresholdEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
+/**
+ * Stores ip which are over threshold for login failures
+ */
 @Component
-public class BlockedUserRegistry implements ApplicationListener<LockUserEvent> {
+public class IpOverLoginThresholdRegistry implements ApplicationListener<IpFailedLoginOverThresholdEvent> {
 
     private Duration expirationTime = Duration.ofMinutes(5);
 
-    private final Cache<String, String> blockedUsers = CacheBuilder.newBuilder()
+    private final Cache<String, String> ipOverThreshold = CacheBuilder.newBuilder()
             .expireAfterWrite(expirationTime)
             .build();
 
-
-    public boolean contains(final String username) {
-        return blockedUsers.getIfPresent(username) != null;
+    public boolean contains(String ip) {
+        return this.ipOverThreshold.getIfPresent(ip) != null;
     }
 
     @Override
-    public void onApplicationEvent(final LockUserEvent event) {
+    public void onApplicationEvent(final IpFailedLoginOverThresholdEvent event) {
         // TODO block for time
-        blockedUsers.put(event.getUsername(), event.getUsername());
+        ipOverThreshold.put(event.getIp(), event.getIp());
     }
 
     public void setExpirationTime(final Duration expirationTime) {

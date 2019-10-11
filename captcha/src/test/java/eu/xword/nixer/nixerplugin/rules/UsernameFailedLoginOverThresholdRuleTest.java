@@ -3,7 +3,7 @@ package eu.xword.nixer.nixerplugin.rules;
 import java.util.ArrayList;
 import java.util.List;
 
-import eu.xword.nixer.nixerplugin.events.IpFailedLoginOverThresholdEvent;
+import eu.xword.nixer.nixerplugin.events.UsernameFailedLoginOverThresholdEvent;
 import eu.xword.nixer.nixerplugin.login.LoginContext;
 import eu.xword.nixer.nixerplugin.login.counts.LoginMetric;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class IpFailedLoginOverThresholdRuleTest {
+class UsernameFailedLoginOverThresholdRuleTest {
 
     private static final int THRESHOLD = 3;
     private static final int UNDER_THRESHOLD = THRESHOLD - 1;
@@ -25,36 +25,36 @@ class IpFailedLoginOverThresholdRuleTest {
     @Mock
     private LoginMetric loginMetric;
 
-    private IpFailedLoginOverThresholdRule rule;
+    private UsernameFailedLoginOverThresholdRule rule;
+
+    private static final String USER = "user";
 
     @BeforeEach
     void setup() {
-        rule = new IpFailedLoginOverThresholdRule(loginMetric);
+        rule = new UsernameFailedLoginOverThresholdRule(loginMetric);
         rule.setThreshold(THRESHOLD);
     }
 
     @Test
-    void should_emit_event_for_ip_over_threshold() {
-        final String ip = "127.0.0.1";
-        when(loginMetric.value(ip)).thenReturn(OVER_THRESHOLD);
+    void should_emit_event_for_username_over_threshold() {
+        when(loginMetric.value(USER)).thenReturn(OVER_THRESHOLD);
 
-        final List<Object> events = execute(ip);
+        final List<Object> events = execute(USER);
 
-        assertThat(events).contains(new IpFailedLoginOverThresholdEvent(ip));
+        assertThat(events).contains(new UsernameFailedLoginOverThresholdEvent(USER));
     }
 
     @Test
-    void should_not_emit_event_for_ip_under_threshold() {
-        final String ip = "127.0.0.1";
-        when(loginMetric.value(ip)).thenReturn(UNDER_THRESHOLD);
+    void should_not_emit_event_for_user_under_threshold() {
+        when(loginMetric.value(USER)).thenReturn(UNDER_THRESHOLD);
 
-        final List<Object> events = execute(ip);
+        final List<Object> events = execute(USER);
 
         assertThat(events).isEmpty();
     }
 
-    private List<Object> execute(final String ipAddress) {
-        final LoginContext loginContext = new LoginContext("", ipAddress, "");
+    private List<Object> execute(final String username) {
+        final LoginContext loginContext = new LoginContext(username, "", "");
         final List<Object> events = new ArrayList<>();
 
         rule.execute(loginContext, events::add);
