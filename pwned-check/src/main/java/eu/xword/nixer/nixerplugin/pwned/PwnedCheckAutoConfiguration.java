@@ -5,6 +5,8 @@ import java.io.FileNotFoundException;
 import eu.xword.nixer.bloom.BloomFilterCheck;
 import eu.xword.nixer.nixerplugin.pwned.check.PwnedCredentialsChecker;
 import eu.xword.nixer.nixerplugin.pwned.filter.PwnedCredentialsFilter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.ResourceUtils;
@@ -15,6 +17,8 @@ import org.springframework.util.ResourceUtils;
  * @author gcwiak
  */
 @Configuration
+@EnableConfigurationProperties(value = {PwnedCheckProperties.class})
+@ConditionalOnProperty(value = "nixer.pwned.check.enabled")
 public class PwnedCheckAutoConfiguration {
 
     @Bean
