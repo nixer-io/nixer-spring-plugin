@@ -16,6 +16,7 @@ dependencies {
     testImplementation("junit:junit:4.12")
     testImplementation("pl.pragmatists:JUnitParams:1.0.6")
     testImplementation("org.assertj:assertj-core:3.6.2")
+    testImplementation("com.github.stefanbirkner:system-rules:1.19.0")
 
     testRuntimeOnly("org.junit.vintage", "junit-vintage-engine", "5.3.2")
 }

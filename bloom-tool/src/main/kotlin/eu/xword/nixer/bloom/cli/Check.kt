@@ -9,14 +9,13 @@ class Check : InputStreamingCommand(name = "check",
 
     private val basicFilterOptions by BasicFilterOptions().required()
 
+
     override fun run() {
 
-        val inputStream = inputStream()
+        val bloomFilter = openFilterForCheck(basicFilterOptions.name, hashInput)
 
-        val bloomFilter = with(basicFilterOptions) {
-            openFilter(name, hex)
+        tryExecuting {
+            checkAgainstFilter(bloomFilter, entryParser(), inputStream())
         }
-
-        checkAgainstFilter(bloomFilter, inputStream)
     }
 }

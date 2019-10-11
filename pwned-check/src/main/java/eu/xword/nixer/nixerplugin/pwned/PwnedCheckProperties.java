@@ -21,6 +21,13 @@ public class PwnedCheckProperties {
      */
     private String pwnedFilePath;
 
+    /**
+     * Limit for length of the checked password.
+     * Mitigates the risk of flooding the system with unnaturally long passwords.
+     * Passwords longer than this limit will not be checked and treated as false match.
+     */
+    private int maxPasswordLength = 50;
+
     public boolean isEnabled() {
         return enabled;
     }
@@ -37,4 +44,11 @@ public class PwnedCheckProperties {
         this.pwnedFilePath = pwnedFilePath;
     }
 
+    public int getMaxPasswordLength() {
+        return maxPasswordLength;
+    }
+
+    public void setMaxPasswordLength(final int maxPasswordLength) {
+        this.maxPasswordLength = maxPasswordLength;
+    }
 }

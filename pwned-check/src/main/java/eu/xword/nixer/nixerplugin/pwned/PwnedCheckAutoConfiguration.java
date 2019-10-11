@@ -2,9 +2,7 @@ package eu.xword.nixer.nixerplugin.pwned;
 
 import java.io.FileNotFoundException;
 
-import com.google.common.hash.Funnels;
-import eu.xword.nixer.bloom.BloomFilter;
-import eu.xword.nixer.bloom.FileBasedBloomFilter;
+import eu.xword.nixer.bloom.BloomFilterCheck;
 import eu.xword.nixer.nixerplugin.pwned.check.PwnedCredentialsChecker;
 import eu.xword.nixer.nixerplugin.pwned.filter.PwnedCredentialsFilter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -29,15 +27,16 @@ public class PwnedCheckAutoConfiguration {
     }
 
     @Bean
-    public PwnedCredentialsChecker pwnedCredentialsChecker(final BloomFilter<byte[]> pwnedFilter) {
-        return new PwnedCredentialsChecker(pwnedFilter);
+    public PwnedCredentialsChecker pwnedCredentialsChecker(final BloomFilterCheck pwnedFilter,
+                                                           final PwnedCheckProperties pwnedCheckProperties) {
+
+        return new PwnedCredentialsChecker(pwnedFilter, pwnedCheckProperties.getMaxPasswordLength());
     }
 
     @Bean
-    public BloomFilter<byte[]> bloomFilter(final PwnedCheckProperties pwnedCheckProperties) throws FileNotFoundException {
-        return FileBasedBloomFilter.open(
-                ResourceUtils.getFile(pwnedCheckProperties.getPwnedFilePath()).toPath(), // TODO simplify path injection
-                Funnels.byteArrayFunnel()
+    public BloomFilterCheck bloomFilter(final PwnedCheckProperties pwnedCheckProperties) throws FileNotFoundException {
+        return BloomFilterCheck.hashingBeforeCheck(
+                ResourceUtils.getFile(pwnedCheckProperties.getPwnedFilePath()).toPath()
         );
     }
 }

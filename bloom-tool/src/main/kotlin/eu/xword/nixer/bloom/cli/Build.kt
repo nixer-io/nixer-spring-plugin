@@ -1,7 +1,5 @@
 package eu.xword.nixer.bloom.cli
 
-import com.github.ajalt.clikt.parameters.groups.cooccurring
-
 /**
  * Created on 26/09/2019.
  *
@@ -20,7 +18,6 @@ class Build : InputStreamingCommand(name = "build",
 
     private val basicFilterOptions by BasicFilterOptions().required()
     private val detailedFilterOptions by DetailedFilterOptions().required()
-    private val entryParsingOptions by EntryParsingOptions().cooccurring()
 
     override fun run() {
 
@@ -28,15 +25,21 @@ class Build : InputStreamingCommand(name = "build",
 
         val bloomFilter = createFilter(
                 basicFilterOptions.name,
-                basicFilterOptions.hex,
                 detailedFilterOptions.size,
                 detailedFilterOptions.fpp
         )
 
-        val entryParser = entryParsingOptions
-                ?.run { fieldExtractor(separator, field) }
-                ?: { it }
+        val entryParser = entryParser()
 
-        insertIntoFilter(bloomFilter, entryParser, inputStream)
+        val entryHasher: (String) -> String = when {
+            hashInput -> ::sha1
+            else -> { it -> it }
+        }
+
+        val entryTransformer: (String) -> String = { entryHasher(entryParser(it)) }
+
+        tryExecuting {
+            insertIntoFilter(bloomFilter, entryTransformer, inputStream)
+        }
     }
 }
