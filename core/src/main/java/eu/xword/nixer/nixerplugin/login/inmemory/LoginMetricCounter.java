@@ -2,8 +2,8 @@ package eu.xword.nixer.nixerplugin.login.inmemory;
 
 import eu.xword.nixer.nixerplugin.login.LoginContext;
 import eu.xword.nixer.nixerplugin.login.LoginResult;
-import eu.xword.nixer.nixerplugin.login.counts.LoginMetric;
 import eu.xword.nixer.nixerplugin.login.counts.LoginCounter;
+import eu.xword.nixer.nixerplugin.login.counts.LoginMetric;
 import org.springframework.util.Assert;
 
 /**
@@ -11,7 +11,7 @@ import org.springframework.util.Assert;
  */
 public class LoginMetricCounter implements LoginMetric, LoginCounter {
 
-    private final RollingCounter counter;
+    private final CachedBackedRollingCounter counter;
     private final FeatureKey featureKey;
 
     //todo extract filter
@@ -19,7 +19,7 @@ public class LoginMetricCounter implements LoginMetric, LoginCounter {
         Assert.notNull(builder, "Builder must not be null");
 
         Assert.notNull(builder.windowSize, "WindowSize must not be null");
-        this.counter = new RollingCounter(builder.windowSize);
+        this.counter = new CachedBackedRollingCounter(builder.windowSize);
         this.counter.setClock(builder.clock);
 
         Assert.notNull(builder.featureKey, "FeatureKey must not be null");
@@ -38,6 +38,6 @@ public class LoginMetricCounter implements LoginMetric, LoginCounter {
 
         result
                 .onSuccess(it -> counter.remove(key))
-                .onFailure(it -> counter.add(key));
+                .onFailure(it -> counter.add(key, 1));
     }
 }
