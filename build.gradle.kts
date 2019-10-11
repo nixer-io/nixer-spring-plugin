@@ -2,6 +2,8 @@ plugins {
     java
 }
 
+defaultTasks("build")
+
 allprojects {
     group = "eu.xword.nixer"
     version = "0.0.1-SNAPSHOT"

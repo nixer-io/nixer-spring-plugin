@@ -1,13 +1,12 @@
 package eu.xword.nixer.nixerplugin.pwned;
 
 import java.io.FileNotFoundException;
-import java.nio.file.Paths;
 
-import com.google.common.hash.Funnels;
-import eu.xword.nixer.bloom.BloomFilter;
-import eu.xword.nixer.bloom.FileBasedBloomFilter;
+import eu.xword.nixer.bloom.BloomFilterCheck;
 import eu.xword.nixer.nixerplugin.pwned.check.PwnedCredentialsChecker;
 import eu.xword.nixer.nixerplugin.pwned.filter.PwnedCredentialsFilter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.ResourceUtils;
@@ -18,6 +17,8 @@ import org.springframework.util.ResourceUtils;
  * @author gcwiak
  */
 @Configuration
+@EnableConfigurationProperties(value = {PwnedCheckProperties.class})
+@ConditionalOnProperty(value = "nixer.pwned.check.enabled")
 public class PwnedCheckAutoConfiguration {
 
     @Bean
@@ -26,10 +27,16 @@ public class PwnedCheckAutoConfiguration {
     }
 
     @Bean
-    public BloomFilter<byte[]> bloomFilter(final PwnedCheckProperties pwnedCheckProperties) throws FileNotFoundException {
-        return FileBasedBloomFilter.open(
-                ResourceUtils.getFile(pwnedCheckProperties.getPwnedFilePath()).toPath(), // TODO simplify path injection
-                Funnels.byteArrayFunnel()
+    public PwnedCredentialsChecker pwnedCredentialsChecker(final BloomFilterCheck pwnedFilter,
+                                                           final PwnedCheckProperties pwnedCheckProperties) {
+
+        return new PwnedCredentialsChecker(pwnedFilter, pwnedCheckProperties.getMaxPasswordLength());
+    }
+
+    @Bean
+    public BloomFilterCheck bloomFilter(final PwnedCheckProperties pwnedCheckProperties) throws FileNotFoundException {
+        return BloomFilterCheck.hashingBeforeCheck(
+                ResourceUtils.getFile(pwnedCheckProperties.getPwnedFilePath()).toPath()
         );
     }
 }

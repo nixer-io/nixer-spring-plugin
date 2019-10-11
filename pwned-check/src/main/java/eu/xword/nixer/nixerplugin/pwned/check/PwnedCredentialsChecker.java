@@ -1,33 +1,28 @@
 package eu.xword.nixer.nixerplugin.pwned.check;
 
-import com.google.common.base.Charsets;
-import com.google.common.hash.HashFunction;
-import com.google.common.hash.Hashing;
-import eu.xword.nixer.bloom.BloomFilter;
-import org.springframework.stereotype.Component;
+import eu.xword.nixer.bloom.BloomFilterCheck;
 
 /**
  * Created on 23/09/2019.
  *
  * @author gcwiak
  */
-@Component
 public class PwnedCredentialsChecker {
 
-    private final HashFunction hashFunction = Hashing.sha1(); // TODO make this configurable
+    private final BloomFilterCheck pwnedFilter;
+    private final int maxPasswordLength;
 
-    private final BloomFilter<byte[]> pwnedFilter;
-
-    public PwnedCredentialsChecker(final BloomFilter<byte[]> pwnedFilter) {
+    public PwnedCredentialsChecker(final BloomFilterCheck pwnedFilter, final int maxPasswordLength) {
         this.pwnedFilter = pwnedFilter;
+        this.maxPasswordLength = maxPasswordLength;
     }
 
     public boolean isPasswordPwned(final String password) {
 
-        final byte[] passwordBytes = password.getBytes(Charsets.UTF_8);
+        if (password == null || password.length() > maxPasswordLength) {
+            return false;
+        }
 
-        final byte[] passwordHash = hashFunction.hashBytes(passwordBytes).asBytes();
-
-        return pwnedFilter.mightContain(passwordHash);
+        return pwnedFilter.test(password);
     }
 }

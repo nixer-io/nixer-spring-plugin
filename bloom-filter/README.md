@@ -1,11 +1,10 @@
-bloom-lib
---------
+# bloom-filter
 
-A library for a file-based Bloom filters. The algorithms are copied from Google Guava version 22, but used bit array is backed
+A library for a file-based Bloom filters. The algorithms are copied from Google Guava, but the used bit array is backed
 by memory mapped files, instead of Java arrays. The goal was too be able to handle very large bloom filters. 
 
-
-Performance numbers (date: 2018-08-24, on a Macbook 16GB RAM, the file generated had size 4GB ) using `bloom-tool benchmark`:
+### Benchmark
+Performance numbers (date: 2018-08-24, on a MacBook Pro 16GB RAM, the file generated had size 4GB ) using `bloom-tool benchmark`:
 ```
 $ caffeinate build/dist/bloom-tool benchmark --size=1000000000 --fpp=1e-7
 Creating: /var/folders/f3/pqxz3z7s6g37nhv65114479r0000gn/T/bloom-benchmark-tmp3708262923291670873/test.bloom
