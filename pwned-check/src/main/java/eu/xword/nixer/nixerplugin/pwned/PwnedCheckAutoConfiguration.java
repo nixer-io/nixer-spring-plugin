@@ -27,6 +27,13 @@ public class PwnedCheckAutoConfiguration {
     }
 
     @Bean
+    public PwnedCredentialsChecker pwnedCredentialsChecker(final BloomFilterCheck pwnedFilter,
+                                                           final PwnedCheckProperties pwnedCheckProperties) {
+
+        return new PwnedCredentialsChecker(pwnedFilter, pwnedCheckProperties.getMaxPasswordLength());
+    }
+
+    @Bean
     public BloomFilterCheck bloomFilter(final PwnedCheckProperties pwnedCheckProperties) throws FileNotFoundException {
         return BloomFilterCheck.hashingBeforeCheck(
                 ResourceUtils.getFile(pwnedCheckProperties.getPwnedFilePath()).toPath()

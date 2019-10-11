@@ -38,8 +38,6 @@ public class BloomFilterCheck implements Predicate<String> {
 
     @Override
     public boolean test(final String value) {
-        Preconditions.checkNotNull(value, "value");
-
         final byte[] valueBytes = hashingStrategy.convertToBytes(value);
 
         return bloomFilter.mightContain(valueBytes);
