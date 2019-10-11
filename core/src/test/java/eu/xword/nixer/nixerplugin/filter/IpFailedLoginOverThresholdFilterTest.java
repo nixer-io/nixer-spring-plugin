@@ -1,6 +1,6 @@
 package eu.xword.nixer.nixerplugin.filter;
 
-import eu.xword.nixer.nixerplugin.registry.IpFailedLoginOverThresholdRegistry;
+import eu.xword.nixer.nixerplugin.registry.IpOverLoginThresholdRegistry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,16 +17,16 @@ class IpFailedLoginOverThresholdFilterTest {
     IpFailedLoginOverThresholdFilter filter;
 
     @Mock
-    IpFailedLoginOverThresholdRegistry IPFailedLoginOverThresholdRegistry;
+    IpOverLoginThresholdRegistry IPOverLoginThresholdRegistry;
 
     @BeforeEach
     public void setup() {
-        filter = new IpFailedLoginOverThresholdFilter(IPFailedLoginOverThresholdRegistry);
+        filter = new IpFailedLoginOverThresholdFilter(IPOverLoginThresholdRegistry);
     }
 
     @Test
     public void shouldMarkRequestBasedOnIp() {
-        given(IPFailedLoginOverThresholdRegistry.contains("127.0.0.1")).willReturn(Boolean.TRUE);
+        given(IPOverLoginThresholdRegistry.contains("127.0.0.1")).willReturn(Boolean.TRUE);
 
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setRemoteAddr("127.0.0.1");

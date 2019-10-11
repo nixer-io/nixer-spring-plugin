@@ -9,18 +9,22 @@ import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.util.Assert;
 
-public class RulesEngine implements EventEmitter {
+/**
+ * Executes rules
+ */
+public class RulesRunner implements EventEmitter {
 
     private final List<Rule> rules = new ArrayList<>();
 
     private final ApplicationEventPublisher eventPublisher;
 
-    public RulesEngine(final ApplicationEventPublisher eventPublisher) {
+    public RulesRunner(final ApplicationEventPublisher eventPublisher) {
         Assert.notNull(eventPublisher, "ApplicationEventPublisher must not be null");
         this.eventPublisher = eventPublisher;
     }
 
     public void onLogin(final LoginResult result, final LoginContext context) {
+        //todo should we skip execution for success login ?
         for (Rule rule : rules) {
             rule.execute(context, this);
         }

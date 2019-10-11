@@ -26,7 +26,7 @@ public class JsonSerializer implements EventVisitor {
     }
 
     @Override
-    public void accept(final LockUserEvent event) {
+    public void accept(final UsernameFailedLoginOverThresholdEvent event) {
         apply(event, () -> writeStringField("user", event.getUsername()));
     }
 

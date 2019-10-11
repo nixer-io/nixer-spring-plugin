@@ -7,30 +7,35 @@ import eu.xword.nixer.nixerplugin.login.LoginResult;
 import org.junit.jupiter.api.Test;
 
 import static eu.xword.nixer.nixerplugin.login.LoginFailureType.BAD_PASSWORD;
-import static eu.xword.nixer.nixerplugin.login.inmemory.ConsecutiveFailedLoginCounter.create;
+import static eu.xword.nixer.nixerplugin.login.inmemory.FeatureKey.Features.IP;
+import static eu.xword.nixer.nixerplugin.login.inmemory.LoginMetricCounterBuilder.counter;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class ConsecutiveFailedLoginCounterTest {
+class LoginMetricCounterTest {
 
     private static final String IP_1 = "127.0.0.1";
     private static final String IP_2 = "127.0.0.2";
 
     private final ClockStub clock = new ClockStub();
 
-    private final ConsecutiveFailedLoginCounter counter = create(Duration.ofMinutes(1), clock);
+    private final LoginMetricCounter counter = counter()
+            .key(IP)
+            .window(Duration.ofMinutes(1))
+            .clock(clock)
+            .build();
 
     @Test
     void should_increment_counter() {
         counter.onLogin(LoginResult.failure(BAD_PASSWORD), ipContext(IP_1));
 
-        final int count = counter.failedLoginByIp(IP_1);
+        final int count = counter.value(IP_1);
 
         assertEquals(1, count);
     }
 
     @Test
     void should_return_zero_count_for_unseen_key() {
-        final int count = counter.failedLoginByIp(IP_1);
+        final int count = counter.value(IP_1);
 
         assertEquals(0, count);
     }
@@ -41,8 +46,8 @@ class ConsecutiveFailedLoginCounterTest {
         counter.onLogin(LoginResult.failure(BAD_PASSWORD), ipContext(IP_2));
         counter.onLogin(LoginResult.failure(BAD_PASSWORD), ipContext(IP_2));
 
-        assertEquals(1, counter.failedLoginByIp(IP_1));
-        assertEquals(2, counter.failedLoginByIp(IP_2));
+        assertEquals(1, counter.value(IP_1));
+        assertEquals(2, counter.value(IP_2));
     }
 
     @Test
@@ -50,7 +55,7 @@ class ConsecutiveFailedLoginCounterTest {
         counter.onLogin(LoginResult.failure(BAD_PASSWORD), ipContext(IP_1));
         counter.onLogin(LoginResult.success(), ipContext(IP_1));
 
-        final int count = counter.failedLoginByIp(IP_1);
+        final int count = counter.value(IP_1);
 
         assertEquals(0, count);
     }
@@ -61,7 +66,7 @@ class ConsecutiveFailedLoginCounterTest {
 
         clock.tick(Duration.ofMinutes(5));
 
-        final int count = counter.failedLoginByIp(IP_1);
+        final int count = counter.value(IP_1);
 
         assertEquals(0, count);
     }

@@ -2,8 +2,11 @@ package eu.xword.nixer.nixerplugin.filter;
 
 import javax.servlet.http.HttpServletRequest;
 
-import eu.xword.nixer.nixerplugin.registry.IpFailedLoginOverThresholdRegistry;
+import eu.xword.nixer.nixerplugin.registry.IpOverLoginThresholdRegistry;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
+
+import static eu.xword.nixer.nixerplugin.filter.RequestAugmentation.IP_FAILED_LOGIN_OVER_THRESHOLD;
 
 /**
  * Appends information if request ip is over threshold for failed login.
@@ -11,17 +14,18 @@ import org.springframework.stereotype.Component;
 @Component
 public class IpFailedLoginOverThresholdFilter extends MetadataFilter {
 
-    private final IpFailedLoginOverThresholdRegistry ipFailedLoginOverThresholdRegistry;
+    private final IpOverLoginThresholdRegistry ipOverLoginThresholdRegistry;
 
-    public IpFailedLoginOverThresholdFilter(final IpFailedLoginOverThresholdRegistry ipFailedLoginOverThresholdRegistry) {
-        this.ipFailedLoginOverThresholdRegistry = ipFailedLoginOverThresholdRegistry;
+    public IpFailedLoginOverThresholdFilter(final IpOverLoginThresholdRegistry ipOverLoginThresholdRegistry) {
+        Assert.notNull(ipOverLoginThresholdRegistry, "IpOverLoginThresholdRegistry must not be null");
+        this.ipOverLoginThresholdRegistry = ipOverLoginThresholdRegistry;
     }
 
     @Override
     protected void apply(final HttpServletRequest request) {
         final String ip = request.getRemoteAddr();
-        if (ipFailedLoginOverThresholdRegistry.contains(ip)) {
-            request.setAttribute(RequestAugmentation.IP_FAILED_LOGIN_OVER_THRESHOLD, true);
+        if (ipOverLoginThresholdRegistry.contains(ip)) {
+            request.setAttribute(IP_FAILED_LOGIN_OVER_THRESHOLD, true);
         }
     }
 }

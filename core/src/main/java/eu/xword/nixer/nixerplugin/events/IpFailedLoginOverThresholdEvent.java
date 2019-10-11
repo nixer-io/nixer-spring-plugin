@@ -6,10 +6,7 @@ import com.google.common.base.Objects;
  * This events is emitted when number of failed login per ip exceeds threshold.
  */
 public class IpFailedLoginOverThresholdEvent extends BlockEvent {
-    /**
-     * Create a new ApplicationEvent.
-     * @param ip the object on which the event initially occurred (never {@code null})
-     */
+
     public IpFailedLoginOverThresholdEvent(final String ip) {
         super(ip);
     }
@@ -45,6 +42,5 @@ public class IpFailedLoginOverThresholdEvent extends BlockEvent {
     public int hashCode() {
         return Objects.hashCode(getIp());
     }
-
 
 }

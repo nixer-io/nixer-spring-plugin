@@ -3,7 +3,7 @@ package eu.xword.nixer.nixerplugin.example.full;
 import eu.xword.nixer.nixerplugin.captcha.recaptcha.RecaptchaClientStub;
 import eu.xword.nixer.nixerplugin.captcha.security.CaptchaChecker;
 import eu.xword.nixer.nixerplugin.captcha.security.CaptchaCondition;
-import eu.xword.nixer.nixerplugin.rules.IpFailedLoginThresholdRuleProperties;
+import eu.xword.nixer.nixerplugin.rules.FailedLoginThresholdRulesProperties;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.junit.jupiter.api.AfterEach;
@@ -65,7 +65,7 @@ public class FullApplicationTest {
     private MeterRegistry meterRegistry;
 
     @Autowired
-    private IpFailedLoginThresholdRuleProperties ruleProperties;
+    private FailedLoginThresholdRulesProperties ruleProperties;
 
     @TestConfiguration
     public static class TestConfig {
@@ -115,7 +115,7 @@ public class FullApplicationTest {
 
         MockHttpSession session = new MockHttpSession();
         // @formatter:on
-        for (int i = 0; i < ruleProperties.getThreshold() + 1; i++) {
+        for (int i = 0; i < ruleProperties.getFailedLoginThreshold().get("ip").getThreshold() + 1; i++) {
             this.mockMvc.perform(formLogin().user("user").password("guess").build()
                     .session(session))
                     .andExpect(unauthenticated());
@@ -289,7 +289,6 @@ public class FullApplicationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.rules", MapContentMatchers.hasEntry("credentialStuffingActive", "log")));
     }
-
 
     private RequestPostProcessor remoteAddress(String ip) {
         return request -> {

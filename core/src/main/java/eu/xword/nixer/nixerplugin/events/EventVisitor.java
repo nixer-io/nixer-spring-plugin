@@ -4,7 +4,7 @@ public interface EventVisitor {
 
     void accept(BlockEvent event);
 
-    void accept(LockUserEvent event);
+    void accept(UsernameFailedLoginOverThresholdEvent event);
 
     void accept(IpFailedLoginOverThresholdEvent event);
 
