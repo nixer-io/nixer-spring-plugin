@@ -21,19 +21,12 @@ public class BloomFilterCheck implements Predicate<String> {
 
     private final HashingStrategy hashingStrategy;
 
-    private BloomFilterCheck(final Path filename, final HashingStrategy hashingStrategy) {
-        Preconditions.checkNotNull(filename, "filename");
+    private BloomFilterCheck(final BloomFilter<byte[]> bloomFilter, final HashingStrategy hashingStrategy) {
+        Preconditions.checkNotNull(bloomFilter, "bloomFilter");
         Preconditions.checkNotNull(hashingStrategy, "hashingStrategy");
 
-        this.bloomFilter = openBloomFilter(filename);
+        this.bloomFilter = bloomFilter;
         this.hashingStrategy = hashingStrategy;
-    }
-
-    private static BloomFilter<byte[]> openBloomFilter(final Path filename) {
-        return FileBasedBloomFilter.open(
-                filename,
-                Funnels.byteArrayFunnel()
-        );
     }
 
     @Override
@@ -44,11 +37,18 @@ public class BloomFilterCheck implements Predicate<String> {
     }
 
     public static BloomFilterCheck hashingBeforeCheck(final Path filename) {
-        return new BloomFilterCheck(filename, new Sha1Hashing());
+        return new BloomFilterCheck(openBloomFilter(filename), new Sha1Hashing());
     }
 
     public static BloomFilterCheck notHashingBeforeCheck(final Path filename) {
-        return new BloomFilterCheck(filename, new NoHashing());
+        return new BloomFilterCheck(openBloomFilter(filename), new NoHashing());
+    }
+
+    private static BloomFilter<byte[]> openBloomFilter(final Path filename) {
+        return FileBasedBloomFilter.open(
+                filename,
+                Funnels.byteArrayFunnel()
+        );
     }
 
 }
