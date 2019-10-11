@@ -1,6 +1,5 @@
 package eu.xword.nixer.nixerplugin.example.full;
 
-import eu.xword.nixer.nixerplugin.captcha.reattempt.InMemoryCaptchaReattemptService;
 import eu.xword.nixer.nixerplugin.captcha.recaptcha.RecaptchaClientStub;
 import eu.xword.nixer.nixerplugin.captcha.security.CaptchaChecker;
 import eu.xword.nixer.nixerplugin.captcha.security.CaptchaCondition;
@@ -8,7 +7,6 @@ import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -64,9 +62,6 @@ public class FullApplicationTest {
     @Autowired
     private MeterRegistry meterRegistry;
 
-    @Autowired
-    private InMemoryCaptchaReattemptService inMemoryCaptchaReattemptService;
-
     @TestConfiguration
     public static class TestConfig {
         @Bean
@@ -77,7 +72,7 @@ public class FullApplicationTest {
     }
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         this.captchaChecker.setCaptchaCondition(CaptchaCondition.NEVER);
 
         recaptchaClientStub.recordValidCaptcha("good-captcha");
@@ -85,19 +80,19 @@ public class FullApplicationTest {
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    void tearDown() throws Exception {
         mockMvc.perform(logout());
     }
 
     @Test
-    public void loginUser() throws Exception {
+    void loginUser() throws Exception {
         // @formatter:off
         loginSuccessfully();
         // @formatter:on
     }
 
     @Test
-    public void returnCaptcha() throws Exception {
+    void returnCaptcha() throws Exception {
         //enable captcha
         this.captchaChecker.setCaptchaCondition(CaptchaCondition.ALWAYS);
 
@@ -109,28 +104,30 @@ public class FullApplicationTest {
     }
 
     @Test
-    @Disabled
-    public void shouldActivateCaptcha() throws Exception {
-        // enable automatic mode
-        this.captchaChecker.setCaptchaCondition(CaptchaCondition.AUTOMATIC);
+    void shouldActivateCaptcha() throws Exception {
+        // enable session controlled mode
+        this.captchaChecker.setCaptchaCondition(CaptchaCondition.SESSION_CONTROLLED);
 
+        MockHttpSession session = new MockHttpSession();
         // @formatter:on
-        final SmartRequestBuilder loginRequest = formLogin().user("user").password("guess").build();
         for (int i = 0; i < 4; i++) {
-            this.mockMvc.perform(loginRequest).andExpect(unauthenticated());
+            this.mockMvc.perform(formLogin().user("user").password("guess").build()
+                    .session(session))
+                    .andExpect(unauthenticated());
         }
         // @formatter:off
 
-        this.mockMvc.perform(get("/login"))
+        this.mockMvc.perform(get("/login").session(session))
             .andExpect(status().isOk())
             .andExpect(content().string(containsString("class=\"g-recaptcha\"")));
 
-        this.mockMvc.perform(formLogin().user("user").password("user").captcha("good-captcha").build())
+        this.mockMvc.perform(formLogin().user("user").password("user").captcha("good-captcha").build()
+                .session(session))
                 .andExpect(authenticated());
     }
 
     @Test
-    public void loginWithCaptcha() throws  Exception {
+    void loginWithCaptcha() throws  Exception {
         //enable captcha
         this.captchaChecker.setCaptchaCondition(CaptchaCondition.ALWAYS);
 
@@ -143,7 +140,7 @@ public class FullApplicationTest {
     }
 
     @Test
-    public void loginFailedWithCaptcha() throws  Exception {
+    void loginFailedWithCaptcha() throws  Exception {
         //enable captcha
         this.captchaChecker.setCaptchaCondition(CaptchaCondition.ALWAYS);
 
@@ -156,7 +153,7 @@ public class FullApplicationTest {
     }
 
     @Test
-    public void should_add_request_attribute_on_pwned_password() throws  Exception {
+    void should_add_request_attribute_on_pwned_password() throws  Exception {
 
         this.mockMvc.perform(formLogin().user("user").password("not-pwned-password").build())
                 .andExpect(request().attribute("nixer.pwned.password", nullValue()));
@@ -167,42 +164,21 @@ public class FullApplicationTest {
     }
 
     @Test
-    public void protectEndpointWithCaptcha() throws  Exception {
+    void protectEndpointWithCaptcha() throws  Exception {
         this.mockMvc.perform(post("/subscribeUser")
                 .param("g-recaptcha-response", "good-captcha"))
                 .andExpect(status().isOk());
     }
 
     @Test
-    public void protectEndpointWithCaptchaFailed() throws  Exception {
+    void protectEndpointWithCaptchaFailed() throws  Exception {
         this.mockMvc.perform(post("/subscribeUser")
                 .param("g-recaptcha-response", "bad-captcha"))
                 .andExpect(status().is4xxClientError());
     }
 
     @Test
-    public void blockIpForTimeIfToManyCaptchaFailed() throws  Exception {
-        inMemoryCaptchaReattemptService.clean();
-
-//        enable captcha
-        this.captchaChecker.setCaptchaCondition(CaptchaCondition.ALWAYS);
-
-        final SmartRequestBuilder loginRequest = formLogin().user("user").password("user").captcha("bad-captcha").build();
-        this.mockMvc.perform(loginRequest)
-                .andExpect(redirectedUrl("/login?error"));
-        this.mockMvc.perform(loginRequest)
-                .andExpect(redirectedUrl("/login?error"));
-        this.mockMvc.perform(loginRequest)
-                .andExpect(redirectedUrl("/login?error"));
-        this.mockMvc.perform(loginRequest)
-                .andExpect(redirectedUrl("/login?error"));
-
-        this.mockMvc.perform(loginRequest)
-                .andExpect(redirectedUrl("/login?error=LOCKED"));
-    }
-
-    @Test
-    public void loginUserAccessProtected() throws Exception {
+    void loginUserAccessProtected() throws Exception {
         // @formatter:off
         final SmartRequestBuilder loginRequest = formLogin().user("user").password("user").build();
         MvcResult mvcResult = this.mockMvc.perform(loginRequest)
@@ -218,14 +194,14 @@ public class FullApplicationTest {
     }
 
     @Test
-    public void captchaEndpointToReturnCurrentCondition() throws Exception {
+    void captchaEndpointToReturnCurrentCondition() throws Exception {
         this.mockMvc.perform(get("/actuator/captcha"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.condition", is("NEVER")));
     }
 
     @Test
-    public void captchaEndpointToUpdateCondition() throws Exception {
+    void captchaEndpointToUpdateCondition() throws Exception {
         final String newCondition = "{ \"condition\": \"ALWAYS\"}";
         this.mockMvc.perform(post("/actuator/captcha")
                 .content(newCondition)
@@ -238,7 +214,7 @@ public class FullApplicationTest {
     }
 
     @Test
-    public void shouldReportLoginSuccessMetric() throws Exception {
+    void shouldReportLoginSuccessMetric() throws Exception {
         final Counter successLoginCounter = meterRegistry.get("login")
                 .tag("result", "success")
                 .counter();
@@ -250,7 +226,7 @@ public class FullApplicationTest {
     }
 
     @Test
-    public void shouldReportLoginFailedMetric() throws Exception {
+    void shouldReportLoginFailedMetric() throws Exception {
         final Counter failLoginCounter = meterRegistry.get("login")
                 .tag("result", "failed")
                 .counter();
@@ -262,7 +238,7 @@ public class FullApplicationTest {
     }
 
     @Test
-    public void shouldFailLoginFromBlacklistedIpv4() throws Exception {
+    void shouldFailLoginFromBlacklistedIpv4() throws Exception {
         // @formatter:off
         this.mockMvc.perform(
                 formLogin().user("user").password("user")
@@ -272,7 +248,7 @@ public class FullApplicationTest {
     }
 
     @Test
-    public void shouldFailLoginFromBlacklistedIpv6() throws Exception {
+    void shouldFailLoginFromBlacklistedIpv6() throws Exception {
         // @formatter:off
         this.mockMvc.perform(
                 formLogin().user("user").password("user")
@@ -282,7 +258,7 @@ public class FullApplicationTest {
     }
 
     @Test
-    public void behaviorsEndpointToReturnBehaviorsAndRules() throws Exception {
+    void behaviorsEndpointToReturnBehaviorsAndRules() throws Exception {
         this.mockMvc.perform(get("/actuator/behaviors"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.behaviors", hasItems("captcha", "log")))
@@ -291,9 +267,9 @@ public class FullApplicationTest {
     }
 
     @Test
-    public void behaviorsEndpointToUpdateBehavior() throws Exception {
-        final String newBehavior = "{ \"behavior\": \"log\"}";
-        this.mockMvc.perform(post("/actuator/behaviors/credentialStuffingActive")
+    void behaviorsEndpointToUpdateBehavior() throws Exception {
+        final String newBehavior = "{ \"rule\": \"credentialStuffingActive\", \"behavior\": \"log\"}";
+        this.mockMvc.perform(post("/actuator/behaviors")
                 .content(newBehavior)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful());

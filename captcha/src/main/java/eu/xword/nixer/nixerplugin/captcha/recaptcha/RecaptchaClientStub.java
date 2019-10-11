@@ -10,11 +10,11 @@ import eu.xword.nixer.nixerplugin.captcha.error.CaptchaErrors;
 import static eu.xword.nixer.nixerplugin.captcha.recaptcha.RecaptchaVerifyResponse.ErrorCode.InvalidResponse;
 
 /**
- * RecaptchaClient Stub for recording responses for given captcha
+ * Recaptcha Client Stub for recording responses for given recaptcha
  */
 public class RecaptchaClientStub implements RecaptchaClient {
 
-    private Map<String, Supplier<RecaptchaVerifyResponse>> responses = new HashMap<>();
+    private final Map<String, Supplier<RecaptchaVerifyResponse>> responses = new HashMap<>();
 
     @Override
     public RecaptchaVerifyResponse call(final String captcha) {

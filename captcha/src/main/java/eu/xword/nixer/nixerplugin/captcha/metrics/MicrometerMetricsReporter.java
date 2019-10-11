@@ -5,11 +5,11 @@ import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.util.Assert;
 
 import static eu.xword.nixer.nixerplugin.captcha.metrics.CaptchaMetrics.ACTION_TAG;
-import static eu.xword.nixer.nixerplugin.captcha.metrics.CaptchaMetrics.CAPTCHA_COUNTER;
+import static eu.xword.nixer.nixerplugin.captcha.metrics.CaptchaMetrics.CAPTCHA_METRIC;
 import static eu.xword.nixer.nixerplugin.captcha.metrics.CaptchaMetrics.CAPTCHA_FAILED_DESC;
-import static eu.xword.nixer.nixerplugin.captcha.metrics.CaptchaMetrics.CAPTCHA_PASS_DESC;
-import static eu.xword.nixer.nixerplugin.captcha.metrics.CaptchaMetrics.RESULT_FAILED;
-import static eu.xword.nixer.nixerplugin.captcha.metrics.CaptchaMetrics.RESULT_PASSED;
+import static eu.xword.nixer.nixerplugin.captcha.metrics.CaptchaMetrics.CAPTCHA_PASSED_DESC;
+import static eu.xword.nixer.nixerplugin.captcha.metrics.CaptchaMetrics.CAPTCHA_FAILED;
+import static eu.xword.nixer.nixerplugin.captcha.metrics.CaptchaMetrics.CAPTCHA_PASSED;
 import static eu.xword.nixer.nixerplugin.captcha.metrics.CaptchaMetrics.RESULT_TAG;
 
 /**
@@ -25,15 +25,15 @@ public class MicrometerMetricsReporter implements MetricsReporter {
         Assert.notNull(meterRegistry, "MeterRegistry must not be null");
         Assert.notNull(action, "Action must not be null");
 
-        this.captchaPassedCounter = Counter.builder(CAPTCHA_COUNTER)
-                .description(CAPTCHA_PASS_DESC)
-                .tag(RESULT_TAG, RESULT_PASSED)
+        this.captchaPassedCounter = Counter.builder(CAPTCHA_METRIC)
+                .description(CAPTCHA_PASSED_DESC)
+                .tag(RESULT_TAG, CAPTCHA_PASSED)
                 .tag(ACTION_TAG, action)
                 .register(meterRegistry);
 
-        this.captchaFailedCounter = Counter.builder(CAPTCHA_COUNTER)
+        this.captchaFailedCounter = Counter.builder(CAPTCHA_METRIC)
                 .description(CAPTCHA_FAILED_DESC)
-                .tag(RESULT_TAG, RESULT_FAILED)
+                .tag(RESULT_TAG, CAPTCHA_FAILED)
                 .tag(ACTION_TAG, action)
                 .register(meterRegistry);
     }
@@ -46,18 +46,4 @@ public class MicrometerMetricsReporter implements MetricsReporter {
         this.captchaPassedCounter.increment();
     }
 
-    @Override
-    public void onCheck() {
-
-    }
-
-    @Override
-    public void onSuccess() {
-        reportPassedCaptcha();
-    }
-
-    @Override
-    public void onFailure() {
-        reportFailedCaptcha();
-    }
 }

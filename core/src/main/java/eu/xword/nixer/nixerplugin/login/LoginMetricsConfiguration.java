@@ -1,5 +1,7 @@
 package eu.xword.nixer.nixerplugin.login;
 
+import java.util.List;
+
 import eu.xword.nixer.nixerplugin.login.metrics.LoginMetricsReporter;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -16,12 +18,18 @@ public class LoginMetricsConfiguration {
     @ConditionalOnProperty(prefix = "nixer.login.metrics", name = "enabled", havingValue = "true", matchIfMissing = true)
     @ConditionalOnMissingBean(LoginMetricsReporter.class)
 //    @ConditionalOnBean(MeterRegistry.class) // TODO making this active breaks  program causing bean not being registered
-    public LoginActivityRepository loginMetrics(MeterRegistry meterRegistry) {
-        return new LoginMetricsReporter(meterRegistry);
+    public LoginActivityRepository loginMetrics(MeterRegistry meterRegistry, LoginFailureTypeRegistry failureTypeRegistry) {
+        return new LoginMetricsReporter(meterRegistry, failureTypeRegistry);
     }
 
     @Bean
-    public LoginFailures loginFailures() {
-        return new LoginFailures();
+    public LoginFailureTypeRegistry loginFailuresRegistry(List<LoginFailureTypeRegistry.Contributor> consumers) {
+        final LoginFailureTypeRegistry.Builder builder = new LoginFailureTypeRegistry.Builder();
+
+        consumers.forEach(builderConsumer -> builderConsumer.contribute(builder));
+
+        return builder.build();
+
     }
+
 }

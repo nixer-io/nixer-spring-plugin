@@ -1,29 +1,22 @@
-package eu.xword.nixer.nixerplugin.captcha.config;
-
-import java.time.Duration;
+package eu.xword.nixer.nixerplugin.captcha.recaptcha;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 /**
- * {@link ConfigurationProperties} for configuring captcha challenge.
+ * {@link ConfigurationProperties} for configuring ReCaptcha.
  */
 @Component
-@ConfigurationProperties(prefix = "recaptcha")
+@ConfigurationProperties(prefix = "nixer.captcha.recaptcha")
 public class RecaptchaProperties {
 
-    public static final String DEFAULT_CAPTCHA_PARAM = "g-recaptcha-response";
-
+    /**
+     * Http url of Google service used to verify captcha
+     */
     private String verifyUrl;
 
     private Http http = new Http();
     private RecaptchaKeys key = new RecaptchaKeys();
-
-    private String param = DEFAULT_CAPTCHA_PARAM;
-
-    private BlockingProperties blocking = new BlockingProperties();
-
-    private MetricsProperties metrics = new MetricsProperties();
 
     public String getVerifyUrl() {
         return verifyUrl;
@@ -41,14 +34,6 @@ public class RecaptchaProperties {
         this.key = key;
     }
 
-    public String getParam() {
-        return param;
-    }
-
-    public void setParam(final String param) {
-        this.param = param;
-    }
-
     public Http getHttp() {
         return http;
     }
@@ -57,24 +42,12 @@ public class RecaptchaProperties {
         this.http = http;
     }
 
-    public BlockingProperties getBlocking() {
-        return blocking;
-    }
-
-    public void setBlocking(final BlockingProperties blocking) {
-        this.blocking = blocking;
-    }
-
-    public MetricsProperties getMetrics() {
-        return metrics;
-    }
-
-    public void setMetrics(final MetricsProperties metrics) {
-        this.metrics = metrics;
-    }
-
     public static class Http {
         private Timeout timeout = new Timeout();
+
+        /**
+         * Maximum number of connection established
+         */
         private int maxConnections = 10;
 
         public Timeout getTimeout() {
@@ -95,8 +68,17 @@ public class RecaptchaProperties {
     }
 
     public static class Timeout {
+        /**
+         * Http connection timeout
+         */
         private int connect = 1_000;
+        /**
+         * Socket read timeout
+         */
         private int read = 1_000;
+        /**
+         * Timeout for request for connection from pool
+         */
         private int connectionRequest = 1_000;
 
         public int getConnect() {
@@ -124,21 +106,15 @@ public class RecaptchaProperties {
         }
     }
 
-    public static class MetricsProperties {
-        public static final boolean DEFAULT = true;
-        private boolean enabled = DEFAULT;
-
-        public boolean isEnabled() {
-            return enabled;
-        }
-
-        public void setEnabled(final boolean enabled) {
-            this.enabled = enabled;
-        }
-    }
-
     public static class RecaptchaKeys {
+
+        /**
+         * Site key for Google Recaptcha API
+         */
         private String site;
+        /**
+         * Secret key for Google Recaptcha API
+         */
         private String secret;
 
         public String getSite() {
@@ -155,39 +131,6 @@ public class RecaptchaProperties {
 
         public void setSecret(final String secret) {
             this.secret = secret;
-        }
-    }
-
-    public static class BlockingProperties {
-        private static final int DEFAULT_MAX_ATTEMPTS = 4;
-        private static final Duration DEFAULT_BLOCKING_DURATION = Duration.ofHours(1);
-
-        private boolean enabled = false;
-        private int maxAttempts = DEFAULT_MAX_ATTEMPTS;
-        private Duration duration = DEFAULT_BLOCKING_DURATION;
-
-        public boolean isEnabled() {
-            return enabled;
-        }
-
-        public void setEnabled(final boolean enabled) {
-            this.enabled = enabled;
-        }
-
-        public int getMaxAttempts() {
-            return maxAttempts;
-        }
-
-        public void setMaxAttempts(final int maxAttempts) {
-            this.maxAttempts = maxAttempts;
-        }
-
-        public Duration getDuration() {
-            return duration;
-        }
-
-        public void setDuration(final String duration) {
-            this.duration = Duration.parse(duration);
         }
     }
 }

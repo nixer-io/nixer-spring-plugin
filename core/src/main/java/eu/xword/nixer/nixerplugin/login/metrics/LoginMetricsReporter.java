@@ -1,15 +1,17 @@
 package eu.xword.nixer.nixerplugin.login.metrics;
 
-import java.util.EnumMap;
+import java.util.Collections;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-import com.google.common.collect.Maps;
 import eu.xword.nixer.nixerplugin.login.LoginActivityRepository;
 import eu.xword.nixer.nixerplugin.login.LoginContext;
 import eu.xword.nixer.nixerplugin.login.LoginFailureType;
+import eu.xword.nixer.nixerplugin.login.LoginFailureTypeRegistry;
 import eu.xword.nixer.nixerplugin.login.LoginResult;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
+import org.springframework.util.Assert;
 
 /**
  * Records metrics about user login in micrometer.
@@ -20,24 +22,31 @@ public class LoginMetricsReporter implements LoginActivityRepository {
 
     private final Map<LoginFailureType, Counter> failureCounters;
 
-    public LoginMetricsReporter(final MeterRegistry meterRegistry) {
-        final EnumMap<LoginFailureType, Counter> result = Maps.newEnumMap(LoginFailureType.class);
+    private final MeterRegistry meterRegistry;
 
-        for (LoginFailureType it : LoginFailureType.values()) {
-            final Counter counter = Counter.builder("login")
-                    .description("User login failed")
-                    .tags("result", "failed")
-                    .tag("reason", it.name())
-                    .register(meterRegistry);
-            result.put(it, counter);
-        }
-        this.failureCounters = result;
+    public LoginMetricsReporter(final MeterRegistry meterRegistry, final LoginFailureTypeRegistry loginFailureTypeRegistry) {
+        Assert.notNull(meterRegistry, "MeterRegistry must not be null");
+        this.meterRegistry = meterRegistry;
+
+        Assert.notNull(loginFailureTypeRegistry, "LoginFailureTypeRegistry must not be null");
+
+        final Map<LoginFailureType, Counter> failureCounters = loginFailureTypeRegistry.getReasons().stream()
+                .collect(Collectors.toMap( it -> it, this::failureCounter));
+        this.failureCounters = Collections.unmodifiableMap(failureCounters);
 
         this.loginSuccessCounter = Counter.builder("login")
                 .description("User login succeeded")
                 .tags("result", "success")
                 .register(meterRegistry);
 
+    }
+
+    private Counter failureCounter(final LoginFailureType reason) {
+        return Counter.builder("login")
+                .description("User login failed")
+                .tags("result", "failed")
+                .tag("reason", reason.name())
+                .register(meterRegistry);
     }
 
     private void reportLoginFail(final LoginFailureType loginFailureType) {

@@ -14,4 +14,5 @@ public class BadCaptchaException extends BadCredentialsException {
     public BadCaptchaException(final String msg, final Throwable t) {
         super(msg, t);
     }
+
 }

@@ -4,7 +4,7 @@ import java.util.function.Consumer;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
-import com.google.common.base.Preconditions;
+import org.springframework.util.Assert;
 
 /**
  * Represents result of authentication
@@ -14,7 +14,9 @@ public class LoginResult {
     private final LoginFailureType reason;
 
     private LoginResult(final Status status, final LoginFailureType reason) {
-        this.status = Preconditions.checkNotNull(status, "status");
+        Assert.notNull(status, "Status must not be null");
+        this.status = status;
+
         this.reason = reason;
     }
 
@@ -23,7 +25,7 @@ public class LoginResult {
     }
 
     public static LoginResult failure(LoginFailureType reason) {
-        Preconditions.checkNotNull(reason, "reason");
+        Assert.notNull(reason, "Reason must not be null");
 
         return new LoginResult(Status.FAILURE, reason);
     }

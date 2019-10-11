@@ -1,65 +1,53 @@
 package eu.xword.nixer.nixerplugin.captcha.security;
 
 import eu.xword.nixer.nixerplugin.captcha.CaptchaService;
-import eu.xword.nixer.nixerplugin.captcha.error.RecaptchaServiceException;
-import eu.xword.nixer.nixerplugin.login.LoginFailures;
+import eu.xword.nixer.nixerplugin.captcha.error.CaptchaServiceException;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.BDDMockito;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import static eu.xword.nixer.nixerplugin.captcha.config.RecaptchaProperties.DEFAULT_CAPTCHA_PARAM;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verifyZeroInteractions;
 
-@ExtendWith(MockitoExtension.class)
 class CaptchaCheckerTest {
 
-    public static final UserDetails ANY = null;
+    private static final UserDetails ANY = null;
+    private static final String CAPTCHA_PARAM = "captcha-param";
 
-    @Mock
-    CaptchaService captchaService;
+    private CaptchaService captchaService = BDDMockito.mock(CaptchaService.class);
 
-    @Mock
-    LoginFailures loginFailures;
+    private CaptchaChecker captchaChecker = new CaptchaChecker(captchaService, CAPTCHA_PARAM);
 
     @Test
-    public void should_pass_validation() {
-        final CaptchaChecker captchaChecker = new CaptchaChecker(captchaService, loginFailures);
-
+    void should_pass_validation() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setParameter(DEFAULT_CAPTCHA_PARAM, "captcha");
+        request.setParameter(CAPTCHA_PARAM, "captcha");
         captchaChecker.setCaptchaCondition(CaptchaCondition.ALWAYS);
         captchaChecker.setRequest(request);
 
-        doNothing().when(captchaService).processResponse("captcha");
+        doNothing().when(captchaService).verifyResponse("captcha");
 
         captchaChecker.check(ANY);
     }
 
     @Test
-    public void should_fail_validation() {
-        final CaptchaChecker captchaChecker = new CaptchaChecker(captchaService, loginFailures);
-
+    void should_fail_validation() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setParameter(DEFAULT_CAPTCHA_PARAM, "captcha");
+        request.setParameter(CAPTCHA_PARAM, "captcha");
         captchaChecker.setCaptchaCondition(CaptchaCondition.ALWAYS);
         captchaChecker.setRequest(request);
 
-        doThrow(new RecaptchaServiceException(""))
-                .when(captchaService).processResponse("captcha");
+        doThrow(new CaptchaServiceException(""))
+                .when(captchaService).verifyResponse("captcha");
 
         assertThrows(BadCaptchaException.class, () -> captchaChecker.check(ANY));
     }
 
     @Test
-    public void should_skip_validation() {
-        final CaptchaChecker captchaChecker = new CaptchaChecker(captchaService, loginFailures);
-
+    void should_skip_validation() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         captchaChecker.setCaptchaCondition(CaptchaCondition.NEVER);
         captchaChecker.setRequest(request);

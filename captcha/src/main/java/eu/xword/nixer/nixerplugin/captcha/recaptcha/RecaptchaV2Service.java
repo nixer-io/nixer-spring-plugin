@@ -2,11 +2,11 @@ package eu.xword.nixer.nixerplugin.captcha.recaptcha;
 
 import java.util.regex.Pattern;
 
-import eu.xword.nixer.nixerplugin.captcha.CaptchaInterceptor;
 import eu.xword.nixer.nixerplugin.captcha.CaptchaService;
+import eu.xword.nixer.nixerplugin.captcha.error.CaptchaClientException;
 import eu.xword.nixer.nixerplugin.captcha.error.CaptchaErrors;
-import eu.xword.nixer.nixerplugin.captcha.error.RecaptchaClientException;
-import eu.xword.nixer.nixerplugin.captcha.error.RecaptchaServiceException;
+import eu.xword.nixer.nixerplugin.captcha.error.CaptchaServiceException;
+import eu.xword.nixer.nixerplugin.captcha.metrics.MetricsReporter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.util.Assert;
@@ -23,37 +23,35 @@ public class RecaptchaV2Service implements CaptchaService {
 
     private static Pattern RESPONSE_PATTERN = Pattern.compile("[A-Za-z0-9_-]+");
 
-    private CaptchaInterceptor captchaInterceptor;
+    private final MetricsReporter metricsReporter;
 
-    private RecaptchaClient recaptchaClient;
+    private final RecaptchaClient recaptchaClient;
 
-    public RecaptchaV2Service(final RecaptchaClient recaptchaClient, final CaptchaInterceptor captchaInterceptor) {
+    public RecaptchaV2Service(final RecaptchaClient recaptchaClient, final MetricsReporter metricsReporter) {
         Assert.notNull(recaptchaClient, "RecaptchaClient must not be null");
         this.recaptchaClient = recaptchaClient;
 
-        Assert.notNull(captchaInterceptor, "CaptchaInterceptor must not be null");
-        this.captchaInterceptor = captchaInterceptor;
+        Assert.notNull(metricsReporter, "MetricsReporter must not be null");
+        this.metricsReporter = metricsReporter;
     }
 
-    private boolean isInValidFormat(String response) {
+    private boolean isInValidFormat(final String response) {
         return StringUtils.hasLength(response) && RESPONSE_PATTERN.matcher(response).matches();
     }
 
     @Override
-    public void processResponse(final String captcha) {
-        captchaInterceptor.onCheck();
-
+    public void verifyResponse(final String captcha) {
         if (!isInValidFormat(captcha)) {
-            captchaInterceptor.onFailure();
+            metricsReporter.reportFailedCaptcha();
             throw CaptchaErrors.invalidCaptchaFormat("Response contains invalid characters");
         }
 
         try {
             verify(captcha);
 
-            captchaInterceptor.onSuccess();
-        } catch (RecaptchaServiceException | RecaptchaClientException e) {
-            captchaInterceptor.onFailure();
+            metricsReporter.reportPassedCaptcha();
+        } catch (CaptchaServiceException | CaptchaClientException e) {
+            metricsReporter.reportFailedCaptcha();
             throw e;
         }
     }
@@ -65,7 +63,7 @@ public class RecaptchaV2Service implements CaptchaService {
             if (!verifyResponse.hasClientError()) {
                 logger.warn("Got captcha verify error: " + verifyResponse.getErrorCodes());
             }
-            throw CaptchaErrors.invalidRecaptcha("reCaptcha was not successfully validated");
+            throw CaptchaErrors.invalidCaptcha("reCaptcha was not successfully validated");
         }
     }
 

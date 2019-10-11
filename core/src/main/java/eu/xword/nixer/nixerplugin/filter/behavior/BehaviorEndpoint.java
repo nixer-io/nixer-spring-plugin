@@ -44,7 +44,7 @@ public class BehaviorEndpoint {
     }
 
     @WriteOperation
-    public void setBehavior(@Selector String name, String behavior) {
-        behaviorProvider.setBehavior(name, behavior);
+    public void setBehavior(String rule, String behavior) {
+        behaviorProvider.setBehavior(rule, behavior);
     }
 }

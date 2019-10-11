@@ -1,20 +1,20 @@
 package eu.xword.nixer.nixerplugin.captcha.error;
 
 /**
- * Helper factory methods for creating variants of {@link RecaptchaException}.
+ * Helper factory methods for creating variants of {@link CaptchaException}.
  */
 public class CaptchaErrors {
 
-    public static RecaptchaClientException invalidCaptchaFormat(String message) {
-        return new RecaptchaClientException(message);
+    public static CaptchaClientException invalidCaptchaFormat(String message) {
+        return new CaptchaClientException(message);
     }
 
-    public static RecaptchaClientException invalidRecaptcha(String message) {
-        return new RecaptchaClientException(message);
+    public static CaptchaClientException invalidCaptcha(String message) {
+        return new CaptchaClientException(message);
     }
 
-    public static RecaptchaServiceException serviceFailure(String message, Exception e) {
-        return new RecaptchaServiceException(message, e);
+    public static CaptchaServiceException serviceFailure(String message, Exception e) {
+        return new CaptchaServiceException(message, e);
     }
 
 }

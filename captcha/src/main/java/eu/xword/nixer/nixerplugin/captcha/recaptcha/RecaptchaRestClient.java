@@ -3,8 +3,8 @@ package eu.xword.nixer.nixerplugin.captcha.recaptcha;
 import java.util.HashMap;
 import java.util.Map;
 
-import eu.xword.nixer.nixerplugin.captcha.config.RecaptchaProperties;
 import eu.xword.nixer.nixerplugin.captcha.error.CaptchaErrors;
+import org.springframework.util.Assert;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestOperations;
 
@@ -19,7 +19,10 @@ public class RecaptchaRestClient implements RecaptchaClient {
     private final String recaptchaSecret;
 
     public RecaptchaRestClient(final RestOperations restTemplate, final RecaptchaProperties config) {
+        Assert.notNull(restTemplate, "RestTemplate must not be null");
         this.restTemplate = restTemplate;
+
+        Assert.notNull(config, "RecaptchaProperties must not be null");
         this.verifyUrl = config.getVerifyUrl();
         this.recaptchaSecret = config.getKey().getSecret();
     }

@@ -2,7 +2,7 @@ package eu.xword.nixer.nixerplugin.captcha.validation;
 
 import eu.xword.nixer.nixerplugin.captcha.CaptchaService;
 import eu.xword.nixer.nixerplugin.captcha.CaptchaServiceFactory;
-import eu.xword.nixer.nixerplugin.captcha.error.RecaptchaClientException;
+import eu.xword.nixer.nixerplugin.captcha.error.CaptchaClientException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(controllers = RecaptchaTestController.class, secure = false)
 @ContextConfiguration(classes = AppConfiguration.class)
-public class CaptchaValidatorTest {
+class CaptchaValidatorTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -35,14 +35,14 @@ public class CaptchaValidatorTest {
     private CaptchaService captchaService;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         Mockito.when(serviceFactory.createCaptchaService(Mockito.anyString())).thenReturn(captchaService);
     }
 
     @Test
-    public void should_return_ok_captcha_validation_succeeded() throws Exception {
+    void should_return_ok_captcha_validation_succeeded() throws Exception {
         Mockito.doNothing()
-                .when(captchaService).processResponse(Mockito.anyString());
+                .when(captchaService).verifyResponse(Mockito.anyString());
 
         this.mockMvc.perform(MockMvcRequestBuilders
                 .post("/captchaTest")
@@ -51,9 +51,9 @@ public class CaptchaValidatorTest {
     }
 
     @Test
-    public void should_return_validation_error_with_custom_message() throws Exception {
-        Mockito.doThrow(new RecaptchaClientException(""))
-                .when(captchaService).processResponse(Mockito.anyString());
+    void should_return_validation_error_with_custom_message() throws Exception {
+        Mockito.doThrow(new CaptchaClientException(""))
+                .when(captchaService).verifyResponse(Mockito.anyString());
 
         this.mockMvc.perform(MockMvcRequestBuilders
                 .post("/captchaTest")
@@ -63,9 +63,9 @@ public class CaptchaValidatorTest {
     }
 
     @Test
-    public void should_return_validation_error_with_valid_message() throws Exception {
-        Mockito.doThrow(new RecaptchaClientException(""))
-                .when(captchaService).processResponse(Mockito.anyString());
+    void should_return_validation_error_with_valid_message() throws Exception {
+        Mockito.doThrow(new CaptchaClientException(""))
+                .when(captchaService).verifyResponse(Mockito.anyString());
 
         this.mockMvc.perform(MockMvcRequestBuilders
                 .post("/captchaTestDefault")

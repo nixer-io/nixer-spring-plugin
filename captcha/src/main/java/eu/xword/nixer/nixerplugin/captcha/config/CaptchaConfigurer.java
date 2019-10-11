@@ -5,6 +5,9 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.ObjectPostProcessor;
 import org.springframework.util.Assert;
 
+/**
+ * This class is used to integrate {@link CaptchaChecker} into Spring Authentication flow.
+ */
 public class CaptchaConfigurer implements ObjectPostProcessor<DaoAuthenticationProvider> {
 
     private CaptchaChecker captchaChecker;

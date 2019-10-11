@@ -16,7 +16,7 @@ import org.springframework.util.Assert;
 @Endpoint(id = "captcha")
 public class CaptchaEndpoint {
 
-    private CaptchaChecker captchaChecker;
+    private final CaptchaChecker captchaChecker;
 
     public CaptchaEndpoint(final CaptchaChecker captchaChecker) {
         Assert.notNull(captchaChecker, "CaptchaChecker must not be null");

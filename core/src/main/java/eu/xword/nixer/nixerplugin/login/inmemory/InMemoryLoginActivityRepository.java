@@ -49,7 +49,7 @@ public class InMemoryLoginActivityRepository implements LoginActivityRepository 
 //                  if (failedByIp == LOGIN_FAILED_BY_IP_THRESHOLD) {
 //                        eventPublisher.publishEvent(new BlockSourceIPEvent(context.getIpAddress()));
 //                    }
-                    if (failure.getFailureType() == LoginFailureType.UNKNOWN_USER) {
+                    if (LoginFailureType.UNKNOWN_USER == failure.getFailureType()) {
                         unknownUserByIp.increment(context);
                     }
                     if (context.getUsername() != null) {
@@ -68,7 +68,7 @@ public class InMemoryLoginActivityRepository implements LoginActivityRepository 
     }
 
     public static class Counter<T> {
-        private static final BiFunction<Object, Integer, Integer> ZERO_OR_INCRY = (key, count) -> count == null ? 0 : count + 1;
+        private static final BiFunction<Object, Integer, Integer> ONE_OR_INCRY = (key, count) -> count == null ? 1 : count + 1;
 
         private final ConcurrentHashMap<T, Integer> counts = new ConcurrentHashMap<>();
         private final Function<LoginContext, T> keyFunction;
@@ -78,7 +78,7 @@ public class InMemoryLoginActivityRepository implements LoginActivityRepository 
         }
 
         public Integer increment(LoginContext key) {
-            return counts.compute(keyFunction.apply(key), ZERO_OR_INCRY);
+            return counts.compute(keyFunction.apply(key), ONE_OR_INCRY);
         }
 
         public Integer reset(LoginContext key) {
