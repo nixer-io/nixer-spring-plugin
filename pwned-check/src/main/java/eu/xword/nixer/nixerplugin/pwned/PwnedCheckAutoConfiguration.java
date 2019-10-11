@@ -22,8 +22,10 @@ import org.springframework.util.ResourceUtils;
 public class PwnedCheckAutoConfiguration {
 
     @Bean
-    public PwnedCredentialsFilter pwnedCredentialsFilter(final PwnedCredentialsChecker pwnedCredentialsChecker) {
-        return new PwnedCredentialsFilter(pwnedCredentialsChecker);
+    public PwnedCredentialsFilter pwnedCredentialsFilter(final PwnedCheckProperties pwnedCheckProperties,
+                                                         final PwnedCredentialsChecker pwnedCredentialsChecker) {
+
+        return new PwnedCredentialsFilter(pwnedCheckProperties.getPasswordParameter(), pwnedCredentialsChecker);
     }
 
     @Bean

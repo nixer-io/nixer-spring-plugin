@@ -12,20 +12,26 @@ import eu.xword.nixer.nixerplugin.pwned.check.PwnedCredentialsChecker;
  */
 public class PwnedCredentialsFilter extends MetadataFilter {
 
+    private final String passwordParameter;
+
     private final PwnedCredentialsChecker pwnedCredentialsChecker;
 
-    public PwnedCredentialsFilter(final PwnedCredentialsChecker pwnedCredentialsChecker) {
+    public PwnedCredentialsFilter(final String passwordParameter, final PwnedCredentialsChecker pwnedCredentialsChecker) {
+        this.passwordParameter = passwordParameter;
         this.pwnedCredentialsChecker = pwnedCredentialsChecker;
     }
 
     @Override
     protected void apply(final HttpServletRequest request) {
 
-        // TODO retrieve password properly
-        final String password = request.getParameter("password");
+        final String password = obtainPassword(request);
 
         if (password != null && pwnedCredentialsChecker.isPasswordPwned(password)) {
             request.setAttribute("nixer.pwned.password", true);
         }
+    }
+
+    private String obtainPassword(HttpServletRequest request) {
+        return request.getParameter(passwordParameter);
     }
 }
