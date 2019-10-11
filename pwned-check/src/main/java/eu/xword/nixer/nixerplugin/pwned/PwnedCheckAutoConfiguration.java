@@ -2,7 +2,7 @@ package eu.xword.nixer.nixerplugin.pwned;
 
 import java.io.FileNotFoundException;
 
-import eu.xword.nixer.bloom.BloomFilterCheck;
+import eu.xword.nixer.bloom.check.BloomFilterCheck;
 import eu.xword.nixer.nixerplugin.pwned.check.PwnedCredentialsChecker;
 import eu.xword.nixer.nixerplugin.pwned.filter.PwnedCredentialsFilter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;

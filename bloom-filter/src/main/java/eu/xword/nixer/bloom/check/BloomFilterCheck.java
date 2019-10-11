@@ -1,10 +1,12 @@
-package eu.xword.nixer.bloom;
+package eu.xword.nixer.bloom.check;
 
 import java.nio.file.Path;
 import java.util.function.Predicate;
 
 import com.google.common.base.Preconditions;
 import com.google.common.hash.Funnels;
+import eu.xword.nixer.bloom.BloomFilter;
+import eu.xword.nixer.bloom.FileBasedBloomFilter;
 
 /**
  * Convenience wrapper over a file-based Bloom filter allowing to use the filter as a String predicate.

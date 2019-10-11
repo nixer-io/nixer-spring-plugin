@@ -1,7 +1,8 @@
-package eu.xword.nixer.bloom;
+package eu.xword.nixer.bloom.check;
 
 import com.google.common.hash.HashCode;
 import com.google.common.io.BaseEncoding;
+import eu.xword.nixer.bloom.NotHexStringException;
 
 /**
  *  Does not do any hashing. Assures the input value is a valid hex string and converts it to bytes.

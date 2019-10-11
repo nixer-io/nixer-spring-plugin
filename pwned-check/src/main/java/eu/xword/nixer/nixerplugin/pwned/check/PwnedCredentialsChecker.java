@@ -1,6 +1,6 @@
 package eu.xword.nixer.nixerplugin.pwned.check;
 
-import eu.xword.nixer.bloom.BloomFilterCheck;
+import eu.xword.nixer.bloom.check.BloomFilterCheck;
 
 /**
  * Created on 23/09/2019.
