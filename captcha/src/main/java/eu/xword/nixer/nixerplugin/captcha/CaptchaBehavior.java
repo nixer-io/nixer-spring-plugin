@@ -11,21 +11,25 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Component;
 
 /**
- * Challenges user with captcha. Sets flag in session based on which captcha is displayed and then verified
+ * Challenges user with captcha. Sets flag {@link #CAPTCHA_CHALLENGE_SESSION_ATTR} in session based on which captcha is displayed and then verified
  */
 @Component
 public class CaptchaBehavior implements Behavior {
 
     private final Log logger = LogFactory.getLog(getClass());
 
-    public static final String CAPTCHA_NAME = "captcha";
-    public static final String CAPTCHA_CHALLENGE_ATTR = "nixer.captcha.challenge";
+    private static final String CAPTCHA_NAME = "captcha";
+
+    /**
+     * Defines session attribute name that will be used to control captcha challenge.
+     */
+    public static final String CAPTCHA_CHALLENGE_SESSION_ATTR = "nixer.session.captcha.challenge";
 
     @Override
     public void act(final HttpServletRequest request, final HttpServletResponse response) throws IOException {
         final HttpSession session = request.getSession(false);
         if (session != null) {
-            session.setAttribute(CAPTCHA_CHALLENGE_ATTR, true);
+            session.setAttribute(CAPTCHA_CHALLENGE_SESSION_ATTR, true);
         } else {
             logger.warn("Expecting session to be created by this time");
         }

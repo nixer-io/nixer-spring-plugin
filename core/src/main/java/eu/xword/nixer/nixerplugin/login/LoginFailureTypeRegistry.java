@@ -1,16 +1,17 @@
 package eu.xword.nixer.nixerplugin.login;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
-import com.google.common.collect.ImmutableSet;
 import org.springframework.security.authentication.AccountExpiredException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.util.Assert;
 
 import static eu.xword.nixer.nixerplugin.login.LoginFailureType.BAD_PASSWORD;
 import static eu.xword.nixer.nixerplugin.login.LoginFailureType.DISABLED;
@@ -20,22 +21,23 @@ import static eu.xword.nixer.nixerplugin.login.LoginFailureType.OTHER;
 import static eu.xword.nixer.nixerplugin.login.LoginFailureType.UNKNOWN_USER;
 
 /**
- * Maps {@link AuthenticationException} to {@link LoginFailureType}
+ * Keeps registry of {@link AuthenticationException} to {@link LoginFailureType} mappings
  */
 public class LoginFailureTypeRegistry {
 
     private final Map<Class<? extends AuthenticationException>, LoginFailureType> failureTypeByException;
 
-    public LoginFailureTypeRegistry(final Map<Class<? extends AuthenticationException>, LoginFailureType> mapping) {
-        this.failureTypeByException = mapping;
+    private LoginFailureTypeRegistry(final Map<Class<? extends AuthenticationException>, LoginFailureType> mapping) {
+        Assert.notNull(mapping, "Mapping must not be null");
+        this.failureTypeByException = Collections.unmodifiableMap(mapping);
     }
 
     public LoginFailureType fromException(AuthenticationException ex) {
         return failureTypeByException.getOrDefault(ex.getClass(), OTHER);
     }
 
-    public Set<LoginFailureType> getReasons() {
-        return ImmutableSet.copyOf(failureTypeByException.values());
+    public Collection<LoginFailureType> getReasons() {
+        return Collections.unmodifiableCollection(failureTypeByException.values());
     }
 
     public static class Builder {

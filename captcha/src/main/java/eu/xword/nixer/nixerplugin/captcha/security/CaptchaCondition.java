@@ -3,7 +3,7 @@ package eu.xword.nixer.nixerplugin.captcha.security;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import static eu.xword.nixer.nixerplugin.captcha.CaptchaBehavior.CAPTCHA_CHALLENGE_ATTR;
+import static eu.xword.nixer.nixerplugin.captcha.CaptchaBehavior.CAPTCHA_CHALLENGE_SESSION_ATTR;
 
 public enum CaptchaCondition {
 
@@ -11,7 +11,7 @@ public enum CaptchaCondition {
         @Override
         public boolean test(HttpServletRequest request) {
             final HttpSession session = request.getSession(false);
-            return session != null && Boolean.TRUE.equals(session.getAttribute(CAPTCHA_CHALLENGE_ATTR));
+            return session != null && Boolean.TRUE.equals(session.getAttribute(CAPTCHA_CHALLENGE_SESSION_ATTR));
         }
 
     },
