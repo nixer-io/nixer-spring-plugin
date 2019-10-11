@@ -2,7 +2,7 @@ package eu.xword.nixer.nixerplugin.filter;
 
 import java.util.List;
 
-import eu.xword.nixer.nixerplugin.detection.GlobalCredentialStuffing;
+import eu.xword.nixer.nixerplugin.registry.GlobalCredentialStuffingRegistry;
 import eu.xword.nixer.nixerplugin.filter.behavior.Behavior;
 import eu.xword.nixer.nixerplugin.filter.behavior.BehaviorEndpoint;
 import eu.xword.nixer.nixerplugin.filter.behavior.BehaviorProvider;
@@ -27,7 +27,7 @@ public class FilterConfiguration {
     private final Log logger = LogFactory.getLog(getClass());
 
     @Bean
-    public BehaviorExecutionFilter executionFilter(FilterProperties filterProperties, BehaviorProvider behaviorProvider, GlobalCredentialStuffing credentialStuffing) {
+    public BehaviorExecutionFilter executionFilter(FilterProperties filterProperties, BehaviorProvider behaviorProvider, GlobalCredentialStuffingRegistry credentialStuffing) {
         final BehaviorExecutionFilter executionFilter = new BehaviorExecutionFilter(behaviorProvider, credentialStuffing);
         if (filterProperties.isDryRun()) {
             logger.warn("Filters dry-run mode is enabled");

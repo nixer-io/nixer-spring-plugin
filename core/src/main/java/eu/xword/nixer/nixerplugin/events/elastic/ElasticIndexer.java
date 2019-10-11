@@ -1,6 +1,6 @@
 package eu.xword.nixer.nixerplugin.events.elastic;
 
-import eu.xword.nixer.nixerplugin.events.BlockEvent;
+import eu.xword.nixer.nixerplugin.events.DetectionEvent;
 import eu.xword.nixer.nixerplugin.events.JsonSerializer;
 import io.searchbox.client.JestClient;
 import io.searchbox.client.JestResultHandler;
@@ -10,7 +10,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationListener;
 
-public class ElasticIndexer implements ApplicationListener<BlockEvent> {
+public class ElasticIndexer implements ApplicationListener<DetectionEvent> {
 
     private final Log logger = LogFactory.getLog(getClass());
 
@@ -26,7 +26,7 @@ public class ElasticIndexer implements ApplicationListener<BlockEvent> {
     }
 
     @Override
-    public void onApplicationEvent(final BlockEvent event) {
+    public void onApplicationEvent(final DetectionEvent event) {
 
         final Index index = prepareRequest(event);
 
@@ -42,7 +42,7 @@ public class ElasticIndexer implements ApplicationListener<BlockEvent> {
         });
     }
 
-    private Index prepareRequest(BlockEvent event) {
+    private Index prepareRequest(DetectionEvent event) {
         final JsonSerializer jsonSerializer = new JsonSerializer();
 
         event.accept(jsonSerializer);

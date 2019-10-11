@@ -1,16 +1,16 @@
-package eu.xword.nixer.nixerplugin.rules;
+package eu.xword.nixer.nixerplugin.detection.rules;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import eu.xword.nixer.nixerplugin.events.DetectionEvent;
 import eu.xword.nixer.nixerplugin.login.LoginContext;
 import eu.xword.nixer.nixerplugin.login.LoginResult;
-import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.util.Assert;
 
 /**
- * Executes rules
+ * Executes login anomaly detection rules
  */
 public class RulesRunner implements EventEmitter {
 
@@ -31,7 +31,7 @@ public class RulesRunner implements EventEmitter {
     }
 
     @Override
-    public void emit(final ApplicationEvent event) {
+    public void accept(final DetectionEvent event) {
         eventPublisher.publishEvent(event);
     }
 

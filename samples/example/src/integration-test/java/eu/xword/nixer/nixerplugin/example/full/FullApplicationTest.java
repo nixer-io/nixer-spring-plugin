@@ -3,7 +3,7 @@ package eu.xword.nixer.nixerplugin.example.full;
 import eu.xword.nixer.nixerplugin.captcha.recaptcha.RecaptchaClientStub;
 import eu.xword.nixer.nixerplugin.captcha.security.CaptchaChecker;
 import eu.xword.nixer.nixerplugin.captcha.security.CaptchaCondition;
-import eu.xword.nixer.nixerplugin.rules.FailedLoginThresholdRulesProperties;
+import eu.xword.nixer.nixerplugin.detection.config.FailedLoginThresholdRulesProperties;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.junit.jupiter.api.AfterEach;

@@ -1,4 +1,4 @@
-package eu.xword.nixer.nixerplugin.rules;
+package eu.xword.nixer.nixerplugin.detection.rules;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -27,7 +27,7 @@ public class UsernameFailedLoginOverThresholdRule implements Rule {
         final int failedLogin = loginMetric.value(username); //todo login Metric api not symmetrical.
         if (failedLogin > threshold.get()) {
             //todo duped events. should we use == ?
-            eventEmitter.emit(new UsernameFailedLoginOverThresholdEvent(username));
+            eventEmitter.accept(new UsernameFailedLoginOverThresholdEvent(username));
         }
     }
 

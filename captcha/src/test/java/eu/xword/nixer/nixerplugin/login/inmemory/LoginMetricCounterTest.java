@@ -18,8 +18,7 @@ class LoginMetricCounterTest {
 
     private final ClockStub clock = new ClockStub();
 
-    private final LoginMetricCounter counter = counter()
-            .key(IP)
+    private final LoginMetricCounter counter = counter(IP)
             .window(Duration.ofMinutes(1))
             .clock(clock)
             .build();

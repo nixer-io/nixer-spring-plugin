@@ -2,7 +2,7 @@ package eu.xword.nixer.nixerplugin.login;
 
 import java.util.List;
 
-import eu.xword.nixer.nixerplugin.rules.RulesRunner;
+import eu.xword.nixer.nixerplugin.detection.rules.RulesRunner;
 import org.springframework.stereotype.Component;
 
 @Component

@@ -1,4 +1,4 @@
-package eu.xword.nixer.nixerplugin.detection;
+package eu.xword.nixer.nixerplugin.registry;
 
 import java.time.Duration;
 
@@ -12,7 +12,7 @@ import org.springframework.context.ApplicationListener;
  * Provides information about global credential stuffing attacks detected.
  *
  */
-public class GlobalCredentialStuffing implements ApplicationListener<GlobalCredentialStuffingEvent> {
+public class GlobalCredentialStuffingRegistry implements ApplicationListener<GlobalCredentialStuffingEvent> {
 
     // TODO for non-overlaping ranges such as this. BST could be used with O(log n) search time.
     private final Duration credentialStuffingDuration = Duration.ofMinutes(15);

@@ -2,9 +2,9 @@ package eu.xword.nixer.nixerplugin.events;
 
 import org.springframework.context.ApplicationEvent;
 
-public abstract class BlockEvent extends ApplicationEvent {
+public abstract class DetectionEvent extends ApplicationEvent {
 
-    public BlockEvent(final Object source) {
+    public DetectionEvent(final Object source) {
         super(source);
     }
 

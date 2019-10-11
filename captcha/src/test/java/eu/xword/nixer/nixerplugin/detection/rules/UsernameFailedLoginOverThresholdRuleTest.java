@@ -1,4 +1,4 @@
-package eu.xword.nixer.nixerplugin.rules;
+package eu.xword.nixer.nixerplugin.detection.rules;
 
 import java.util.ArrayList;
 import java.util.List;

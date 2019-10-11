@@ -20,6 +20,7 @@ public class LoginContext {
 
     private IpMetadata ipMetadata;
 
+    // todo refactor to mutable object
     public LoginContext(final String username, final String ipAddress, final String userAgent) {
         this.username = username;
         this.ipAddress = ipAddress;

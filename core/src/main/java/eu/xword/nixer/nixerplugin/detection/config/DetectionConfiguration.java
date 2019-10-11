@@ -1,7 +1,10 @@
-package eu.xword.nixer.nixerplugin.rules;
+package eu.xword.nixer.nixerplugin.detection.config;
 
 import java.util.List;
 
+import eu.xword.nixer.nixerplugin.detection.rules.IpFailedLoginOverThresholdRule;
+import eu.xword.nixer.nixerplugin.detection.rules.Rule;
+import eu.xword.nixer.nixerplugin.detection.rules.UsernameFailedLoginOverThresholdRule;
 import eu.xword.nixer.nixerplugin.login.inmemory.CounterRegistry;
 import eu.xword.nixer.nixerplugin.login.inmemory.LoginMetricCounter;
 import eu.xword.nixer.nixerplugin.login.inmemory.LoginMetricCounterBuilder;
@@ -11,17 +14,17 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
+import eu.xword.nixer.nixerplugin.detection.rules.RulesRunner;
 import static eu.xword.nixer.nixerplugin.login.inmemory.FeatureKey.Features.IP;
 import static eu.xword.nixer.nixerplugin.login.inmemory.FeatureKey.Features.USERNAME;
 
 @Configuration
 @EnableConfigurationProperties(FailedLoginThresholdRulesProperties.class)
-public class RuleConfiguration {
+public class DetectionConfiguration {
 
-    private CounterRegistry counterRegistry;
+    private final CounterRegistry counterRegistry;
 
-    public RuleConfiguration(final CounterRegistry counterRegistry) {
+    public DetectionConfiguration(final CounterRegistry counterRegistry) {
         this.counterRegistry = counterRegistry;
     }
 
@@ -39,9 +42,8 @@ public class RuleConfiguration {
     public IpFailedLoginOverThresholdRule ipFailedLoginThresholdRule(FailedLoginThresholdRulesProperties ruleProperties) {
         final RuleProperties properties = ruleProperties.getFailedLoginThreshold().get("ip");
 
-        final LoginMetricCounter counter = LoginMetricCounterBuilder.counter()
+        final LoginMetricCounter counter = LoginMetricCounterBuilder.counter(IP)
                 .window(properties.getWindow())
-                .key(IP)
                 .build();
         counterRegistry.registerCounter(counter);
 
@@ -56,9 +58,8 @@ public class RuleConfiguration {
     public UsernameFailedLoginOverThresholdRule usernameFailedLoginThresholdRule(FailedLoginThresholdRulesProperties ruleProperties) {
         final RuleProperties properties = ruleProperties.getFailedLoginThreshold().get("username");
 
-        final LoginMetricCounter counter = LoginMetricCounterBuilder.counter()
+        final LoginMetricCounter counter = LoginMetricCounterBuilder.counter(USERNAME)
                 .window(properties.getWindow())
-                .key(USERNAME)
                 .build();
         counterRegistry.registerCounter(counter);
 

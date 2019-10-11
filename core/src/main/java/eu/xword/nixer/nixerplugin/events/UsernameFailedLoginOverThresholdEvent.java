@@ -5,8 +5,7 @@ import com.google.common.base.Objects;
 /**
  * This events is emitted when number of failed login per username exceeds threshold.
  */
-public class UsernameFailedLoginOverThresholdEvent extends BlockEvent {
-
+public class UsernameFailedLoginOverThresholdEvent extends DetectionEvent {
 
     public UsernameFailedLoginOverThresholdEvent(final String ip) {
         super(ip);

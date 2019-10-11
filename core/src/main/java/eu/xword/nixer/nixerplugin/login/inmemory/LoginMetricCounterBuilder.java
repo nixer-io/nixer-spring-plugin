@@ -3,7 +3,7 @@ package eu.xword.nixer.nixerplugin.login.inmemory;
 import java.time.Clock;
 import java.time.Duration;
 
-import eu.xword.nixer.nixerplugin.rules.WindowSize;
+import eu.xword.nixer.nixerplugin.detection.config.WindowSize;
 import org.springframework.util.Assert;
 
 /**
@@ -18,14 +18,12 @@ public class LoginMetricCounterBuilder {
     private LoginMetricCounterBuilder() {
     }
 
-    public static LoginMetricCounterBuilder counter() {
-        return new LoginMetricCounterBuilder();
-    }
+    public static LoginMetricCounterBuilder counter(final FeatureKey key) {
+        Assert.notNull(key, "FeatureKey must not be null");
 
-    public LoginMetricCounterBuilder key(final FeatureKey key) {
-        Assert.notNull(key, "Key must not be null");
-        this.featureKey = key;
-        return this;
+        final LoginMetricCounterBuilder builder = new LoginMetricCounterBuilder();
+        builder.featureKey = key;
+        return builder;
     }
 
     public LoginMetricCounterBuilder clock(final Clock clock) {
@@ -39,7 +37,6 @@ public class LoginMetricCounterBuilder {
         this.windowSize = windowSize;
         return this;
     }
-
 
     public LoginMetricCounter build() {
         return new LoginMetricCounter(this);

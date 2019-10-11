@@ -1,4 +1,4 @@
-package eu.xword.nixer.nixerplugin.rules;
+package eu.xword.nixer.nixerplugin.detection.config;
 
 import java.util.HashMap;
 import java.util.Map;
