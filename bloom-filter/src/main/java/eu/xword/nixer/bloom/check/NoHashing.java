@@ -1,5 +1,6 @@
 package eu.xword.nixer.bloom.check;
 
+import com.google.common.base.Strings;
 import com.google.common.hash.HashCode;
 import com.google.common.io.BaseEncoding;
 import eu.xword.nixer.bloom.NotHexStringException;
@@ -23,6 +24,6 @@ class NoHashing implements HashingStrategy {
     }
 
     private boolean isHexString(final String value) {
-        return BaseEncoding.base16().canDecode(value);
+        return !Strings.isNullOrEmpty(value) && BaseEncoding.base16().canDecode(value);
     }
 }
