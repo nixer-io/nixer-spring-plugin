@@ -4,8 +4,10 @@ import java.util.List;
 
 import eu.xword.nixer.nixerplugin.detection.rules.IpFailedLoginOverThresholdRule;
 import eu.xword.nixer.nixerplugin.detection.rules.Rule;
+import eu.xword.nixer.nixerplugin.detection.rules.UserAgentLoginOverThresholdRule;
 import eu.xword.nixer.nixerplugin.detection.rules.UsernameFailedLoginOverThresholdRule;
 import eu.xword.nixer.nixerplugin.login.inmemory.CounterRegistry;
+import eu.xword.nixer.nixerplugin.login.inmemory.CountingStrategies;
 import eu.xword.nixer.nixerplugin.login.inmemory.LoginMetricCounter;
 import eu.xword.nixer.nixerplugin.login.inmemory.LoginMetricCounterBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,7 @@ import org.springframework.context.annotation.Configuration;
 import eu.xword.nixer.nixerplugin.detection.rules.RulesRunner;
 import static eu.xword.nixer.nixerplugin.login.inmemory.FeatureKey.Features.IP;
 import static eu.xword.nixer.nixerplugin.login.inmemory.FeatureKey.Features.USERNAME;
+import static eu.xword.nixer.nixerplugin.login.inmemory.FeatureKey.Features.USER_AGENT_TOKEN;
 
 @Configuration
 @EnableConfigurationProperties(FailedLoginThresholdRulesProperties.class)
@@ -69,4 +72,20 @@ public class DetectionConfiguration {
         return rule;
     }
 
+    @Bean
+    @ConditionalOnProperty(prefix = "nixer.rules.failed-login-threshold.user-agent", name = "enabled", havingValue = "true")
+    public UserAgentLoginOverThresholdRule userAgentFailedLoginThresholdRule(FailedLoginThresholdRulesProperties ruleProperties) {
+        final RuleProperties properties = ruleProperties.getFailedLoginThreshold().get("user-agent");
+
+        final LoginMetricCounter counter = LoginMetricCounterBuilder.counter(USER_AGENT_TOKEN)
+                .window(properties.getWindow())
+                .count(CountingStrategies.TOTAL_FAILS)
+                .build();
+        counterRegistry.registerCounter(counter);
+
+        final UserAgentLoginOverThresholdRule rule = new UserAgentLoginOverThresholdRule(counter);
+        rule.setThreshold(properties.getThreshold());
+
+        return rule;
+    }
 }

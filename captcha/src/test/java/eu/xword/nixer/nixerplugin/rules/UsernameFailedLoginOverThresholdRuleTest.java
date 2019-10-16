@@ -3,6 +3,7 @@ package eu.xword.nixer.nixerplugin.rules;
 import java.util.ArrayList;
 import java.util.List;
 
+import eu.xword.nixer.nixerplugin.detection.rules.UsernameFailedLoginOverThresholdRule;
 import eu.xword.nixer.nixerplugin.events.UsernameFailedLoginOverThresholdEvent;
 import eu.xword.nixer.nixerplugin.login.LoginContext;
 import eu.xword.nixer.nixerplugin.login.counts.LoginMetric;

@@ -18,6 +18,8 @@ public class LoginContext {
 
     private final String userAgent;
 
+    private String userAgentToken;
+
     private IpMetadata ipMetadata;
 
     // todo refactor to mutable object
@@ -47,6 +49,14 @@ public class LoginContext {
         return ipMetadata;
     }
 
+    public String getUserAgentToken() {
+        return userAgentToken;
+    }
+
+    public void setUserAgentToken(final String userAgentToken) {
+        this.userAgentToken = userAgentToken;
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;
@@ -54,11 +64,12 @@ public class LoginContext {
         final LoginContext that = (LoginContext) o;
         return Objects.equal(ipAddress, that.ipAddress) &&
                 Objects.equal(userAgent, that.userAgent) &&
+                Objects.equal(userAgentToken, that.userAgentToken) &&
                 Objects.equal(username, that.username);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(ipAddress, userAgent, username);
+        return Objects.hashCode(ipAddress, userAgent, username, userAgentToken);
     }
 }

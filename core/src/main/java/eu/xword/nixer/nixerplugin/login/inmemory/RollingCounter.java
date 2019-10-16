@@ -5,6 +5,8 @@ package eu.xword.nixer.nixerplugin.login.inmemory;
  */
 public interface RollingCounter {
 
+    void increment(String key);
+
     void add(String key, int increment);
 
     void remove(String key);

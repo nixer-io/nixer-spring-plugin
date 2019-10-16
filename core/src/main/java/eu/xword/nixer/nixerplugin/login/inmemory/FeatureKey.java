@@ -25,7 +25,7 @@ public interface FeatureKey {
                 return loginContext.getUsername();
             }
         },
-        USER_AGENT {
+        USER_AGENT_TOKEN {
             @Override
             public String key(final LoginContext loginContext) {
                 return loginContext.getUserAgent();

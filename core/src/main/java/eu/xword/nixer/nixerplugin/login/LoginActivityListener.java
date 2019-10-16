@@ -19,6 +19,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import static eu.xword.nixer.nixerplugin.filter.RequestAugmentation.IP_METADATA;
+import static eu.xword.nixer.nixerplugin.useragent.UserAgentTokenizer.sha1Tokenizer;
 
 /**
  * Listens for Spring {@link AbstractAuthenticationEvent} and stores it in configured repositories
@@ -70,6 +71,7 @@ public class LoginActivityListener implements ApplicationListener<AbstractAuthen
 
         final LoginContext context = new LoginContext(username, ip, userAgent);
         final IpMetadata ipMetadata = (IpMetadata) request.getAttribute(IP_METADATA);
+        context.setUserAgentToken(sha1Tokenizer().tokenize(userAgent));
         context.setIpMetadata(ipMetadata);
         return context;
     }

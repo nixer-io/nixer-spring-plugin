@@ -44,6 +44,11 @@ public class CachedBackedRollingCounter implements RollingCounter {
     }
 
     @Override
+    public void increment(final String key) {
+        add(key, 1);
+    }
+
+    @Override
     public void add(final String key, final int increment) {
         Assert.notNull(key, "Key must not be null");
         Assert.isTrue(increment == 1, "Increment must be 1");
