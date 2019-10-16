@@ -3,6 +3,7 @@ package eu.xword.nixer.nixerplugin.pwned;
 import java.io.FileNotFoundException;
 
 import eu.xword.nixer.bloom.check.BloomFilterCheck;
+import eu.xword.nixer.nixerplugin.metrics.MetricsFacade;
 import eu.xword.nixer.nixerplugin.pwned.check.PwnedCredentialsChecker;
 import eu.xword.nixer.nixerplugin.pwned.filter.PwnedCredentialsFilter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -30,9 +31,10 @@ public class PwnedCheckAutoConfiguration {
 
     @Bean
     public PwnedCredentialsChecker pwnedCredentialsChecker(final BloomFilterCheck pwnedFilter,
-                                                           final PwnedCheckProperties pwnedCheckProperties) {
+                                                           final PwnedCheckProperties pwnedCheckProperties,
+                                                           final MetricsFacade metricsFacade) {
 
-        return new PwnedCredentialsChecker(pwnedFilter, pwnedCheckProperties.getMaxPasswordLength());
+        return new PwnedCredentialsChecker(pwnedFilter, pwnedCheckProperties.getMaxPasswordLength(), metricsFacade);
     }
 
     @Bean

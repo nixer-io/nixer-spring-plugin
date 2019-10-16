@@ -153,14 +153,29 @@ public class FullApplicationTest {
     }
 
     @Test
-    void should_add_request_attribute_on_pwned_password() throws  Exception {
+    void shouldDetectPwnedPassword() throws  Exception {
+        final Counter pwnedPasswordCounter = meterRegistry.get("pwned_password")
+                .tag("result", "positive")
+                .counter();
+        final Counter notPwnedPasswordCounter = meterRegistry.get("pwned_password")
+                .tag("result", "negative")
+                .counter();
+
+        double initialPwnedCount = pwnedPasswordCounter.count();
+        double initialNotPwnedCount = notPwnedPasswordCounter.count();
 
         this.mockMvc.perform(formLogin().user("user").password("not-pwned-password").build())
                 .andExpect(request().attribute("nixer.pwned.password", nullValue()));
 
+        assertThat(pwnedPasswordCounter.count()).isEqualTo(initialPwnedCount);
+        assertThat(notPwnedPasswordCounter.count()).isEqualTo(initialNotPwnedCount + 1);
+
         // using password from pwned-database
         this.mockMvc.perform(formLogin().user("user").password("foobar1").build())
                 .andExpect(request().attribute("nixer.pwned.password", true));
+
+        assertThat(pwnedPasswordCounter.count()).isEqualTo(initialPwnedCount + 1);
+        assertThat(notPwnedPasswordCounter.count()).isEqualTo(initialNotPwnedCount + 1);
     }
 
     @Test

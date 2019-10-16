@@ -2,6 +2,7 @@ package eu.xword.nixer.nixerplugin.pwned.check;
 
 import com.google.common.base.Strings;
 import eu.xword.nixer.bloom.check.BloomFilterCheck;
+import eu.xword.nixer.nixerplugin.metrics.MetricsFacade;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,6 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyZeroInteractions;
 
 /**
@@ -27,15 +29,18 @@ class PwnedCredentialsCheckerTest {
     @Mock
     BloomFilterCheck pwnedFilter;
 
+    @Mock
+    MetricsFacade metrics;
+
     private PwnedCredentialsChecker pwnedCredentialsChecker;
 
     @BeforeEach
     void setUp() {
-        pwnedCredentialsChecker = new PwnedCredentialsChecker(pwnedFilter, MAX_PASSWORD_LENGTH);
+        pwnedCredentialsChecker = new PwnedCredentialsChecker(pwnedFilter, MAX_PASSWORD_LENGTH, metrics);
     }
 
     @Test
-    void should_delegate_check_to_the_filter() {
+    void should_detect_pwned_password() {
         // given
         given(pwnedFilter.test(SAMPLE_PASSWORD)).willReturn(true);
 
@@ -45,6 +50,23 @@ class PwnedCredentialsCheckerTest {
         // then
         assertThat(result).isTrue();
         verify(pwnedFilter).test(SAMPLE_PASSWORD);
+        verify(metrics).write("pwned_password_positive");
+        verifyNoMoreInteractions(metrics);
+    }
+
+    @Test
+    void should_detect_not_pwned_password() {
+        // given
+        given(pwnedFilter.test(SAMPLE_PASSWORD)).willReturn(false);
+
+        // when
+        final boolean result = pwnedCredentialsChecker.isPasswordPwned(SAMPLE_PASSWORD);
+
+        // then
+        assertThat(result).isFalse();
+        verify(pwnedFilter).test(SAMPLE_PASSWORD);
+        verify(metrics).write("pwned_password_negative");
+        verifyNoMoreInteractions(metrics);
     }
 
     @Test
@@ -55,6 +77,8 @@ class PwnedCredentialsCheckerTest {
         // then
         assertThat(result).isFalse();
         verifyZeroInteractions(pwnedFilter);
+        verify(metrics).write("pwned_password_negative");
+        verifyNoMoreInteractions(metrics);
     }
 
     @Test
@@ -68,5 +92,7 @@ class PwnedCredentialsCheckerTest {
         // then
         assertThat(result).isFalse();
         verifyZeroInteractions(pwnedFilter);
+        verify(metrics).write("pwned_password_negative");
+        verifyNoMoreInteractions(metrics);
     }
 }
