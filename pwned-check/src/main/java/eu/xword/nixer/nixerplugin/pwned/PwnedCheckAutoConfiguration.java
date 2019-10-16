@@ -2,7 +2,7 @@ package eu.xword.nixer.nixerplugin.pwned;
 
 import java.io.FileNotFoundException;
 
-import eu.xword.nixer.bloom.BloomFilterCheck;
+import eu.xword.nixer.bloom.check.BloomFilterCheck;
 import eu.xword.nixer.nixerplugin.pwned.check.PwnedCredentialsChecker;
 import eu.xword.nixer.nixerplugin.pwned.filter.PwnedCredentialsFilter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -22,8 +22,10 @@ import org.springframework.util.ResourceUtils;
 public class PwnedCheckAutoConfiguration {
 
     @Bean
-    public PwnedCredentialsFilter pwnedCredentialsFilter(final PwnedCredentialsChecker pwnedCredentialsChecker) {
-        return new PwnedCredentialsFilter(pwnedCredentialsChecker);
+    public PwnedCredentialsFilter pwnedCredentialsFilter(final PwnedCheckProperties pwnedCheckProperties,
+                                                         final PwnedCredentialsChecker pwnedCredentialsChecker) {
+
+        return new PwnedCredentialsFilter(pwnedCheckProperties.getPasswordParameter(), pwnedCredentialsChecker);
     }
 
     @Bean

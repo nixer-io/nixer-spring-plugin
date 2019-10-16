@@ -17,6 +17,13 @@ public class PwnedCheckProperties {
     private boolean enabled;
 
     /**
+     * The HTTP parameter to look for the password when performing the check.
+     */
+    // FIXME this duplicates the parameter set in Spring's FormLoginConfigurer.
+    // Think how it can be reused.
+    private String passwordParameter = "password";
+
+    /**
      * Location of leaked credentials data file
      */
     private String pwnedFilePath;
@@ -34,6 +41,14 @@ public class PwnedCheckProperties {
 
     public void setEnabled(final boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public String getPasswordParameter() {
+        return passwordParameter;
+    }
+
+    public void setPasswordParameter(final String passwordParameter) {
+        this.passwordParameter = passwordParameter;
     }
 
     public String getPwnedFilePath() {

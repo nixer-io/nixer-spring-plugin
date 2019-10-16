@@ -1,4 +1,4 @@
-package eu.xword.nixer.bloom;
+package eu.xword.nixer.bloom.check;
 
 /**
  * Created on 10/10/2019.
