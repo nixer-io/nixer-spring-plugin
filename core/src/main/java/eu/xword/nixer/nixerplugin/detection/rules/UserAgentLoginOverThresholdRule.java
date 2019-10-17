@@ -13,7 +13,7 @@ import org.springframework.util.Assert;
  */
 public class UserAgentLoginOverThresholdRule implements Rule {
 
-    private final AtomicInteger threshold = new AtomicInteger(5);
+    private final AtomicInteger threshold = new AtomicInteger(10);
     private final LoginMetric loginMetric;
 
     public UserAgentLoginOverThresholdRule(final LoginMetric loginMetric) {

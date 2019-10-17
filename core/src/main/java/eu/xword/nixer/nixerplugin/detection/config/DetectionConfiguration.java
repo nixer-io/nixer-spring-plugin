@@ -1,6 +1,7 @@
 package eu.xword.nixer.nixerplugin.detection.config;
 
 import java.util.List;
+import java.util.Optional;
 
 import eu.xword.nixer.nixerplugin.detection.rules.IpFailedLoginOverThresholdRule;
 import eu.xword.nixer.nixerplugin.detection.rules.Rule;
@@ -56,7 +57,8 @@ public class DetectionConfiguration {
         counterRegistry.registerCounter(counter);
 
         final IpFailedLoginOverThresholdRule rule = new IpFailedLoginOverThresholdRule(counter);
-        rule.setThreshold(properties.getThreshold());
+        Optional.ofNullable(properties.getThreshold())
+                .ifPresent(rule::setThreshold);
 
         return rule;
     }
@@ -73,7 +75,8 @@ public class DetectionConfiguration {
         counterRegistry.registerCounter(counter);
 
         final UsernameFailedLoginOverThresholdRule rule = new UsernameFailedLoginOverThresholdRule(counter);
-        rule.setThreshold(properties.getThreshold());
+        Optional.ofNullable(properties.getThreshold())
+                .ifPresent(rule::setThreshold);
 
         return rule;
     }
@@ -90,7 +93,8 @@ public class DetectionConfiguration {
         counterRegistry.registerCounter(counter);
 
         final UserAgentLoginOverThresholdRule rule = new UserAgentLoginOverThresholdRule(counter);
-        rule.setThreshold(properties.getThreshold());
+        Optional.ofNullable(properties.getThreshold())
+                .ifPresent(rule::setThreshold);
 
         return rule;
     }
