@@ -7,6 +7,8 @@ import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.Meter;
 import org.springframework.util.Assert;
 
+import static java.lang.String.format;
+
 /**
  * Created on 16/10/2019.
  *
@@ -22,10 +24,20 @@ public class MetricsFacade {
         this.meters = Collections.unmodifiableMap(meters);
     }
 
-    public void write(final String metricName) { // TODO additional argument for value and eventually type of meter
-        final Meter meter = meters.get(metricName);
-        // FIXME handle meter type
-        // TODO handle missing meter
-        ((Counter) meter).increment();
+    // TODO handle meter type another than counter
+    // TODO additional argument for value and eventually type of meter
+    public void write(final String lookupId) {
+        final Meter meter = meters.get(lookupId);
+
+        if (meter == null) {
+            throw new IllegalArgumentException(
+                    format("Meter for lookupId '%s' not found. Available meters: '%s'", lookupId, meters.keySet()));
+        }
+
+        if (meter instanceof Counter) {
+            ((Counter) meter).increment();
+        } else {
+            throw new UnsupportedOperationException(format("Unsupported meter type: '%s'", meter.getClass().getCanonicalName()));
+        }
     }
 }
