@@ -54,8 +54,9 @@ class IpFailedLoginOverThresholdRuleTest {
         assertThat(events).isEmpty();
     }
 
-    private List<Object> execute(final String ipAddress) {
-        final LoginContext loginContext = new LoginContext("", ipAddress, "");
+    private List<Object> execute(final String ip) {
+        final LoginContext loginContext = new LoginContext();
+        loginContext.setIpAddress(ip);
         final List<Object> events = new ArrayList<>();
 
         rule.execute(loginContext, events::add);

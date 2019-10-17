@@ -69,7 +69,10 @@ public class LoginActivityListener implements ApplicationListener<AbstractAuthen
 
         final String username = extractUsername(event);
 
-        final LoginContext context = new LoginContext(username, ip, userAgent);
+        final LoginContext context = new LoginContext();
+        context.setUsername(username);
+        context.setIpAddress(ip);
+        context.setUserAgent(userAgent);
         final IpMetadata ipMetadata = (IpMetadata) request.getAttribute(IP_METADATA);
         context.setUserAgentToken(sha1Tokenizer().tokenize(userAgent));
         context.setIpMetadata(ipMetadata);

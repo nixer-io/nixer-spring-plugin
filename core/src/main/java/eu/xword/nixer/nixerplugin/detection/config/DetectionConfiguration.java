@@ -4,6 +4,7 @@ import java.util.List;
 
 import eu.xword.nixer.nixerplugin.detection.rules.IpFailedLoginOverThresholdRule;
 import eu.xword.nixer.nixerplugin.detection.rules.Rule;
+import eu.xword.nixer.nixerplugin.detection.rules.RulesRunner;
 import eu.xword.nixer.nixerplugin.detection.rules.UserAgentLoginOverThresholdRule;
 import eu.xword.nixer.nixerplugin.detection.rules.UsernameFailedLoginOverThresholdRule;
 import eu.xword.nixer.nixerplugin.login.inmemory.CounterRegistry;
@@ -16,7 +17,10 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import eu.xword.nixer.nixerplugin.detection.rules.RulesRunner;
+
+import static eu.xword.nixer.nixerplugin.detection.config.FailedLoginThresholdRulesProperties.Name.ip;
+import static eu.xword.nixer.nixerplugin.detection.config.FailedLoginThresholdRulesProperties.Name.useragent;
+import static eu.xword.nixer.nixerplugin.detection.config.FailedLoginThresholdRulesProperties.Name.username;
 import static eu.xword.nixer.nixerplugin.login.inmemory.FeatureKey.Features.IP;
 import static eu.xword.nixer.nixerplugin.login.inmemory.FeatureKey.Features.USERNAME;
 import static eu.xword.nixer.nixerplugin.login.inmemory.FeatureKey.Features.USER_AGENT_TOKEN;
@@ -43,10 +47,11 @@ public class DetectionConfiguration {
     @Bean
     @ConditionalOnProperty(prefix = "nixer.rules.failed-login-threshold.ip", name = "enabled", havingValue = "true")
     public IpFailedLoginOverThresholdRule ipFailedLoginThresholdRule(FailedLoginThresholdRulesProperties ruleProperties) {
-        final RuleProperties properties = ruleProperties.getFailedLoginThreshold().get("ip");
+        final RuleProperties properties = ruleProperties.getFailedLoginThreshold().get(ip);
 
         final LoginMetricCounter counter = LoginMetricCounterBuilder.counter(IP)
                 .window(properties.getWindow())
+                .count(CountingStrategies.CONSECUTIVE_FAILS)
                 .build();
         counterRegistry.registerCounter(counter);
 
@@ -59,10 +64,11 @@ public class DetectionConfiguration {
     @Bean
     @ConditionalOnProperty(prefix = "nixer.rules.failed-login-threshold.username", name = "enabled", havingValue = "true")
     public UsernameFailedLoginOverThresholdRule usernameFailedLoginThresholdRule(FailedLoginThresholdRulesProperties ruleProperties) {
-        final RuleProperties properties = ruleProperties.getFailedLoginThreshold().get("username");
+        final RuleProperties properties = ruleProperties.getFailedLoginThreshold().get(username);
 
         final LoginMetricCounter counter = LoginMetricCounterBuilder.counter(USERNAME)
                 .window(properties.getWindow())
+                .count(CountingStrategies.CONSECUTIVE_FAILS)
                 .build();
         counterRegistry.registerCounter(counter);
 
@@ -73,9 +79,9 @@ public class DetectionConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty(prefix = "nixer.rules.failed-login-threshold.user-agent", name = "enabled", havingValue = "true")
+    @ConditionalOnProperty(prefix = "nixer.rules.failed-login-threshold.useragent", name = "enabled", havingValue = "true")
     public UserAgentLoginOverThresholdRule userAgentFailedLoginThresholdRule(FailedLoginThresholdRulesProperties ruleProperties) {
-        final RuleProperties properties = ruleProperties.getFailedLoginThreshold().get("user-agent");
+        final RuleProperties properties = ruleProperties.getFailedLoginThreshold().get(useragent);
 
         final LoginMetricCounter counter = LoginMetricCounterBuilder.counter(USER_AGENT_TOKEN)
                 .window(properties.getWindow())

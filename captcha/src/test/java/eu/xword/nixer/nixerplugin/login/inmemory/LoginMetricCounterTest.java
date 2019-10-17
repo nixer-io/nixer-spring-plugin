@@ -72,7 +72,9 @@ class LoginMetricCounterTest {
 
 
     private LoginContext ipContext(final String ip) {
-        return new LoginContext("", ip, "");
+        final LoginContext loginContext = new LoginContext();
+        loginContext.setIpAddress(ip);
+        return loginContext;
     }
 
 }

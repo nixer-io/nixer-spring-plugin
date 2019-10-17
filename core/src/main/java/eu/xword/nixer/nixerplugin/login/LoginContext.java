@@ -12,22 +12,17 @@ public class LoginContext {
     // 1. to be used for metrics eg. unique usernames/ip
     // 1. to be used for security. Tracking metrics / username could leak to DOS.
     //      Attacker controls that field and could generate random names.
-    private final String username;
+    private String username;
 
-    private final String ipAddress;
+    private String ipAddress;
 
-    private final String userAgent;
+    private String userAgent;
 
     private String userAgentToken;
 
     private IpMetadata ipMetadata;
 
     // todo refactor to mutable object
-    public LoginContext(final String username, final String ipAddress, final String userAgent) {
-        this.username = username;
-        this.ipAddress = ipAddress;
-        this.userAgent = userAgent;
-    }
 
     public String getUsername() {
         return username;
@@ -39,6 +34,18 @@ public class LoginContext {
 
     public String getUserAgent() {
         return userAgent;
+    }
+
+    public void setUsername(final String username) {
+        this.username = username;
+    }
+
+    public void setIpAddress(final String ipAddress) {
+        this.ipAddress = ipAddress;
+    }
+
+    public void setUserAgent(final String userAgent) {
+        this.userAgent = userAgent;
     }
 
     public void setIpMetadata(final IpMetadata ipMetadata) {

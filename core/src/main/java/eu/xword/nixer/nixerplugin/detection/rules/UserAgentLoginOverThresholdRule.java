@@ -9,7 +9,7 @@ import eu.xword.nixer.nixerplugin.login.counts.LoginMetric;
 import org.springframework.util.Assert;
 
 /**
- * Rule that checks if number of consecutive login failures for useragent exceeds threshold and emits {@link IpFailedLoginOverThresholdEvent} event if it does.
+ * Rule that checks if number of login failures for useragent exceeds threshold and emits {@link IpFailedLoginOverThresholdEvent} event if it does.
  */
 public class UserAgentLoginOverThresholdRule implements Rule {
 

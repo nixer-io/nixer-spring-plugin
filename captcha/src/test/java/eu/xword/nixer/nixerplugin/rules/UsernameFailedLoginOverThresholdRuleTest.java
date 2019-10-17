@@ -55,7 +55,8 @@ class UsernameFailedLoginOverThresholdRuleTest {
     }
 
     private List<Object> execute(final String username) {
-        final LoginContext loginContext = new LoginContext(username, "", "");
+        final LoginContext loginContext = new LoginContext();
+        loginContext.setUsername(username);
         final List<Object> events = new ArrayList<>();
 
         rule.execute(loginContext, events::add);

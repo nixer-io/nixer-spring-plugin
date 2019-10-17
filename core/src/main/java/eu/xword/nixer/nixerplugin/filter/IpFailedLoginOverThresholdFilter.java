@@ -24,8 +24,7 @@ public class IpFailedLoginOverThresholdFilter extends MetadataFilter {
     @Override
     protected void apply(final HttpServletRequest request) {
         final String ip = request.getRemoteAddr();
-        if (ipOverLoginThresholdRegistry.contains(ip)) {
-            request.setAttribute(IP_FAILED_LOGIN_OVER_THRESHOLD, true);
-        }
+        final boolean isIpOverThreshold = ipOverLoginThresholdRegistry.contains(ip);
+        request.setAttribute(IP_FAILED_LOGIN_OVER_THRESHOLD, isIpOverThreshold);
     }
 }
