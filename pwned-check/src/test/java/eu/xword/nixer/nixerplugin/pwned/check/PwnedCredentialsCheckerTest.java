@@ -2,7 +2,7 @@ package eu.xword.nixer.nixerplugin.pwned.check;
 
 import com.google.common.base.Strings;
 import eu.xword.nixer.bloom.check.BloomFilterCheck;
-import eu.xword.nixer.nixerplugin.metrics.MetricsFacade;
+import eu.xword.nixer.nixerplugin.metrics.MetricsWriter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,7 +30,7 @@ class PwnedCredentialsCheckerTest {
     BloomFilterCheck pwnedFilter;
 
     @Mock
-    MetricsFacade metrics;
+    MetricsWriter metrics;
 
     private PwnedCredentialsChecker pwnedCredentialsChecker;
 

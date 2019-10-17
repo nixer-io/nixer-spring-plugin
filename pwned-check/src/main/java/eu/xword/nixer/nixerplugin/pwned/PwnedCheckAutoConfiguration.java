@@ -3,11 +3,9 @@ package eu.xword.nixer.nixerplugin.pwned;
 import java.io.FileNotFoundException;
 
 import eu.xword.nixer.bloom.check.BloomFilterCheck;
-import eu.xword.nixer.nixerplugin.metrics.MeterDefinition;
-import eu.xword.nixer.nixerplugin.metrics.MetricsFacade;
 import eu.xword.nixer.nixerplugin.pwned.check.PwnedCredentialsChecker;
 import eu.xword.nixer.nixerplugin.pwned.filter.PwnedCredentialsFilter;
-import io.micrometer.core.instrument.Counter;
+import eu.xword.nixer.nixerplugin.pwned.metrics.PwnedCheckMetricsWriterFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -34,37 +32,19 @@ public class PwnedCheckAutoConfiguration {
     @Bean
     public PwnedCredentialsChecker pwnedCredentialsChecker(final BloomFilterCheck pwnedFilter,
                                                            final PwnedCheckProperties pwnedCheckProperties,
-                                                           final MetricsFacade metricsFacade) {
-
-        return new PwnedCredentialsChecker(pwnedFilter, pwnedCheckProperties.getMaxPasswordLength(), metricsFacade);
+                                                           // TODO Fix IntelliJ complaining about more than one metricsWriterFactory bean
+                                                           final PwnedCheckMetricsWriterFactory metricsWriterFactory) {
+        return new PwnedCredentialsChecker(
+                pwnedFilter,
+                pwnedCheckProperties.getMaxPasswordLength(),
+                metricsWriterFactory.createMetricsWriter()
+        );
     }
 
     @Bean
     public BloomFilterCheck bloomFilter(final PwnedCheckProperties pwnedCheckProperties) throws FileNotFoundException {
         return BloomFilterCheck.hashingBeforeCheck(
                 ResourceUtils.getFile(pwnedCheckProperties.getPwnedFilePath()).toPath()
-        );
-    }
-
-    // TODO constants below!
-
-    @Bean
-    public MeterDefinition pwnedPasswordCounter() {
-        return MeterDefinition.counter(
-                "pwned_password_positive",
-                () -> Counter.builder("pwned_password")
-                        .description("Password is pwned")
-                        .tag("result", "positive")
-        );
-    }
-
-    @Bean
-    public MeterDefinition notPwnedPasswordCounter() {
-        return MeterDefinition.counter(
-                "pwned_password_negative",
-                () -> Counter.builder("pwned_password")
-                        .description("Password is not pwned")
-                        .tag("result", "negative")
         );
     }
 }
