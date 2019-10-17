@@ -7,5 +7,5 @@ package eu.xword.nixer.nixerplugin.metrics;
  */
 public interface MetricsWriter {
 
-    void write(String metricName);
+    void write(MetricsLookupId metricsLookupId);
 }

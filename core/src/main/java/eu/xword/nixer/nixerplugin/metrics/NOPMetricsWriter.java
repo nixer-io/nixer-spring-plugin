@@ -8,7 +8,7 @@ package eu.xword.nixer.nixerplugin.metrics;
 public class NOPMetricsWriter implements MetricsWriter {
 
     @Override
-    public void write(final String metricName) {
+    public void write(final MetricsLookupId metricsLookupId) {
 
     }
 }

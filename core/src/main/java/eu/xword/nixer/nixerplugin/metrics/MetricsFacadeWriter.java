@@ -17,7 +17,7 @@ public class MetricsFacadeWriter implements MetricsWriter {
     }
 
     @Override
-    public void write(final String metricName) {
-        metricsFacade.write(metricName);
+    public void write(final MetricsLookupId metricsLookupId) {
+        metricsFacade.write(metricsLookupId.lookupId());
     }
 }

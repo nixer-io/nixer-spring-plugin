@@ -3,6 +3,9 @@ package eu.xword.nixer.nixerplugin.pwned.check;
 import eu.xword.nixer.bloom.check.BloomFilterCheck;
 import eu.xword.nixer.nixerplugin.metrics.MetricsWriter;
 
+import static eu.xword.nixer.nixerplugin.pwned.metrics.PwnedCheckMetrics.NOT_PWNED_PASSWORD;
+import static eu.xword.nixer.nixerplugin.pwned.metrics.PwnedCheckMetrics.PWNED_PASSWORD;
+
 /**
  * Created on 23/09/2019.
  *
@@ -25,9 +28,9 @@ public class PwnedCredentialsChecker {
         final boolean pwned = isPwned(password);
 
         if (pwned) {
-            metrics.write("pwned_password_positive");
+            metrics.write(PWNED_PASSWORD);
         } else {
-            metrics.write("pwned_password_negative");
+            metrics.write(NOT_PWNED_PASSWORD);
         }
 
         return pwned;

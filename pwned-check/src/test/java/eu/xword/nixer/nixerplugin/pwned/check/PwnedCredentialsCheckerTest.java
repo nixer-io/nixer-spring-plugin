@@ -3,6 +3,7 @@ package eu.xword.nixer.nixerplugin.pwned.check;
 import com.google.common.base.Strings;
 import eu.xword.nixer.bloom.check.BloomFilterCheck;
 import eu.xword.nixer.nixerplugin.metrics.MetricsWriter;
+import eu.xword.nixer.nixerplugin.pwned.metrics.PwnedCheckMetrics;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -50,7 +51,7 @@ class PwnedCredentialsCheckerTest {
         // then
         assertThat(result).isTrue();
         verify(pwnedFilter).test(SAMPLE_PASSWORD);
-        verify(metrics).write("pwned_password_positive");
+        verify(metrics).write(PwnedCheckMetrics.PWNED_PASSWORD);
         verifyNoMoreInteractions(metrics);
     }
 
@@ -65,7 +66,7 @@ class PwnedCredentialsCheckerTest {
         // then
         assertThat(result).isFalse();
         verify(pwnedFilter).test(SAMPLE_PASSWORD);
-        verify(metrics).write("pwned_password_negative");
+        verify(metrics).write(PwnedCheckMetrics.NOT_PWNED_PASSWORD);
         verifyNoMoreInteractions(metrics);
     }
 
@@ -77,7 +78,7 @@ class PwnedCredentialsCheckerTest {
         // then
         assertThat(result).isFalse();
         verifyZeroInteractions(pwnedFilter);
-        verify(metrics).write("pwned_password_negative");
+        verify(metrics).write(PwnedCheckMetrics.NOT_PWNED_PASSWORD);
         verifyNoMoreInteractions(metrics);
     }
 
@@ -92,7 +93,7 @@ class PwnedCredentialsCheckerTest {
         // then
         assertThat(result).isFalse();
         verifyZeroInteractions(pwnedFilter);
-        verify(metrics).write("pwned_password_negative");
+        verify(metrics).write(PwnedCheckMetrics.NOT_PWNED_PASSWORD);
         verifyNoMoreInteractions(metrics);
     }
 }

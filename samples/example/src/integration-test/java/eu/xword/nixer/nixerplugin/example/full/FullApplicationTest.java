@@ -25,6 +25,8 @@ import org.springframework.test.web.servlet.SmartRequestBuilder;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 
 import static eu.xword.nixer.nixerplugin.example.LoginRequestBuilder.formLogin;
+import static eu.xword.nixer.nixerplugin.pwned.metrics.PwnedCheckMetrics.NOT_PWNED_PASSWORD;
+import static eu.xword.nixer.nixerplugin.pwned.metrics.PwnedCheckMetrics.PWNED_PASSWORD;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.is;
@@ -154,11 +156,11 @@ public class FullApplicationTest {
 
     @Test
     void shouldDetectPwnedPassword() throws  Exception {
-        final Counter pwnedPasswordCounter = meterRegistry.get("pwned_password")
-                .tag("result", "positive")
+        final Counter pwnedPasswordCounter = meterRegistry.get(PWNED_PASSWORD.metricName)
+                .tag(PWNED_PASSWORD.resultTag, PWNED_PASSWORD.result)
                 .counter();
-        final Counter notPwnedPasswordCounter = meterRegistry.get("pwned_password")
-                .tag("result", "negative")
+        final Counter notPwnedPasswordCounter = meterRegistry.get(NOT_PWNED_PASSWORD.metricName)
+                .tag(NOT_PWNED_PASSWORD.resultTag, NOT_PWNED_PASSWORD.result)
                 .counter();
 
         double initialPwnedCount = pwnedPasswordCounter.count();

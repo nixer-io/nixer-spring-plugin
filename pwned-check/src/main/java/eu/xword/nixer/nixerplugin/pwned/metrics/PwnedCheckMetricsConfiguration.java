@@ -13,6 +13,9 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import static eu.xword.nixer.nixerplugin.pwned.metrics.PwnedCheckMetrics.NOT_PWNED_PASSWORD;
+import static eu.xword.nixer.nixerplugin.pwned.metrics.PwnedCheckMetrics.PWNED_PASSWORD;
+
 /**
  * Created on 17/10/2019.
  *
@@ -43,20 +46,20 @@ public class PwnedCheckMetricsConfiguration {
         @Bean
         public MeterDefinition pwnedPasswordCounter() {
             return MeterDefinition.counter(
-                    "pwned_password_positive",
-                    () -> Counter.builder("pwned_password")
-                            .description("Password is pwned")
-                            .tag("result", "positive")
+                    PWNED_PASSWORD.lookupId(),
+                    () -> Counter.builder(PWNED_PASSWORD.metricName)
+                            .description(PWNED_PASSWORD.description)
+                            .tag(PWNED_PASSWORD.resultTag, PWNED_PASSWORD.result)
             );
         }
 
         @Bean
         public MeterDefinition notPwnedPasswordCounter() {
             return MeterDefinition.counter(
-                    "pwned_password_negative",
-                    () -> Counter.builder("pwned_password")
-                            .description("Password is not pwned")
-                            .tag("result", "negative")
+                    NOT_PWNED_PASSWORD.lookupId(),
+                    () -> Counter.builder(NOT_PWNED_PASSWORD.metricName)
+                            .description(NOT_PWNED_PASSWORD.description)
+                            .tag(NOT_PWNED_PASSWORD.resultTag, NOT_PWNED_PASSWORD.result)
             );
         }
     }
