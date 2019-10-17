@@ -10,6 +10,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Component;
 
+import static eu.xword.nixer.nixerplugin.filter.behavior.Behaviors.CAPTCHA;
+
 /**
  * Challenges user with captcha. Sets flag in session based on which captcha is displayed and then verified
  */
@@ -18,7 +20,6 @@ public class CaptchaBehavior implements Behavior {
 
     private final Log logger = LogFactory.getLog(getClass());
 
-    public static final String CAPTCHA_NAME = "captcha";
     public static final String CAPTCHA_CHALLENGE_ATTR = "nixer.captcha.challenge";
 
     @Override
@@ -38,7 +39,7 @@ public class CaptchaBehavior implements Behavior {
 
     @Override
     public String name() {
-        return CAPTCHA_NAME;
+        return CAPTCHA.name();
     }
 
     @Override

@@ -1,24 +1,20 @@
 package eu.xword.nixer.nixerplugin.filter;
 
 import java.util.List;
+import java.util.Optional;
 
-import eu.xword.nixer.nixerplugin.registry.GlobalCredentialStuffingRegistry;
 import eu.xword.nixer.nixerplugin.filter.behavior.Behavior;
 import eu.xword.nixer.nixerplugin.filter.behavior.BehaviorEndpoint;
 import eu.xword.nixer.nixerplugin.filter.behavior.BehaviorProvider;
 import eu.xword.nixer.nixerplugin.filter.behavior.BehaviorRegistry;
 import eu.xword.nixer.nixerplugin.filter.behavior.BehaviourProviderBuilder;
-import eu.xword.nixer.nixerplugin.filter.behavior.Facts;
-import eu.xword.nixer.nixerplugin.ip.IpMetadata;
+import eu.xword.nixer.nixerplugin.registry.GlobalCredentialStuffingRegistry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import static eu.xword.nixer.nixerplugin.filter.RequestAugmentation.GLOBAL_CREDENTIAL_STUFFING;
-import static eu.xword.nixer.nixerplugin.filter.RequestAugmentation.IP_FAILED_LOGIN_OVER_THRESHOLD;
-import static eu.xword.nixer.nixerplugin.filter.RequestAugmentation.IP_METADATA;
 
 @Configuration
 @EnableConfigurationProperties(value = {FilterProperties.class})
@@ -46,12 +42,21 @@ public class FilterConfiguration {
     }
 
     @Bean
-    public BehaviorProvider buildBehaviorProvider(BehaviorRegistry behaviorRegistry) {
-        return BehaviourProviderBuilder.builder()
-                .addRule("blacklistedIp", this::isBlacklistedIp, "blockedError")
-                .addRule("ipLoginOverThreshold", this::isIpLoginOverThreshold, "captcha")
-                .addRule("credentialStuffingActive", this::isGlobalCredentialStuffing, "captcha")
-                .build(behaviorRegistry);
+    public BehaviorProvider buildBehaviorProvider(BehaviorRegistry behaviorRegistry, @Autowired(required = false) BehaviorProviderConfigurer configurer) {
+        final BehaviourProviderBuilder builder = BehaviourProviderBuilder.builder();
+
+        Optional.ofNullable(configurer)
+                .orElse(defaultRuleConfigurer())
+                .configure(builder);
+
+        return builder.build(behaviorRegistry);
+    }
+
+    private BehaviorProviderConfigurer defaultRuleConfigurer() {
+        return (it) -> {
+            logger.warn("Custom BehaviorProviderConfigurer bean not found. There are not behaviors configured.");
+            return it;
+        };
     }
 
     @Bean
@@ -59,15 +64,7 @@ public class FilterConfiguration {
         return new BehaviorEndpoint(behaviorProvider, behaviorRegistry);
     }
 
-    private boolean isBlacklistedIp(Facts facts) {
-        IpMetadata ipMetadata = (IpMetadata) facts.getFact(IP_METADATA);
-        return ipMetadata != null && ipMetadata.isBlacklisted();
-    }
-
-    private boolean isGlobalCredentialStuffing(Facts facts) {
-        return Boolean.TRUE.equals(facts.getFact(GLOBAL_CREDENTIAL_STUFFING));
-    }
-    private boolean isIpLoginOverThreshold(Facts facts) {
-        return Boolean.TRUE.equals(facts.getFact(IP_FAILED_LOGIN_OVER_THRESHOLD));
+    public interface BehaviorProviderConfigurer {
+        BehaviourProviderBuilder configure(BehaviourProviderBuilder behaviourProviderBuilder);
     }
 }

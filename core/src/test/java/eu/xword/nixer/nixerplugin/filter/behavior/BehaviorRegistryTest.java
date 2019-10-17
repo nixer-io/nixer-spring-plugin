@@ -8,24 +8,24 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 
 class BehaviorRegistryTest {
 
-    BehaviorRegistry registry;
+    private BehaviorRegistry registry;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         registry = new BehaviorRegistry();
     }
 
     @Test
-    public void should_find_by_name() {
+    void should_find_by_name() {
         final LogBehavior logBehavior = new LogBehavior();
         registry.register(logBehavior);
 
-        final Behavior found = registry.findByName("log");
+        final Behavior found = registry.findByName(Behaviors.LOG.name());
         assertSame(found, logBehavior);
     }
 
     @Test
-    public void should_throw_on_duplicate_name() {
+    void should_throw_on_duplicate_name() {
         final LogBehavior logBehavior = new LogBehavior();
         registry.register(logBehavior);
 

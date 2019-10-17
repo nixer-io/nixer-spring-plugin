@@ -4,6 +4,7 @@ import eu.xword.nixer.nixerplugin.captcha.recaptcha.RecaptchaClientStub;
 import eu.xword.nixer.nixerplugin.captcha.security.CaptchaChecker;
 import eu.xword.nixer.nixerplugin.captcha.security.CaptchaCondition;
 import eu.xword.nixer.nixerplugin.detection.config.FailedLoginThresholdRulesProperties;
+import eu.xword.nixer.nixerplugin.filter.behavior.Behaviors;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.junit.jupiter.api.AfterEach;
@@ -309,14 +310,14 @@ public class FullApplicationTest {
     void behaviorsEndpointToReturnBehaviorsAndRules() throws Exception {
         this.mockMvc.perform(get("/actuator/behaviors"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.behaviors", hasItems("captcha", "log")))
-                .andExpect(jsonPath("$.rules", MapContentMatchers.hasEntry("credentialStuffingActive", "captcha")))
+                .andExpect(jsonPath("$.behaviors", hasItems(Behaviors.CAPTCHA.name(), Behaviors.LOG.name())))
+                .andExpect(jsonPath("$.rules", MapContentMatchers.hasKey("credentialStuffingActive")))
         ;
     }
 
     @Test
     void behaviorsEndpointToUpdateBehavior() throws Exception {
-        final String newBehavior = "{ \"rule\": \"credentialStuffingActive\", \"behavior\": \"log\"}";
+        final String newBehavior = "{ \"rule\": \"credentialStuffingActive\", \"behavior\": \"LOG\"}";
         this.mockMvc.perform(post("/actuator/behaviors")
                 .content(newBehavior)
                 .contentType(MediaType.APPLICATION_JSON))
@@ -324,7 +325,7 @@ public class FullApplicationTest {
 
         this.mockMvc.perform(get("/actuator/behaviors"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.rules", MapContentMatchers.hasEntry("credentialStuffingActive", "log")));
+                .andExpect(jsonPath("$.rules", MapContentMatchers.hasEntry("credentialStuffingActive", Behaviors.LOG.name())));
     }
 
     private RequestPostProcessor remoteAddress(String ip) {

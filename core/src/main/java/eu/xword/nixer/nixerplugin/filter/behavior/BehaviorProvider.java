@@ -3,6 +3,7 @@ package eu.xword.nixer.nixerplugin.filter.behavior;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 
@@ -11,17 +12,21 @@ import org.springframework.util.Assert;
 
 public class BehaviorProvider {
 
-    private BehaviorRegistry behaviorRegistry;
+    private final BehaviorRegistry behaviorRegistry;
 
-    private ConcurrentHashMap<String, String> behaviors = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, String> behaviors = new ConcurrentHashMap<>();
 
-    private List<Rule> rules = new ArrayList<>();
+    private final List<Rule> rules = new ArrayList<>();
 
     public BehaviorProvider(final BehaviorRegistry behaviorRegistry) {
+        Assert.notNull(behaviorRegistry, "BehaviorRegistry must not be null");
         this.behaviorRegistry = behaviorRegistry;
     }
 
     public void addRule(String name, Predicate<Facts> predicate, String behaviorName) {
+        Optional.ofNullable(behaviorRegistry.findByName(behaviorName))
+                .orElseThrow(() -> new IllegalArgumentException("Unknown behavior " + behaviorName));
+
         behaviors.put(name, behaviorName);
         rules.add(new PredicateRule(name, predicate));
     }
