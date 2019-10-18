@@ -2,6 +2,7 @@ package eu.xword.nixer.nixerplugin.pwned.check;
 
 import com.google.common.base.Strings;
 import eu.xword.nixer.bloom.check.BloomFilterCheck;
+import eu.xword.nixer.nixerplugin.metrics.MetricsLookupId;
 import eu.xword.nixer.nixerplugin.metrics.MetricsWriter;
 import eu.xword.nixer.nixerplugin.pwned.metrics.PwnedCheckMetrics;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,7 +42,7 @@ class PwnedCredentialsCheckerTest {
     }
 
     @Test
-    void should_detect_pwned_password() {
+    void shouldDetectPwnedPassword() {
         // given
         given(pwnedFilter.test(SAMPLE_PASSWORD)).willReturn(true);
 
@@ -51,12 +52,11 @@ class PwnedCredentialsCheckerTest {
         // then
         assertThat(result).isTrue();
         verify(pwnedFilter).test(SAMPLE_PASSWORD);
-        verify(metrics).write(PwnedCheckMetrics.PWNED_PASSWORD);
-        verifyNoMoreInteractions(metrics);
+        verifyMetricsRecord(PwnedCheckMetrics.PWNED_PASSWORD);
     }
 
     @Test
-    void should_detect_not_pwned_password() {
+    void shouldDetectNotPwnedPassword() {
         // given
         given(pwnedFilter.test(SAMPLE_PASSWORD)).willReturn(false);
 
@@ -66,24 +66,22 @@ class PwnedCredentialsCheckerTest {
         // then
         assertThat(result).isFalse();
         verify(pwnedFilter).test(SAMPLE_PASSWORD);
-        verify(metrics).write(PwnedCheckMetrics.NOT_PWNED_PASSWORD);
-        verifyNoMoreInteractions(metrics);
+        verifyMetricsRecord(PwnedCheckMetrics.NOT_PWNED_PASSWORD);
     }
 
     @Test
-    void should_skip_check_for_missing_password() {
+    void shouldSkipCheckForMissingPassword() {
         // when
         final boolean result = pwnedCredentialsChecker.isPasswordPwned(null);
 
         // then
         assertThat(result).isFalse();
         verifyZeroInteractions(pwnedFilter);
-        verify(metrics).write(PwnedCheckMetrics.NOT_PWNED_PASSWORD);
-        verifyNoMoreInteractions(metrics);
+        verifyMetricsRecord(PwnedCheckMetrics.NOT_PWNED_PASSWORD);
     }
 
     @Test
-    void should_skip_check_for_too_long_password() {
+    void shouldSkipCheckForTooLongPassword() {
         // given
         final String tooLongPassword = Strings.repeat("a", MAX_PASSWORD_LENGTH + 1);
 
@@ -93,7 +91,11 @@ class PwnedCredentialsCheckerTest {
         // then
         assertThat(result).isFalse();
         verifyZeroInteractions(pwnedFilter);
-        verify(metrics).write(PwnedCheckMetrics.NOT_PWNED_PASSWORD);
+        verifyMetricsRecord(PwnedCheckMetrics.NOT_PWNED_PASSWORD);
+    }
+
+    private void verifyMetricsRecord(final MetricsLookupId lookupId) {
+        verify(metrics).write(lookupId);
         verifyNoMoreInteractions(metrics);
     }
 }
