@@ -5,7 +5,7 @@ import java.time.temporal.ChronoUnit;
 
 import org.springframework.boot.convert.DurationUnit;
 
-public class RuleProperties {
+public class WindowThresholdRuleProperties {
 
     /**
      * Whether rule is enabled. Disabled by default.

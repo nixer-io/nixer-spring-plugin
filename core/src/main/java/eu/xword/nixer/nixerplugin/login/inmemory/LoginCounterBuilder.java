@@ -7,46 +7,46 @@ import eu.xword.nixer.nixerplugin.detection.config.WindowSize;
 import org.springframework.util.Assert;
 
 /**
- * Builder class for {@link LoginMetricCounter}
+ * Builder class for {@link LoginCounter}
  */
-public class LoginMetricCounterBuilder {
+public class LoginCounterBuilder {
 
     FeatureKey featureKey;
     Clock clock = Clock.systemDefaultZone();
     Duration windowSize = WindowSize.WINDOW_5M;
     CountingStrategy countingStrategy = CountingStrategies.CONSECUTIVE_FAILS;
 
-    private LoginMetricCounterBuilder() {
+    private LoginCounterBuilder() {
     }
 
-    public static LoginMetricCounterBuilder counter(final FeatureKey key) {
+    public static LoginCounterBuilder counter(final FeatureKey key) {
         Assert.notNull(key, "FeatureKey must not be null");
 
-        final LoginMetricCounterBuilder builder = new LoginMetricCounterBuilder();
+        final LoginCounterBuilder builder = new LoginCounterBuilder();
         builder.featureKey = key;
         return builder;
     }
 
-    public LoginMetricCounterBuilder clock(final Clock clock) {
+    public LoginCounterBuilder clock(final Clock clock) {
         Assert.notNull(clock, "Clock must not be null");
         this.clock = clock;
         return this;
     }
 
-    public LoginMetricCounterBuilder window(final Duration windowSize) {
+    public LoginCounterBuilder window(final Duration windowSize) {
         Assert.notNull(windowSize, "WindowSize must not be null");
         this.windowSize = windowSize;
         return this;
     }
 
-    public LoginMetricCounterBuilder count(final CountingStrategy countingStrategy) {
+    public LoginCounterBuilder count(final CountingStrategy countingStrategy) {
         Assert.notNull(countingStrategy, "CountingStrategy must not be null");
         this.countingStrategy = countingStrategy;
         return this;
     }
 
 
-    public LoginMetricCounter build() {
-        return new LoginMetricCounter(this);
+    public LoginCounter build() {
+        return new LoginCounter(this);
     }
 }

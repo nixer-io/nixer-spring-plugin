@@ -6,16 +6,15 @@ import java.util.Map;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "nixer.rules")
-public class FailedLoginThresholdRulesProperties {
+public class AnomalyRulesProperties {
 
-    //todo consider string to enum
-    private Map<Name, RuleProperties> failedLoginThreshold = new HashMap<>();
+    private Map<Name, WindowThresholdRuleProperties> failedLoginThreshold = new HashMap<>();
 
-    public Map<Name, RuleProperties> getFailedLoginThreshold() {
+    public Map<Name, WindowThresholdRuleProperties> getFailedLoginThreshold() {
         return failedLoginThreshold;
     }
 
-    public void setFailedLoginThreshold(final Map<Name, RuleProperties> failedLoginThreshold) {
+    public void setFailedLoginThreshold(final Map<Name, WindowThresholdRuleProperties> failedLoginThreshold) {
         this.failedLoginThreshold = failedLoginThreshold;
     }
 

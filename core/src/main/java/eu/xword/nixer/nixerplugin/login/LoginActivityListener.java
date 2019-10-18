@@ -22,23 +22,22 @@ import static eu.xword.nixer.nixerplugin.filter.RequestAugmentation.IP_METADATA;
 import static eu.xword.nixer.nixerplugin.useragent.UserAgentTokenizer.sha1Tokenizer;
 
 /**
- * Listens for Spring {@link AbstractAuthenticationEvent} and stores it in configured repositories
+ * Listens for Spring {@link AbstractAuthenticationEvent} and processed them.
  */
 @Component
 public class LoginActivityListener implements ApplicationListener<AbstractAuthenticationEvent> {
 
-    @Autowired
     private HttpServletRequest request;
 
-    @Autowired
     private HttpServletResponse response;
 
-    private StigmaUtils stigmaUtils;
-    private EmbeddedStigmaService stigmaService;
+    private final StigmaUtils stigmaUtils;
 
-    private LoginActivityService loginActivityService;
+    private final EmbeddedStigmaService stigmaService;
 
-    private LoginFailureTypeRegistry loginFailureTypeRegistry;
+    private final LoginActivityService loginActivityService;
+
+    private final LoginFailureTypeRegistry loginFailureTypeRegistry;
 
     public LoginActivityListener(final EmbeddedStigmaService stigmaService,
                                  final StigmaUtils stigmaUtils,
@@ -60,7 +59,7 @@ public class LoginActivityListener implements ApplicationListener<AbstractAuthen
     }
 
     private void reportLogin(LoginResult loginResult, final LoginContext context) {
-        loginActivityService.handle(loginResult, context);
+        loginActivityService.save(loginResult, context);
     }
 
     private LoginContext buildContext(final AbstractAuthenticationEvent event) {
@@ -119,4 +118,13 @@ public class LoginActivityListener implements ApplicationListener<AbstractAuthen
         }
     }
 
+    @Autowired
+    public void setRequest(final HttpServletRequest request) {
+        this.request = request;
+    }
+
+    @Autowired
+    public void setResponse(final HttpServletResponse response) {
+        this.response = response;
+    }
 }

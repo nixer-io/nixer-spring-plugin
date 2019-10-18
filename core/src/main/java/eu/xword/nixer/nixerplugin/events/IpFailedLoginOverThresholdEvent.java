@@ -5,7 +5,7 @@ import com.google.common.base.Objects;
 /**
  * This events is emitted when number of failed login per ip exceeds threshold.
  */
-public class IpFailedLoginOverThresholdEvent extends DetectionEvent {
+public class IpFailedLoginOverThresholdEvent extends AnomalyEvent {
 
     public IpFailedLoginOverThresholdEvent(final String ip) {
         super(ip);

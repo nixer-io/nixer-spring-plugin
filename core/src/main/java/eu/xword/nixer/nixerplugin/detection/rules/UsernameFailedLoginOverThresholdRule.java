@@ -5,13 +5,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 import eu.xword.nixer.nixerplugin.events.IpFailedLoginOverThresholdEvent;
 import eu.xword.nixer.nixerplugin.events.UsernameFailedLoginOverThresholdEvent;
 import eu.xword.nixer.nixerplugin.login.LoginContext;
-import eu.xword.nixer.nixerplugin.login.counts.LoginMetric;
+import eu.xword.nixer.nixerplugin.login.inmemory.LoginMetric;
 import org.springframework.util.Assert;
 
 /**
  * Rule that checks if number of consecutive login failures for username exceeds threshold and emits {@link IpFailedLoginOverThresholdEvent} event if it does.
  */
-public class UsernameFailedLoginOverThresholdRule implements Rule {
+public class UsernameFailedLoginOverThresholdRule implements AnomalyRule {
 
     private final AtomicInteger threshold = new AtomicInteger(5);
     private final LoginMetric loginMetric;

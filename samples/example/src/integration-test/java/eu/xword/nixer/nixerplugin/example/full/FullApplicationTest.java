@@ -3,7 +3,7 @@ package eu.xword.nixer.nixerplugin.example.full;
 import eu.xword.nixer.nixerplugin.captcha.recaptcha.RecaptchaClientStub;
 import eu.xword.nixer.nixerplugin.captcha.security.CaptchaChecker;
 import eu.xword.nixer.nixerplugin.captcha.security.CaptchaCondition;
-import eu.xword.nixer.nixerplugin.detection.config.FailedLoginThresholdRulesProperties;
+import eu.xword.nixer.nixerplugin.detection.config.AnomalyRulesProperties;
 import eu.xword.nixer.nixerplugin.filter.behavior.Behaviors;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
@@ -26,8 +26,8 @@ import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.SmartRequestBuilder;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 
-import static eu.xword.nixer.nixerplugin.detection.config.FailedLoginThresholdRulesProperties.Name.ip;
-import static eu.xword.nixer.nixerplugin.detection.config.FailedLoginThresholdRulesProperties.Name.useragent;
+import static eu.xword.nixer.nixerplugin.detection.config.AnomalyRulesProperties.Name.ip;
+import static eu.xword.nixer.nixerplugin.detection.config.AnomalyRulesProperties.Name.useragent;
 import static eu.xword.nixer.nixerplugin.example.LoginRequestBuilder.formLogin;
 import static eu.xword.nixer.nixerplugin.filter.RequestAugmentation.USER_AGENT_FAILED_LOGIN_OVER_THRESHOLD;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -78,7 +78,7 @@ public class FullApplicationTest {
     private MeterRegistry meterRegistry;
 
     @Autowired
-    private FailedLoginThresholdRulesProperties ruleProperties;
+    private AnomalyRulesProperties ruleProperties;
 
     @TestConfiguration
     public static class TestConfig {

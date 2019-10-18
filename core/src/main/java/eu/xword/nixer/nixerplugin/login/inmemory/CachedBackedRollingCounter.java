@@ -20,9 +20,8 @@ import org.springframework.util.Assert;
 @ThreadSafe
 public class CachedBackedRollingCounter implements RollingCounter {
 
-    //todo consider two problems
-    // 1. cleanup of expired counters
-    // 2. O(n) for sum operation and memory.
+    //todo consider
+    // O(n) for sum operation and space.
     private final LoadingCache<String, Count> counts;
 
     private Clock clock = Clock.systemDefaultZone();

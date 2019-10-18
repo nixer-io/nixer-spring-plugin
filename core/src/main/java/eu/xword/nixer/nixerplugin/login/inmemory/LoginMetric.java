@@ -1,4 +1,4 @@
-package eu.xword.nixer.nixerplugin.login.counts;
+package eu.xword.nixer.nixerplugin.login.inmemory;
 
 /**
  * Exposes login metric value per given key
@@ -6,5 +6,5 @@ package eu.xword.nixer.nixerplugin.login.counts;
 public interface LoginMetric {
 
     //todo should return double ?
-    int value(String key);
+    int value(final String key);
 }

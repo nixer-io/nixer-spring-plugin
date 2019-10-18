@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import static eu.xword.nixer.nixerplugin.login.LoginFailureType.BAD_PASSWORD;
 import static eu.xword.nixer.nixerplugin.login.inmemory.FeatureKey.Features.IP;
-import static eu.xword.nixer.nixerplugin.login.inmemory.LoginMetricCounterBuilder.counter;
+import static eu.xword.nixer.nixerplugin.login.inmemory.LoginCounterBuilder.counter;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class LoginMetricCounterTest {
@@ -18,7 +18,7 @@ class LoginMetricCounterTest {
 
     private final ClockStub clock = new ClockStub();
 
-    private final LoginMetricCounter counter = counter(IP)
+    private final LoginCounter counter = counter(IP)
             .window(Duration.ofMinutes(1))
             .clock(clock)
             .build();

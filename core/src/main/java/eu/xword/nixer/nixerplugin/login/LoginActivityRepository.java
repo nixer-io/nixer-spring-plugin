@@ -1,6 +1,9 @@
 package eu.xword.nixer.nixerplugin.login;
 
+/**
+ * Abstraction for storing login result
+ */
 public interface LoginActivityRepository {
 
-    void reportLoginActivity(LoginResult result, LoginContext loginContext);
+    void save(final LoginResult result, final LoginContext context);
 }

@@ -2,7 +2,7 @@ package eu.xword.nixer.nixerplugin.events;
 
 public interface EventVisitor {
 
-    void accept(DetectionEvent event);
+    void accept(AnomalyEvent event);
 
     void accept(UserAgentFailedLoginOverThresholdEvent event);
 

@@ -2,9 +2,13 @@ package eu.xword.nixer.nixerplugin.events;
 
 import org.springframework.context.ApplicationEvent;
 
-public abstract class DetectionEvent extends ApplicationEvent {
 
-    public DetectionEvent(final Object source) {
+/**
+ * Represents event detected by anomaly rule
+ */
+public abstract class AnomalyEvent extends ApplicationEvent {
+
+    public AnomalyEvent(final Object source) {
         super(source);
     }
 

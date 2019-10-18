@@ -1,10 +1,9 @@
 package eu.xword.nixer.nixerplugin.login;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.security.authentication.AccountExpiredException;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -41,6 +40,10 @@ public class LoginFailureTypeRegistry {
         return Collections.unmodifiableCollection(failureTypeByException.values());
     }
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public static class Builder {
 
         private final Map<Class<? extends AuthenticationException>, LoginFailureType> mappings = new HashMap<>();
@@ -52,6 +55,9 @@ public class LoginFailureTypeRegistry {
             addMapping(AccountExpiredException.class, EXPIRED);
             addMapping(DisabledException.class, DISABLED);
             // TODO separated exception for credentials and account expired/disabled/locked
+        }
+
+        private Builder() {
         }
 
         public Builder addMapping(Class<? extends AuthenticationException> clazz, LoginFailureType loginFailureType) {

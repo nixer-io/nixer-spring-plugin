@@ -3,7 +3,7 @@ package eu.xword.nixer.nixerplugin.events;
 /**
  * This events is emitted when system is under credential stuffing attack.
  */
-public class GlobalCredentialStuffingEvent extends DetectionEvent {
+public class GlobalCredentialStuffingEvent extends AnomalyEvent {
 
     public GlobalCredentialStuffingEvent() {
         super("");

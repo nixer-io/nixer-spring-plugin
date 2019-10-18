@@ -2,21 +2,20 @@ package eu.xword.nixer.nixerplugin.login.inmemory;
 
 import eu.xword.nixer.nixerplugin.login.LoginContext;
 import eu.xword.nixer.nixerplugin.login.LoginResult;
-import eu.xword.nixer.nixerplugin.login.counts.LoginCounter;
-import eu.xword.nixer.nixerplugin.login.counts.LoginMetric;
+import eu.xword.nixer.nixerplugin.login.LoginMetricCounter;
 import org.springframework.util.Assert;
 
 /**
- * This counter tracks consecutive failed login per ip. Successful login resets counter.
+ * This counter tracks counts for login.
  */
-public class LoginMetricCounter implements LoginMetric, LoginCounter {
+public class LoginCounter implements LoginMetric, LoginMetricCounter {
 
     private final RollingCounter counter;
     private final FeatureKey featureKey;
     private final CountingStrategy countingStrategy;
 
-    //todo extract filter
-    LoginMetricCounter(final LoginMetricCounterBuilder builder) {
+    //todo extract filter that will eg. filter particular types of failures
+    LoginCounter(final LoginCounterBuilder builder) {
         Assert.notNull(builder, "Builder must not be null");
 
         Assert.notNull(builder.windowSize, "WindowSize must not be null");

@@ -21,7 +21,7 @@ public class JsonSerializer implements EventVisitor {
     }
 
     @Override
-    public void accept(final DetectionEvent event) {
+    public void accept(final AnomalyEvent event) {
         apply(event, this::nop);
     }
 
@@ -51,7 +51,7 @@ public class JsonSerializer implements EventVisitor {
     private void nop() {
     }
 
-    private <T extends DetectionEvent> void apply(T event, Runnable runnable) {
+    private <T extends AnomalyEvent> void apply(T event, Runnable runnable) {
         try {
             generator.writeStartObject();
             generator.writeStringField("type", event.type());
@@ -69,7 +69,7 @@ public class JsonSerializer implements EventVisitor {
 
     @Override
     public void accept(final GlobalCredentialStuffingEvent event) {
-        accept((DetectionEvent) event);
+        accept((AnomalyEvent) event);
     }
 
     public String toString() {

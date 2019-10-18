@@ -5,7 +5,7 @@ import com.google.common.base.Objects;
 /**
  * This events is emitted when number of failed login per useragent exceeds threshold.
  */
-public class UserAgentFailedLoginOverThresholdEvent extends DetectionEvent {
+public class UserAgentFailedLoginOverThresholdEvent extends AnomalyEvent {
 
     public UserAgentFailedLoginOverThresholdEvent(final String ip) {
         super(ip);
