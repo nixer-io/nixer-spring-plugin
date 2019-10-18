@@ -1,10 +1,10 @@
-package eu.xword.nixer.nixerplugin.rules;
+package eu.xword.nixer.nixerplugin.detection.rules;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import eu.xword.nixer.nixerplugin.detection.rules.IpFailedLoginOverThresholdRule;
-import eu.xword.nixer.nixerplugin.events.IpFailedLoginOverThresholdEvent;
+import eu.xword.nixer.nixerplugin.detection.rules.UserAgentLoginOverThresholdRule;
+import eu.xword.nixer.nixerplugin.events.UserAgentFailedLoginOverThresholdEvent;
 import eu.xword.nixer.nixerplugin.login.LoginContext;
 import eu.xword.nixer.nixerplugin.login.counts.LoginMetric;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class IpFailedLoginOverThresholdRuleTest {
+class UserAgentFailedLoginOverThresholdRuleTest {
 
     private static final int THRESHOLD = 3;
     private static final int UNDER_THRESHOLD = THRESHOLD - 1;
@@ -26,37 +26,37 @@ class IpFailedLoginOverThresholdRuleTest {
     @Mock
     private LoginMetric loginMetric;
 
-    private IpFailedLoginOverThresholdRule rule;
+    private UserAgentLoginOverThresholdRule rule;
+
+    private static final String UAS_TOKEN = "uas-token";
 
     @BeforeEach
     void setup() {
-        rule = new IpFailedLoginOverThresholdRule(loginMetric);
+        rule = new UserAgentLoginOverThresholdRule(loginMetric);
         rule.setThreshold(THRESHOLD);
     }
 
     @Test
-    void should_emit_event_for_ip_over_threshold() {
-        final String ip = "127.0.0.1";
-        when(loginMetric.value(ip)).thenReturn(OVER_THRESHOLD);
+    void should_emit_event_for_useragent_over_threshold() {
+        when(loginMetric.value(UAS_TOKEN)).thenReturn(OVER_THRESHOLD);
 
-        final List<Object> events = execute(ip);
+        final List<Object> events = execute(UAS_TOKEN);
 
-        assertThat(events).contains(new IpFailedLoginOverThresholdEvent(ip));
+        assertThat(events).contains(new UserAgentFailedLoginOverThresholdEvent(UAS_TOKEN));
     }
 
     @Test
-    void should_not_emit_event_for_ip_under_threshold() {
-        final String ip = "127.0.0.1";
-        when(loginMetric.value(ip)).thenReturn(UNDER_THRESHOLD);
+    void should_not_emit_event_for_useragent_under_threshold() {
+        when(loginMetric.value(UAS_TOKEN)).thenReturn(UNDER_THRESHOLD);
 
-        final List<Object> events = execute(ip);
+        final List<Object> events = execute(UAS_TOKEN);
 
         assertThat(events).isEmpty();
     }
 
-    private List<Object> execute(final String ip) {
+    private List<Object> execute(final String userAgentToken) {
         final LoginContext loginContext = new LoginContext();
-        loginContext.setIpAddress(ip);
+        loginContext.setUserAgentToken(userAgentToken);
         final List<Object> events = new ArrayList<>();
 
         rule.execute(loginContext, events::add);
