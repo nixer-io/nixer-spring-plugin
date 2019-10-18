@@ -17,7 +17,7 @@ public class UserAgentFailedLoginOverThresholdEvent extends DetectionEvent {
 
     @Override
     public String toString() {
-        return "UserAgentFailedLoginOverThresholdEvent ip:" + getUserAgent();
+        return "UserAgentFailedLoginOverThresholdEvent userAgent:" + getUserAgent();
     }
 
     @Override
