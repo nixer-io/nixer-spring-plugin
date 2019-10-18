@@ -1,10 +1,8 @@
 package eu.xword.nixer.nixerplugin.metrics;
 
-import java.util.Collections;
-import java.util.Map;
-
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.Meter;
+import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import static java.lang.String.format;
@@ -14,25 +12,20 @@ import static java.lang.String.format;
  *
  * @author gcwiak
  */
+@Component
 public class MetricsFacade {
 
-    // TODO consider moving this to a separate registry
-    private final Map<String, Meter> meters;
+    private final MetersRepository metersRepository;
 
-    public MetricsFacade(final Map<String, Meter> meters) {
-        Assert.notNull(meters, "meters must not be null");
-        this.meters = Collections.unmodifiableMap(meters);
+    public MetricsFacade(final MetersRepository metersRepository) {
+        Assert.notNull(metersRepository, "metersRepository must not be null");
+        this.metersRepository = metersRepository;
     }
 
     // TODO handle meter type another than counter
     // TODO additional argument for value and eventually type of meter
     public void write(final String lookupId) {
-        final Meter meter = meters.get(lookupId);
-
-        if (meter == null) {
-            throw new IllegalArgumentException(
-                    format("Meter for lookupId '%s' not found. Available meters: '%s'", lookupId, meters.keySet()));
-        }
+        final Meter meter = metersRepository.get(lookupId);
 
         if (meter instanceof Counter) {
             ((Counter) meter).increment();

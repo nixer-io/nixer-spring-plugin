@@ -1,10 +1,7 @@
 package eu.xword.nixer.nixerplugin.metrics;
 
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
-import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,15 +16,11 @@ import org.springframework.context.annotation.Configuration;
 public class MetricsConfiguration {
 
     @Bean
-    public MetricsFacade metricsFacade(final List<MeterDefinition> meterDefinitions, final MeterRegistry meterRegistry) {
+    public MetersRepository metersRepository(final List<MetersRepository.Contributor> contributors, final MeterRegistry meterRegistry) {
+        final MetersRepository.Builder builder = new MetersRepository.Builder();
 
-        // TODO move this transformation to a dedicated component
-        final Map<String, Meter> meters = meterDefinitions.stream()
-                .collect(Collectors.toMap(
-                        MeterDefinition::getLookupId,
-                        meterDefinition -> meterDefinition.register(meterRegistry)
-                ));
+        contributors.forEach(contributor -> contributor.contribute(builder));
 
-        return new MetricsFacade(meters);
+        return builder.build(meterRegistry);
     }
 }

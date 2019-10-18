@@ -1,6 +1,7 @@
 package eu.xword.nixer.nixerplugin.pwned.metrics;
 
 import eu.xword.nixer.nixerplugin.metrics.MeterDefinition;
+import eu.xword.nixer.nixerplugin.metrics.MetersRepository;
 import eu.xword.nixer.nixerplugin.metrics.MetricsFacade;
 import eu.xword.nixer.nixerplugin.metrics.MetricsFacadeWriter;
 import eu.xword.nixer.nixerplugin.metrics.NOPMetricsWriter;
@@ -39,28 +40,29 @@ public class PwnedCheckMetricsConfiguration {
         return () -> new MetricsFacadeWriter(metricsFacade);
     }
 
-    @Configuration
+    @Bean
     @ConditionalOnProperty(value = "nixer.pwned.check.metrics.enabled")
-    public static class MetersConfiguration {
+    public MetersRepository.Contributor pwnedCheckMetersConfigurer() {
 
-        @Bean
-        public MeterDefinition pwnedPasswordCounter() {
-            return MeterDefinition.counter(
-                    PWNED_PASSWORD.lookupId(),
-                    () -> Counter.builder(PWNED_PASSWORD.metricName)
-                            .description(PWNED_PASSWORD.description)
-                            .tag(PWNED_PASSWORD.resultTag, PWNED_PASSWORD.result)
-            );
-        }
+        return builder -> {
 
-        @Bean
-        public MeterDefinition notPwnedPasswordCounter() {
-            return MeterDefinition.counter(
-                    NOT_PWNED_PASSWORD.lookupId(),
-                    () -> Counter.builder(NOT_PWNED_PASSWORD.metricName)
-                            .description(NOT_PWNED_PASSWORD.description)
-                            .tag(NOT_PWNED_PASSWORD.resultTag, NOT_PWNED_PASSWORD.result)
+            builder.register(
+                    MeterDefinition.counter(
+                            PWNED_PASSWORD.lookupId(),
+                            () -> Counter.builder(PWNED_PASSWORD.metricName)
+                                    .description(PWNED_PASSWORD.description)
+                                    .tag(PWNED_PASSWORD.resultTag, PWNED_PASSWORD.result)
+                    )
             );
-        }
+
+            builder.register(
+                    MeterDefinition.counter(
+                            NOT_PWNED_PASSWORD.lookupId(),
+                            () -> Counter.builder(NOT_PWNED_PASSWORD.metricName)
+                                    .description(NOT_PWNED_PASSWORD.description)
+                                    .tag(NOT_PWNED_PASSWORD.resultTag, NOT_PWNED_PASSWORD.result)
+                    )
+            );
+        };
     }
 }
