@@ -12,6 +12,9 @@ import org.springframework.util.Assert;
  */
 public class BehaviorRegistry {
 
+    /**
+     * We use mapping between rules and behaviors to make it possible to change behavior at runtime
+     */
     private final Map<String, Behavior> behaviorByName = new ConcurrentHashMap<>();
 
     @PostConstruct

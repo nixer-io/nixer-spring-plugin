@@ -31,15 +31,13 @@ public class BehaviourProviderBuilder {
         return this;
     }
 
-    public BehaviorProvider build(BehaviorRegistry behaviorRegistry) {
+    public BehaviorProvider build(final BehaviorRegistry behaviorRegistry) {
         final BehaviorProvider behaviorProvider = new BehaviorProvider(behaviorRegistry);
 
         final long uniqueRuleNamesCount = ruleDefinitions.stream().map(ruleDefinition -> ruleDefinition.name).distinct().count();
         Assert.isTrue(ruleDefinitions.size() == uniqueRuleNamesCount, "Found duplicate rule names");
 
-        ruleDefinitions.forEach(ruleDefinition -> {
-            behaviorProvider.addRule(ruleDefinition.name, ruleDefinition.predicate, ruleDefinition.behavior);
-        });
+        ruleDefinitions.forEach(ruleDef -> behaviorProvider.addRule(ruleDef.name, ruleDef.predicate, ruleDef.behavior));
 
         return behaviorProvider;
     }
