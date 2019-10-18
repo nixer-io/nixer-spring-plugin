@@ -17,10 +17,6 @@ public class MetricsConfiguration {
 
     @Bean
     public MetersRepository metersRepository(final List<MetersRepository.Contributor> contributors, final MeterRegistry meterRegistry) {
-        final MetersRepository.Builder builder = new MetersRepository.Builder();
-
-        contributors.forEach(contributor -> contributor.contribute(builder));
-
-        return builder.build(meterRegistry);
+        return MetersRepository.build(contributors, meterRegistry);
     }
 }

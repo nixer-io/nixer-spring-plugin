@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.MeterRegistry;
+import org.springframework.util.Assert;
 
 /**
  * Created on 18/10/2019.
@@ -33,10 +34,22 @@ public class MetersRepository {
         return meter;
     }
 
+    public static MetersRepository build(final List<MetersRepository.Contributor> contributors, final MeterRegistry meterRegistry) {
+        Assert.notNull(contributors, "contributors must not be null");
+        Assert.notNull(meterRegistry, "meterRegistry must not be null");
+
+        final MetersRepository.Builder builder = new MetersRepository.Builder();
+
+        contributors.forEach(contributor -> contributor.contribute(builder));
+
+        return builder.build(meterRegistry);
+    }
+
     public static class Builder {
+
         private final List<MeterDefinition> meterDefinitions = new ArrayList<>();
 
-        Builder() {
+        private Builder() {
         }
 
         public Builder register(MeterDefinition meterDefinition) {
@@ -44,7 +57,7 @@ public class MetersRepository {
             return this;
         }
 
-        MetersRepository build(MeterRegistry meterRegistry) {
+        private MetersRepository build(MeterRegistry meterRegistry) {
             final Map<String, Meter> meters = meterDefinitions.stream()
                     .collect(Collectors.toMap(
                             MeterDefinition::getLookupId,
