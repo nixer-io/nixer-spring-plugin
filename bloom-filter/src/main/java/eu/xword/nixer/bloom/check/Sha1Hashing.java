@@ -1,4 +1,4 @@
-package eu.xword.nixer.bloom;
+package eu.xword.nixer.bloom.check;
 
 import com.google.common.base.Charsets;
 import com.google.common.hash.HashFunction;

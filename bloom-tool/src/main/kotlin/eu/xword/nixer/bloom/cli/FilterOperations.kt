@@ -3,7 +3,7 @@ package eu.xword.nixer.bloom.cli
 import com.google.common.base.Charsets
 import com.google.common.hash.Hashing
 import eu.xword.nixer.bloom.BloomFilter
-import eu.xword.nixer.bloom.BloomFilterCheck
+import eu.xword.nixer.bloom.check.BloomFilterCheck
 import eu.xword.nixer.bloom.FileBasedBloomFilter
 import eu.xword.nixer.bloom.HexFunnel
 import java.io.InputStream

@@ -137,7 +137,7 @@ public class FullApplicationTest {
         }
         // @formatter:off
 
-        this.mockMvc.perform(get(LOGIN_PAGE).session(session))
+        this.mockMvc.perform(get(LOGIN_PAGE).session(session).session(session))
             .andExpect(status().isOk())
             .andExpect(captchaChallenge());
 

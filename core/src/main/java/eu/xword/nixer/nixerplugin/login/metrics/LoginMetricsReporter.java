@@ -1,6 +1,8 @@
 package eu.xword.nixer.nixerplugin.login.metrics;
 
-import java.util.HashMap;
+import java.util.Collections;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import eu.xword.nixer.nixerplugin.login.LoginActivityRepository;
 import eu.xword.nixer.nixerplugin.login.LoginContext;
@@ -18,7 +20,7 @@ public class LoginMetricsReporter implements LoginActivityRepository {
 
     private final Counter loginSuccessCounter;
 
-    private final HashMap<LoginFailureType, Counter> failureCounters = new HashMap<>();
+    private final Map<LoginFailureType, Counter> failureCounters;
 
     private final MeterRegistry meterRegistry;
 
@@ -28,8 +30,9 @@ public class LoginMetricsReporter implements LoginActivityRepository {
 
         Assert.notNull(loginFailureTypeRegistry, "LoginFailureTypeRegistry must not be null");
 
-        loginFailureTypeRegistry.getReasons()
-                .forEach(reason -> failureCounters.put(reason, this.failureCounter(reason)));
+        final Map<LoginFailureType, Counter> failureCounters = loginFailureTypeRegistry.getReasons().stream()
+                .collect(Collectors.toMap( it -> it, this::failureCounter));
+        this.failureCounters = Collections.unmodifiableMap(failureCounters);
 
         this.loginSuccessCounter = Counter.builder("login")
                 .description("User login succeeded")

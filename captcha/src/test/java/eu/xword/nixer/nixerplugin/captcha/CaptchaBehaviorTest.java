@@ -8,7 +8,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockHttpSession;
 
-import static eu.xword.nixer.nixerplugin.captcha.CaptchaBehavior.CAPTCHA_CHALLENGE_ATTR;
+import static eu.xword.nixer.nixerplugin.captcha.CaptchaBehavior.CAPTCHA_CHALLENGE_SESSION_ATTR;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class CaptchaBehaviorTest {
@@ -23,7 +23,7 @@ class CaptchaBehaviorTest {
 
         act(request);
 
-        assertEquals(true, session.getAttribute(CAPTCHA_CHALLENGE_ATTR));
+        assertEquals(true, session.getAttribute(CAPTCHA_CHALLENGE_SESSION_ATTR));
     }
 
     private void act(HttpServletRequest request) throws IOException {
