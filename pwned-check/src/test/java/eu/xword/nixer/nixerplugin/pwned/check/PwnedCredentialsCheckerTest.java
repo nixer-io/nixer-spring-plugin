@@ -2,20 +2,18 @@ package eu.xword.nixer.nixerplugin.pwned.check;
 
 import com.google.common.base.Strings;
 import eu.xword.nixer.bloom.check.BloomFilterCheck;
-import eu.xword.nixer.nixerplugin.metrics.MetricsLookupId;
 import eu.xword.nixer.nixerplugin.metrics.MetricsWriter;
-import eu.xword.nixer.nixerplugin.pwned.metrics.PwnedCheckMetrics;
 import eu.xword.nixer.nixerplugin.pwned.metrics.PwnedPasswordMetricsReporter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyZeroInteractions;
 
 /**
@@ -32,8 +30,7 @@ class PwnedCredentialsCheckerTest {
     @Mock
     BloomFilterCheck pwnedFilter;
 
-    @Mock
-    MetricsWriter metrics;
+    private PwnedPasswordMetricsReporter pwnedPasswordMetrics = new PwnedPasswordMetricsReporter(Mockito.mock(MetricsWriter.class));
 
     private PwnedCredentialsChecker pwnedCredentialsChecker;
 
@@ -42,8 +39,8 @@ class PwnedCredentialsCheckerTest {
         pwnedCredentialsChecker = new PwnedCredentialsChecker(
                 pwnedFilter,
                 MAX_PASSWORD_LENGTH,
-                // TODO replace PwnedPasswordMetricsReporter with a mock and move away assertions on particular metrics
-                new PwnedPasswordMetricsReporter(metrics)
+                // TODO consider replacing PwnedPasswordMetricsReporter with a mock and verifying it's invoked
+                pwnedPasswordMetrics
         );
     }
 
@@ -58,7 +55,6 @@ class PwnedCredentialsCheckerTest {
         // then
         assertThat(result).isTrue();
         verify(pwnedFilter).test(SAMPLE_PASSWORD);
-        verifyMetricsRecord(PwnedCheckMetrics.PWNED_PASSWORD);
     }
 
     @Test
@@ -72,7 +68,6 @@ class PwnedCredentialsCheckerTest {
         // then
         assertThat(result).isFalse();
         verify(pwnedFilter).test(SAMPLE_PASSWORD);
-        verifyMetricsRecord(PwnedCheckMetrics.NOT_PWNED_PASSWORD);
     }
 
     @Test
@@ -83,7 +78,6 @@ class PwnedCredentialsCheckerTest {
         // then
         assertThat(result).isFalse();
         verifyZeroInteractions(pwnedFilter);
-        verifyMetricsRecord(PwnedCheckMetrics.NOT_PWNED_PASSWORD);
     }
 
     @Test
@@ -97,11 +91,5 @@ class PwnedCredentialsCheckerTest {
         // then
         assertThat(result).isFalse();
         verifyZeroInteractions(pwnedFilter);
-        verifyMetricsRecord(PwnedCheckMetrics.NOT_PWNED_PASSWORD);
-    }
-
-    private void verifyMetricsRecord(final MetricsLookupId lookupId) {
-        verify(metrics).write(lookupId);
-        verifyNoMoreInteractions(metrics);
     }
 }
