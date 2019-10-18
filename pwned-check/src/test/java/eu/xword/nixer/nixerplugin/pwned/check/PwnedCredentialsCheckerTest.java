@@ -5,6 +5,7 @@ import eu.xword.nixer.bloom.check.BloomFilterCheck;
 import eu.xword.nixer.nixerplugin.metrics.MetricsLookupId;
 import eu.xword.nixer.nixerplugin.metrics.MetricsWriter;
 import eu.xword.nixer.nixerplugin.pwned.metrics.PwnedCheckMetrics;
+import eu.xword.nixer.nixerplugin.pwned.metrics.PwnedPasswordMetricsReporter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,7 +39,12 @@ class PwnedCredentialsCheckerTest {
 
     @BeforeEach
     void setUp() {
-        pwnedCredentialsChecker = new PwnedCredentialsChecker(pwnedFilter, MAX_PASSWORD_LENGTH, metrics);
+        pwnedCredentialsChecker = new PwnedCredentialsChecker(
+                pwnedFilter,
+                MAX_PASSWORD_LENGTH,
+                // TODO replace PwnedPasswordMetricsReporter with a mock and move away assertions on particular metrics
+                new PwnedPasswordMetricsReporter(metrics)
+        );
     }
 
     @Test

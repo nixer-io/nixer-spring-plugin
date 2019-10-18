@@ -40,6 +40,11 @@ public class PwnedCheckMetricsConfiguration {
         return () -> new MetricsFacadeWriter(metricsFacade);
     }
 
+    @Bean // TODO Fix IntelliJ incorrectly complaining about two PwnedCheckMetricsWriterFactory beans detected.
+    public PwnedPasswordMetricsReporter pwnedPasswordMetricsReporter(PwnedCheckMetricsWriterFactory metricsWriterFactory) {
+        return new PwnedPasswordMetricsReporter(metricsWriterFactory.createMetricsWriter());
+    }
+
     @Bean
     @ConditionalOnProperty(value = "nixer.pwned.check.metrics.enabled")
     public MetersRepository.Contributor pwnedCheckMetersConfigurer() {

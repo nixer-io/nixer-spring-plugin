@@ -1,10 +1,7 @@
 package eu.xword.nixer.nixerplugin.pwned.check;
 
 import eu.xword.nixer.bloom.check.BloomFilterCheck;
-import eu.xword.nixer.nixerplugin.metrics.MetricsWriter;
-
-import static eu.xword.nixer.nixerplugin.pwned.metrics.PwnedCheckMetrics.NOT_PWNED_PASSWORD;
-import static eu.xword.nixer.nixerplugin.pwned.metrics.PwnedCheckMetrics.PWNED_PASSWORD;
+import eu.xword.nixer.nixerplugin.pwned.metrics.PwnedPasswordMetricsReporter;
 
 /**
  * Created on 23/09/2019.
@@ -15,25 +12,20 @@ public class PwnedCredentialsChecker {
 
     private final BloomFilterCheck pwnedFilter;
     private final int maxPasswordLength;
-    private final MetricsWriter metrics;
+    private final PwnedPasswordMetricsReporter pwnedPasswordMetrics;
 
-    public PwnedCredentialsChecker(final BloomFilterCheck pwnedFilter, final int maxPasswordLength, final MetricsWriter metrics) {
+    public PwnedCredentialsChecker(final BloomFilterCheck pwnedFilter,
+                                   final int maxPasswordLength,
+                                   final PwnedPasswordMetricsReporter pwnedPasswordMetrics) {
+
         this.pwnedFilter = pwnedFilter;
         this.maxPasswordLength = maxPasswordLength;
-        this.metrics = metrics;
+        this.pwnedPasswordMetrics = pwnedPasswordMetrics;
     }
 
     public boolean isPasswordPwned(final String password) {
 
-        final boolean pwned = isPwned(password);
-
-        if (pwned) {
-            metrics.write(PWNED_PASSWORD);
-        } else {
-            metrics.write(NOT_PWNED_PASSWORD);
-        }
-
-        return pwned;
+        return pwnedPasswordMetrics.executeAndReport(() -> isPwned(password));
     }
 
     private boolean isPwned(final String password) {
