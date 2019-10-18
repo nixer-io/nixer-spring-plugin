@@ -60,7 +60,7 @@ public class MetersRepository {
         private MetersRepository build(MeterRegistry meterRegistry) {
             final Map<String, Meter> meters = meterDefinitions.stream()
                     .collect(Collectors.toMap(
-                            MeterDefinition::getLookupId,
+                            meterDefinition -> meterDefinition.getLookupId().lookupId(),
                             meterDefinition -> meterDefinition.register(meterRegistry)
                     ));
 

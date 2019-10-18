@@ -48,7 +48,7 @@ public class PwnedCheckMetricsConfiguration {
 
             builder.register(
                     MeterDefinition.counter(
-                            PWNED_PASSWORD.lookupId(),
+                            PWNED_PASSWORD,
                             () -> Counter.builder(PWNED_PASSWORD.metricName)
                                     .description(PWNED_PASSWORD.description)
                                     .tag(PWNED_PASSWORD.resultTag, PWNED_PASSWORD.result)
@@ -57,7 +57,7 @@ public class PwnedCheckMetricsConfiguration {
 
             builder.register(
                     MeterDefinition.counter(
-                            NOT_PWNED_PASSWORD.lookupId(),
+                            NOT_PWNED_PASSWORD,
                             () -> Counter.builder(NOT_PWNED_PASSWORD.metricName)
                                     .description(NOT_PWNED_PASSWORD.description)
                                     .tag(NOT_PWNED_PASSWORD.resultTag, NOT_PWNED_PASSWORD.result)

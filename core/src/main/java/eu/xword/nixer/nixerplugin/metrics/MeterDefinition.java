@@ -14,20 +14,20 @@ import io.micrometer.core.instrument.MeterRegistry;
  */
 public class MeterDefinition {
 
-    private final String lookupId;
+    private final MetricsLookupId lookupId;
 
     private final Function<MeterRegistry, Meter> definition;
 
-    public static MeterDefinition counter(final String lookupId, final Supplier<Counter.Builder> counterDefinition) {
+    public static MeterDefinition counter(final MetricsLookupId lookupId, final Supplier<Counter.Builder> counterDefinition) {
         return new MeterDefinition(lookupId, counterDefinition.get()::register);
     }
 
-    private MeterDefinition(final String lookupId, final Function<MeterRegistry, Meter> definition) {
+    private MeterDefinition(final MetricsLookupId lookupId, final Function<MeterRegistry, Meter> definition) {
         this.lookupId = lookupId;
         this.definition = definition;
     }
 
-    public String getLookupId() {
+    public MetricsLookupId getLookupId() {
         return lookupId;
     }
 
