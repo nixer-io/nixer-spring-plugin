@@ -17,7 +17,7 @@ public class UsernameFailedLoginOverThresholdEvent extends AnomalyEvent {
 
     @Override
     public String toString() {
-        return "UsernameFailedLoginOverThresholdEvent ip:" + getUsername();
+        return "UsernameFailedLoginOverThresholdEvent username:" + getUsername();
     }
 
     @Override

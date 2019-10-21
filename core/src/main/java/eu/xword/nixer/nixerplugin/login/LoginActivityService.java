@@ -28,6 +28,6 @@ public class LoginActivityService {
             repository.save(loginResult, context);
         }
 
-        anomalyRulesRunner.onLogin(loginResult, context);
+        anomalyRulesRunner.onLogin(context);
     }
 }

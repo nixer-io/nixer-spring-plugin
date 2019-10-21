@@ -1,7 +1,7 @@
 package eu.xword.nixer.nixerplugin.login;
 
 /**
- * Abstraction for
+ * Abstraction for counter that updates it value to login result.
  */
 public interface LoginMetricCounter {
 

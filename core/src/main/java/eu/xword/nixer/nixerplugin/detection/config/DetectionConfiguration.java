@@ -1,7 +1,6 @@
 package eu.xword.nixer.nixerplugin.detection.config;
 
 import java.util.List;
-import java.util.Optional;
 
 import eu.xword.nixer.nixerplugin.detection.rules.AnomalyRule;
 import eu.xword.nixer.nixerplugin.detection.rules.AnomalyRulesRunner;
@@ -39,11 +38,8 @@ public class DetectionConfiguration {
 
     @Bean
     public AnomalyRulesRunner rulesEngine(ApplicationEventPublisher eventPublisher, List<AnomalyRule> anomalyRules) {
-        final AnomalyRulesRunner anomalyRulesRunner = new AnomalyRulesRunner(eventPublisher);
 
-        anomalyRules.forEach(anomalyRulesRunner::addRule);
-
-        return anomalyRulesRunner;
+        return new AnomalyRulesRunner(eventPublisher, anomalyRules);
     }
 
     @Bean

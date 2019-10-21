@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import static eu.xword.nixer.nixerplugin.filter.RequestAugmentation.USER_AGENT_FAILED_LOGIN_OVER_THRESHOLD;
+import static eu.xword.nixer.nixerplugin.filter.RequestAugmentation.USER_AGENT_TOKEN;
 import static org.springframework.http.HttpHeaders.USER_AGENT;
 
 /**
@@ -16,6 +17,7 @@ import static org.springframework.http.HttpHeaders.USER_AGENT;
 @Component
 public class UserAgentFailedLoginOverThresholdFilter extends MetadataFilter {
 
+    private final UserAgentTokenizer userAgentTokenizer = UserAgentTokenizer.sha1Tokenizer();
     private final UserAgentOverLoginThresholdRegistry userAgentOverLoginThresholdRegistry;
 
     public UserAgentFailedLoginOverThresholdFilter(UserAgentOverLoginThresholdRegistry userAgentOverLoginThresholdRegistry) {
@@ -26,10 +28,10 @@ public class UserAgentFailedLoginOverThresholdFilter extends MetadataFilter {
     @Override
     protected void apply(final HttpServletRequest request) {
         final String userAgent = request.getHeader(USER_AGENT);
-        final UserAgentTokenizer tokenizer = UserAgentTokenizer.sha1Tokenizer();
-        final String userAgentToken = tokenizer.tokenize(userAgent);
+        final String userAgentToken = userAgentTokenizer.tokenize(userAgent);
         boolean overThreshold = userAgentToken != null && userAgentOverLoginThresholdRegistry.contains(userAgentToken);
 
+        request.setAttribute(USER_AGENT_TOKEN, userAgentToken);
         request.setAttribute(USER_AGENT_FAILED_LOGIN_OVER_THRESHOLD, overThreshold);
     }
 }

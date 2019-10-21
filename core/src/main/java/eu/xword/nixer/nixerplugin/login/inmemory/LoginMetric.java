@@ -5,6 +5,5 @@ package eu.xword.nixer.nixerplugin.login.inmemory;
  */
 public interface LoginMetric {
 
-    //todo should return double ?
     int value(final String key);
 }

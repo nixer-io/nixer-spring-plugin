@@ -7,9 +7,7 @@ public interface RollingCounter {
 
     void increment(String key);
 
-    void add(String key, int increment);
-
     void remove(String key);
 
-    int get(String key);
+    int count(String key);
 }

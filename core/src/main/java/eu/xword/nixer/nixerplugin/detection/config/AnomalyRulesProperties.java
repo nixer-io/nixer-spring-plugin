@@ -5,9 +5,15 @@ import java.util.Map;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+/**
+ * Central class for rules properties
+ */
 @ConfigurationProperties(prefix = "nixer.rules")
 public class AnomalyRulesProperties {
 
+    /**
+     * Maps rule properties by name that they correspond to
+     */
     private Map<Name, WindowThresholdRuleProperties> failedLoginThreshold = new HashMap<>();
 
     public Map<Name, WindowThresholdRuleProperties> getFailedLoginThreshold() {

@@ -13,18 +13,18 @@ public class UserAgentLoginOverThresholdRule extends ThresholdAnomalyRule {
 
     private static final int THRESHOLD_VALUE = 10;
 
-    private final LoginMetric loginMetric;
+    private final LoginMetric failedLoginMetric;
 
-    public UserAgentLoginOverThresholdRule(final LoginMetric loginMetric) {
+    public UserAgentLoginOverThresholdRule(final LoginMetric failedLoginMetric) {
         super(THRESHOLD_VALUE);
-        Assert.notNull(loginMetric, "LoginMetric must not be null");
-        this.loginMetric = loginMetric;
+        Assert.notNull(failedLoginMetric, "LoginMetric must not be null");
+        this.failedLoginMetric = failedLoginMetric;
     }
 
     @Override
     public void execute(final LoginContext loginContext, final EventEmitter eventEmitter) {
         final String userAgent = loginContext.getUserAgentToken();
-        final int failedLogin = loginMetric.value(userAgent); //todo login Metric api not symmetrical.
+        final int failedLogin = failedLoginMetric.value(userAgent); //todo login Metric api not symmetrical.
 
         if (isOverThreshold(failedLogin)) {
             eventEmitter.accept(new UserAgentFailedLoginOverThresholdEvent(userAgent));

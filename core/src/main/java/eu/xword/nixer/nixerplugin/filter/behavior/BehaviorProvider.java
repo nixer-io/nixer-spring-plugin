@@ -3,7 +3,6 @@ package eu.xword.nixer.nixerplugin.filter.behavior;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 
@@ -24,8 +23,8 @@ public class BehaviorProvider {
     }
 
     public void addRule(String name, Predicate<Facts> predicate, String behaviorName) {
-        Optional.ofNullable(behaviorRegistry.findByName(behaviorName))
-                .orElseThrow(() -> new IllegalArgumentException("Unknown behavior " + behaviorName));
+        final Behavior behavior = behaviorRegistry.findByName(behaviorName);
+        Assert.notNull(behavior, () -> "Unknown behavior " + behaviorName);
 
         behaviors.put(name, behaviorName);
         rules.add(new PredicateRule(name, predicate));

@@ -14,10 +14,10 @@ public class IpFailedLoginOverThresholdRule extends ThresholdAnomalyRule {
 
     private final LoginMetric loginMetric;
 
-    public IpFailedLoginOverThresholdRule(final LoginMetric loginMetric) {
+    public IpFailedLoginOverThresholdRule(final LoginMetric failedLoginMetric) {
         super(THRESHOLD_VALUE);
-        Assert.notNull(loginMetric, "LoginMetric must not be null");
-        this.loginMetric = loginMetric;
+        Assert.notNull(failedLoginMetric, "LoginMetric must not be null");
+        this.loginMetric = failedLoginMetric;
     }
 
     @Override

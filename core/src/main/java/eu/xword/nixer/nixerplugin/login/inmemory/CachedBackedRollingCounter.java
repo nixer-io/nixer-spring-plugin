@@ -22,39 +22,33 @@ public class CachedBackedRollingCounter implements RollingCounter {
 
     //todo consider
     // O(n) for sum operation and space.
-    private final LoadingCache<String, Count> counts;
+    private final LoadingCache<String, Timestamps> counts;
 
     private Clock clock = Clock.systemDefaultZone();
 
-    private final long window;
+    private final long windowInMillis;
 
-    public CachedBackedRollingCounter(final Duration window) {
-        Assert.notNull(window, "Window must not be null");
+    public CachedBackedRollingCounter(final Duration windowInMillis) {
+        Assert.notNull(windowInMillis, "Window must not be null");
         // todo check if window length makes sense
-        this.window = window.toMillis();
+        this.windowInMillis = windowInMillis.toMillis();
         this.counts = CacheBuilder.newBuilder()
-                .expireAfterAccess(window.plusMinutes(1))
-                .build(new CacheLoader<String, Count>() {
+                .expireAfterAccess(windowInMillis.plusMinutes(1))
+                .build(new CacheLoader<String, Timestamps>() {
                     @Override
-                    public Count load(final String key) throws Exception {
-                        return new Count();
+                    public Timestamps load(final String key) throws Exception {
+                        return new Timestamps();
                     }
                 });
     }
 
     @Override
     public void increment(final String key) {
-        add(key, 1);
-    }
-
-    @Override
-    public void add(final String key, final int increment) {
         Assert.notNull(key, "Key must not be null");
-        Assert.isTrue(increment == 1, "Increment must be 1");
 
         final long millis = clock.millis();
-        final Count count = counts.getUnchecked(key);
-        count.add(millis);
+        final Timestamps timestamps = counts.getUnchecked(key);
+        timestamps.add(millis);
     }
 
     @Override
@@ -65,16 +59,16 @@ public class CachedBackedRollingCounter implements RollingCounter {
     }
 
     @Override
-    public int get(final String key) {
+    public int count(final String key) {
         Assert.notNull(key, "Key must not be null");
 
-        final Count count = counts.getIfPresent(key);
-        if (count != null) {
-            final int sum = count.sum();
-            if (sum == 0) {
+        final Timestamps timestamps = counts.getIfPresent(key);
+        if (timestamps != null) {
+            final int size = timestamps.size();
+            if (size == 0) {
                 counts.invalidate(key);
             }
-            return sum;
+            return size;
         } else {
             return 0;
         }
@@ -85,27 +79,27 @@ public class CachedBackedRollingCounter implements RollingCounter {
         return counts.size();
     }
 
-    private class Count {
+    private class Timestamps {
 
         //todo use int instead of long
         //todo consider using fastutil IntList
-        private final LinkedList<Long> counts = new LinkedList<>();
+        private final LinkedList<Long> timestamps = new LinkedList<>();
 
         synchronized void add(long timestamp) {
-            counts.addLast(timestamp);
+            timestamps.addLast(timestamp);
         }
 
-        synchronized int sum() {
+        synchronized int size() {
             final long now = CachedBackedRollingCounter.this.clock.millis();
-            if (counts.isEmpty()) {
+            if (timestamps.isEmpty()) {
                 return 0;
             }
-            long expireOlderThan = now - CachedBackedRollingCounter.this.window;
-            if (expireOlderThan > counts.getLast()) {
+            long expireOlderThan = now - CachedBackedRollingCounter.this.windowInMillis;
+            if (expireOlderThan > timestamps.getLast()) {
                 return 0; // expired
             } else {
                 removeExpired(expireOlderThan);
-                return counts.size();
+                return timestamps.size();
             }
         }
 
@@ -113,11 +107,11 @@ public class CachedBackedRollingCounter implements RollingCounter {
             //todo it might be efficient to use binary search to find element of expiring element.
             // But it would require direct access list eg. arraylist
             while (true) {
-                Long time = counts.getFirst();
+                Long time = timestamps.getFirst();
                 if (time == null) {
                     return;
                 } else if (time < expireOlderThan) {
-                    counts.removeFirst();
+                    timestamps.removeFirst();
                 } else {
                     break;
                 }

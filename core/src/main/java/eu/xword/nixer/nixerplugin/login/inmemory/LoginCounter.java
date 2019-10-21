@@ -32,7 +32,7 @@ public class LoginCounter implements LoginMetric, LoginMetricCounter {
 
     @Override
     public int value(final String key) {
-        return key != null ? counter.get(key) : 0;
+        return key != null ? counter.count(key) : 0;
     }
 
     @Override
