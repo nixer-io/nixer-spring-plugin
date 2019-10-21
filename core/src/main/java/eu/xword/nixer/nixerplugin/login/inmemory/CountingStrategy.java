@@ -8,9 +8,9 @@ import eu.xword.nixer.nixerplugin.login.LoginResult;
  * Abstraction for strategy factor for metric counting
  */
 public interface CountingStrategy {
-    CountFunction count(final RollingCounter counter, final LoginResult result);
+    CounterFunction counter(final RollingCounter counter, final LoginResult result);
 
-    interface CountFunction extends Consumer<String> {
+    interface CounterFunction extends Consumer<String> {
 
     }
 }

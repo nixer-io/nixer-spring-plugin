@@ -30,12 +30,12 @@ class CountingStrategiesTest {
         void shouldCountFails() {
             final CountingStrategies factory = CountingStrategies.TOTAL_FAILS;
 
-            factory.count(rollingCounter, failed).accept(KEY);
+            factory.counter(rollingCounter, failed).accept(KEY);
 
             verify(rollingCounter).increment(KEY);
             verifyNoMoreInteractions(rollingCounter);
 
-            factory.count(rollingCounter, success).accept(KEY);
+            factory.counter(rollingCounter, success).accept(KEY);
 
             verifyNoMoreInteractions(rollingCounter);
         }
@@ -48,16 +48,16 @@ class CountingStrategiesTest {
         void shouldCountConsecutiveFails() {
             final CountingStrategies factory = CountingStrategies.CONSECUTIVE_FAILS;
 
-            factory.count(rollingCounter, failed).accept(KEY);
+            factory.counter(rollingCounter, failed).accept(KEY);
 
             verify(rollingCounter).increment(KEY);
             verifyNoMoreInteractions(rollingCounter);
 
-            factory.count(rollingCounter, failed).accept(KEY);
+            factory.counter(rollingCounter, failed).accept(KEY);
             verify(rollingCounter, times(2)).increment(KEY);
             verifyNoMoreInteractions(rollingCounter);
 
-            factory.count(rollingCounter, success).accept(KEY);
+            factory.counter(rollingCounter, success).accept(KEY);
             verify(rollingCounter).remove(KEY);
             verifyNoMoreInteractions(rollingCounter);
         }

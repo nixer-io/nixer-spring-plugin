@@ -58,8 +58,9 @@ public class DetectionConfiguration {
         counterRegistry.registerCounter(counter);
 
         final IpFailedLoginOverThresholdRule rule = new IpFailedLoginOverThresholdRule(counter);
-        Optional.ofNullable(properties.getThreshold())
-                .ifPresent(rule::setThreshold);
+        if (properties.getThreshold() != null) {
+            rule.setThreshold(properties.getThreshold());
+        }
 
         return rule;
     }
@@ -76,8 +77,9 @@ public class DetectionConfiguration {
         counterRegistry.registerCounter(counter);
 
         final UsernameFailedLoginOverThresholdRule rule = new UsernameFailedLoginOverThresholdRule(counter);
-        Optional.ofNullable(properties.getThreshold())
-                .ifPresent(rule::setThreshold);
+        if (properties.getThreshold() != null) {
+            rule.setThreshold(properties.getThreshold());
+        }
 
         return rule;
     }
@@ -94,8 +96,9 @@ public class DetectionConfiguration {
         counterRegistry.registerCounter(counter);
 
         final UserAgentLoginOverThresholdRule rule = new UserAgentLoginOverThresholdRule(counter);
-        Optional.ofNullable(properties.getThreshold())
-                .ifPresent(rule::setThreshold);
+        if (properties.getThreshold() != null) {
+            rule.setThreshold(properties.getThreshold());
+        }
 
         return rule;
     }

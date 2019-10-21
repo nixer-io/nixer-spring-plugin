@@ -9,18 +9,18 @@ public enum CountingStrategies implements CountingStrategy {
 
     CONSECUTIVE_FAILS {
         @Override
-        public CountFunction count(final RollingCounter counter, final LoginResult result) {
+        public CounterFunction counter(final RollingCounter counter, final LoginResult result) {
             return result.isSuccess() ? counter::remove : counter::increment;
         }
     },
     TOTAL_FAILS {
         @Override
-        public CountFunction count(final RollingCounter counter, final LoginResult result) {
+        public CounterFunction counter(final RollingCounter counter, final LoginResult result) {
             return result.isSuccess() ? NOP : counter::increment;
         }
     };
 
-    public static final CountFunction NOP = (it) -> {
+    public static final CounterFunction NOP = (it) -> {
     };
 
 }

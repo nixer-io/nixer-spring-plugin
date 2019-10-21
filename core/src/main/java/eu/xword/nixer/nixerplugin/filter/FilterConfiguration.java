@@ -54,7 +54,7 @@ public class FilterConfiguration {
 
     private BehaviorProviderConfigurer defaultRuleConfigurer() {
         return (it) -> {
-            logger.warn("Custom BehaviorProviderConfigurer bean not found. There are not behaviors configured.");
+            logger.warn("Custom BehaviorProviderConfigurer bean not found. Behaviors are not configured.");
             return it;
         };
     }

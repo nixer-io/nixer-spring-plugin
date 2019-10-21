@@ -39,7 +39,7 @@ public class LoginCounter implements LoginMetric, LoginMetricCounter {
     public void onLogin(final LoginResult result, final LoginContext context) {
         final String key = this.featureKey.key(context);
         if (key != null) {
-            countingStrategy.count(counter, result).accept(key);
+            countingStrategy.counter(counter, result).accept(key);
         }
     }
 }
