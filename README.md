@@ -1,22 +1,21 @@
 ## Nixer spring-plugin by Crossword Cybersecurity
-------
+
 A plugin for [Spring](https://github.com/spring-projects/spring-framework) utilising Nixer's protection technologies by [Crossword Cybersecurity](https://www.crosswordcybersecurity.com/). The plugin provides protection against credential stuffing attacks to your Spring web application. 
 
 ## Credential Stuffing attack
-------
+
 Credential Stuffing is a peculiar attack on web applications. Technically it is a very basic and easy to understand attack closely related to brute force techniques, yet it is frighteningly effective. 
  
-To learn more about credential stuffing take a look at [OWASP definition](https://www.owasp
-.org/index.php/Credential_stuffing) or our [introductory article into the subject](https://medium.com/@jbron/credential-stuffing-how-its-done-and-what-to-do-with-it-57ad66302ce2).
+To learn more about credential stuffing take a look at [OWASP definition](https://www.owasp.org/index.php/Credential_stuffing) or our [introductory article into the subject](https://medium.com/@jbron/credential-stuffing-how-its-done-and-what-to-do-with-it-57ad66302ce2).
 
 ## Credential Stuffing protection as a Spring library - why?
-------
+
 The motivation for releasing this open-source plugin is to give more insight and control to the developers of the web applications. Majority of available protection software runs as an external piece complicating the architecture and introducing yet another point of failure into the system. In addition, the task of detecting credential stuffing often requires statistical learning or machine learning which results in a black-box software that can't explain its decisions. Also such third-party servers require access to the HTTP traffic, which creates data privacy and security concerns. Administrators are usually reluctant to adopt that kind of black-box protections. It is always not easy to propagate such decisions within the organization. 
    
 Apart from privacy and infrastructure considerations, there are also data-science related advantages of such approach. External software needs to read a lot of things directly from HTTP traffic. The process of feature engineering and data augmentation is harder and usually results in complicated algorithms. By moving heuristics directly into the application, we are no longer forced to decode HTTP traffic and we have access to much broader application context. This is especially powerful in Spring, where a lot of configuration parameters about the application are available internally. By leverage Spring's well-though architecture, it is possible to create a library that provides control and ease of integration.
 
 ## Features and concepts
-------
+
 
 ### HTTP filters
 We use Java Servlet filters for injecting additional functionality into the HTTP pipeline, just like Spring Security and other Spring modules. Every major feature of the plugin will have a dedicated filter which allows fine-grained control over particular features. 
@@ -59,7 +58,7 @@ By default, we publish events to micrometer. Also, we provide integration with E
 Google's Captcha V2 is a solid mechanism. We provide an example integration with Spring Security login form. You can configure the system to use other captcha providers. Sometime you may only wish to log suspicious behavior or maybe you want to redirect. 
 
 ## Licensing
-------
+
 Nixer credential stuffing plugin is an open source project licensed under MIT.
 
 
