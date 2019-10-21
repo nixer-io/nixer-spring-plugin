@@ -1,7 +1,5 @@
 package eu.xword.nixer.nixerplugin.detection.rules;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 import eu.xword.nixer.nixerplugin.events.IpFailedLoginOverThresholdEvent;
 import eu.xword.nixer.nixerplugin.events.UserAgentFailedLoginOverThresholdEvent;
 import eu.xword.nixer.nixerplugin.login.LoginContext;
@@ -11,12 +9,14 @@ import org.springframework.util.Assert;
 /**
  * Rule that checks if number of login failures for useragent exceeds threshold and emits {@link IpFailedLoginOverThresholdEvent} event if it does.
  */
-public class UserAgentLoginOverThresholdRule implements AnomalyRule {
+public class UserAgentLoginOverThresholdRule extends ThresholdAnomalyRule {
 
-    private final AtomicInteger threshold = new AtomicInteger(10);
+    private static final int THRESHOLD_VALUE = 10;
+
     private final LoginMetric loginMetric;
 
     public UserAgentLoginOverThresholdRule(final LoginMetric loginMetric) {
+        super(THRESHOLD_VALUE);
         Assert.notNull(loginMetric, "LoginMetric must not be null");
         this.loginMetric = loginMetric;
     }
@@ -25,15 +25,10 @@ public class UserAgentLoginOverThresholdRule implements AnomalyRule {
     public void execute(final LoginContext loginContext, final EventEmitter eventEmitter) {
         final String userAgent = loginContext.getUserAgentToken();
         final int failedLogin = loginMetric.value(userAgent); //todo login Metric api not symmetrical.
-        if (failedLogin > threshold.get()) {
-            //todo duped events. should we use == ?
+
+        if (isOverThreshold(failedLogin)) {
             eventEmitter.accept(new UserAgentFailedLoginOverThresholdEvent(userAgent));
         }
     }
 
-    //todo add actuator endpoint to read/update it
-    public void setThreshold(final int threshold) {
-        Assert.isTrue(threshold > 1, "Threshold must be greater than 1");
-        this.threshold.set(threshold);
-    }
 }
