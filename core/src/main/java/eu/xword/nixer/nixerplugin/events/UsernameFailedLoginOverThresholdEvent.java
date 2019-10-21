@@ -7,8 +7,8 @@ import com.google.common.base.Objects;
  */
 public class UsernameFailedLoginOverThresholdEvent extends AnomalyEvent {
 
-    public UsernameFailedLoginOverThresholdEvent(final String ip) {
-        super(ip);
+    public UsernameFailedLoginOverThresholdEvent(final String username) {
+        super(username);
     }
 
     public String getUsername() {

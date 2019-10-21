@@ -7,8 +7,8 @@ import com.google.common.base.Objects;
  */
 public class UserAgentFailedLoginOverThresholdEvent extends AnomalyEvent {
 
-    public UserAgentFailedLoginOverThresholdEvent(final String ip) {
-        super(ip);
+    public UserAgentFailedLoginOverThresholdEvent(final String userAgent) {
+        super(userAgent);
     }
 
     public String getUserAgent() {
