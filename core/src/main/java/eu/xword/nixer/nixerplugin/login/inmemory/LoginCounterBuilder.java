@@ -35,6 +35,7 @@ public class LoginCounterBuilder {
 
     public LoginCounterBuilder window(final Duration windowSize) {
         Assert.notNull(windowSize, "WindowSize must not be null");
+        WindowSize.validate(windowSize);
         this.windowSize = windowSize;
         return this;
     }

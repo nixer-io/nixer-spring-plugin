@@ -16,7 +16,7 @@ public class WindowThresholdRuleProperties {
      * Window size in minutes that will be used to calculate metric.
      */
     @DurationUnit(ChronoUnit.MINUTES)
-    private Duration window;
+    private Duration window = WindowSize.WINDOW_5M;
 
     /**
      * Defines at what metric value rule will trigger
@@ -44,8 +44,6 @@ public class WindowThresholdRuleProperties {
     }
 
     public void setWindow(final Duration window) {
-        WindowSize.validate(window);
-
         this.window = window;
     }
 }

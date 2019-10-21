@@ -3,16 +3,17 @@ package eu.xword.nixer.nixerplugin.detection.config;
 import java.util.List;
 import java.util.Optional;
 
-import eu.xword.nixer.nixerplugin.detection.rules.IpFailedLoginOverThresholdRule;
 import eu.xword.nixer.nixerplugin.detection.rules.AnomalyRule;
 import eu.xword.nixer.nixerplugin.detection.rules.AnomalyRulesRunner;
+import eu.xword.nixer.nixerplugin.detection.rules.IpFailedLoginOverThresholdRule;
 import eu.xword.nixer.nixerplugin.detection.rules.UserAgentLoginOverThresholdRule;
 import eu.xword.nixer.nixerplugin.detection.rules.UsernameFailedLoginOverThresholdRule;
 import eu.xword.nixer.nixerplugin.login.inmemory.CounterRegistry;
 import eu.xword.nixer.nixerplugin.login.inmemory.CountingStrategies;
+import eu.xword.nixer.nixerplugin.login.inmemory.InMemoryLoginActivityRepository;
 import eu.xword.nixer.nixerplugin.login.inmemory.LoginCounter;
 import eu.xword.nixer.nixerplugin.login.inmemory.LoginCounterBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationEventPublisher;
@@ -30,14 +31,14 @@ import static eu.xword.nixer.nixerplugin.login.inmemory.FeatureKey.Features.USER
 @EnableConfigurationProperties(AnomalyRulesProperties.class)
 public class DetectionConfiguration {
 
-    private final CounterRegistry counterRegistry;
-
-    public DetectionConfiguration(final CounterRegistry counterRegistry) {
-        this.counterRegistry = counterRegistry;
+    @Bean
+    @ConditionalOnMissingBean
+    public InMemoryLoginActivityRepository counterRegistry() {
+        return new InMemoryLoginActivityRepository();
     }
 
     @Bean
-    public AnomalyRulesRunner rulesEngine(ApplicationEventPublisher eventPublisher, @Autowired(required = false) List<AnomalyRule> anomalyRules) {
+    public AnomalyRulesRunner rulesEngine(ApplicationEventPublisher eventPublisher, List<AnomalyRule> anomalyRules) {
         final AnomalyRulesRunner anomalyRulesRunner = new AnomalyRulesRunner(eventPublisher);
 
         anomalyRules.forEach(anomalyRulesRunner::addRule);
@@ -47,7 +48,7 @@ public class DetectionConfiguration {
 
     @Bean
     @ConditionalOnProperty(prefix = "nixer.rules.failed-login-threshold.ip", name = "enabled", havingValue = "true")
-    public IpFailedLoginOverThresholdRule ipFailedLoginThresholdRule(AnomalyRulesProperties ruleProperties) {
+    public IpFailedLoginOverThresholdRule ipFailedLoginThresholdRule(AnomalyRulesProperties ruleProperties, CounterRegistry counterRegistry) {
         final WindowThresholdRuleProperties properties = ruleProperties.getFailedLoginThreshold().get(ip);
 
         final LoginCounter counter = LoginCounterBuilder.counter(IP)
@@ -65,7 +66,7 @@ public class DetectionConfiguration {
 
     @Bean
     @ConditionalOnProperty(prefix = "nixer.rules.failed-login-threshold.username", name = "enabled", havingValue = "true")
-    public UsernameFailedLoginOverThresholdRule usernameFailedLoginThresholdRule(AnomalyRulesProperties ruleProperties) {
+    public UsernameFailedLoginOverThresholdRule usernameFailedLoginThresholdRule(AnomalyRulesProperties ruleProperties, CounterRegistry counterRegistry) {
         final WindowThresholdRuleProperties properties = ruleProperties.getFailedLoginThreshold().get(username);
 
         final LoginCounter counter = LoginCounterBuilder.counter(USERNAME)
@@ -83,7 +84,7 @@ public class DetectionConfiguration {
 
     @Bean
     @ConditionalOnProperty(prefix = "nixer.rules.failed-login-threshold.useragent", name = "enabled", havingValue = "true")
-    public UserAgentLoginOverThresholdRule userAgentFailedLoginThresholdRule(AnomalyRulesProperties ruleProperties) {
+    public UserAgentLoginOverThresholdRule userAgentFailedLoginThresholdRule(AnomalyRulesProperties ruleProperties, CounterRegistry counterRegistry) {
         final WindowThresholdRuleProperties properties = ruleProperties.getFailedLoginThreshold().get(useragent);
 
         final LoginCounter counter = LoginCounterBuilder.counter(USER_AGENT_TOKEN)

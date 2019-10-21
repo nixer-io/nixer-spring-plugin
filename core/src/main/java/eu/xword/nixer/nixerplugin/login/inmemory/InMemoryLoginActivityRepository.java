@@ -7,12 +7,10 @@ import eu.xword.nixer.nixerplugin.login.LoginActivityRepository;
 import eu.xword.nixer.nixerplugin.login.LoginContext;
 import eu.xword.nixer.nixerplugin.login.LoginMetricCounter;
 import eu.xword.nixer.nixerplugin.login.LoginResult;
-import org.springframework.stereotype.Repository;
 
 /**
  * Stores login results in memory.
  */
-@Repository
 public class InMemoryLoginActivityRepository implements LoginActivityRepository, CounterRegistry {
 
     private final List<LoginMetricCounter> counters = new ArrayList<>();
