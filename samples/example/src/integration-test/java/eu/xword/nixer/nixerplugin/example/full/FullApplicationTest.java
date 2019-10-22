@@ -3,6 +3,7 @@ package eu.xword.nixer.nixerplugin.example.full;
 import eu.xword.nixer.nixerplugin.captcha.recaptcha.RecaptchaClientStub;
 import eu.xword.nixer.nixerplugin.captcha.security.CaptchaChecker;
 import eu.xword.nixer.nixerplugin.captcha.security.CaptchaCondition;
+import eu.xword.nixer.nixerplugin.pwned.metrics.PwnedCheckMetrics;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.junit.jupiter.api.AfterEach;
@@ -20,11 +21,14 @@ import org.springframework.integration.test.matcher.MapContentMatchers;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.SmartRequestBuilder;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 
 import static eu.xword.nixer.nixerplugin.example.LoginRequestBuilder.formLogin;
+import static eu.xword.nixer.nixerplugin.pwned.metrics.PwnedCheckMetrics.NOT_PWNED_PASSWORD;
+import static eu.xword.nixer.nixerplugin.pwned.metrics.PwnedCheckMetrics.PWNED_PASSWORD;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.is;
@@ -153,14 +157,51 @@ public class FullApplicationTest {
     }
 
     @Test
-    void should_add_request_attribute_on_pwned_password() throws  Exception {
+    void shouldDetectPwnedPassword() throws Exception {
 
-        this.mockMvc.perform(formLogin().user("user").password("not-pwned-password").build())
+        loginWithNotPwnedPassword()
                 .andExpect(request().attribute("nixer.pwned.password", nullValue()));
 
-        // using password from pwned-database
-        this.mockMvc.perform(formLogin().user("user").password("foobar1").build())
+        loginWithPwnedPassword()
                 .andExpect(request().attribute("nixer.pwned.password", true));
+    }
+
+    @Test
+    void shouldWritePwnedPasswordMetrics() throws  Exception {
+        // given
+        final Counter pwnedPasswordCounter = givenCounter(PWNED_PASSWORD);
+        final Counter notPwnedPasswordCounter = givenCounter(NOT_PWNED_PASSWORD);
+
+        double initialPwnedCount = pwnedPasswordCounter.count();
+        double initialNotPwnedCount = notPwnedPasswordCounter.count();
+
+        // when
+        loginWithNotPwnedPassword();
+
+        // then
+        assertThat(pwnedPasswordCounter.count()).isEqualTo(initialPwnedCount);
+        assertThat(notPwnedPasswordCounter.count()).isEqualTo(initialNotPwnedCount + 1);
+
+        // when
+        loginWithPwnedPassword();
+
+        // then
+        assertThat(pwnedPasswordCounter.count()).isEqualTo(initialPwnedCount + 1);
+        assertThat(notPwnedPasswordCounter.count()).isEqualTo(initialNotPwnedCount + 1);
+    }
+
+    private Counter givenCounter(final PwnedCheckMetrics pwnedMetric) {
+        return meterRegistry.get(pwnedMetric.metricName)
+                .tag(pwnedMetric.resultTag, pwnedMetric.result).counter();
+    }
+
+    private ResultActions loginWithNotPwnedPassword() throws Exception {
+        return this.mockMvc.perform(formLogin().user("user").password("not-pwned-password").build());
+    }
+
+    private ResultActions loginWithPwnedPassword() throws Exception {
+        // using password from pwned-database
+        return this.mockMvc.perform(formLogin().user("user").password("foobar1").build());
     }
 
     @Test
