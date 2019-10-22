@@ -1,5 +1,6 @@
 package eu.xword.nixer.nixerplugin.captcha.config;
 
+import eu.xword.nixer.nixerplugin.captcha.CaptchaBehavior;
 import eu.xword.nixer.nixerplugin.captcha.CaptchaService;
 import eu.xword.nixer.nixerplugin.captcha.CaptchaServiceFactory;
 import eu.xword.nixer.nixerplugin.captcha.endpoint.CaptchaEndpoint;
@@ -22,7 +23,7 @@ import static eu.xword.nixer.nixerplugin.captcha.metrics.CaptchaMetrics.LOGIN_AC
  *
  */
 @Configuration
-@EnableConfigurationProperties(value = {LoginCaptchaProperties.class})
+@EnableConfigurationProperties(value = {CaptchaMetricsProperties.class, LoginCaptchaProperties.class})
 @Import({MetricsConfiguration.class, RecaptchaConfiguration.class})
 public class CaptchaConfiguration implements LoginFailureTypeRegistry.Contributor {
 
@@ -47,6 +48,11 @@ public class CaptchaConfiguration implements LoginFailureTypeRegistry.Contributo
     @Bean
     public CaptchaValidator captchaValidator(CaptchaServiceFactory captchaServiceFactory) {
         return new CaptchaValidator(captchaServiceFactory);
+    }
+
+    @Bean
+    public CaptchaBehavior captchaBehavior() {
+        return new CaptchaBehavior();
     }
 
     @Override

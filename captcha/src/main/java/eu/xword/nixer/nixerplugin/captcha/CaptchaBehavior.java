@@ -8,14 +8,12 @@ import javax.servlet.http.HttpSession;
 import eu.xword.nixer.nixerplugin.filter.behavior.Behavior;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.stereotype.Component;
 
 import static eu.xword.nixer.nixerplugin.filter.behavior.Behaviors.CAPTCHA;
 
 /**
  * Challenges user with captcha. Sets flag {@link #CAPTCHA_CHALLENGE_SESSION_ATTR} in session based on which captcha is displayed and then verified
  */
-@Component
 public class CaptchaBehavior implements Behavior {
 
     private final Log logger = LogFactory.getLog(getClass());

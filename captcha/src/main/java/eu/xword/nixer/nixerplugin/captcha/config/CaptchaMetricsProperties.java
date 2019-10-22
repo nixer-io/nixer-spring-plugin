@@ -1,12 +1,10 @@
 package eu.xword.nixer.nixerplugin.captcha.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 
 /**
  * {@link ConfigurationProperties} for configuring captcha protection metrics.
  */
-@Component
 @ConfigurationProperties(prefix = "nixer.captcha")
 public class CaptchaMetricsProperties {
 
