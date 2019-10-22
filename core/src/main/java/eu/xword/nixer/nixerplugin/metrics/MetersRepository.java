@@ -47,21 +47,21 @@ public class MetersRepository {
 
     public static class Builder {
 
-        private final List<MeterDefinition> meterDefinitions = new ArrayList<>();
+        private final List<CounterDefinition> counterDefinitions = new ArrayList<>();
 
         private Builder() {
         }
 
-        public Builder register(MeterDefinition meterDefinition) {
-            meterDefinitions.add(meterDefinition);
+        public Builder register(CounterDefinition counterDefinition) {
+            counterDefinitions.add(counterDefinition);
             return this;
         }
 
         private MetersRepository build(MeterRegistry meterRegistry) {
-            final Map<String, Meter> meters = meterDefinitions.stream()
+            final Map<String, Meter> meters = counterDefinitions.stream()
                     .collect(Collectors.toMap(
-                            meterDefinition -> meterDefinition.getLookupId().lookupId(),
-                            meterDefinition -> meterDefinition.register(meterRegistry)
+                            MetricsLookupId::lookupId,
+                            counterDefinition -> counterDefinition.register(meterRegistry)
                     ));
 
             return new MetersRepository(meters);

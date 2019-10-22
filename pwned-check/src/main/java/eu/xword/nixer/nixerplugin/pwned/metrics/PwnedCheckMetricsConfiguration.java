@@ -1,12 +1,10 @@
 package eu.xword.nixer.nixerplugin.pwned.metrics;
 
-import eu.xword.nixer.nixerplugin.metrics.MeterDefinition;
 import eu.xword.nixer.nixerplugin.metrics.MetersRepository;
 import eu.xword.nixer.nixerplugin.metrics.MetricsFacade;
 import eu.xword.nixer.nixerplugin.metrics.MetricsFacadeWriter;
 import eu.xword.nixer.nixerplugin.metrics.NOPMetricsWriter;
 import eu.xword.nixer.nixerplugin.pwned.PwnedCheckAutoConfiguration;
-import io.micrometer.core.instrument.Counter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -50,24 +48,8 @@ public class PwnedCheckMetricsConfiguration {
     public MetersRepository.Contributor pwnedCheckMetersConfigurer() {
 
         return builder -> {
-
-            builder.register(
-                    MeterDefinition.counter(
-                            PWNED_PASSWORD,
-                            () -> Counter.builder(PWNED_PASSWORD.metricName)
-                                    .description(PWNED_PASSWORD.description)
-                                    .tag(PWNED_PASSWORD.resultTag, PWNED_PASSWORD.result)
-                    )
-            );
-
-            builder.register(
-                    MeterDefinition.counter(
-                            NOT_PWNED_PASSWORD,
-                            () -> Counter.builder(NOT_PWNED_PASSWORD.metricName)
-                                    .description(NOT_PWNED_PASSWORD.description)
-                                    .tag(NOT_PWNED_PASSWORD.resultTag, NOT_PWNED_PASSWORD.result)
-                    )
-            );
+            builder.register(PWNED_PASSWORD);
+            builder.register(NOT_PWNED_PASSWORD);
         };
     }
 }
