@@ -3,10 +3,12 @@ package eu.xword.nixer.nixerplugin.pwned.metrics;
 import eu.xword.nixer.nixerplugin.metrics.MetersRepository;
 import eu.xword.nixer.nixerplugin.metrics.MetricsFacade;
 import eu.xword.nixer.nixerplugin.metrics.MetricsFacadeWriter;
+import eu.xword.nixer.nixerplugin.metrics.MetricsWriterFactory;
 import eu.xword.nixer.nixerplugin.metrics.NOPMetricsWriter;
 import eu.xword.nixer.nixerplugin.pwned.PwnedCheckAutoConfiguration;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -25,21 +27,18 @@ import static eu.xword.nixer.nixerplugin.pwned.metrics.PwnedCheckMetrics.PWNED_P
 @EnableConfigurationProperties(value = {PwnedCheckMetricsProperties.class})
 public class PwnedCheckMetricsConfiguration {
 
-    @Bean
-    @ConditionalOnMissingBean
-    @ConditionalOnProperty(value = "nixer.pwned.check.metrics.enabled", havingValue = "false")
-    public PwnedCheckMetricsWriterFactory nopMetricsWriterFactory() {
-        return NOPMetricsWriter::new;
+    @Bean("pwnedCheckMetricsWriterFactory")
+    public MetricsWriterFactory pwnedCheckMetricsWriterFactory(@Value("${nixer.pwned.check.metrics.enabled}") final boolean pwnedMetricsEnabled,
+                                                               final MetricsFacade metricsFacade) {
+        return pwnedMetricsEnabled
+                ? () -> new MetricsFacadeWriter(metricsFacade)
+                : NOPMetricsWriter::new;
     }
 
     @Bean
-    @ConditionalOnProperty(value = "nixer.pwned.check.metrics.enabled")
-    public PwnedCheckMetricsWriterFactory pwnedCheckMetricsWriterFactory(final MetricsFacade metricsFacade) {
-        return () -> new MetricsFacadeWriter(metricsFacade);
-    }
+    public PwnedPasswordMetricsReporter pwnedPasswordMetricsReporter(
+            @Qualifier("pwnedCheckMetricsWriterFactory") MetricsWriterFactory metricsWriterFactory) {
 
-    @Bean // TODO Fix IntelliJ incorrectly complaining about two PwnedCheckMetricsWriterFactory beans detected.
-    public PwnedPasswordMetricsReporter pwnedPasswordMetricsReporter(PwnedCheckMetricsWriterFactory metricsWriterFactory) {
         return new PwnedPasswordMetricsReporter(metricsWriterFactory.createMetricsWriter());
     }
 
