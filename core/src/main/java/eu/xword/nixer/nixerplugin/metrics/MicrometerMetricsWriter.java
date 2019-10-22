@@ -1,28 +1,27 @@
 package eu.xword.nixer.nixerplugin.metrics;
 
-import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 /**
- * Created on 16/10/2019.
+ * Created on 17/10/2019.
  *
  * @author gcwiak
  */
-@Component
-public class MetricsFacade {
+public class MicrometerMetricsWriter implements MetricsWriter {
 
     private final MetersRepository metersRepository;
 
-    public MetricsFacade(final MetersRepository metersRepository) {
+    public MicrometerMetricsWriter(final MetersRepository metersRepository) {
         Assert.notNull(metersRepository, "metersRepository must not be null");
         this.metersRepository = metersRepository;
     }
 
     // TODO handle meter type another than counter
     // TODO additional argument for value and eventually type of meter
-    public void write(final String lookupId) {
+    @Override
+    public void write(final MetricsLookupId metricsLookupId) {
         metersRepository
-                .getCounter(lookupId)
+                .getCounter(metricsLookupId.lookupId())
                 .increment();
     }
 }

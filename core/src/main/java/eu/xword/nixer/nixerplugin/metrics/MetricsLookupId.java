@@ -1,7 +1,7 @@
 package eu.xword.nixer.nixerplugin.metrics;
 
 /**
- * Represents ID to be used for lookup for a meter in {@link MetricsFacade} registry.
+ * Represents ID to be used for lookup for a meter in {@link MetersRepository} registry.
  * <p>
  * <b>Not to be confused with the Micrometer metric name</b>
  * </p>

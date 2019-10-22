@@ -1,9 +1,8 @@
 package eu.xword.nixer.nixerplugin.pwned.metrics;
 
 import eu.xword.nixer.nixerplugin.metrics.MetersRepository;
-import eu.xword.nixer.nixerplugin.metrics.MetricsFacade;
-import eu.xword.nixer.nixerplugin.metrics.MetricsFacadeWriter;
 import eu.xword.nixer.nixerplugin.metrics.MetricsWriterFactory;
+import eu.xword.nixer.nixerplugin.metrics.MicrometerMetricsWriter;
 import eu.xword.nixer.nixerplugin.metrics.NOPMetricsWriter;
 import eu.xword.nixer.nixerplugin.pwned.PwnedCheckAutoConfiguration;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -28,10 +27,10 @@ import static eu.xword.nixer.nixerplugin.pwned.metrics.PwnedCheckMetrics.PWNED_P
 public class PwnedCheckMetricsConfiguration {
 
     @Bean("pwnedCheckMetricsWriterFactory")
-    public MetricsWriterFactory pwnedCheckMetricsWriterFactory(@Value("${nixer.pwned.check.metrics.enabled}") final boolean pwnedMetricsEnabled,
-                                                               final MetricsFacade metricsFacade) {
+    public MetricsWriterFactory pwnedCheckMetricsWriterFactory(@Value("${nixer.pwned.check.metrics.enabled}") boolean pwnedMetricsEnabled,
+                                                               final MetersRepository metersRepository) {
         return pwnedMetricsEnabled
-                ? () -> new MetricsFacadeWriter(metricsFacade)
+                ? () -> new MicrometerMetricsWriter(metersRepository)
                 : NOPMetricsWriter::new;
     }
 
