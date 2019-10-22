@@ -1,4 +1,4 @@
-package eu.xword.nixer.nixerplugin.example;
+package eu.xword.nixer.example;
 
 import java.util.LinkedHashMap;
 import javax.sql.DataSource;

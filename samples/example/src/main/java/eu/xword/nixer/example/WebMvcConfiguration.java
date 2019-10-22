@@ -1,4 +1,4 @@
-package eu.xword.nixer.nixerplugin.example;
+package eu.xword.nixer.example;
 
 import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;

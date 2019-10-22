@@ -1,4 +1,4 @@
-package eu.xword.nixer.nixerplugin.example;
+package eu.xword.nixer.example;
 
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;

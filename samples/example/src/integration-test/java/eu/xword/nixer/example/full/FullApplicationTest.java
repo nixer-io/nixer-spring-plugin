@@ -1,4 +1,4 @@
-package eu.xword.nixer.nixerplugin.example.full;
+package eu.xword.nixer.example.full;
 
 import eu.xword.nixer.nixerplugin.captcha.recaptcha.RecaptchaClientStub;
 import eu.xword.nixer.nixerplugin.captcha.security.CaptchaChecker;
@@ -30,7 +30,7 @@ import org.springframework.test.web.servlet.request.RequestPostProcessor;
 
 import static eu.xword.nixer.nixerplugin.detection.config.AnomalyRulesProperties.Name.ip;
 import static eu.xword.nixer.nixerplugin.detection.config.AnomalyRulesProperties.Name.useragent;
-import static eu.xword.nixer.nixerplugin.example.LoginRequestBuilder.formLogin;
+import static eu.xword.nixer.example.LoginRequestBuilder.formLogin;
 import static eu.xword.nixer.nixerplugin.filter.RequestAugmentation.USER_AGENT_FAILED_LOGIN_OVER_THRESHOLD;
 import static eu.xword.nixer.nixerplugin.pwned.metrics.PwnedCheckMetrics.NOT_PWNED_PASSWORD;
 import static eu.xword.nixer.nixerplugin.pwned.metrics.PwnedCheckMetrics.PWNED_PASSWORD;
