@@ -4,11 +4,9 @@ import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 import static eu.xword.nixer.nixerplugin.captcha.config.CaptchaMetricsProperties.DEFAULT;
 
-@Configuration
 public class MetricsConfiguration {
 
     @Bean
@@ -21,7 +19,14 @@ public class MetricsConfiguration {
     @ConditionalOnMissingBean
     @ConditionalOnProperty(prefix = "nixer.captcha.metrics", name = "enabled", havingValue = "false")
     public MetricsReporterFactory nopMetricsReporterFactory() {
-        return action -> new NOPMetricsReporter();
+        return new NOPMetricsFactory();
     }
 
+    public static final class NOPMetricsFactory implements MetricsReporterFactory {
+
+        @Override
+        public MetricsReporter createMetricsReporter(final String action) {
+            return new NOPMetricsReporter();
+        }
+    }
 }

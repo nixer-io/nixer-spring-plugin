@@ -53,4 +53,5 @@ dependencies {
         exclude(module = "junit")
     }
     testImplementation("org.springframework.security", "spring-security-test")
+    testImplementation("io.micrometer", "micrometer-registry-influx", "1.2.0")
 }
