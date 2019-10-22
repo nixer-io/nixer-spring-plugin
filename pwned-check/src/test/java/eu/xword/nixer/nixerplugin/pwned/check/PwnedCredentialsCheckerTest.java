@@ -2,10 +2,13 @@ package eu.xword.nixer.nixerplugin.pwned.check;
 
 import com.google.common.base.Strings;
 import eu.xword.nixer.bloom.check.BloomFilterCheck;
+import eu.xword.nixer.nixerplugin.metrics.MetricsWriter;
+import eu.xword.nixer.nixerplugin.pwned.metrics.PwnedPasswordMetricsReporter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -27,15 +30,22 @@ class PwnedCredentialsCheckerTest {
     @Mock
     BloomFilterCheck pwnedFilter;
 
+    private PwnedPasswordMetricsReporter pwnedPasswordMetrics = new PwnedPasswordMetricsReporter(Mockito.mock(MetricsWriter.class));
+
     private PwnedCredentialsChecker pwnedCredentialsChecker;
 
     @BeforeEach
     void setUp() {
-        pwnedCredentialsChecker = new PwnedCredentialsChecker(pwnedFilter, MAX_PASSWORD_LENGTH);
+        pwnedCredentialsChecker = new PwnedCredentialsChecker(
+                pwnedFilter,
+                MAX_PASSWORD_LENGTH,
+                // TODO consider replacing PwnedPasswordMetricsReporter with a mock and verifying it's invoked
+                pwnedPasswordMetrics
+        );
     }
 
     @Test
-    void should_delegate_check_to_the_filter() {
+    void shouldDetectPwnedPassword() {
         // given
         given(pwnedFilter.test(SAMPLE_PASSWORD)).willReturn(true);
 
@@ -48,7 +58,20 @@ class PwnedCredentialsCheckerTest {
     }
 
     @Test
-    void should_skip_check_for_missing_password() {
+    void shouldDetectNotPwnedPassword() {
+        // given
+        given(pwnedFilter.test(SAMPLE_PASSWORD)).willReturn(false);
+
+        // when
+        final boolean result = pwnedCredentialsChecker.isPasswordPwned(SAMPLE_PASSWORD);
+
+        // then
+        assertThat(result).isFalse();
+        verify(pwnedFilter).test(SAMPLE_PASSWORD);
+    }
+
+    @Test
+    void shouldSkipCheckForMissingPassword() {
         // when
         final boolean result = pwnedCredentialsChecker.isPasswordPwned(null);
 
@@ -58,7 +81,7 @@ class PwnedCredentialsCheckerTest {
     }
 
     @Test
-    void should_skip_check_for_too_long_password() {
+    void shouldSkipCheckForTooLongPassword() {
         // given
         final String tooLongPassword = Strings.repeat("a", MAX_PASSWORD_LENGTH + 1);
 
