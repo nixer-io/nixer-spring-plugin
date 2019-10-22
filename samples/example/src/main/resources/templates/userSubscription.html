@@ -29,7 +29,7 @@
             <label for="username">Username</label>
             <input type="text" id="username" name="username"/>
 
-            <div class="g-recaptcha" th:attr="data-sitekey=${@recaptchaProperties.getKey().getSite()}"></div>
+            <div class="g-recaptcha" th:attr="data-sitekey=${@captchaKeyProvider.getSiteKey()}"></div>
 
             <div class="form-actions">
                 <button type="submit" class="btn">Register</button>

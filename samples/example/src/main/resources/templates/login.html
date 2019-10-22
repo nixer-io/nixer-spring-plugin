@@ -30,7 +30,7 @@
         </p>
         <!--            TODO conditional rendering of captcha depending whether in CS mode and captcha enabled-->
         <div th:if="${@captchaChecker.shouldDisplayCaptcha()}" class="g-recaptcha"
-             th:attr="data-sitekey=${@recaptchaProperties.getKey().getSite()}"></div>
+             th:attr="data-sitekey=${@captchaKeyProvider.getSiteKey()}"></div>
 
         <button type="submit" class="btn btn-lg btn-primary btn-block">Log in</button>
     </form>

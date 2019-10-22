@@ -6,10 +6,11 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
@@ -18,7 +19,7 @@ import org.springframework.web.client.RestTemplate;
  * Configuration class for ReCaptcha.
  *
  */
-@Configuration
+@EnableConfigurationProperties(RecaptchaProperties.class)
 public class RecaptchaConfiguration {
 
     @Bean
@@ -44,21 +45,26 @@ public class RecaptchaConfiguration {
     }
 
 
-    @Bean("recaptchaRestTemplate")
+    @Bean
     @ConditionalOnMissingBean(name = "recaptchaRestTemplate")
-    public RestTemplate restTemplate(ClientHttpRequestFactory requestFactory) {
+    public RestTemplate recaptchaRestTemplate(ClientHttpRequestFactory requestFactory) {
         return new RestTemplate(requestFactory);
     }
 
     @Bean
-    public RecaptchaClient captchaClient(RestTemplate restTemplate, RecaptchaProperties recaptchaProperties) {
+    public RecaptchaClient captchaClient(@Qualifier("recaptchaRestTemplate") RestTemplate restTemplate,
+                                         RecaptchaProperties recaptchaProperties) {
         return new RecaptchaRestClient(restTemplate, recaptchaProperties);
     }
 
     @Bean
-    public RecaptchaV2ServiceFactory recaptchaV2ServiceFactory(RecaptchaClient recaptchaClient, RecaptchaProperties recaptchaProperties,
+    public RecaptchaV2ServiceFactory recaptchaV2ServiceFactory(RecaptchaClient recaptchaClient,
                                                                MetricsReporterFactory metricsReporterFactory) {
         return new RecaptchaV2ServiceFactory(recaptchaClient, metricsReporterFactory);
     }
 
+    @Bean
+    public CaptchaKeyProvider captchaKeyProvider(RecaptchaProperties recaptchaProperties) {
+        return new CaptchaKeyProvider(recaptchaProperties);
+    }
 }
