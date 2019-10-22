@@ -25,7 +25,7 @@ public class PwnedCredentialsChecker {
 
     public boolean isPasswordPwned(final String password) {
 
-        return pwnedPasswordMetrics.executeAndReport(() -> isPwned(password));
+        return pwnedPasswordMetrics.report(() -> isPwned(password));
     }
 
     private boolean isPwned(final String password) {

@@ -32,7 +32,7 @@ class PwnedPasswordMetricsReporterTest {
         final Supplier<Boolean> pwnedPasswordRevealingAction = () -> true;
 
         // when
-        final Boolean result = pwnedPasswordMetricsReporter.executeAndReport(pwnedPasswordRevealingAction);
+        final Boolean result = pwnedPasswordMetricsReporter.report(pwnedPasswordRevealingAction);
 
         // then
         assertThat(result).isTrue();
@@ -45,7 +45,7 @@ class PwnedPasswordMetricsReporterTest {
         final Supplier<Boolean> notPwnedPasswordRevealingAction = () -> false;
 
         // when
-        final Boolean result = pwnedPasswordMetricsReporter.executeAndReport(notPwnedPasswordRevealingAction);
+        final Boolean result = pwnedPasswordMetricsReporter.report(notPwnedPasswordRevealingAction);
 
         // then
         assertThat(result).isFalse();

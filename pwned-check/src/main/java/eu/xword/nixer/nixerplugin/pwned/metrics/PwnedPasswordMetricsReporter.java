@@ -1,7 +1,9 @@
 package eu.xword.nixer.nixerplugin.pwned.metrics;
 
-import eu.xword.nixer.nixerplugin.metrics.ActionExecutingMetricsReporter;
+import java.util.function.Supplier;
+
 import eu.xword.nixer.nixerplugin.metrics.MetricsWriter;
+import org.springframework.util.Assert;
 
 import static eu.xword.nixer.nixerplugin.pwned.metrics.PwnedCheckMetrics.NOT_PWNED_PASSWORD;
 import static eu.xword.nixer.nixerplugin.pwned.metrics.PwnedCheckMetrics.PWNED_PASSWORD;
@@ -11,17 +13,27 @@ import static eu.xword.nixer.nixerplugin.pwned.metrics.PwnedCheckMetrics.PWNED_P
  *
  * @author Grzegorz Cwiak (gcwiak)
  */
-public class PwnedPasswordMetricsReporter extends ActionExecutingMetricsReporter<Boolean> {
+public class PwnedPasswordMetricsReporter {
+
+    private final MetricsWriter metricsWriter;
 
     public PwnedPasswordMetricsReporter(final MetricsWriter metricsWriter) {
-        super(metricsWriter);
+        Assert.notNull(metricsWriter, "metricsWriter must not be null");
+        this.metricsWriter = metricsWriter;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void writeMetrics(final MetricsWriter metricsWriter, final Boolean isPasswordPwned) {
-        metricsWriter.write(isPasswordPwned ? PWNED_PASSWORD : NOT_PWNED_PASSWORD);
+    public final Boolean report(Supplier<Boolean> actionGivingResult) {
+        Assert.notNull(actionGivingResult, "actionGivingResult must not be null");
+
+        final Boolean result = execute(actionGivingResult);
+
+        metricsWriter.write(result ? PWNED_PASSWORD : NOT_PWNED_PASSWORD);
+
+        return result;
     }
+
+    private Boolean execute(final Supplier<Boolean> actionGivingResult) {
+        return actionGivingResult.get();
+    }
+
 }
