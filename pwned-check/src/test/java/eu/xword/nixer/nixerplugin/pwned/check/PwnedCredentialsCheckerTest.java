@@ -2,7 +2,7 @@ package eu.xword.nixer.nixerplugin.pwned.check;
 
 import com.google.common.base.Strings;
 import eu.xword.nixer.bloom.check.BloomFilterCheck;
-import eu.xword.nixer.nixerplugin.metrics.MetricsWriter;
+import eu.xword.nixer.nixerplugin.core.metrics.MetricsWriter;
 import eu.xword.nixer.nixerplugin.pwned.metrics.PwnedPasswordMetricsReporter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

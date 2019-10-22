@@ -5,8 +5,8 @@ import javax.sql.DataSource;
 
 import eu.xword.nixer.nixerplugin.captcha.config.CaptchaConfigurer;
 import eu.xword.nixer.nixerplugin.captcha.security.CaptchaChecker;
-import eu.xword.nixer.nixerplugin.filter.FilterConfiguration;
-import eu.xword.nixer.nixerplugin.filter.behavior.Conditions;
+import eu.xword.nixer.nixerplugin.core.filter.FilterConfiguration;
+import eu.xword.nixer.nixerplugin.core.filter.behavior.Conditions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.filter.OrderedRequestContextFilter;
 import org.springframework.context.annotation.Bean;
@@ -24,8 +24,8 @@ import org.springframework.security.web.authentication.DelegatingAuthenticationF
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.web.filter.RequestContextFilter;
 
-import static eu.xword.nixer.nixerplugin.filter.behavior.Behaviors.BLOCKED_ERROR;
-import static eu.xword.nixer.nixerplugin.filter.behavior.Behaviors.CAPTCHA;
+import static eu.xword.nixer.nixerplugin.core.filter.behavior.Behaviors.BLOCKED_ERROR;
+import static eu.xword.nixer.nixerplugin.core.filter.behavior.Behaviors.CAPTCHA;
 import static org.springframework.http.HttpMethod.POST;
 
 /**
