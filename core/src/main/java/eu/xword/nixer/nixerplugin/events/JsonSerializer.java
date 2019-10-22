@@ -21,17 +21,22 @@ public class JsonSerializer implements EventVisitor {
     }
 
     @Override
-    public void accept(final BlockEvent event) {
+    public void accept(final AnomalyEvent event) {
         apply(event, this::nop);
     }
 
     @Override
-    public void accept(final LockUserEvent event) {
+    public void accept(final UserAgentFailedLoginOverThresholdEvent event) {
+        apply(event, () -> writeStringField("userAgent", event.getUserAgent()));
+    }
+
+    @Override
+    public void accept(final UsernameFailedLoginOverThresholdEvent event) {
         apply(event, () -> writeStringField("user", event.getUsername()));
     }
 
     @Override
-    public void accept(final BlockSourceIpEvent event) {
+    public void accept(final IpFailedLoginOverThresholdEvent event) {
         apply(event, () -> writeStringField("ip", event.getIp()));
     }
 
@@ -46,7 +51,7 @@ public class JsonSerializer implements EventVisitor {
     private void nop() {
     }
 
-    private <T extends BlockEvent> void apply(T event, Runnable runnable) {
+    private <T extends AnomalyEvent> void apply(T event, Runnable runnable) {
         try {
             generator.writeStartObject();
             generator.writeStringField("type", event.type());
@@ -64,7 +69,7 @@ public class JsonSerializer implements EventVisitor {
 
     @Override
     public void accept(final GlobalCredentialStuffingEvent event) {
-        accept((BlockEvent) event);
+        accept((AnomalyEvent) event);
     }
 
     public String toString() {

@@ -31,7 +31,7 @@ public class LoginMetricsReporter implements LoginActivityRepository {
         Assert.notNull(loginFailureTypeRegistry, "LoginFailureTypeRegistry must not be null");
 
         final Map<LoginFailureType, Counter> failureCounters = loginFailureTypeRegistry.getReasons().stream()
-                .collect(Collectors.toMap( it -> it, this::failureCounter));
+                .collect(Collectors.toMap(it -> it, this::failureCounter));
         this.failureCounters = Collections.unmodifiableMap(failureCounters);
 
         this.loginSuccessCounter = Counter.builder("login")
@@ -60,7 +60,7 @@ public class LoginMetricsReporter implements LoginActivityRepository {
     }
 
     @Override
-    public void reportLoginActivity(final LoginResult loginResult, final LoginContext loginContext) {
+    public void save(final LoginResult loginResult, final LoginContext loginContext) {
         loginResult
                 .onSuccess(it -> reportLoginSuccess())
                 .onFailure(result -> reportLoginFail(result.getFailureType()));

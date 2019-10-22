@@ -2,18 +2,32 @@ package eu.xword.nixer.nixerplugin.login;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import eu.xword.nixer.nixerplugin.detection.rules.AnomalyRulesRunner;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 @Component
 public class LoginActivityService {
 
-    @Autowired
-    private List<LoginActivityRepository> loginActivityRepositories;
+    private final List<LoginActivityRepository> repositories;
 
-    public void handle(final LoginResult loginResult, final LoginContext context) {
-        //TODO extract keeping track of stats to dedicated place
-        loginActivityRepositories.forEach(it -> it.reportLoginActivity(loginResult, context));
+    private final AnomalyRulesRunner anomalyRulesRunner;
+
+
+    public LoginActivityService(final List<LoginActivityRepository> repositories, final AnomalyRulesRunner anomalyRulesRunner) {
+        Assert.notNull(repositories, "Repositories must not be null");
+        this.repositories = repositories;
+
+        Assert.notNull(anomalyRulesRunner, "RulesRunner must not be null");
+        this.anomalyRulesRunner = anomalyRulesRunner;
     }
 
+    public void save(final LoginResult loginResult, final LoginContext context) {
+
+        for (LoginActivityRepository repository : repositories) {
+            repository.save(loginResult, context);
+        }
+
+        anomalyRulesRunner.onLogin(context);
+    }
 }

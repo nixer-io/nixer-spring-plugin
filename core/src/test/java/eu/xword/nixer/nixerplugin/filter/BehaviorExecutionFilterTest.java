@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.common.collect.ImmutableList;
-import eu.xword.nixer.nixerplugin.detection.GlobalCredentialStuffing;
+import eu.xword.nixer.nixerplugin.registry.GlobalCredentialStuffingRegistry;
 import eu.xword.nixer.nixerplugin.filter.behavior.Behavior;
 import eu.xword.nixer.nixerplugin.filter.behavior.BehaviorProvider;
 import eu.xword.nixer.nixerplugin.filter.behavior.Facts;
@@ -39,7 +39,7 @@ class BehaviorExecutionFilterTest {
     BehaviorExecutionFilter behaviorExecutionFilter;
 
     @Mock
-    GlobalCredentialStuffing globalCredentialStuffing;
+    GlobalCredentialStuffingRegistry globalCredentialStuffingRegistry;
 
     @Mock
     BehaviorProvider behaviorProvider;
@@ -52,7 +52,7 @@ class BehaviorExecutionFilterTest {
 
     @BeforeEach
     public void setup() {
-        behaviorExecutionFilter = new BehaviorExecutionFilter(behaviorProvider, globalCredentialStuffing);
+        behaviorExecutionFilter = new BehaviorExecutionFilter(behaviorProvider, globalCredentialStuffingRegistry);
     }
 
     @Test
@@ -61,7 +61,7 @@ class BehaviorExecutionFilterTest {
         request.setAttribute("nixer.flag", true);
         request.setAttribute("other.flag", true);
 
-        given(globalCredentialStuffing.isCredentialStuffingActive()).willReturn(true);
+        given(globalCredentialStuffingRegistry.isCredentialStuffingActive()).willReturn(true);
 
         behaviorExecutionFilter.doFilterInternal(request, response, filterChain);
 

@@ -11,7 +11,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import eu.xword.nixer.nixerplugin.detection.GlobalCredentialStuffing;
+import eu.xword.nixer.nixerplugin.registry.GlobalCredentialStuffingRegistry;
 import eu.xword.nixer.nixerplugin.filter.behavior.Behavior;
 import eu.xword.nixer.nixerplugin.filter.behavior.BehaviorProvider;
 import eu.xword.nixer.nixerplugin.filter.behavior.Facts;
@@ -29,16 +29,16 @@ public class BehaviorExecutionFilter extends OncePerRequestFilter {
 
     private BehaviorProvider behaviorProvider;
 
-    private GlobalCredentialStuffing globalCredentialStuffing;
+    private GlobalCredentialStuffingRegistry globalCredentialStuffingRegistry;
 
     private boolean dryRun;
 
     // TODO externalize
     private RequestMatcher requestMatcher = new AntPathRequestMatcher("/login");
 
-    public BehaviorExecutionFilter(final BehaviorProvider behaviorProvider, final GlobalCredentialStuffing globalCredentialStuffing) {
+    public BehaviorExecutionFilter(final BehaviorProvider behaviorProvider, final GlobalCredentialStuffingRegistry globalCredentialStuffingRegistry) {
         this.behaviorProvider = behaviorProvider;
-        this.globalCredentialStuffing = globalCredentialStuffing;
+        this.globalCredentialStuffingRegistry = globalCredentialStuffingRegistry;
     }
 
     @Override
@@ -92,7 +92,7 @@ public class BehaviorExecutionFilter extends OncePerRequestFilter {
                 metadata.put(key, request.getAttribute(key));
             }
         }
-        metadata.put(GLOBAL_CREDENTIAL_STUFFING, globalCredentialStuffing.isCredentialStuffingActive());
+        metadata.put(GLOBAL_CREDENTIAL_STUFFING, globalCredentialStuffingRegistry.isCredentialStuffingActive());
 
         return new Facts(metadata);
     }

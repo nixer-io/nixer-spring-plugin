@@ -1,12 +1,17 @@
 package eu.xword.nixer.nixerplugin.filter;
 
-public class RequestAugmentation {
+public interface RequestAugmentation {
 
-    public static final String IP_METADATA = "nixer.ip.metadata";
-    public static final String PWN_METADATA = "nixer.pwn.metadata";
+    String USER_AGENT_TOKEN = "nixer.useragent.token";
 
-    public static final String IP_BLOCKED = "nixer.ip.blocked";
-    public static final String USERNAME_BLOCKED = "nixer.username.blocked";
+    String IP_METADATA = "nixer.ip.metadata";
+    String PWN_METADATA = "nixer.pwn.metadata";
 
-    public static final String GLOBAL_CREDENTIAL_STUFFING = "nixer.cs.global";
+    //TODO how structure naming
+    // nixer.ip.failedLoginOverThreshold vs nixer.failedLoginOverThreshold.ip
+    String IP_FAILED_LOGIN_OVER_THRESHOLD = "nixer.ip.failedLoginOverThreshold";
+    String USERNAME_FAILED_LOGIN_OVER_THRESHOLD = "nixer.username.failedLoginOverThreshold";
+    String USER_AGENT_FAILED_LOGIN_OVER_THRESHOLD = "nixer.useragent.failedLoginOverThreshold";
+
+    String GLOBAL_CREDENTIAL_STUFFING = "nixer.cs.global";
 }

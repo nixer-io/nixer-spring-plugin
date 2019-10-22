@@ -11,17 +11,21 @@ import org.springframework.util.Assert;
 
 public class BehaviorProvider {
 
-    private BehaviorRegistry behaviorRegistry;
+    private final BehaviorRegistry behaviorRegistry;
 
-    private ConcurrentHashMap<String, String> behaviors = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, String> behaviors = new ConcurrentHashMap<>();
 
-    private List<Rule> rules = new ArrayList<>();
+    private final List<Rule> rules = new ArrayList<>();
 
     public BehaviorProvider(final BehaviorRegistry behaviorRegistry) {
+        Assert.notNull(behaviorRegistry, "BehaviorRegistry must not be null");
         this.behaviorRegistry = behaviorRegistry;
     }
 
     public void addRule(String name, Predicate<Facts> predicate, String behaviorName) {
+        final Behavior behavior = behaviorRegistry.findByName(behaviorName);
+        Assert.notNull(behavior, () -> "Unknown behavior " + behaviorName);
+
         behaviors.put(name, behaviorName);
         rules.add(new PredicateRule(name, predicate));
     }

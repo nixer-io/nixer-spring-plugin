@@ -3,9 +3,12 @@ package eu.xword.nixer.nixerplugin.filter.behavior;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class PassthroughBehavior implements Behavior {
+import static eu.xword.nixer.nixerplugin.filter.behavior.Behaviors.PASSTHROUGH;
 
-    public static final String PASSTHROUGH = "passthrough";
+/**
+ * This behavior just ignores request. Kind of NullObject.
+ */
+public class PassthroughBehavior implements Behavior {
 
     @Override
     public void act(final HttpServletRequest request, final HttpServletResponse response) {
@@ -19,7 +22,7 @@ public class PassthroughBehavior implements Behavior {
 
     @Override
     public String name() {
-        return PASSTHROUGH;
+        return PASSTHROUGH.name();
     }
 
     @Override

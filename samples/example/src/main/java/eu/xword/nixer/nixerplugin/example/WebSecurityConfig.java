@@ -5,6 +5,8 @@ import javax.sql.DataSource;
 
 import eu.xword.nixer.nixerplugin.captcha.config.CaptchaConfigurer;
 import eu.xword.nixer.nixerplugin.captcha.security.CaptchaChecker;
+import eu.xword.nixer.nixerplugin.filter.FilterConfiguration;
+import eu.xword.nixer.nixerplugin.filter.behavior.Conditions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.filter.OrderedRequestContextFilter;
 import org.springframework.context.annotation.Bean;
@@ -22,6 +24,8 @@ import org.springframework.security.web.authentication.DelegatingAuthenticationF
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.web.filter.RequestContextFilter;
 
+import static eu.xword.nixer.nixerplugin.filter.behavior.Behaviors.BLOCKED_ERROR;
+import static eu.xword.nixer.nixerplugin.filter.behavior.Behaviors.CAPTCHA;
 import static org.springframework.http.HttpMethod.POST;
 
 /**
@@ -53,7 +57,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .formLogin().loginPage("/login")
                 .failureHandler(new DelegatingAuthenticationFailureHandler(loginFailureHandlers, new SimpleUrlAuthenticationFailureHandler("/login?error")))
-
                 .and()
                 .logout().logoutUrl("/logout").permitAll()
                 .and().csrf()
@@ -71,7 +74,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .dataSource(dataSource)
                 .withDefaultSchema()
                 .withUser("user").password(encoder.encode("user")).roles("USER").and()
-                .withObjectPostProcessor(new CaptchaConfigurer(captchaChecker));
+                .withObjectPostProcessor(new CaptchaConfigurer(captchaChecker)); // configure captcha
 
 //        auth.inMemoryAuthentication()
 //                .passwordEncoder(encoder)
@@ -99,4 +102,28 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return filter;
     }
 
+    /**
+     * Configures rules. Rules define what happens at what conditions.
+     */
+    @Bean
+    public FilterConfiguration.BehaviorProviderConfigurer behaviorConfigurer() {
+        // todo make it possible to create rule from properties
+        return builder -> builder
+                    .rule("blacklistedIp")  // we want to hide fact that request was blocked. So pretending regular login error.
+                    .when(Conditions::isBlacklistedIp)
+                    .act(BLOCKED_ERROR)
+                .build()
+                    .rule("ipLoginOverThreshold")
+                    .when(Conditions::isIpLoginOverThreshold)
+                    .act(CAPTCHA)
+                .build()
+                    .rule("userAgentLoginOverThreshold")
+                    .when(Conditions::isIpLoginOverThreshold)
+                    .act(CAPTCHA)
+                .build()
+                    .rule("credentialStuffingActive")
+                    .when(Conditions::isGlobalCredentialStuffing)
+                    .act(CAPTCHA)
+                .build();
+    }
 }

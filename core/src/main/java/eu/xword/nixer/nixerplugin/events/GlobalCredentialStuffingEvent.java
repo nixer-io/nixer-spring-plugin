@@ -1,9 +1,10 @@
 package eu.xword.nixer.nixerplugin.events;
 
-public class GlobalCredentialStuffingEvent extends BlockEvent {
-    /**
-     * Create a new ApplicationEvent.
-     */
+/**
+ * This events is emitted when system is under credential stuffing attack.
+ */
+public class GlobalCredentialStuffingEvent extends AnomalyEvent {
+
     public GlobalCredentialStuffingEvent() {
         super("");
     }
@@ -16,4 +17,5 @@ public class GlobalCredentialStuffingEvent extends BlockEvent {
     public String type() {
         return "GLOBAL_CREDENTIAL_STUFFING";
     }
+
 }

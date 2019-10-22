@@ -6,10 +6,16 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import static eu.xword.nixer.nixerplugin.filter.behavior.Behaviors.LOG;
+
+/**
+ * This behaviors logs request.
+ */
 public class LogBehavior implements Behavior {
+
     private final Log logger = LogFactory.getLog(getClass());
 
-    public static final String LOG = "log";
+    //todo consider whether http tracking would be replacement or addition to it
 
     @Override
     public void act(final HttpServletRequest request, final HttpServletResponse response) {
@@ -25,7 +31,7 @@ public class LogBehavior implements Behavior {
 
     @Override
     public String name() {
-        return LOG;
+        return LOG.name();
     }
 
     @Override
