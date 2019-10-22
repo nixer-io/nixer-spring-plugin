@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 /**
  * {@link ConfigurationProperties} for configuring ReCaptcha.
  */
-@Component
 @ConfigurationProperties(prefix = "nixer.captcha.recaptcha")
 public class RecaptchaProperties {
 
