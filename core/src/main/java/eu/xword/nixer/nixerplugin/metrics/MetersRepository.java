@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import io.micrometer.core.instrument.Meter;
+import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.util.Assert;
 
@@ -17,21 +17,21 @@ import org.springframework.util.Assert;
  */
 public class MetersRepository {
 
-    private final Map<String, Meter> meters;
+    private final Map<String, Counter> counters;
 
-    private MetersRepository(final Map<String, Meter> meters) {
-        this.meters = Collections.unmodifiableMap(meters);
+    private MetersRepository(final Map<String, Counter> counters) {
+        this.counters = Collections.unmodifiableMap(counters);
     }
 
-    public Meter get(final String lookupId) {
+    public Counter getCounter(final String lookupId) {
 
-        final Meter meter = meters.get(lookupId);
+        final Counter counter = counters.get(lookupId);
 
-        if (meter == null) {
+        if (counter == null) {
             throw new IllegalArgumentException(
-                    String.format("Meter for lookupId '%s' not found. Available meters: '%s'", lookupId, meters.keySet()));
+                    String.format("Counter for lookupId '%s' not found. Available counters: '%s'", lookupId, counters.keySet()));
         }
-        return meter;
+        return counter;
     }
 
     public static MetersRepository build(final List<MetersRepository.Contributor> contributors, final MeterRegistry meterRegistry) {
@@ -58,7 +58,7 @@ public class MetersRepository {
         }
 
         private MetersRepository build(MeterRegistry meterRegistry) {
-            final Map<String, Meter> meters = counterDefinitions.stream()
+            final Map<String, Counter> meters = counterDefinitions.stream()
                     .collect(Collectors.toMap(
                             MetricsLookupId::lookupId,
                             counterDefinition -> counterDefinition.register(meterRegistry)
