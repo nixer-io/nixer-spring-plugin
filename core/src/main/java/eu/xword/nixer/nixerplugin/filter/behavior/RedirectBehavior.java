@@ -8,6 +8,9 @@ import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.RedirectStrategy;
 import org.springframework.util.Assert;
 
+/**
+ * Performs Redirect to given url. This behavior is committing response, meaning it will stop processing of succeeding filter.
+ */
 public class RedirectBehavior implements Behavior {
 
     private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
@@ -25,8 +28,8 @@ public class RedirectBehavior implements Behavior {
     }
 
     @Override
-    public Category category() {
-        return Category.EXCLUSIVE;
+    public boolean isCommitting() {
+        return true;
     }
 
     @Override

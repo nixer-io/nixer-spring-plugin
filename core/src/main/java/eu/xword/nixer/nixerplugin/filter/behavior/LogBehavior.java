@@ -25,8 +25,8 @@ public class LogBehavior implements Behavior {
     }
 
     @Override
-    public Category category() {
-        return Category.STACKABLE;
+    public boolean isCommitting() {
+        return false;
     }
 
     @Override

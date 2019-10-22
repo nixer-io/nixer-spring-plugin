@@ -3,9 +3,9 @@ package eu.xword.nixer.nixerplugin.example.full;
 import eu.xword.nixer.nixerplugin.captcha.recaptcha.RecaptchaClientStub;
 import eu.xword.nixer.nixerplugin.captcha.security.CaptchaChecker;
 import eu.xword.nixer.nixerplugin.captcha.security.CaptchaCondition;
-import eu.xword.nixer.nixerplugin.pwned.metrics.PwnedCheckMetrics;
 import eu.xword.nixer.nixerplugin.detection.config.AnomalyRulesProperties;
 import eu.xword.nixer.nixerplugin.filter.behavior.Behaviors;
+import eu.xword.nixer.nixerplugin.pwned.metrics.PwnedCheckMetrics;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.junit.jupiter.api.AfterEach;
@@ -52,10 +52,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.request;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-/**
- *
- * @author Joe Grandja
- */
+
 @SpringBootTest
 @AutoConfigureMockMvc
 @Import(FullApplicationTest.TestConfig.class)
@@ -140,7 +137,6 @@ public class FullApplicationTest {
                     .andExpect(unauthenticated());
         }
         // @formatter:off
-
         this.mockMvc.perform(get(LOGIN_PAGE).session(session).session(session))
             .andExpect(status().isOk())
             .andExpect(captchaChallenge());
@@ -329,8 +325,8 @@ public class FullApplicationTest {
     void shouldFailLoginFromBlacklistedIpv4() throws Exception {
         // @formatter:off
         this.mockMvc.perform(
-                formLogin().user("user").password("user")
-                .build().with(remoteAddress(BLACKLISTED_IP_V4)))
+                formLogin().user("user").password("fake").build()
+                        .with(remoteAddress(BLACKLISTED_IP_V4)))
                 .andExpect(isBlocked());
         // @formatter:on
     }
@@ -339,8 +335,8 @@ public class FullApplicationTest {
     void shouldFailLoginFromBlacklistedIpv6() throws Exception {
         // @formatter:off
         this.mockMvc.perform(
-                formLogin().user("user").password("user")
-                .build().with(remoteAddress(BLACKLISTED_IP_V6)))
+                formLogin().user("user").password("fake").build()
+                        .with(remoteAddress(BLACKLISTED_IP_V6)))
                 .andExpect(isBlocked());
         // @formatter:on
     }
