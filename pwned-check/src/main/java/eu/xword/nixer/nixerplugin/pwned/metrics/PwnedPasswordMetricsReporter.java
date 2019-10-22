@@ -22,10 +22,16 @@ public class PwnedPasswordMetricsReporter {
         this.metricsWriter = metricsWriter;
     }
 
-    public final Boolean report(Supplier<Boolean> actionGivingResult) {
-        Assert.notNull(actionGivingResult, "actionGivingResult must not be null");
+    /**
+     * Executes the given action, reports metrics basing on the result and returns the result.
+     *
+     * @param pwnedPasswordCheckAction
+     * @return result of the action
+     */
+    public final Boolean report(Supplier<Boolean> pwnedPasswordCheckAction) {
+        Assert.notNull(pwnedPasswordCheckAction, "pwnedPasswordCheckAction must not be null");
 
-        final Boolean result = execute(actionGivingResult);
+        final Boolean result = execute(pwnedPasswordCheckAction);
 
         metricsWriter.write(result ? PWNED_PASSWORD : NOT_PWNED_PASSWORD);
 
