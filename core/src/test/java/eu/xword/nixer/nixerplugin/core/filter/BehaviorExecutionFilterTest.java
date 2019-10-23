@@ -6,10 +6,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.common.collect.ImmutableList;
-import eu.xword.nixer.nixerplugin.core.registry.GlobalCredentialStuffingRegistry;
 import eu.xword.nixer.nixerplugin.core.filter.behavior.Behavior;
 import eu.xword.nixer.nixerplugin.core.filter.behavior.BehaviorProvider;
 import eu.xword.nixer.nixerplugin.core.filter.behavior.Facts;
+import eu.xword.nixer.nixerplugin.core.registry.GlobalCredentialStuffingRegistry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -51,7 +51,7 @@ class BehaviorExecutionFilterTest {
     private MockHttpServletResponse response = new MockHttpServletResponse();
 
     @Captor
-    ArgumentCaptor<Facts> factsArgumentCaptor;
+    private ArgumentCaptor<Facts> factsArgumentCaptor;
 
     @BeforeEach
     void setup() {
@@ -66,11 +66,11 @@ class BehaviorExecutionFilterTest {
 
         given(globalCredentialStuffingRegistry.isCredentialStuffingActive()).willReturn(true);
 
-        behaviorExecutionFilter.doFilterInternal(request, response, filterChain);
+        execute(request);
 
         verify(behaviorProvider).get(factsArgumentCaptor.capture());
 
-        final Facts facts = factsArgumentCaptor.getValue();
+        Facts facts = factsArgumentCaptor.getValue();
         assertNotNull(facts);
         assertEquals(facts.getFact("nixer.flag"), true);
         assertEquals(facts.getFact(GLOBAL_CREDENTIAL_STUFFING), true);
@@ -79,13 +79,10 @@ class BehaviorExecutionFilterTest {
     @Test
     void should_execute_behavior() throws ServletException, IOException {
         MockHttpServletRequest request = loginRequest();
+        Behavior behavior = committingBehavior();
+        givenBehaviors(behavior);
 
-        final Behavior behavior = committingBehavior();
-
-        given(behaviorProvider.get(Mockito.any(Facts.class)))
-                .willReturn(ImmutableList.of(behavior));
-
-        behaviorExecutionFilter.doFilterInternal(request, response, filterChain);
+        execute(request);
 
         verifyExecuted(behavior);
     }
@@ -94,13 +91,10 @@ class BehaviorExecutionFilterTest {
     void should_not_execute_in_dry_run() throws ServletException, IOException {
         MockHttpServletRequest request = loginRequest();
         behaviorExecutionFilter.setDryRun(true);
+        Behavior behavior = committingBehavior();
+        givenBehaviors(behavior);
 
-        final Behavior behavior = committingBehavior();
-
-        given(behaviorProvider.get(Mockito.any(Facts.class)))
-                .willReturn(ImmutableList.of(behavior));
-
-        behaviorExecutionFilter.doFilterInternal(request, response, filterChain);
+        execute(request);
 
         verifyNotExecuted(behavior);
     }
@@ -109,7 +103,7 @@ class BehaviorExecutionFilterTest {
     void should_skip_processing_for_not_matching_request() throws ServletException, IOException {
         MockHttpServletRequest request = logoutRequest();
 
-        behaviorExecutionFilter.doFilterInternal(request, response, filterChain);
+        execute(request);
 
         verifyZeroInteractions(behaviorProvider);
     }
@@ -117,52 +111,49 @@ class BehaviorExecutionFilterTest {
     @Test
     void should_execute_both_behaviors() throws ServletException, IOException {
         MockHttpServletRequest request = loginRequest();
+        Behavior committingBehavior = committingBehavior();
+        Behavior nonCommittingBehavior = nonCommittingBehavior();
+        Behavior otherNonCommittingBehavior = nonCommittingBehavior();
+        givenBehaviors(nonCommittingBehavior, committingBehavior, otherNonCommittingBehavior);
 
-        final Behavior committingBehavior = committingBehavior();
-        final Behavior nonCommittingBehavior = nonCommittingBehavior();
-        final Behavior otherNonCommittingBehavior = nonCommittingBehavior();
-
-        given(behaviorProvider.get(Mockito.any(Facts.class)))
-                .willReturn(ImmutableList.of(nonCommittingBehavior, committingBehavior, otherNonCommittingBehavior));
-
-        behaviorExecutionFilter.doFilterInternal(request, response, filterChain);
+        execute(request);
 
         verifyExecuted(committingBehavior);
         verifyExecuted(nonCommittingBehavior);
         verifyExecuted(otherNonCommittingBehavior);
     }
 
+    private void execute(final MockHttpServletRequest request) throws ServletException, IOException {
+        behaviorExecutionFilter.doFilterInternal(request, response, filterChain);
+    }
+
+    private void givenBehaviors(final Behavior... behaviors) {
+        given(behaviorProvider.get(Mockito.any(Facts.class)))
+                .willReturn(ImmutableList.copyOf(behaviors));
+    }
+
     @Test
     void should_execute_only_first_committing_behavior() throws ServletException, IOException {
         MockHttpServletRequest request = loginRequest();
+        Behavior firstCommittingBehavior = committingBehavior();
+        Behavior secondCommittingBehavior = committingBehavior();
+        givenBehaviors(firstCommittingBehavior, secondCommittingBehavior);
 
-        final Behavior firstCommittingBehavior = committingBehavior();
-        final Behavior secondCommittingBehavior = committingBehavior();
-
-        given(behaviorProvider.get(Mockito.any(Facts.class)))
-                .willReturn(ImmutableList.of(firstCommittingBehavior, secondCommittingBehavior));
-
-        behaviorExecutionFilter.doFilterInternal(request, response, filterChain);
+        execute(request);
 
         verifyExecuted(firstCommittingBehavior);
         verifyNotExecuted(secondCommittingBehavior);
     }
 
     @Test
-    void should_stop_only_first_committing_behavior() throws ServletException, IOException {
+    void should_stop_executing_filter_chain_on_committing_behavior() throws ServletException, IOException {
         MockHttpServletRequest request = loginRequest();
+        Behavior committingBehavior = committingBehavior();
+        givenBehaviors(committingBehavior);
 
-        final Behavior firstCommittingBehavior = committingBehavior();
-        final Behavior secondCommittingBehavior = committingBehavior();
+        execute(request);
 
-        given(behaviorProvider.get(Mockito.any(Facts.class)))
-                .willReturn(ImmutableList.of(firstCommittingBehavior, secondCommittingBehavior));
-
-        behaviorExecutionFilter.doFilterInternal(request, response, filterChain);
-
-        verifyExecuted(firstCommittingBehavior);
-        verifyNotExecuted(secondCommittingBehavior);
-
+        verifyExecuted(committingBehavior);
         verifyFilterChainIgnored(request);
     }
 
