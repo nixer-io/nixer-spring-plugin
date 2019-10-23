@@ -20,7 +20,6 @@ public class BehaviorRegistry {
     @PostConstruct
     public void init() {
         this
-                .register(new LogBehavior())
                 .register(new PassthroughBehavior())
                 .register(new RedirectBehavior("/login?blockedError", Behaviors.BLOCKED_ERROR.name()))
                 .register(new RedirectBehavior("/login?error", Behaviors.BAD_CREDENTIALS_ERROR.name()));

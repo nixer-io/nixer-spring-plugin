@@ -10,14 +10,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class BehaviorProviderTest {
 
-    private static final String ERROR = Behaviors.PASSTHROUGH.name();
+    private static final String PASSTHROUGH = Behaviors.PASSTHROUGH.name();
     private static final String LOG = Behaviors.LOG.name();
     private BehaviorProvider behaviorProvider;
 
     @BeforeEach
     void init() {
         final BehaviorRegistry behaviorRegistry = new BehaviorRegistry();
-        behaviorRegistry.init();
+        behaviorRegistry.register(new LogBehavior());
+        behaviorRegistry.register(new PassthroughBehavior());
         behaviorProvider = new BehaviorProvider(behaviorRegistry);
     }
 
@@ -25,7 +26,7 @@ class BehaviorProviderTest {
     void should_return_no_behaviors() {
         final Facts facts = new Facts(ImmutableMap.of());
 
-        behaviorProvider.addRule("rule", it -> false, ERROR);
+        behaviorProvider.addRule("rule", it -> false, PASSTHROUGH);
 
         final List<Behavior> behaviors = behaviorProvider.get(facts);
 
@@ -37,7 +38,7 @@ class BehaviorProviderTest {
         final Facts facts = new Facts(ImmutableMap.of());
 
         behaviorProvider.addRule("rule1", it -> true, LOG);
-        behaviorProvider.addRule("rule2", it -> false, ERROR);
+        behaviorProvider.addRule("rule2", it -> false, PASSTHROUGH);
         behaviorProvider.addRule("rule3", it -> true, LOG);
         final List<Behavior> behaviors = behaviorProvider.get(facts);
 
