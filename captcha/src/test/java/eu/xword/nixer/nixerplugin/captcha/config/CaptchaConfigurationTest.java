@@ -9,7 +9,7 @@ import eu.xword.nixer.nixerplugin.captcha.recaptcha.RecaptchaClient;
 import eu.xword.nixer.nixerplugin.captcha.recaptcha.RecaptchaV2ServiceFactory;
 import eu.xword.nixer.nixerplugin.captcha.security.CaptchaChecker;
 import eu.xword.nixer.nixerplugin.captcha.validation.CaptchaValidator;
-import eu.xword.nixer.nixerplugin.login.LoginFailureTypeRegistry;
+import eu.xword.nixer.nixerplugin.core.login.LoginFailureTypeRegistry;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.junit.jupiter.api.Test;

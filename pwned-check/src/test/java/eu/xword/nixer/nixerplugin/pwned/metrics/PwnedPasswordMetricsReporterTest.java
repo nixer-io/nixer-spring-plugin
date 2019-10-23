@@ -2,7 +2,7 @@ package eu.xword.nixer.nixerplugin.pwned.metrics;
 
 import java.util.function.Supplier;
 
-import eu.xword.nixer.nixerplugin.metrics.MetricsWriter;
+import eu.xword.nixer.nixerplugin.core.metrics.MetricsWriter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

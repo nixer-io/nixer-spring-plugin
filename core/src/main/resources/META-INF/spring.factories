@@ -1,1 +1,1 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=eu.xword.nixer.nixerplugin.NixerAutoConfiguration
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=eu.xword.nixer.nixerplugin.core.NixerAutoConfiguration
