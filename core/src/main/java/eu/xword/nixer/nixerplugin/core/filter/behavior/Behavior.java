@@ -8,12 +8,8 @@ public interface Behavior {
 
     void act(HttpServletRequest request, HttpServletResponse response) throws IOException;
 
-    Category category();
+    boolean isCommitting();
 
     String name();
 
-    enum Category {
-        EXCLUSIVE,
-        STACKABLE
-    }
 }

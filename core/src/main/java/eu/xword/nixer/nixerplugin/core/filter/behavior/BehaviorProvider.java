@@ -1,12 +1,12 @@
 package eu.xword.nixer.nixerplugin.core.filter.behavior;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 
-import com.google.common.collect.ImmutableMap;
 import org.springframework.util.Assert;
 
 public class BehaviorProvider {
@@ -46,7 +46,7 @@ public class BehaviorProvider {
     }
 
     public Map<String, String> getRuleBehaviors() {
-        return ImmutableMap.copyOf(behaviors);
+        return Collections.unmodifiableMap(behaviors);
     }
 
 

@@ -16,8 +16,8 @@ public class PassthroughBehavior implements Behavior {
     }
 
     @Override
-    public Category category() {
-        return Category.EXCLUSIVE;
+    public boolean isCommitting() {
+        return false;
     }
 
     @Override

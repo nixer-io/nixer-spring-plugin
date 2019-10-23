@@ -6,10 +6,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.common.collect.ImmutableList;
-import eu.xword.nixer.nixerplugin.core.registry.GlobalCredentialStuffingRegistry;
 import eu.xword.nixer.nixerplugin.core.filter.behavior.Behavior;
 import eu.xword.nixer.nixerplugin.core.filter.behavior.BehaviorProvider;
 import eu.xword.nixer.nixerplugin.core.filter.behavior.Facts;
+import eu.xword.nixer.nixerplugin.core.registry.GlobalCredentialStuffingRegistry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,127 +22,143 @@ import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
+import static eu.xword.nixer.nixerplugin.core.filter.BehaviorExecutionFilterTest.StubBehavior.committingBehavior;
+import static eu.xword.nixer.nixerplugin.core.filter.BehaviorExecutionFilterTest.StubBehavior.nonCommittingBehavior;
 import static eu.xword.nixer.nixerplugin.core.filter.RequestAugmentation.GLOBAL_CREDENTIAL_STUFFING;
-import static eu.xword.nixer.nixerplugin.core.filter.behavior.Behavior.Category.EXCLUSIVE;
-import static eu.xword.nixer.nixerplugin.core.filter.behavior.Behavior.Category.STACKABLE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 
 @ExtendWith(MockitoExtension.class)
 class BehaviorExecutionFilterTest {
 
-    BehaviorExecutionFilter behaviorExecutionFilter;
+    private BehaviorExecutionFilter behaviorExecutionFilter;
 
     @Mock
-    GlobalCredentialStuffingRegistry globalCredentialStuffingRegistry;
+    private GlobalCredentialStuffingRegistry globalCredentialStuffingRegistry;
 
     @Mock
-    BehaviorProvider behaviorProvider;
+    private BehaviorProvider behaviorProvider;
 
-    MockHttpServletResponse response = new MockHttpServletResponse();
-    MockFilterChain filterChain = new MockFilterChain();
+    @Mock
+    private MockFilterChain filterChain;
+
+    private MockHttpServletResponse response = new MockHttpServletResponse();
 
     @Captor
-    ArgumentCaptor<Facts> factsArgumentCaptor;
+    private ArgumentCaptor<Facts> factsArgumentCaptor;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         behaviorExecutionFilter = new BehaviorExecutionFilter(behaviorProvider, globalCredentialStuffingRegistry);
     }
 
     @Test
-    public void should_build_facts() throws ServletException, IOException {
+    void should_build_facts() throws ServletException, IOException {
         MockHttpServletRequest request = loginRequest();
         request.setAttribute("nixer.flag", true);
         request.setAttribute("other.flag", true);
 
         given(globalCredentialStuffingRegistry.isCredentialStuffingActive()).willReturn(true);
 
-        behaviorExecutionFilter.doFilterInternal(request, response, filterChain);
+        execute(request);
 
         verify(behaviorProvider).get(factsArgumentCaptor.capture());
 
-        final Facts facts = factsArgumentCaptor.getValue();
+        Facts facts = factsArgumentCaptor.getValue();
         assertNotNull(facts);
         assertEquals(facts.getFact("nixer.flag"), true);
         assertEquals(facts.getFact(GLOBAL_CREDENTIAL_STUFFING), true);
     }
 
     @Test
-    public void should_execute_behavior() throws ServletException, IOException {
+    void should_execute_behavior() throws ServletException, IOException {
         MockHttpServletRequest request = loginRequest();
+        Behavior behavior = committingBehavior();
+        givenBehaviors(behavior);
 
-        final StubBehavior stubBehavior = new StubBehavior(EXCLUSIVE);
+        execute(request);
 
-        given(behaviorProvider.get(Mockito.any(Facts.class)))
-                .willReturn(ImmutableList.of(stubBehavior));
-
-        behaviorExecutionFilter.doFilterInternal(request, response, filterChain);
-
-        assertTrue(stubBehavior.executed);
+        verifyExecuted(behavior);
     }
 
     @Test
-    public void should_not_execute_in_dry_run() throws ServletException, IOException {
+    void should_not_execute_in_dry_run() throws ServletException, IOException {
         MockHttpServletRequest request = loginRequest();
         behaviorExecutionFilter.setDryRun(true);
+        Behavior behavior = committingBehavior();
+        givenBehaviors(behavior);
 
-        final StubBehavior stubBehavior = new StubBehavior(EXCLUSIVE);
+        execute(request);
 
-        given(behaviorProvider.get(Mockito.any(Facts.class)))
-                .willReturn(ImmutableList.of(stubBehavior));
-
-        behaviorExecutionFilter.doFilterInternal(request, response, filterChain);
-
-        assertFalse(stubBehavior.executed);
+        verifyNotExecuted(behavior);
     }
 
     @Test
-    public void should_skip_processing_for_not_matching_request() throws ServletException, IOException {
+    void should_skip_processing_for_not_matching_request() throws ServletException, IOException {
         MockHttpServletRequest request = logoutRequest();
 
-        behaviorExecutionFilter.doFilterInternal(request, response, filterChain);
+        execute(request);
 
         verifyZeroInteractions(behaviorProvider);
     }
 
     @Test
-    public void should_execute_both_categories_of_behaviors() throws ServletException, IOException {
+    void should_execute_both_behaviors() throws ServletException, IOException {
         MockHttpServletRequest request = loginRequest();
+        Behavior committingBehavior = committingBehavior();
+        Behavior nonCommittingBehavior = nonCommittingBehavior();
+        Behavior otherNonCommittingBehavior = nonCommittingBehavior();
+        givenBehaviors(nonCommittingBehavior, committingBehavior, otherNonCommittingBehavior);
 
-        final StubBehavior exclusiveBehavior = new StubBehavior(EXCLUSIVE);
-        final StubBehavior stackableBehavior = new StubBehavior(STACKABLE);
-        final StubBehavior otherStackableBehavior = new StubBehavior(STACKABLE);
+        execute(request);
 
-        given(behaviorProvider.get(Mockito.any(Facts.class)))
-                .willReturn(ImmutableList.of(stackableBehavior, exclusiveBehavior, otherStackableBehavior));
+        verifyExecuted(committingBehavior);
+        verifyExecuted(nonCommittingBehavior);
+        verifyExecuted(otherNonCommittingBehavior);
+    }
 
+    private void execute(final MockHttpServletRequest request) throws ServletException, IOException {
         behaviorExecutionFilter.doFilterInternal(request, response, filterChain);
+    }
 
-        assertTrue(exclusiveBehavior.executed);
-        assertTrue(stackableBehavior.executed);
-        assertTrue(otherStackableBehavior.executed);
+    private void givenBehaviors(final Behavior... behaviors) {
+        given(behaviorProvider.get(Mockito.any(Facts.class)))
+                .willReturn(ImmutableList.copyOf(behaviors));
     }
 
     @Test
-    public void should_execute_only_first_exclusive_behavior() throws ServletException, IOException {
+    void should_execute_only_first_committing_behavior() throws ServletException, IOException {
         MockHttpServletRequest request = loginRequest();
+        Behavior firstCommittingBehavior = committingBehavior();
+        Behavior secondCommittingBehavior = committingBehavior();
+        givenBehaviors(firstCommittingBehavior, secondCommittingBehavior);
 
-        final StubBehavior firstExclusiveBehavior = new StubBehavior(EXCLUSIVE);
-        final StubBehavior secondExclusiveBehavior = new StubBehavior(EXCLUSIVE);
+        execute(request);
 
-        given(behaviorProvider.get(Mockito.any(Facts.class)))
-                .willReturn(ImmutableList.of(firstExclusiveBehavior, secondExclusiveBehavior));
+        verifyExecuted(firstCommittingBehavior);
+        verifyNotExecuted(secondCommittingBehavior);
+    }
 
-        behaviorExecutionFilter.doFilterInternal(request, response, filterChain);
+    @Test
+    void should_stop_executing_filter_chain_on_committing_behavior() throws ServletException, IOException {
+        MockHttpServletRequest request = loginRequest();
+        Behavior committingBehavior = committingBehavior();
+        givenBehaviors(committingBehavior);
 
-        assertTrue(firstExclusiveBehavior.executed);
-        assertFalse(secondExclusiveBehavior.executed);
+        execute(request);
+
+        verifyExecuted(committingBehavior);
+        verifyFilterChainIgnored(request);
+    }
+
+    private void verifyFilterChainIgnored(final MockHttpServletRequest request) throws IOException, ServletException {
+        verify(filterChain, never()).doFilter(request, response);
     }
 
     private MockHttpServletRequest loginRequest() {
@@ -159,13 +175,23 @@ class BehaviorExecutionFilterTest {
         return request;
     }
 
+    private void verifyExecuted(Behavior behavior) {
+        StubBehavior stubBehavior = (StubBehavior) behavior;
+        assertTrue(stubBehavior.executed);
+    }
+
+    private void verifyNotExecuted(Behavior behavior) {
+        StubBehavior stubBehavior = (StubBehavior) behavior;
+        assertFalse(stubBehavior.executed);
+    }
+
     static class StubBehavior implements Behavior {
 
-        Category category;
+        boolean isCommitting;
         boolean executed;
 
-        public StubBehavior(Category category) {
-            this.category = category;
+        StubBehavior(boolean isCommitting) {
+            this.isCommitting = isCommitting;
         }
 
         @Override
@@ -174,8 +200,8 @@ class BehaviorExecutionFilterTest {
         }
 
         @Override
-        public Category category() {
-            return category;
+        public boolean isCommitting() {
+            return isCommitting;
         }
 
         @Override
@@ -183,6 +209,13 @@ class BehaviorExecutionFilterTest {
             return "stub";
         }
 
+        static Behavior committingBehavior() {
+            return new StubBehavior(true);
+        }
+
+        static Behavior nonCommittingBehavior() {
+            return new StubBehavior(false);
+        }
 
     }
 }
