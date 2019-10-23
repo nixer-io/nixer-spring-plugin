@@ -59,7 +59,7 @@ Google's Captcha V2 is a solid mechanism. We provide an example integration with
 
 ## Licensing
 
-Nixer credential stuffing plugin is an open source project licensed under MIT.
+Nixer credential stuffing plugin is an open source project licensed under version 2.0 of the Apache License.
 
 
 

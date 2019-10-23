@@ -1,5 +1,6 @@
 package eu.xword.nixer.nixerplugin.captcha.config;
 
+import eu.xword.nixer.nixerplugin.captcha.CaptchaBehavior;
 import eu.xword.nixer.nixerplugin.captcha.CaptchaService;
 import eu.xword.nixer.nixerplugin.captcha.CaptchaServiceFactory;
 import eu.xword.nixer.nixerplugin.captcha.endpoint.CaptchaEndpoint;
@@ -8,8 +9,8 @@ import eu.xword.nixer.nixerplugin.captcha.recaptcha.RecaptchaConfiguration;
 import eu.xword.nixer.nixerplugin.captcha.security.BadCaptchaException;
 import eu.xword.nixer.nixerplugin.captcha.security.CaptchaChecker;
 import eu.xword.nixer.nixerplugin.captcha.validation.CaptchaValidator;
-import eu.xword.nixer.nixerplugin.login.LoginFailureType;
-import eu.xword.nixer.nixerplugin.login.LoginFailureTypeRegistry;
+import eu.xword.nixer.nixerplugin.core.login.LoginFailureType;
+import eu.xword.nixer.nixerplugin.core.login.LoginFailureTypeRegistry;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,7 +23,7 @@ import static eu.xword.nixer.nixerplugin.captcha.metrics.CaptchaMetrics.LOGIN_AC
  *
  */
 @Configuration
-@EnableConfigurationProperties(value = {LoginCaptchaProperties.class})
+@EnableConfigurationProperties(value = {CaptchaMetricsProperties.class, LoginCaptchaProperties.class})
 @Import({MetricsConfiguration.class, RecaptchaConfiguration.class})
 public class CaptchaConfiguration implements LoginFailureTypeRegistry.Contributor {
 
@@ -47,6 +48,11 @@ public class CaptchaConfiguration implements LoginFailureTypeRegistry.Contributo
     @Bean
     public CaptchaValidator captchaValidator(CaptchaServiceFactory captchaServiceFactory) {
         return new CaptchaValidator(captchaServiceFactory);
+    }
+
+    @Bean
+    public CaptchaBehavior captchaBehavior() {
+        return new CaptchaBehavior();
     }
 
     @Override

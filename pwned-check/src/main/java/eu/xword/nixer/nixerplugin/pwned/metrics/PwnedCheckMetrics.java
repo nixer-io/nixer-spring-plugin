@@ -1,7 +1,7 @@
 package eu.xword.nixer.nixerplugin.pwned.metrics;
 
-import eu.xword.nixer.nixerplugin.metrics.CounterDefinition;
-import eu.xword.nixer.nixerplugin.metrics.MetricsLookupId;
+import eu.xword.nixer.nixerplugin.core.metrics.CounterDefinition;
+import eu.xword.nixer.nixerplugin.core.metrics.MetricsLookupId;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 
