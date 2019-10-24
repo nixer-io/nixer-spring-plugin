@@ -17,7 +17,7 @@ class BehaviorProviderTest {
     @BeforeEach
     void init() {
         final BehaviorRegistry behaviorRegistry = new BehaviorRegistry();
-        behaviorRegistry.init();
+        behaviorRegistry.afterPropertiesSet();
         behaviorProvider = new BehaviorProvider(behaviorRegistry);
     }
 

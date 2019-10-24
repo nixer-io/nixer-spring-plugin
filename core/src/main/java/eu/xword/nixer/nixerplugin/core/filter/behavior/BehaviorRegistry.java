@@ -3,22 +3,22 @@ package eu.xword.nixer.nixerplugin.core.filter.behavior;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import javax.annotation.PostConstruct;
 
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 
 /**
  * Manages behaviors. Allowing to lookup by name and registering new.
  */
-public class BehaviorRegistry {
+public class BehaviorRegistry implements InitializingBean {
 
     /**
      * We use mapping between rules and behaviors to make it possible to change behavior at runtime
      */
     private final Map<String, Behavior> behaviorByName = new ConcurrentHashMap<>();
-
-    @PostConstruct
-    public void init() {
+    
+    @Override
+    public void afterPropertiesSet() {
         this
                 .register(new LogBehavior())
                 .register(new PassthroughBehavior())
