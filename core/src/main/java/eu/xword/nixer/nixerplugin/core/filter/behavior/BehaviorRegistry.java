@@ -1,14 +1,14 @@
 package eu.xword.nixer.nixerplugin.core.filter.behavior;
 
+import java.util.Collection;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.PostConstruct;
 
 import org.springframework.util.Assert;
 
 /**
- * Manages behaviors. Allowing to lookup by name and registering new.
+ * Manages behaviors. Allowing to lookup by name and registering new behaviors.
  */
 public class BehaviorRegistry {
 
@@ -41,7 +41,7 @@ public class BehaviorRegistry {
         return this;
     }
 
-    public Set<String> getBehaviors() {
-        return behaviorByName.keySet();
+    public Collection<Behavior> getBehaviors() {
+        return behaviorByName.values();
     }
 }

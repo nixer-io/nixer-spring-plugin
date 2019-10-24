@@ -6,9 +6,9 @@ import java.util.Optional;
 import eu.xword.nixer.nixerplugin.core.filter.behavior.Behavior;
 import eu.xword.nixer.nixerplugin.core.filter.behavior.BehaviorEndpoint;
 import eu.xword.nixer.nixerplugin.core.filter.behavior.BehaviorProvider;
+import eu.xword.nixer.nixerplugin.core.filter.behavior.BehaviorProviderBuilder;
 import eu.xword.nixer.nixerplugin.core.filter.behavior.BehaviorRegistry;
 import eu.xword.nixer.nixerplugin.core.filter.behavior.BehaviorsProperties;
-import eu.xword.nixer.nixerplugin.core.filter.behavior.BehaviourProviderBuilder;
 import eu.xword.nixer.nixerplugin.core.filter.behavior.LogBehavior;
 import eu.xword.nixer.nixerplugin.core.registry.GlobalCredentialStuffingRegistry;
 import org.apache.commons.logging.Log;
@@ -58,13 +58,13 @@ public class FilterConfiguration {
 
     @Bean
     public BehaviorProvider buildBehaviorProvider(BehaviorRegistry behaviorRegistry, @Autowired(required = false) BehaviorProviderConfigurer configurer) {
-        final BehaviourProviderBuilder builder = BehaviourProviderBuilder.builder();
+        final BehaviorProviderBuilder builder = BehaviorProviderBuilder.builder(behaviorRegistry);
 
         Optional.ofNullable(configurer)
                 .orElse(defaultRuleConfigurer())
                 .configure(builder);
 
-        return builder.build(behaviorRegistry);
+        return builder.build();
     }
 
     private BehaviorProviderConfigurer defaultRuleConfigurer() {
@@ -80,7 +80,7 @@ public class FilterConfiguration {
     }
 
     public interface BehaviorProviderConfigurer {
-        BehaviourProviderBuilder configure(BehaviourProviderBuilder behaviourProviderBuilder);
+        BehaviorProviderBuilder configure(BehaviorProviderBuilder behaviorProviderBuilder);
     }
 
 

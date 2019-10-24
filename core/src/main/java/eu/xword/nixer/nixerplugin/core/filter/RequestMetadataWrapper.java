@@ -1,6 +1,5 @@
 package eu.xword.nixer.nixerplugin.core.filter;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -19,13 +18,6 @@ public class RequestMetadataWrapper {
     public RequestMetadataWrapper(final HttpServletRequest request) {
         Assert.notNull(request, "HttpServletRequest must not be null");
         this.request = request;
-    }
-
-    public Collection<String> getMetadataAttributeNames() {
-        return Collections.list(request.getAttributeNames())
-                .stream()
-                .filter(this::isMetadataAttribute)
-                .collect(Collectors.toList());
     }
 
     public Map<String, Object> getMetadataAttributes() {
