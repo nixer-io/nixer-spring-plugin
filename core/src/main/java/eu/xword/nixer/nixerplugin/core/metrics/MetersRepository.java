@@ -45,23 +45,25 @@ public class MetersRepository {
         return builder.build(meterRegistry);
     }
 
-    public static class Builder {
+    public static class Builder<T extends CounterDefinition & MetricsLookupId> {
 
-        private final List<CounterDefinition> counterDefinitions = new ArrayList<>();
+        private final List<T> counterDefinitions = new ArrayList<>();
 
         private Builder() {
         }
 
-        public Builder register(CounterDefinition counterDefinition) {
+        public Builder register(T counterDefinition) {
             counterDefinitions.add(counterDefinition);
             return this;
         }
 
         private MetersRepository build(MeterRegistry meterRegistry) {
-            final Map<String, Counter> meters = counterDefinitions.stream()
+            final Map<String, Counter> meters = counterDefinitions
+                    .stream()
                     .collect(Collectors.toMap(
-                            MetricsLookupId::lookupId,
-                            counterDefinition -> counterDefinition.register(meterRegistry)
+                            counterDef -> counterDef.lookupId(), // do not use method reference.
+                            // See javac bug https://stackoverflow.com/questions/27031244/lambdaconversionexception-with-generics-jvm-bug
+                            counterDef -> counterDef.register(meterRegistry)
                     ));
 
             return new MetersRepository(meters);
