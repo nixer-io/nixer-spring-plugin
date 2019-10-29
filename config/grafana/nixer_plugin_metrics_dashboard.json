@@ -46,7 +46,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1566469836650,
+  "iteration": 1572365816028,
   "links": [],
   "panels": [
     {
@@ -431,7 +431,7 @@
               "type": "fill"
             }
           ],
-          "measurement": "recaptcha",
+          "measurement": "captcha",
           "orderByTime": "ASC",
           "policy": "default",
           "refId": "A",
@@ -480,7 +480,7 @@
               "type": "fill"
             }
           ],
-          "measurement": "recaptcha",
+          "measurement": "captcha",
           "orderByTime": "ASC",
           "policy": "default",
           "refId": "B",
@@ -555,6 +555,142 @@
         "align": false,
         "alignLevel": null
       }
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 18
+      },
+      "id": 14,
+      "panels": [],
+      "title": "Pwned Passwords",
+      "type": "row"
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "description": "",
+      "fill": 1,
+      "gridPos": {
+        "h": 6,
+        "w": 24,
+        "x": 0,
+        "y": 19
+      },
+      "id": 12,
+      "interval": "1m",
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "paceLength": 10,
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "alias": "$tag_result",
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "result"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "0"
+              ],
+              "type": "fill"
+            }
+          ],
+          "measurement": "pwned_check",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Pwned Passwords",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "decimals": 0,
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
     }
   ],
   "refresh": "5s",
@@ -567,14 +703,14 @@
         "allValue": null,
         "current": {},
         "datasource": "${DS_INFLUXDB}",
-        "definition": "show tag values from recaptcha with key = action",
+        "definition": "show tag values from captcha with key = action",
         "hide": 0,
         "includeAll": false,
         "label": "Action",
         "multi": false,
         "name": "action",
         "options": [],
-        "query": "show tag values from recaptcha with key = action",
+        "query": "show tag values from captcha with key = action",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
@@ -593,9 +729,6 @@
   },
   "timepicker": {
     "refresh_intervals": [
-      "5s",
-      "10s",
-      "30s",
       "1m",
       "5m",
       "15m",
@@ -617,7 +750,7 @@
     ]
   },
   "timezone": "",
-  "title": "Nixer Plugin",
+  "title": "Nixer Plugin Metrics",
   "uid": "_spUMYHWz",
-  "version": 18
+  "version": 20
 }
