@@ -3,15 +3,14 @@ package eu.xword.nixer.nixerplugin.pwned;
 import java.io.FileNotFoundException;
 
 import eu.xword.nixer.bloom.check.BloomFilterCheck;
+import eu.xword.nixer.nixerplugin.core.NixerAutoConfiguration;
+import eu.xword.nixer.nixerplugin.core.metrics.MetricsFactory;
 import eu.xword.nixer.nixerplugin.pwned.check.PwnedCredentialsChecker;
 import eu.xword.nixer.nixerplugin.pwned.filter.PwnedCredentialsFilter;
-import eu.xword.nixer.nixerplugin.pwned.metrics.PwnedCheckMetricsConfiguration;
 import eu.xword.nixer.nixerplugin.pwned.metrics.PwnedPasswordMetricsReporter;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.util.ResourceUtils;
 
 /**
@@ -19,10 +18,8 @@ import org.springframework.util.ResourceUtils;
  *
  * @author gcwiak
  */
-@Configuration
 @EnableConfigurationProperties(value = {PwnedCheckProperties.class})
-@ConditionalOnProperty(value = "nixer.pwned.check.enabled")
-@Import(value = {PwnedCheckMetricsConfiguration.class})
+@AutoConfigureOrder(NixerAutoConfiguration.ORDER + 1)
 public class PwnedCheckAutoConfiguration {
 
     @Bean
@@ -49,4 +46,10 @@ public class PwnedCheckAutoConfiguration {
                 ResourceUtils.getFile(pwnedCheckProperties.getPwnedFilePath()).toPath()
         );
     }
+
+    @Bean
+    public PwnedPasswordMetricsReporter pwnedPasswordMetricsReporter(MetricsFactory metricsFactory) {
+        return PwnedPasswordMetricsReporter.create(metricsFactory);
+    }
+
 }

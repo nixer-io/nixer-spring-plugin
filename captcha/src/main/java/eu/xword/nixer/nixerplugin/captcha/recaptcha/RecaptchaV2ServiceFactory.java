@@ -2,8 +2,8 @@ package eu.xword.nixer.nixerplugin.captcha.recaptcha;
 
 import eu.xword.nixer.nixerplugin.captcha.CaptchaService;
 import eu.xword.nixer.nixerplugin.captcha.CaptchaServiceFactory;
-import eu.xword.nixer.nixerplugin.captcha.metrics.MetricsReporter;
-import eu.xword.nixer.nixerplugin.captcha.metrics.MetricsReporterFactory;
+import eu.xword.nixer.nixerplugin.captcha.metrics.CaptchaMetricsReporter;
+import eu.xword.nixer.nixerplugin.core.metrics.MetricsFactory;
 import org.springframework.util.Assert;
 
 /**
@@ -12,19 +12,19 @@ import org.springframework.util.Assert;
 public class RecaptchaV2ServiceFactory implements CaptchaServiceFactory {
 
     private final RecaptchaClient recaptchaClient;
-    private final MetricsReporterFactory metricsReporterFactory;
+    private final MetricsFactory metricsFactory;
 
-    public RecaptchaV2ServiceFactory(final RecaptchaClient recaptchaClient, final MetricsReporterFactory metricsReporterFactory) {
+    public RecaptchaV2ServiceFactory(final RecaptchaClient recaptchaClient, final MetricsFactory metricsFactory) {
         Assert.notNull(recaptchaClient, "RecaptchaClient must not be null");
         this.recaptchaClient = recaptchaClient;
 
-        Assert.notNull(metricsReporterFactory, "MetricsReporterFactory must not be null");
-        this.metricsReporterFactory = metricsReporterFactory;
+        Assert.notNull(metricsFactory, "MetricsFactory must not be null");
+        this.metricsFactory = metricsFactory;
     }
 
     @Override
     public CaptchaService createCaptchaService(final String action) {
-        final MetricsReporter metricsReporter = metricsReporterFactory.createMetricsReporter(action);
+        final CaptchaMetricsReporter metricsReporter = CaptchaMetricsReporter.create(metricsFactory, action);
 
         return new RecaptchaV2Service(recaptchaClient, metricsReporter);
     }

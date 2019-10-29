@@ -4,31 +4,35 @@ import eu.xword.nixer.nixerplugin.core.login.LoginActivityRepository;
 import eu.xword.nixer.nixerplugin.core.login.LoginContext;
 import eu.xword.nixer.nixerplugin.core.login.LoginFailureType;
 import eu.xword.nixer.nixerplugin.core.login.LoginResult;
-import eu.xword.nixer.nixerplugin.core.metrics.MetricsWriter;
+import eu.xword.nixer.nixerplugin.core.metrics.MetricsCounter;
+import eu.xword.nixer.nixerplugin.core.metrics.MetricsFactory;
 import org.springframework.util.Assert;
 
-import static eu.xword.nixer.nixerplugin.core.login.metrics.LoginMetrics.LOGIN_SUCCESS;
-import static eu.xword.nixer.nixerplugin.core.login.metrics.LoginMetrics.metricFromLoginFailure;
+import static eu.xword.nixer.nixerplugin.core.login.metrics.LoginCounters.LOGIN_SUCCESS;
+import static eu.xword.nixer.nixerplugin.core.login.metrics.LoginCounters.metricFromLoginFailure;
 
 /**
- * Records metrics about user login in micrometer.
+ * Reports metrics about user login.
  */
 public class LoginMetricsReporter implements LoginActivityRepository {
 
-    private final MetricsWriter metricsWriter;
+    private final MetricsCounter loginSuccessCounter;
+    private final MetricsFactory metricsFactory;
 
-    public LoginMetricsReporter(final MetricsWriter metricsWriter) {
-        Assert.notNull(metricsWriter, "MetricsWriter must not be null");
-        this.metricsWriter = metricsWriter;
+    public LoginMetricsReporter(final MetricsFactory metricsFactory) {
+        Assert.notNull(metricsFactory, "MetricsFactory must not be null");
+
+        this.loginSuccessCounter = metricsFactory.counter(LOGIN_SUCCESS.counterDefinition());
+        this.metricsFactory = metricsFactory;
     }
 
-
     private void reportLoginFail(final LoginFailureType loginFailureType) {
-        metricsWriter.write(metricFromLoginFailure(loginFailureType));
+        final MetricsCounter failureCounter = metricsFactory.counter(metricFromLoginFailure(loginFailureType).counterDefinition());
+        failureCounter.increment();
     }
 
     private void reportLoginSuccess() {
-        metricsWriter.write(LOGIN_SUCCESS);
+        loginSuccessCounter.increment();
     }
 
     @Override

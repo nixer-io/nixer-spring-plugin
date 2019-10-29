@@ -1,6 +1,6 @@
 package eu.xword.nixer.nixerplugin.captcha.recaptcha;
 
-import eu.xword.nixer.nixerplugin.captcha.metrics.MetricsReporterFactory;
+import eu.xword.nixer.nixerplugin.core.metrics.MetricsFactory;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -59,8 +59,9 @@ public class RecaptchaConfiguration {
 
     @Bean
     public RecaptchaV2ServiceFactory recaptchaV2ServiceFactory(RecaptchaClient recaptchaClient,
-                                                               MetricsReporterFactory metricsReporterFactory) {
-        return new RecaptchaV2ServiceFactory(recaptchaClient, metricsReporterFactory);
+                                                               MetricsFactory metricsFactory) {
+
+        return new RecaptchaV2ServiceFactory(recaptchaClient, metricsFactory);
     }
 
     @Bean

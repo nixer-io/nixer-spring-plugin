@@ -11,10 +11,8 @@ import eu.xword.nixer.nixerplugin.core.ip.tree.IpTreeBuilder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.util.ResourceUtils;
 
-@Configuration
 @EnableConfigurationProperties({IpFilterProperties.class})
 @ConditionalOnProperty(prefix = "nixer.filter.ip", name = "enabled", havingValue = "true")
 public class IpFilterConfiguration {

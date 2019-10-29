@@ -6,7 +6,7 @@ import eu.xword.nixer.nixerplugin.captcha.CaptchaService;
 import eu.xword.nixer.nixerplugin.captcha.error.CaptchaClientException;
 import eu.xword.nixer.nixerplugin.captcha.error.CaptchaErrors;
 import eu.xword.nixer.nixerplugin.captcha.error.CaptchaServiceException;
-import eu.xword.nixer.nixerplugin.captcha.metrics.MetricsReporter;
+import eu.xword.nixer.nixerplugin.captcha.metrics.CaptchaMetricsReporter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.util.Assert;
@@ -23,15 +23,15 @@ public class RecaptchaV2Service implements CaptchaService {
 
     private static Pattern RESPONSE_PATTERN = Pattern.compile("[A-Za-z0-9_-]+");
 
-    private final MetricsReporter metricsReporter;
+    private final CaptchaMetricsReporter metricsReporter;
 
     private final RecaptchaClient recaptchaClient;
 
-    public RecaptchaV2Service(final RecaptchaClient recaptchaClient, final MetricsReporter metricsReporter) {
+    public RecaptchaV2Service(final RecaptchaClient recaptchaClient, final CaptchaMetricsReporter metricsReporter) {
         Assert.notNull(recaptchaClient, "RecaptchaClient must not be null");
         this.recaptchaClient = recaptchaClient;
 
-        Assert.notNull(metricsReporter, "MetricsReporter must not be null");
+        Assert.notNull(metricsReporter, "CaptchaMetricsReporter must not be null");
         this.metricsReporter = metricsReporter;
     }
 

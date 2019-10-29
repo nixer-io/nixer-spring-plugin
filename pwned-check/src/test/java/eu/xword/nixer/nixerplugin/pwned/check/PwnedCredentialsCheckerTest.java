@@ -2,13 +2,12 @@ package eu.xword.nixer.nixerplugin.pwned.check;
 
 import com.google.common.base.Strings;
 import eu.xword.nixer.bloom.check.BloomFilterCheck;
-import eu.xword.nixer.nixerplugin.core.metrics.MetricsWriter;
+import eu.xword.nixer.nixerplugin.core.metrics.MetricsCounter;
 import eu.xword.nixer.nixerplugin.pwned.metrics.PwnedPasswordMetricsReporter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,7 +29,7 @@ class PwnedCredentialsCheckerTest {
     @Mock
     BloomFilterCheck pwnedFilter;
 
-    private PwnedPasswordMetricsReporter pwnedPasswordMetrics = new PwnedPasswordMetricsReporter(Mockito.mock(MetricsWriter.class));
+    private PwnedPasswordMetricsReporter pwnedPasswordMetrics = new PwnedPasswordMetricsReporter(counterStub, counterStub);
 
     private PwnedCredentialsChecker pwnedCredentialsChecker;
 
@@ -92,4 +91,8 @@ class PwnedCredentialsCheckerTest {
         assertThat(result).isFalse();
         verifyZeroInteractions(pwnedFilter);
     }
+
+    private static MetricsCounter counterStub = () -> {
+
+    };
 }

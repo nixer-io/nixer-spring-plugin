@@ -4,9 +4,7 @@ import java.util.stream.Stream;
 
 import eu.xword.nixer.nixerplugin.core.login.LoginFailureType;
 import eu.xword.nixer.nixerplugin.core.metrics.CounterDefinition;
-import eu.xword.nixer.nixerplugin.core.metrics.MetricsLookupId;
 import io.micrometer.core.instrument.Counter;
-import io.micrometer.core.instrument.MeterRegistry;
 
 import static eu.xword.nixer.nixerplugin.core.login.LoginFailureType.BAD_PASSWORD;
 import static eu.xword.nixer.nixerplugin.core.login.LoginFailureType.DISABLED;
@@ -17,9 +15,9 @@ import static eu.xword.nixer.nixerplugin.core.login.LoginFailureType.OTHER;
 import static eu.xword.nixer.nixerplugin.core.login.LoginFailureType.UNKNOWN_USER;
 
 /**
- * Defines metrics reported for login
+ * Defines counters reported for login
  */
-public enum LoginMetrics implements CounterDefinition, MetricsLookupId {
+public enum LoginCounters {
 
     LOGIN_SUCCESS(),
     LOGIN_FAILED_UNKNOWN_USER(UNKNOWN_USER),
@@ -34,19 +32,19 @@ public enum LoginMetrics implements CounterDefinition, MetricsLookupId {
     private static final String RESULT_TAG = "result";
     private static final String FAILED_LOGIN_DESC = "User login failed";
     private static final String LOGIN_SUCCESS_DESC = "User login succeeded";
-    private static final String SUCCESS_TAG = "success";
-    private static final String FAILED_TAG = "failed";
+    private static final String SUCCESS_TAG_VALUE = "success";
+    private static final String FAILED_TAG_VALUE = "failed";
     private static final String REASON_TAG = "reason";
 
     private final CounterDefinition counterDefinition;
     private final LoginFailureType loginFailureType;
 
-    LoginMetrics() {
+    LoginCounters() {
         this.counterDefinition = successCounter();
         this.loginFailureType = null;
     }
 
-    LoginMetrics(LoginFailureType loginFailureType) {
+    LoginCounters(LoginFailureType loginFailureType) {
         this.counterDefinition = failureCounter(loginFailureType);
         this.loginFailureType = loginFailureType;
     }
@@ -54,32 +52,26 @@ public enum LoginMetrics implements CounterDefinition, MetricsLookupId {
     private static CounterDefinition successCounter() {
         return meterRegistry -> Counter.builder(LOGIN_METRIC)
                 .description(LOGIN_SUCCESS_DESC)
-                .tags(RESULT_TAG, SUCCESS_TAG)
+                .tags(RESULT_TAG, SUCCESS_TAG_VALUE)
                 .register(meterRegistry);
     }
 
     private static CounterDefinition failureCounter(final LoginFailureType reason) {
         return meterRegistry -> Counter.builder(LOGIN_METRIC)
                 .description(FAILED_LOGIN_DESC)
-                .tags(RESULT_TAG, FAILED_TAG)
+                .tag(RESULT_TAG, FAILED_TAG_VALUE)
                 .tag(REASON_TAG, reason.name())
                 .register(meterRegistry);
     }
 
-    @Override
-    public Counter register(final MeterRegistry meterRegistry) {
-        return counterDefinition.register(meterRegistry);
+    public CounterDefinition counterDefinition() {
+        return counterDefinition;
     }
 
-    @Override
-    public String lookupId() {
-        return name();
-    }
-
-    public static LoginMetrics metricFromLoginFailure(final LoginFailureType loginFailureType) {
+    public static LoginCounters metricFromLoginFailure(final LoginFailureType loginFailureType) {
         return Stream.of(values())
-                .filter(loginMetrics -> loginMetrics.loginFailureType == loginFailureType)
+                .filter(loginCounters -> loginCounters.loginFailureType == loginFailureType)
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Unknown loginFailure " + loginFailureType));
+                .orElseThrow(() -> new IllegalArgumentException("Unknown login failure " + loginFailureType));
     }
 }

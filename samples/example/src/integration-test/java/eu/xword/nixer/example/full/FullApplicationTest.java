@@ -5,7 +5,7 @@ import eu.xword.nixer.nixerplugin.captcha.security.CaptchaChecker;
 import eu.xword.nixer.nixerplugin.captcha.security.CaptchaCondition;
 import eu.xword.nixer.nixerplugin.core.detection.config.AnomalyRulesProperties;
 import eu.xword.nixer.nixerplugin.core.filter.behavior.Behaviors;
-import eu.xword.nixer.nixerplugin.pwned.metrics.PwnedCheckMetrics;
+import eu.xword.nixer.nixerplugin.core.login.metrics.LoginCounters;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.junit.jupiter.api.AfterEach;
@@ -28,12 +28,14 @@ import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.SmartRequestBuilder;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 
+import static eu.xword.nixer.example.LoginRequestBuilder.formLogin;
 import static eu.xword.nixer.nixerplugin.core.detection.config.AnomalyRulesProperties.Name.ip;
 import static eu.xword.nixer.nixerplugin.core.detection.config.AnomalyRulesProperties.Name.useragent;
-import static eu.xword.nixer.example.LoginRequestBuilder.formLogin;
 import static eu.xword.nixer.nixerplugin.core.filter.RequestAugmentation.USER_AGENT_FAILED_LOGIN_OVER_THRESHOLD;
-import static eu.xword.nixer.nixerplugin.pwned.metrics.PwnedCheckMetrics.NOT_PWNED_PASSWORD;
-import static eu.xword.nixer.nixerplugin.pwned.metrics.PwnedCheckMetrics.PWNED_PASSWORD;
+import static eu.xword.nixer.nixerplugin.pwned.metrics.PwnedCheckCounters.METRIC_NAME;
+import static eu.xword.nixer.nixerplugin.pwned.metrics.PwnedCheckCounters.NOT_PWNED_RESULT;
+import static eu.xword.nixer.nixerplugin.pwned.metrics.PwnedCheckCounters.PWNED_RESULT;
+import static eu.xword.nixer.nixerplugin.pwned.metrics.PwnedCheckCounters.RESULT_TAG;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.is;
@@ -212,8 +214,8 @@ public class FullApplicationTest {
     @Test
     void shouldWritePwnedPasswordMetrics() throws  Exception {
         // given
-        final Counter pwnedPasswordCounter = givenCounter(PWNED_PASSWORD);
-        final Counter notPwnedPasswordCounter = givenCounter(NOT_PWNED_PASSWORD);
+        final Counter pwnedPasswordCounter = givenPwnedCounter();
+        final Counter notPwnedPasswordCounter = givenNotPwnedCounter();
 
         double initialPwnedCount = pwnedPasswordCounter.count();
         double initialNotPwnedCount = notPwnedPasswordCounter.count();
@@ -233,9 +235,14 @@ public class FullApplicationTest {
         assertThat(notPwnedPasswordCounter.count()).isEqualTo(initialNotPwnedCount + 1);
     }
 
-    private Counter givenCounter(final PwnedCheckMetrics pwnedMetric) {
-        return meterRegistry.get(pwnedMetric.metricName)
-                .tag(pwnedMetric.resultTag, pwnedMetric.result).counter();
+    private Counter givenPwnedCounter() {
+        return meterRegistry.get(METRIC_NAME)
+                .tag(RESULT_TAG, PWNED_RESULT).counter();
+    }
+
+    private Counter givenNotPwnedCounter() {
+        return meterRegistry.get(METRIC_NAME)
+                .tag(RESULT_TAG, NOT_PWNED_RESULT).counter();
     }
 
     private ResultActions loginWithNotPwnedPassword() throws Exception {
@@ -299,9 +306,7 @@ public class FullApplicationTest {
 
     @Test
     void shouldReportLoginSuccessMetric() throws Exception {
-        final Counter successLoginCounter = meterRegistry.get("login")
-                .tag("result", "success")
-                .counter();
+        final Counter successLoginCounter = successLoginCounter();
         double successLoginCount = successLoginCounter.count();
 
         loginSuccessfully();
@@ -311,14 +316,20 @@ public class FullApplicationTest {
 
     @Test
     void shouldReportLoginFailedMetric() throws Exception {
-        final Counter failLoginCounter = meterRegistry.get("login")
-                .tag("result", "failed")
-                .counter();
+        final Counter failLoginCounter = badPasswordLoginFailCounter();
         double failedLoginCount = failLoginCounter.count();
 
         loginFailure();
 
         assertThat(failLoginCounter.count()).isEqualTo(failedLoginCount + 1);
+    }
+
+    private Counter successLoginCounter() {
+        return LoginCounters.LOGIN_SUCCESS.counterDefinition().register(meterRegistry);
+    }
+
+    private Counter badPasswordLoginFailCounter() {
+        return LoginCounters.LOGIN_FAILED_BAD_PASSWORD.counterDefinition().register(meterRegistry);
     }
 
     @Test
