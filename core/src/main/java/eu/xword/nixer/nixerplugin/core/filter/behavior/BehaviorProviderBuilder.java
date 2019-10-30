@@ -64,13 +64,13 @@ public class BehaviorProviderBuilder {
         }
 
         // todo find better name for act
-        public RuleBuilder act(final Behaviors behavior) {
+        public RuleBuilder then(final Behaviors behavior) {
             Assert.notNull(behavior, "Behavior must not be null");
 
-            return act(behavior.name());
+            return then(behavior.name());
         }
 
-        public RuleBuilder act(final String behaviorName) {
+        public RuleBuilder then(final String behaviorName) {
             Assert.notNull(behaviorName, "BehaviorName must not be null");
 
             this.behaviorName = behaviorName;
@@ -93,7 +93,7 @@ public class BehaviorProviderBuilder {
             return new Rule(name, predicate, behavior);
         }
 
-        public BehaviorProviderBuilder build() {
+        public BehaviorProviderBuilder buildRule() {
             final Rule rule = createRule();
             rules.add(rule);
             return BehaviorProviderBuilder.this;

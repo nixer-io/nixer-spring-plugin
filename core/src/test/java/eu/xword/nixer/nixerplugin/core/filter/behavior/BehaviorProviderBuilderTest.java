@@ -29,7 +29,7 @@ class BehaviorProviderBuilderTest {
         final BehaviorProvider provider = builder(behaviorRegistry)
                 .rule(RULE_NAME)
                 .when(RULE_PREDICATE)
-                .act(Behaviors.LOG).build()
+                .then(Behaviors.LOG).buildRule()
                 .build();
 
         final Rule rule = provider.getRule(RULE_NAME);
@@ -44,10 +44,10 @@ class BehaviorProviderBuilderTest {
         final BehaviorProvider provider = builder(behaviorRegistry)
                 .rule(RULE_NAME)
                 .when(RULE_PREDICATE)
-                .act(Behaviors.LOG).build()
+                .then(Behaviors.LOG).buildRule()
                 .rule(OTHER_RULE_NAME)
                 .when(RULE_PREDICATE)
-                .act(Behaviors.LOG).build()
+                .then(Behaviors.LOG).buildRule()
                 .build();
 
 
@@ -61,10 +61,10 @@ class BehaviorProviderBuilderTest {
         final BehaviorProviderBuilder providerBuilder = builder(behaviorRegistry)
                 .rule(RULE_NAME)
                 .when(RULE_PREDICATE)
-                .act(Behaviors.LOG).build()
+                .then(Behaviors.LOG).buildRule()
                 .rule(RULE_NAME)
                 .when(RULE_PREDICATE)
-                .act(Behaviors.LOG).build();
+                .then(Behaviors.LOG).buildRule();
 
         assertThrows(IllegalArgumentException.class, providerBuilder::build);
     }
@@ -75,7 +75,7 @@ class BehaviorProviderBuilderTest {
             builder(behaviorRegistry)
                     .rule(RULE_NAME)
                     .when(RULE_PREDICATE)
-                    .act("unknownBehavior").build();
+                    .then("unknownBehavior").buildRule();
         });
     }
 }

@@ -13,7 +13,7 @@ public class BehaviorProvider {
 
     private final List<Rule> rules;
 
-    public BehaviorProvider(final List<Rule> rules) {
+    BehaviorProvider(final List<Rule> rules) {
         Assert.notNull(rules, "Rules must not be null");
         this.rules = Collections.unmodifiableList(rules);
     }
@@ -42,7 +42,6 @@ public class BehaviorProvider {
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Unknown rule " + ruleName));
     }
-
 
 
 }
