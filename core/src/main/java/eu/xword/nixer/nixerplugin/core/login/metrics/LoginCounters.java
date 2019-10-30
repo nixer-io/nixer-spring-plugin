@@ -1,5 +1,7 @@
 package eu.xword.nixer.nixerplugin.core.login.metrics;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import eu.xword.nixer.nixerplugin.core.login.LoginFailureType;
@@ -50,6 +52,10 @@ public enum LoginCounters implements CounterDefinition {
         this.loginFailureType = loginFailureType;
     }
 
+    public LoginFailureType loginFailureType() {
+        return loginFailureType;
+    }
+
     private static CounterDefinition successCounter() {
         return meterRegistry -> Counter.builder(LOGIN_METRIC)
                 .description(LOGIN_SUCCESS_DESC)
@@ -65,15 +71,10 @@ public enum LoginCounters implements CounterDefinition {
                 .register(meterRegistry);
     }
 
-    public CounterDefinition counterDefinition() {
-        return counterDefinition;
-    }
-
-    static LoginCounters metricFromLoginFailure(final LoginFailureType loginFailureType) {
+    public static List<LoginCounters> failureCounters() {
         return Stream.of(values())
-                .filter(loginCounters -> loginCounters.loginFailureType == loginFailureType)
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Unknown login failure " + loginFailureType));
+                .filter(loginCounters -> loginCounters.loginFailureType != null)
+                .collect(Collectors.toList());
     }
 
     @Override

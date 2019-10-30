@@ -6,6 +6,7 @@ import eu.xword.nixer.nixerplugin.core.detection.config.DetectionConfiguration;
 import eu.xword.nixer.nixerplugin.core.events.elastic.ElasticLoggingAutoConfiguration;
 import eu.xword.nixer.nixerplugin.core.filter.FilterConfiguration;
 import eu.xword.nixer.nixerplugin.core.ip.IpFilterConfiguration;
+import eu.xword.nixer.nixerplugin.core.login.LoginConfiguration;
 import eu.xword.nixer.nixerplugin.core.login.jdbc.JdbcDAO;
 import eu.xword.nixer.nixerplugin.core.metrics.MetricsConfiguration;
 import eu.xword.nixer.nixerplugin.core.registry.GlobalCredentialStuffingRegistry;
@@ -24,6 +25,7 @@ import static eu.xword.nixer.nixerplugin.core.NixerAutoConfiguration.ORDER;
 @Import({
         DetectionConfiguration.class,
         FilterConfiguration.class,
+        LoginConfiguration.class,
         MetricsConfiguration.class,
         StigmaConfiguration.class,
         IpFilterConfiguration.class,
