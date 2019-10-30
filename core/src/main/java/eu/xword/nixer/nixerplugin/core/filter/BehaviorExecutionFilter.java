@@ -2,7 +2,6 @@ package eu.xword.nixer.nixerplugin.core.filter;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,10 +10,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import eu.xword.nixer.nixerplugin.core.registry.GlobalCredentialStuffingRegistry;
 import eu.xword.nixer.nixerplugin.core.filter.behavior.Behavior;
 import eu.xword.nixer.nixerplugin.core.filter.behavior.BehaviorProvider;
 import eu.xword.nixer.nixerplugin.core.filter.behavior.Facts;
+import eu.xword.nixer.nixerplugin.core.registry.GlobalCredentialStuffingRegistry;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -84,7 +83,7 @@ public class BehaviorExecutionFilter extends OncePerRequestFilter {
     private boolean execute(final HttpServletRequest request, final HttpServletResponse response, final List<Behavior> behaviors) throws IOException {
         boolean gotCommittingBehavior = false;
         for (Behavior behavior : behaviors) {
-            logger.info((dryRun ? "[dry-run]" : "") + "Executing behaviour: " + behavior.name());
+            logger.info((dryRun ? "[dry-run]" : "") + "Executing behavior: " + behavior.name());
             if (!dryRun) {
                 behavior.act(request, response);
                 gotCommittingBehavior |= behavior.isCommitting();
@@ -94,14 +93,9 @@ public class BehaviorExecutionFilter extends OncePerRequestFilter {
     }
 
     private Facts prepareFacts(final HttpServletRequest request) {
-        final Enumeration<String> attributeNames = request.getAttributeNames();
-        final Map<String, Object> metadata = new HashMap<>();
-        while (attributeNames.hasMoreElements()) {
-            String key = attributeNames.nextElement();
-            if (key.startsWith("nixer")) {
-                metadata.put(key, request.getAttribute(key));
-            }
-        }
+        final RequestMetadataWrapper requestMetadataWrapper = new RequestMetadataWrapper(request);
+        final Map<String, Object> metadata = new HashMap<>(requestMetadataWrapper.getMetadataAttributes());
+
         metadata.put(GLOBAL_CREDENTIAL_STUFFING, globalCredentialStuffingRegistry.isCredentialStuffingActive());
 
         return new Facts(metadata);

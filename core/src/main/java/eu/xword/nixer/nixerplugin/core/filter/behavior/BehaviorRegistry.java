@@ -1,14 +1,14 @@
 package eu.xword.nixer.nixerplugin.core.filter.behavior;
 
+import java.util.Collection;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 
 /**
- * Manages behaviors. Allowing to lookup by name and registering new.
+ * Manages behaviors. Allowing to lookup by name and registering new behaviors.
  */
 public class BehaviorRegistry implements InitializingBean {
 
@@ -20,7 +20,6 @@ public class BehaviorRegistry implements InitializingBean {
     @Override
     public void afterPropertiesSet() {
         this
-                .register(new LogBehavior())
                 .register(new PassthroughBehavior())
                 .register(new RedirectBehavior("/login?blockedError", Behaviors.BLOCKED_ERROR.name()))
                 .register(new RedirectBehavior("/login?error", Behaviors.BAD_CREDENTIALS_ERROR.name()));
@@ -42,7 +41,7 @@ public class BehaviorRegistry implements InitializingBean {
         return this;
     }
 
-    public Set<String> getBehaviors() {
-        return behaviorByName.keySet();
+    public Collection<Behavior> getBehaviors() {
+        return behaviorByName.values();
     }
 }

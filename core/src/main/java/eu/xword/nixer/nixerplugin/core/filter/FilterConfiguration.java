@@ -6,8 +6,10 @@ import java.util.Optional;
 import eu.xword.nixer.nixerplugin.core.filter.behavior.Behavior;
 import eu.xword.nixer.nixerplugin.core.filter.behavior.BehaviorEndpoint;
 import eu.xword.nixer.nixerplugin.core.filter.behavior.BehaviorProvider;
+import eu.xword.nixer.nixerplugin.core.filter.behavior.BehaviorProviderBuilder;
 import eu.xword.nixer.nixerplugin.core.filter.behavior.BehaviorRegistry;
-import eu.xword.nixer.nixerplugin.core.filter.behavior.BehaviourProviderBuilder;
+import eu.xword.nixer.nixerplugin.core.filter.behavior.BehaviorsProperties;
+import eu.xword.nixer.nixerplugin.core.filter.behavior.LogBehavior;
 import eu.xword.nixer.nixerplugin.core.registry.GlobalCredentialStuffingRegistry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -17,7 +19,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@EnableConfigurationProperties(value = {FilterProperties.class})
+@EnableConfigurationProperties(value = {FilterProperties.class, BehaviorsProperties.class})
 public class FilterConfiguration {
 
     private final Log logger = LogFactory.getLog(getClass());
@@ -42,14 +44,27 @@ public class FilterConfiguration {
     }
 
     @Bean
+    public LogBehavior logBehavior(BehaviorsProperties behaviorsProperties) {
+        final BehaviorsProperties.LogBehaviorProperties logProperties = behaviorsProperties.getLog();
+
+        final LogBehavior logBehavior = new LogBehavior();
+        logBehavior.setIncludeHeaders(logProperties.isIncludeHeaders());
+        logBehavior.setIncludeMetadata(logProperties.isIncludeMetadata());
+        logBehavior.setIncludeUserInfo(logProperties.isIncludeUserInfo());
+        logBehavior.setIncludeQueryString(logProperties.isIncludeQueryString());
+
+        return logBehavior;
+    }
+
+    @Bean
     public BehaviorProvider buildBehaviorProvider(BehaviorRegistry behaviorRegistry, @Autowired(required = false) BehaviorProviderConfigurer configurer) {
-        final BehaviourProviderBuilder builder = BehaviourProviderBuilder.builder();
+        final BehaviorProviderBuilder builder = BehaviorProviderBuilder.builder(behaviorRegistry);
 
         Optional.ofNullable(configurer)
                 .orElse(defaultRuleConfigurer())
                 .configure(builder);
 
-        return builder.build(behaviorRegistry);
+        return builder.build();
     }
 
     private BehaviorProviderConfigurer defaultRuleConfigurer() {
@@ -65,6 +80,8 @@ public class FilterConfiguration {
     }
 
     public interface BehaviorProviderConfigurer {
-        BehaviourProviderBuilder configure(BehaviourProviderBuilder behaviourProviderBuilder);
+        BehaviorProviderBuilder configure(BehaviorProviderBuilder behaviorProviderBuilder);
     }
+
+
 }
