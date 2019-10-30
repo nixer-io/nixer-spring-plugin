@@ -36,6 +36,4 @@ public enum PwnedCheckCounters implements CounterDefinition {
     public static final String PWNED_RESULT = "pwned_password";
     public static final String METRIC_NAME = "pwned_check";
     public static final String RESULT_TAG = "result";
-
-
 }

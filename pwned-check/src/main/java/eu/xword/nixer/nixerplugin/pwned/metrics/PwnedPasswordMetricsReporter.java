@@ -20,8 +20,7 @@ public class PwnedPasswordMetricsReporter {
     private final MetricsCounter pwnedPasswordCounter;
     private final MetricsCounter notPwnedPasswordCounter;
 
-    public PwnedPasswordMetricsReporter(final MetricsCounter pwnedPasswordCounter, final MetricsCounter notPwnedPasswordCounter) {
-
+    protected PwnedPasswordMetricsReporter(final MetricsCounter pwnedPasswordCounter, final MetricsCounter notPwnedPasswordCounter) {
         Assert.notNull(pwnedPasswordCounter, "pwnedPasswordCounter must not be null");
         this.pwnedPasswordCounter = pwnedPasswordCounter;
 

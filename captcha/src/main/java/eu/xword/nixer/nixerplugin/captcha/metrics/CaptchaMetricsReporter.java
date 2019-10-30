@@ -12,6 +12,8 @@ import static eu.xword.nixer.nixerplugin.captcha.metrics.CaptchaCounters.CAPTCHA
  */
 public class CaptchaMetricsReporter {
 
+    public static final String LOGIN_ACTION = "login";
+
     private final MetricsCounter passedCaptchaCounter;
     private final MetricsCounter failedCaptchaCounter;
 

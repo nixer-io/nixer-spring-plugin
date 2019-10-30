@@ -27,9 +27,7 @@ class PwnedCredentialsCheckerTest {
     private static final int MAX_PASSWORD_LENGTH = 50;
 
     @Mock
-    BloomFilterCheck pwnedFilter;
-
-    private PwnedPasswordMetricsReporter pwnedPasswordMetrics = new PwnedPasswordMetricsReporter(counterStub, counterStub);
+    private BloomFilterCheck pwnedFilter;
 
     private PwnedCredentialsChecker pwnedCredentialsChecker;
 
@@ -39,7 +37,7 @@ class PwnedCredentialsCheckerTest {
                 pwnedFilter,
                 MAX_PASSWORD_LENGTH,
                 // TODO consider replacing PwnedPasswordMetricsReporter with a mock and verifying it's invoked
-                pwnedPasswordMetrics
+                new MetricsReporterStub()
         );
     }
 
@@ -92,7 +90,14 @@ class PwnedCredentialsCheckerTest {
         verifyZeroInteractions(pwnedFilter);
     }
 
-    private static MetricsCounter counterStub = () -> {
 
-    };
+    private static class MetricsReporterStub extends PwnedPasswordMetricsReporter {
+        private static final MetricsCounter COUNTER_STUB = () -> {
+
+        };
+
+        MetricsReporterStub() {
+            super(COUNTER_STUB, COUNTER_STUB);
+        }
+    }
 }

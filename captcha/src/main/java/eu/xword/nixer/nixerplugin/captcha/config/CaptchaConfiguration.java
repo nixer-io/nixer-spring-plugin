@@ -16,7 +16,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 
-import static eu.xword.nixer.nixerplugin.captcha.metrics.CaptchaCounters.LOGIN_ACTION;
+import static eu.xword.nixer.nixerplugin.captcha.metrics.CaptchaMetricsReporter.LOGIN_ACTION;
 
 /**
  * {@link org.springframework.boot.autoconfigure.EnableAutoConfiguration Auto-configuration} for Captcha.

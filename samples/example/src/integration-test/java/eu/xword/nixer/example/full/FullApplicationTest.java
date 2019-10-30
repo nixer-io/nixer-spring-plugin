@@ -328,11 +328,11 @@ public class FullApplicationTest {
     }
 
     private Counter successLoginCounter() {
-        return LoginCounters.LOGIN_SUCCESS.counterDefinition().register(meterRegistry);
+        return LoginCounters.LOGIN_SUCCESS.register(meterRegistry);
     }
 
     private Counter badPasswordLoginFailCounter() {
-        return LoginCounters.LOGIN_FAILED_BAD_PASSWORD.counterDefinition().register(meterRegistry);
+        return LoginCounters.LOGIN_FAILED_BAD_PASSWORD.register(meterRegistry);
     }
 
     @Test

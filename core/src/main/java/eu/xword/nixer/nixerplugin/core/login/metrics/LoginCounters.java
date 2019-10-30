@@ -5,6 +5,7 @@ import java.util.stream.Stream;
 import eu.xword.nixer.nixerplugin.core.login.LoginFailureType;
 import eu.xword.nixer.nixerplugin.core.metrics.CounterDefinition;
 import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
 
 import static eu.xword.nixer.nixerplugin.core.login.LoginFailureType.BAD_PASSWORD;
 import static eu.xword.nixer.nixerplugin.core.login.LoginFailureType.DISABLED;
@@ -17,7 +18,7 @@ import static eu.xword.nixer.nixerplugin.core.login.LoginFailureType.UNKNOWN_USE
 /**
  * Defines counters reported for login
  */
-public enum LoginCounters {
+public enum LoginCounters implements CounterDefinition {
 
     LOGIN_SUCCESS(),
     LOGIN_FAILED_UNKNOWN_USER(UNKNOWN_USER),
@@ -68,10 +69,15 @@ public enum LoginCounters {
         return counterDefinition;
     }
 
-    public static LoginCounters metricFromLoginFailure(final LoginFailureType loginFailureType) {
+    static LoginCounters metricFromLoginFailure(final LoginFailureType loginFailureType) {
         return Stream.of(values())
                 .filter(loginCounters -> loginCounters.loginFailureType == loginFailureType)
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Unknown login failure " + loginFailureType));
+    }
+
+    @Override
+    public Counter register(final MeterRegistry meterRegistry) {
+        return counterDefinition.register(meterRegistry);
     }
 }
