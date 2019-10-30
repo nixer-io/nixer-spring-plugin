@@ -1,7 +1,7 @@
 package eu.xword.nixer.nixerplugin.core.stigma.storage;
 
 import eu.xword.nixer.nixerplugin.core.login.LoginResult;
-import eu.xword.nixer.nixerplugin.core.login.jdbc.JdbcDAO;
+import eu.xword.nixer.nixerplugin.core.stigma.jdbc.JdbcDAO;
 import org.springframework.util.Assert;
 
 public class JdbcStigmaRepository implements StigmaRepository {

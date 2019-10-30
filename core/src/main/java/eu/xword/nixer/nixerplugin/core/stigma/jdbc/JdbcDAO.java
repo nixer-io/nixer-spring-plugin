@@ -1,4 +1,4 @@
-package eu.xword.nixer.nixerplugin.core.login.jdbc;
+package eu.xword.nixer.nixerplugin.core.stigma.jdbc;
 
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 

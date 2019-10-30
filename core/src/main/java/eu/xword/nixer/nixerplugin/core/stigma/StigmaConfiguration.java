@@ -5,9 +5,10 @@ import java.io.FileNotFoundException;
 import java.time.Duration;
 import java.time.Instant;
 import javax.annotation.Nonnull;
+import javax.sql.DataSource;
 
-import eu.xword.nixer.nixerplugin.core.login.jdbc.JdbcDAO;
 import eu.xword.nixer.nixerplugin.core.stigma.embed.EmbeddedStigmaService;
+import eu.xword.nixer.nixerplugin.core.stigma.jdbc.JdbcDAO;
 import eu.xword.nixer.nixerplugin.core.stigma.storage.JdbcStigmaRepository;
 import eu.xword.nixer.nixerplugin.core.stigma.storage.StigmaRepository;
 import eu.xword.nixer.nixerplugin.core.stigma.token.EncryptedStigmaTokenProvider;
@@ -28,6 +29,13 @@ import org.springframework.util.StringUtils;
 @EnableConfigurationProperties(value = {StigmaProperties.class})
 public class StigmaConfiguration {
 
+    @Bean
+    public JdbcDAO jdbcDAO(DataSource dataSource) {
+        final JdbcDAO jdbcDAO = new JdbcDAO();
+        jdbcDAO.setDataSource(dataSource);
+        return jdbcDAO;
+    }
+    
     @Bean
     public StigmaUtils stigmaUtils() {
         return new StigmaUtils();

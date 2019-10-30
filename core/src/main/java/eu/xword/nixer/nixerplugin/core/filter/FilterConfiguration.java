@@ -8,6 +8,7 @@ import eu.xword.nixer.nixerplugin.core.filter.behavior.BehaviorEndpoint;
 import eu.xword.nixer.nixerplugin.core.filter.behavior.BehaviorProvider;
 import eu.xword.nixer.nixerplugin.core.filter.behavior.BehaviorRegistry;
 import eu.xword.nixer.nixerplugin.core.filter.behavior.BehaviourProviderBuilder;
+import eu.xword.nixer.nixerplugin.core.ip.IpFilterConfiguration;
 import eu.xword.nixer.nixerplugin.core.registry.GlobalCredentialStuffingRegistry;
 import eu.xword.nixer.nixerplugin.core.registry.IpOverLoginThresholdRegistry;
 import eu.xword.nixer.nixerplugin.core.registry.UserAgentOverLoginThresholdRegistry;
@@ -24,7 +25,8 @@ import org.springframework.context.annotation.Import;
 @Import({
         FilterConfiguration.IpThresholdFilter.class,
         FilterConfiguration.UsernameThresholdFilter.class,
-        FilterConfiguration.UserAgentThresholdFilter.class
+        FilterConfiguration.UserAgentThresholdFilter.class,
+        IpFilterConfiguration.class,
 })
 public class FilterConfiguration {
 
@@ -105,6 +107,12 @@ public class FilterConfiguration {
         public IpOverLoginThresholdRegistry ipRegistry() {
             return new IpOverLoginThresholdRegistry();
         }
+    }
+
+
+    @Bean
+    public GlobalCredentialStuffingRegistry credentialStuffing() {
+        return new GlobalCredentialStuffingRegistry();
     }
 
     private BehaviorProviderConfigurer defaultRuleConfigurer() {

@@ -4,7 +4,7 @@ import java.util.List;
 import javax.sql.DataSource;
 
 import eu.xword.nixer.nixerplugin.core.detection.rules.AnomalyRulesRunner;
-import eu.xword.nixer.nixerplugin.core.login.jdbc.JdbcDAOConfigurer;
+import eu.xword.nixer.nixerplugin.core.stigma.jdbc.JdbcDAOConfigurer;
 import eu.xword.nixer.nixerplugin.core.login.metrics.LoginMetricsReporter;
 import eu.xword.nixer.nixerplugin.core.metrics.MetricsFactory;
 import eu.xword.nixer.nixerplugin.core.stigma.StigmaService;

@@ -1,4 +1,4 @@
-package eu.xword.nixer.nixerplugin.core.login.jdbc;
+package eu.xword.nixer.nixerplugin.core.stigma.jdbc;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +23,7 @@ public class JdbcDAOConfigurer implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() {
-        this.initScripts.add(new ClassPathResource("eu/xword/nixer/nixerplugin/core/login/jdbc/schema.ddl"));
+        this.initScripts.add(new ClassPathResource("eu/xword/nixer/nixerplugin/core/stigma/jdbc/schema.ddl"));
         getDataSourceInit().afterPropertiesSet();
     }
 
