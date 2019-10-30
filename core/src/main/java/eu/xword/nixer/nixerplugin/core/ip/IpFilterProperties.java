@@ -1,10 +1,8 @@
 package eu.xword.nixer.nixerplugin.core.ip;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 
 @ConfigurationProperties(prefix = "nixer.filter.ip")
-@Component
 public class IpFilterProperties {
 
     private boolean enabled;

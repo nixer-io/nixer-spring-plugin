@@ -11,7 +11,6 @@ import static eu.xword.nixer.nixerplugin.core.filter.RequestAugmentation.IP_FAIL
 /**
  * Appends information if request ip is over threshold for failed login.
  */
-@Component
 public class IpFailedLoginOverThresholdFilter extends MetadataFilter {
 
     private final IpOverLoginThresholdRegistry ipOverLoginThresholdRegistry;

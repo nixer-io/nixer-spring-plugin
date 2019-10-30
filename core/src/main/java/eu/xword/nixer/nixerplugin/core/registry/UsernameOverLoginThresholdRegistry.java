@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 /**
  * Stores username which are over threshold for login failures
  */
-@Component
 public class UsernameOverLoginThresholdRegistry implements ApplicationListener<UsernameFailedLoginOverThresholdEvent> {
 
     private Duration expirationTime = Duration.ofMinutes(5);

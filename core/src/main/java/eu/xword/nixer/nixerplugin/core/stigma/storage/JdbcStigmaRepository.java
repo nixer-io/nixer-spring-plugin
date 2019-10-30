@@ -2,14 +2,16 @@ package eu.xword.nixer.nixerplugin.core.stigma.storage;
 
 import eu.xword.nixer.nixerplugin.core.login.LoginResult;
 import eu.xword.nixer.nixerplugin.core.login.jdbc.JdbcDAO;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
+import org.springframework.util.Assert;
 
-@Repository
 public class JdbcStigmaRepository implements StigmaRepository {
 
-    @Autowired
-    private JdbcDAO jdbcDAO;
+    private final JdbcDAO jdbcDAO;
+
+    public JdbcStigmaRepository(final JdbcDAO jdbcDAO) {
+        Assert.notNull(jdbcDAO, "JdbcDAO must not be null");
+        this.jdbcDAO = jdbcDAO;
+    }
 
     @Override
     public void save(final String stigma, final LoginResult loginResult) {

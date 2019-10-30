@@ -6,7 +6,9 @@ import java.time.Duration;
 import java.time.Instant;
 import javax.annotation.Nonnull;
 
+import eu.xword.nixer.nixerplugin.core.login.jdbc.JdbcDAO;
 import eu.xword.nixer.nixerplugin.core.stigma.embed.EmbeddedStigmaService;
+import eu.xword.nixer.nixerplugin.core.stigma.storage.JdbcStigmaRepository;
 import eu.xword.nixer.nixerplugin.core.stigma.storage.StigmaRepository;
 import eu.xword.nixer.nixerplugin.core.stigma.token.EncryptedStigmaTokenProvider;
 import eu.xword.nixer.nixerplugin.core.stigma.token.PlainStigmaTokenProvider;
@@ -25,6 +27,16 @@ import org.springframework.util.StringUtils;
 
 @EnableConfigurationProperties(value = {StigmaProperties.class})
 public class StigmaConfiguration {
+
+    @Bean
+    public StigmaUtils stigmaUtils() {
+        return new StigmaUtils();
+    }
+
+    @Bean
+    public JdbcStigmaRepository jdbcStigmaRepository(JdbcDAO jdbcDAO) {
+        return new JdbcStigmaRepository(jdbcDAO);
+    }
 
     @Bean
     public StigmaTokenValidator buildStigmaTokenValidator(@Nonnull final EncryptedJwtValidator encryptedJwtValidator) {

@@ -5,9 +5,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.common.net.HttpHeaders;
 import eu.xword.nixer.nixerplugin.core.ip.IpMetadata;
+import eu.xword.nixer.nixerplugin.core.stigma.StigmaService;
 import eu.xword.nixer.nixerplugin.core.stigma.StigmaToken;
 import eu.xword.nixer.nixerplugin.core.stigma.StigmaUtils;
-import eu.xword.nixer.nixerplugin.core.stigma.embed.EmbeddedStigmaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -16,7 +16,6 @@ import org.springframework.security.authentication.event.AbstractAuthenticationF
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Component;
 
 import static eu.xword.nixer.nixerplugin.core.filter.RequestAugmentation.IP_METADATA;
 import static eu.xword.nixer.nixerplugin.core.filter.RequestAugmentation.USER_AGENT_TOKEN;
@@ -24,7 +23,6 @@ import static eu.xword.nixer.nixerplugin.core.filter.RequestAugmentation.USER_AG
 /**
  * Listens for Spring {@link AbstractAuthenticationEvent} and processed them.
  */
-@Component
 public class LoginActivityListener implements ApplicationListener<AbstractAuthenticationEvent> {
 
     private HttpServletRequest request;
@@ -33,13 +31,13 @@ public class LoginActivityListener implements ApplicationListener<AbstractAuthen
 
     private final StigmaUtils stigmaUtils;
 
-    private final EmbeddedStigmaService stigmaService;
+    private final StigmaService stigmaService;
 
     private final LoginActivityService loginActivityService;
 
     private final LoginFailureTypeRegistry loginFailureTypeRegistry;
 
-    public LoginActivityListener(final EmbeddedStigmaService stigmaService,
+    public LoginActivityListener(final StigmaService stigmaService,
                                  final StigmaUtils stigmaUtils,
                                  final LoginActivityService loginActivityService,
                                  final LoginFailureTypeRegistry loginFailureTypeRegistry) {

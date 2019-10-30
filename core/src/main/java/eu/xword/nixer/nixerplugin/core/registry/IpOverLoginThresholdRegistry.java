@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 /**
  * Stores ip which are over threshold for login failures
  */
-@Component
 public class IpOverLoginThresholdRegistry implements ApplicationListener<IpFailedLoginOverThresholdEvent> {
 
     private Duration expirationTime = Duration.ofMinutes(5);

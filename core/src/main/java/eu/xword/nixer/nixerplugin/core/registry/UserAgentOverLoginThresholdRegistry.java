@@ -6,12 +6,10 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import eu.xword.nixer.nixerplugin.core.events.UserAgentFailedLoginOverThresholdEvent;
 import org.springframework.context.ApplicationListener;
-import org.springframework.stereotype.Component;
 
 /**
  * Stores user-agents which are over threshold for login failures
  */
-@Component
 public class UserAgentOverLoginThresholdRegistry implements ApplicationListener<UserAgentFailedLoginOverThresholdEvent> {
 
     private Duration expirationTime = Duration.ofMinutes(5);

@@ -14,7 +14,6 @@ import static org.springframework.security.web.authentication.UsernamePasswordAu
 /**
  * Appends information if presented username is over threshold for failed login.
  */
-@Component
 public class UsernameFailedLoginOverThresholdFilter extends MetadataFilter {
 
     private final UsernameOverLoginThresholdRegistry usernameOverLoginThresholdRegistry;

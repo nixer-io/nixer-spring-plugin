@@ -4,7 +4,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import eu.xword.nixer.nixerplugin.core.registry.UserAgentOverLoginThresholdRegistry;
 import eu.xword.nixer.nixerplugin.core.useragent.UserAgentTokenizer;
-import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import static eu.xword.nixer.nixerplugin.core.filter.RequestAugmentation.USER_AGENT_FAILED_LOGIN_OVER_THRESHOLD;
@@ -14,7 +13,6 @@ import static org.springframework.http.HttpHeaders.USER_AGENT;
 /**
  * Appends information if presented username is over threshold for failed login.
  */
-@Component
 public class UserAgentFailedLoginOverThresholdFilter extends MetadataFilter {
 
     private final UserAgentTokenizer userAgentTokenizer = UserAgentTokenizer.sha1Tokenizer();

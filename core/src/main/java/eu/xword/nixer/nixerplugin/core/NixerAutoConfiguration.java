@@ -13,14 +13,12 @@ import eu.xword.nixer.nixerplugin.core.registry.GlobalCredentialStuffingRegistry
 import eu.xword.nixer.nixerplugin.core.stigma.StigmaConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 import static eu.xword.nixer.nixerplugin.core.NixerAutoConfiguration.ORDER;
 
 @Configuration
-@ComponentScan
 @AutoConfigureOrder(ORDER)
 @Import({
         DetectionConfiguration.class,

@@ -10,9 +10,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.init.DataSourceInitializer;
 import org.springframework.jdbc.datasource.init.DatabasePopulator;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
-import org.springframework.stereotype.Component;
 
-@Component
 public class JdbcDAOConfigurer implements InitializingBean {
 
     private DataSource dataSource;

@@ -3,10 +3,8 @@ package eu.xword.nixer.nixerplugin.core.login;
 import java.util.List;
 
 import eu.xword.nixer.nixerplugin.core.detection.rules.AnomalyRulesRunner;
-import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
-@Component
 public class LoginActivityService {
 
     private final List<LoginActivityRepository> repositories;
