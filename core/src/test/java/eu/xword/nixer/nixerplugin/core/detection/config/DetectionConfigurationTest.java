@@ -1,5 +1,6 @@
 package eu.xword.nixer.nixerplugin.core.detection.config;
 
+import eu.xword.nixer.nixerplugin.core.detection.DetectionConfiguration;
 import eu.xword.nixer.nixerplugin.core.detection.rules.AnomalyRule;
 import eu.xword.nixer.nixerplugin.core.detection.rules.AnomalyRulesRunner;
 import eu.xword.nixer.nixerplugin.core.detection.rules.IpFailedLoginOverThresholdRule;

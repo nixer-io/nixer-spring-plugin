@@ -10,7 +10,9 @@ import eu.xword.nixer.nixerplugin.core.metrics.MetricsFactory;
 import eu.xword.nixer.nixerplugin.core.stigma.StigmaService;
 import eu.xword.nixer.nixerplugin.core.stigma.StigmaUtils;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
+@Configuration
 public class LoginConfiguration {
 
     @Bean

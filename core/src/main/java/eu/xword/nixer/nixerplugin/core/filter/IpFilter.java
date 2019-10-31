@@ -7,6 +7,7 @@ import eu.xword.nixer.nixerplugin.core.ip.IpMetadata;
 import eu.xword.nixer.nixerplugin.core.ip.net.IpAddress;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.util.Assert;
 
 /**
  * NixerFilter that matches request IP with IP ranges, executing action on match.
@@ -16,9 +17,10 @@ public class IpFilter extends MetadataFilter {
 
     private final Log logger = LogFactory.getLog(getClass());
 
-    private IpLookup ipLookup;
+    private final IpLookup ipLookup;
 
     public IpFilter(final IpLookup ipLookup) {
+        Assert.notNull(ipLookup, "IpLookup must not be null");
         this.ipLookup = ipLookup;
     }
 

@@ -23,9 +23,11 @@ import eu.xword.nixer.nixerplugin.core.stigma.token.validation.StigmaTokenPayloa
 import eu.xword.nixer.nixerplugin.core.stigma.token.validation.StigmaTokenValidator;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.util.ResourceUtils;
 import org.springframework.util.StringUtils;
 
+@Configuration
 @EnableConfigurationProperties(value = {StigmaProperties.class})
 public class StigmaConfiguration {
 

@@ -11,7 +11,6 @@ public class LoginActivityService {
 
     private final AnomalyRulesRunner anomalyRulesRunner;
 
-
     public LoginActivityService(final List<LoginActivityRepository> repositories, final AnomalyRulesRunner anomalyRulesRunner) {
         Assert.notNull(repositories, "Repositories must not be null");
         this.repositories = repositories;

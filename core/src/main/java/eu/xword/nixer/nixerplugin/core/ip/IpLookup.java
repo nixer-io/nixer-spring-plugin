@@ -14,7 +14,7 @@ public class IpLookup {
     private IpTree<Ipv4Address> ipv4PrefixTree;
     private IpTree<Ipv6Address> ipv6PrefixTree;
 
-    public IpLookup(final IpTree<Ipv4Address> ipv4PrefixTree, final IpTree<Ipv6Address> ipv6PrefixTree) {
+    IpLookup(final IpTree<Ipv4Address> ipv4PrefixTree, final IpTree<Ipv6Address> ipv6PrefixTree) {
         this.ipv4PrefixTree = ipv4PrefixTree;
         this.ipv6PrefixTree = ipv6PrefixTree;
     }

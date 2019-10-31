@@ -4,15 +4,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.springframework.util.Assert;
 
-public abstract class ThresholdAnomalyRule implements AnomalyRule {
+abstract class ThresholdAnomalyRule implements AnomalyRule {
 
     private final AtomicInteger threshold;
 
-    public ThresholdAnomalyRule(final int threshold) {
+    ThresholdAnomalyRule(final int threshold) {
         this.threshold = new AtomicInteger(threshold);
     }
 
-    protected boolean isOverThreshold(int value) {
+    boolean isOverThreshold(int value) {
         return value > threshold.get();
     }
 

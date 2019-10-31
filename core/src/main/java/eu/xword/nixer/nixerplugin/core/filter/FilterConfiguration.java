@@ -10,7 +10,7 @@ import eu.xword.nixer.nixerplugin.core.filter.behavior.BehaviorProviderBuilder;
 import eu.xword.nixer.nixerplugin.core.filter.behavior.BehaviorRegistry;
 import eu.xword.nixer.nixerplugin.core.filter.behavior.BehaviorsProperties;
 import eu.xword.nixer.nixerplugin.core.filter.behavior.LogBehavior;
-import eu.xword.nixer.nixerplugin.core.ip.IpFilterConfiguration;
+import eu.xword.nixer.nixerplugin.core.ip.IpLookupConfiguration;
 import eu.xword.nixer.nixerplugin.core.registry.GlobalCredentialStuffingRegistry;
 import eu.xword.nixer.nixerplugin.core.registry.IpOverLoginThresholdRegistry;
 import eu.xword.nixer.nixerplugin.core.registry.UserAgentOverLoginThresholdRegistry;
@@ -23,12 +23,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
+@Configuration
 @EnableConfigurationProperties(value = {FilterProperties.class, BehaviorsProperties.class})
 @Import({
         FilterConfiguration.IpThresholdFilter.class,
         FilterConfiguration.UsernameThresholdFilter.class,
         FilterConfiguration.UserAgentThresholdFilter.class,
-        IpFilterConfiguration.class,
+        IpLookupConfiguration.class,
 })
 public class FilterConfiguration {
 
