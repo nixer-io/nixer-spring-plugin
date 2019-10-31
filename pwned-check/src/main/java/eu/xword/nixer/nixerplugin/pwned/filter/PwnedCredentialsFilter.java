@@ -2,7 +2,7 @@ package eu.xword.nixer.nixerplugin.pwned.filter;
 
 import javax.servlet.http.HttpServletRequest;
 
-import eu.xword.nixer.nixerplugin.core.filter.MetadataFilter;
+import eu.xword.nixer.nixerplugin.core.detection.filter.MetadataFilter;
 import eu.xword.nixer.nixerplugin.pwned.check.PwnedCredentialsChecker;
 
 /**

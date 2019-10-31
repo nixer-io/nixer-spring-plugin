@@ -1,7 +1,7 @@
 package eu.xword.nixer.nixerplugin.core.login;
 
 import com.google.common.base.Objects;
-import eu.xword.nixer.nixerplugin.core.ip.IpMetadata;
+import eu.xword.nixer.nixerplugin.core.detection.filter.ip.IpMetadata;
 
 /**
  * Stores data about user making login request.

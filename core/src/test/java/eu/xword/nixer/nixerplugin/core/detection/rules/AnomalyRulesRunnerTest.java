@@ -3,10 +3,10 @@ package eu.xword.nixer.nixerplugin.core.detection.rules;
 import java.util.ArrayList;
 import java.util.List;
 
-import eu.xword.nixer.nixerplugin.core.events.AnomalyEvent;
-import eu.xword.nixer.nixerplugin.core.events.ApplicationEventPublisherStub;
-import eu.xword.nixer.nixerplugin.core.events.IpFailedLoginOverThresholdEvent;
-import eu.xword.nixer.nixerplugin.core.events.UserAgentFailedLoginOverThresholdEvent;
+import eu.xword.nixer.nixerplugin.core.detection.events.AnomalyEvent;
+import eu.xword.nixer.nixerplugin.core.detection.events.ApplicationEventPublisherStub;
+import eu.xword.nixer.nixerplugin.core.detection.events.IpFailedLoginOverThresholdEvent;
+import eu.xword.nixer.nixerplugin.core.detection.events.UserAgentFailedLoginOverThresholdEvent;
 import eu.xword.nixer.nixerplugin.core.login.LoginContext;
 import org.junit.jupiter.api.Test;
 

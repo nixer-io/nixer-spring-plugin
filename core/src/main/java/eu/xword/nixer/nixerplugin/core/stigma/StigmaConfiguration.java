@@ -9,6 +9,7 @@ import javax.sql.DataSource;
 
 import eu.xword.nixer.nixerplugin.core.stigma.embed.EmbeddedStigmaService;
 import eu.xword.nixer.nixerplugin.core.stigma.jdbc.JdbcDAO;
+import eu.xword.nixer.nixerplugin.core.stigma.jdbc.JdbcDAOConfigurer;
 import eu.xword.nixer.nixerplugin.core.stigma.storage.JdbcStigmaRepository;
 import eu.xword.nixer.nixerplugin.core.stigma.storage.StigmaRepository;
 import eu.xword.nixer.nixerplugin.core.stigma.token.EncryptedStigmaTokenProvider;
@@ -37,7 +38,12 @@ public class StigmaConfiguration {
         jdbcDAO.setDataSource(dataSource);
         return jdbcDAO;
     }
-    
+
+    @Bean
+    public JdbcDAOConfigurer JdbcDAOConfigurer(DataSource dataSource) {
+        return new JdbcDAOConfigurer(dataSource);
+    }
+
     @Bean
     public StigmaUtils stigmaUtils() {
         return new StigmaUtils();

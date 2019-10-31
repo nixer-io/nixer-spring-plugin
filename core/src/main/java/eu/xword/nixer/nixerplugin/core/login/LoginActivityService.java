@@ -20,7 +20,6 @@ public class LoginActivityService {
     }
 
     public void save(final LoginResult loginResult, final LoginContext context) {
-
         for (LoginActivityRepository repository : repositories) {
             repository.save(loginResult, context);
         }

@@ -1,24 +1,16 @@
 package eu.xword.nixer.nixerplugin.core.login;
 
 import java.util.List;
-import javax.sql.DataSource;
+import javax.servlet.http.HttpServletRequest;
 
 import eu.xword.nixer.nixerplugin.core.detection.rules.AnomalyRulesRunner;
-import eu.xword.nixer.nixerplugin.core.stigma.jdbc.JdbcDAOConfigurer;
 import eu.xword.nixer.nixerplugin.core.login.metrics.LoginMetricsReporter;
 import eu.xword.nixer.nixerplugin.core.metrics.MetricsFactory;
-import eu.xword.nixer.nixerplugin.core.stigma.StigmaService;
-import eu.xword.nixer.nixerplugin.core.stigma.StigmaUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class LoginConfiguration {
-
-    @Bean
-    public JdbcDAOConfigurer JdbcDAOConfigurer(DataSource dataSource) {
-        return new JdbcDAOConfigurer(dataSource);
-    }
 
     @Bean
     public LoginMetricsReporter loginMetricsReporter(MetricsFactory metricsFactory) {
@@ -41,15 +33,12 @@ public class LoginConfiguration {
     }
 
     @Bean
-    public LoginActivityListener loginActivityListener(StigmaService stigmaService,
-                                                       StigmaUtils stigmaUtils,
+    public LoginActivityListener loginActivityListener(HttpServletRequest httpServletRequest,
                                                        LoginActivityService loginActivityService,
                                                        LoginFailureTypeRegistry loginFailureTypeRegistry) {
-        return new LoginActivityListener(
-                stigmaService,
-                stigmaUtils,
-                loginActivityService,
-                loginFailureTypeRegistry
-        );
+
+        final LoginContextFactory loginContextFactory = new LoginContextFactory(httpServletRequest, loginFailureTypeRegistry);
+
+        return new LoginActivityListener(loginActivityService, loginContextFactory);
     }
 }
