@@ -1,6 +1,6 @@
-## Nixer spring-plugin by Crossword Cybersecurity
+## Nixer spring-plugin
 
-A plugin for [Spring](https://github.com/spring-projects/spring-framework) utilising Nixer's protection technologies by [Crossword Cybersecurity](https://www.crosswordcybersecurity.com/). The plugin provides protection against credential stuffing attacks to your Spring web application. 
+A plugin for [Spring](https://github.com/spring-projects/spring-framework). The plugin provides protection against credential stuffing attacks to your Spring web application. 
 
 ## Credential Stuffing attack
 
@@ -66,7 +66,7 @@ Google's Captcha V2 is a solid mechanism. We provide an example integration with
 
 ## Licensing
 
-Nixer credential stuffing plugin is an open source project licensed under version 2.0 of the Apache License.
+This plugin is an open source project licensed under version 2.0 of the Apache License.
 
 
 
