@@ -14,6 +14,7 @@ import eu.xword.nixer.nixerplugin.core.login.LoginFailureTypeRegistry;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 import static eu.xword.nixer.nixerplugin.captcha.metrics.CaptchaMetricsReporter.LOGIN_ACTION;
@@ -22,6 +23,7 @@ import static eu.xword.nixer.nixerplugin.captcha.metrics.CaptchaMetricsReporter.
  * {@link org.springframework.boot.autoconfigure.EnableAutoConfiguration Auto-configuration} for Captcha.
  *
  */
+@Configuration
 @EnableConfigurationProperties(value = {LoginCaptchaProperties.class})
 @Import({RecaptchaConfiguration.class})
 @AutoConfigureOrder(NixerAutoConfiguration.ORDER + 1)

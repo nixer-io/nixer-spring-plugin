@@ -1,11 +1,15 @@
 package eu.xword.nixer.nixerplugin.core.login;
 
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 
+import eu.xword.nixer.nixerplugin.core.detection.rules.AnomalyRulesRunner;
 import eu.xword.nixer.nixerplugin.core.login.metrics.LoginMetricsReporter;
 import eu.xword.nixer.nixerplugin.core.metrics.MetricsFactory;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
+@Configuration
 public class LoginConfiguration {
 
     @Bean
@@ -20,5 +24,21 @@ public class LoginConfiguration {
         consumers.forEach(builderConsumer -> builderConsumer.contribute(builder));
 
         return builder.build();
+    }
+
+    @Bean
+    public LoginActivityService loginActivityService(List<LoginActivityRepository> loginActivityRepositories,
+                                                     AnomalyRulesRunner anomalyRulesRunner) {
+        return new LoginActivityService(loginActivityRepositories, anomalyRulesRunner);
+    }
+
+    @Bean
+    public LoginActivityListener loginActivityListener(HttpServletRequest httpServletRequest,
+                                                       LoginActivityService loginActivityService,
+                                                       LoginFailureTypeRegistry loginFailureTypeRegistry) {
+
+        final LoginContextFactory loginContextFactory = new LoginContextFactory(httpServletRequest, loginFailureTypeRegistry);
+
+        return new LoginActivityListener(loginActivityService, loginContextFactory);
     }
 }

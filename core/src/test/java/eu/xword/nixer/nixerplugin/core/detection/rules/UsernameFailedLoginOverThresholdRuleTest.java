@@ -3,7 +3,8 @@ package eu.xword.nixer.nixerplugin.core.detection.rules;
 import java.util.ArrayList;
 import java.util.List;
 
-import eu.xword.nixer.nixerplugin.core.events.UsernameFailedLoginOverThresholdEvent;
+import eu.xword.nixer.nixerplugin.core.detection.rules.threshold.UsernameFailedLoginOverThresholdRule;
+import eu.xword.nixer.nixerplugin.core.detection.events.UsernameFailedLoginOverThresholdEvent;
 import eu.xword.nixer.nixerplugin.core.login.LoginContext;
 import eu.xword.nixer.nixerplugin.core.login.inmemory.LoginMetric;
 import org.junit.jupiter.api.BeforeEach;

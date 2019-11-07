@@ -11,6 +11,7 @@ import eu.xword.nixer.nixerplugin.pwned.metrics.PwnedPasswordMetricsReporter;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.util.ResourceUtils;
 
 /**
@@ -18,6 +19,7 @@ import org.springframework.util.ResourceUtils;
  *
  * @author gcwiak
  */
+@Configuration
 @EnableConfigurationProperties(value = {PwnedCheckProperties.class})
 @AutoConfigureOrder(NixerAutoConfiguration.ORDER + 1)
 public class PwnedCheckAutoConfiguration {

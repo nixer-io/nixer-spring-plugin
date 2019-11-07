@@ -5,8 +5,12 @@ import java.io.FileNotFoundException;
 import java.time.Duration;
 import java.time.Instant;
 import javax.annotation.Nonnull;
+import javax.sql.DataSource;
 
 import eu.xword.nixer.nixerplugin.core.stigma.embed.EmbeddedStigmaService;
+import eu.xword.nixer.nixerplugin.core.stigma.jdbc.JdbcDAO;
+import eu.xword.nixer.nixerplugin.core.stigma.jdbc.JdbcDAOConfigurer;
+import eu.xword.nixer.nixerplugin.core.stigma.storage.JdbcStigmaRepository;
 import eu.xword.nixer.nixerplugin.core.stigma.storage.StigmaRepository;
 import eu.xword.nixer.nixerplugin.core.stigma.token.EncryptedStigmaTokenProvider;
 import eu.xword.nixer.nixerplugin.core.stigma.token.PlainStigmaTokenProvider;
@@ -20,11 +24,35 @@ import eu.xword.nixer.nixerplugin.core.stigma.token.validation.StigmaTokenPayloa
 import eu.xword.nixer.nixerplugin.core.stigma.token.validation.StigmaTokenValidator;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.util.ResourceUtils;
 import org.springframework.util.StringUtils;
 
+@Configuration
 @EnableConfigurationProperties(value = {StigmaProperties.class})
 public class StigmaConfiguration {
+
+    @Bean
+    public JdbcDAO jdbcDAO(DataSource dataSource) {
+        final JdbcDAO jdbcDAO = new JdbcDAO();
+        jdbcDAO.setDataSource(dataSource);
+        return jdbcDAO;
+    }
+
+    @Bean
+    public JdbcDAOConfigurer JdbcDAOConfigurer(DataSource dataSource) {
+        return new JdbcDAOConfigurer(dataSource);
+    }
+
+    @Bean
+    public StigmaUtils stigmaUtils() {
+        return new StigmaUtils();
+    }
+
+    @Bean
+    public JdbcStigmaRepository jdbcStigmaRepository(JdbcDAO jdbcDAO) {
+        return new JdbcStigmaRepository(jdbcDAO);
+    }
 
     @Bean
     public StigmaTokenValidator buildStigmaTokenValidator(@Nonnull final EncryptedJwtValidator encryptedJwtValidator) {
