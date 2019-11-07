@@ -4,8 +4,7 @@ import com.google.common.collect.ImmutableList;
 import eu.xword.nixer.nixerplugin.captcha.error.CaptchaErrors;
 import eu.xword.nixer.nixerplugin.captcha.error.CaptchaClientException;
 import eu.xword.nixer.nixerplugin.captcha.error.CaptchaServiceException;
-import eu.xword.nixer.nixerplugin.captcha.metrics.MicrometerMetricsReporter;
-import org.junit.jupiter.api.Assertions;
+import eu.xword.nixer.nixerplugin.captcha.metrics.CaptchaMetricsReporter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,7 +25,7 @@ class RecaptchaV2ServiceTest {
     private RecaptchaClient recaptchaClient;
 
     @Mock
-    private MicrometerMetricsReporter captchaMetricsReporter;
+    private CaptchaMetricsReporter captchaMetricsReporter;
 
     @BeforeEach
     void init() {

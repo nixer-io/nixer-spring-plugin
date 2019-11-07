@@ -17,7 +17,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 import static eu.xword.nixer.nixerplugin.core.detection.config.AnomalyRulesProperties.Name.ip;
 import static eu.xword.nixer.nixerplugin.core.detection.config.AnomalyRulesProperties.Name.useragent;
@@ -26,7 +25,6 @@ import static eu.xword.nixer.nixerplugin.core.login.inmemory.FeatureKey.Features
 import static eu.xword.nixer.nixerplugin.core.login.inmemory.FeatureKey.Features.USERNAME;
 import static eu.xword.nixer.nixerplugin.core.login.inmemory.FeatureKey.Features.USER_AGENT_TOKEN;
 
-@Configuration
 @EnableConfigurationProperties(AnomalyRulesProperties.class)
 public class DetectionConfiguration {
 

@@ -2,13 +2,12 @@ package eu.xword.nixer.nixerplugin.pwned.check;
 
 import com.google.common.base.Strings;
 import eu.xword.nixer.bloom.check.BloomFilterCheck;
-import eu.xword.nixer.nixerplugin.core.metrics.MetricsWriter;
+import eu.xword.nixer.nixerplugin.core.metrics.MetricsCounter;
 import eu.xword.nixer.nixerplugin.pwned.metrics.PwnedPasswordMetricsReporter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -28,9 +27,7 @@ class PwnedCredentialsCheckerTest {
     private static final int MAX_PASSWORD_LENGTH = 50;
 
     @Mock
-    BloomFilterCheck pwnedFilter;
-
-    private PwnedPasswordMetricsReporter pwnedPasswordMetrics = new PwnedPasswordMetricsReporter(Mockito.mock(MetricsWriter.class));
+    private BloomFilterCheck pwnedFilter;
 
     private PwnedCredentialsChecker pwnedCredentialsChecker;
 
@@ -40,7 +37,7 @@ class PwnedCredentialsCheckerTest {
                 pwnedFilter,
                 MAX_PASSWORD_LENGTH,
                 // TODO consider replacing PwnedPasswordMetricsReporter with a mock and verifying it's invoked
-                pwnedPasswordMetrics
+                new MetricsReporterStub()
         );
     }
 
@@ -91,5 +88,16 @@ class PwnedCredentialsCheckerTest {
         // then
         assertThat(result).isFalse();
         verifyZeroInteractions(pwnedFilter);
+    }
+
+
+    private static class MetricsReporterStub extends PwnedPasswordMetricsReporter {
+        private static final MetricsCounter COUNTER_STUB = () -> {
+
+        };
+
+        MetricsReporterStub() {
+            super(COUNTER_STUB, COUNTER_STUB);
+        }
     }
 }

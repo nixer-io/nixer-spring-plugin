@@ -1,6 +1,5 @@
 package eu.xword.nixer.nixerplugin.pwned;
 
-import eu.xword.nixer.nixerplugin.pwned.metrics.PwnedCheckMetricsConfiguration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -35,33 +34,6 @@ public class PwnedCheckProperties {
      * Passwords longer than this limit will not be checked and treated as false match.
      */
     private int maxPasswordLength = 50;
-
-    private PwnedCheckMetricsProperties metrics;
-
-    public static class PwnedCheckMetricsProperties {
-
-        /**
-         * Indicates pwned-check metrics functionality is enabled.
-         * Used in {@link PwnedCheckMetricsConfiguration}, kept here for documentation purposes.
-         */
-        private boolean enabled;
-
-        public boolean isEnabled() {
-            return enabled;
-        }
-
-        public void setEnabled(final boolean enabled) {
-            this.enabled = enabled;
-        }
-    }
-
-    public PwnedCheckMetricsProperties getMetrics() {
-        return metrics;
-    }
-
-    public void setMetrics(final PwnedCheckMetricsProperties metrics) {
-        this.metrics = metrics;
-    }
 
     public boolean isEnabled() {
         return enabled;

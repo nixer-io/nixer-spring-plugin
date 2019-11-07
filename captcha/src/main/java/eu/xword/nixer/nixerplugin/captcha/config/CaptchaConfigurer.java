@@ -10,7 +10,7 @@ import org.springframework.util.Assert;
  */
 public class CaptchaConfigurer implements ObjectPostProcessor<DaoAuthenticationProvider> {
 
-    private CaptchaChecker captchaChecker;
+    private final CaptchaChecker captchaChecker;
 
     public CaptchaConfigurer(final CaptchaChecker captchaChecker) {
         Assert.notNull(captchaChecker, "CaptchaChecker must not be null");

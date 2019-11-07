@@ -8,7 +8,7 @@ import io.micrometer.core.instrument.MeterRegistry;
  *
  * @author Grzegorz Cwiak (gcwiak)
  */
-public interface CounterDefinition extends MetricsLookupId {
+public interface CounterDefinition {
 
     Counter register(final MeterRegistry meterRegistry);
 }
