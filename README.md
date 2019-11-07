@@ -41,12 +41,19 @@ We decided not to force developers to use any time-series database and we create
 ### Pwned credentials
 Attackers use leaked credentials from data breaches. It makes sense to check whether credentials from data breach are used for login attempt. These credentials can be scraped from the dark web, bought, or found on security websites. What action you perform on match, is defined by your rules, you can display captcha for that IP or you can warn a user about leaked credentials after you make sure this is a genuine user. 
 
-We provide checking of hashes of credentials with a HTTP filter and bloom filter algorithm implementation. It offers great performance and can be used on hot-path, [read more here](https://github.com/xword/nixer-spring-plugin/blob/master/bloom-filter). We provide bloom file that contains credentials from [haveibeenpwned.com](https://haveibeenpwned.com/Passwords) but also we provide [tool for generating your own bloom filters](https://github.com/xword/nixer-spring-plugin/tree/master/bloom-tool) with credentials you found on your own.
+We provide checking of hashes of credentials with a HTTP filter and bloom filter algorithm implementation. It offers great performance and can be
+ used on hot-path, [read more here](https://github.com/nixer-io/nixer-spring-plugin/blob/master/bloom-filter). We provide bloom file that contains
+  credentials from [haveibeenpwned.com](https://haveibeenpwned.com/Passwords) but also we provide [tool for generating your own bloom filters
+  ](https://github.com/nixer-io/nixer-spring-plugin/tree/master/bloom-tool) with credentials you found on your own.
 
 ### Suspicious IPs
 Rating an IP can be a strong feature for attack detection algorithms. Or it can be used on its own to display captcha or monitor behavior. For country based services, maybe you expect traffic only from certain countries, or your application operates in an internal network and you expect traffic only from certain IPs. You can also obtain lists suspicious IPs from paid services same way crackers do etc. 
 
-Some credential stuffing attacks use cloud providers to generate traffic, and it can create a visible pattern because rarely genuine users use cloud to services to access websites (it can happen though with virtual desktops). We provide an IP range filter, which checks whether IP of the user corresponds to configured lists. Most big cloud providers publish their IP addresses. We gathered these IPs in a file that IP range filter uses and also provide [simple python script](https://github.com/xword/nixer-spring-plugin/tree/master/scripts/ip_cloud_ranges) to extract current IP lists. You can find more information [here](https://github.com/xword/nixer-spring-plugin/tree/master/core).
+Some credential stuffing attacks use cloud providers to generate traffic, and it can create a visible pattern because rarely genuine users use
+ cloud to services to access websites (it can happen though with virtual desktops). We provide an IP range filter, which checks whether IP of the
+  user corresponds to configured lists. Most big cloud providers publish their IP addresses. We gathered these IPs in a file that IP range filter
+   uses and also provide [simple python script](https://github.com/nixer-io/nixer-spring-plugin/tree/master/scripts/ip_cloud_ranges) to extract
+    current IP lists. You can find more information [here](https://github.com/nixer-io/nixer-spring-plugin/tree/master/core).
 
 ### Stigma tokens
 Credential stuffing attack usually involves proxies. From the application perspective, proxies look like new devices that suddenly show up. You can observe such scenario by introducing a token that is send back to the user's browser. It can be stored in a Cookie. This simple mechanism has powerful ability of detecting proxies and is an important feature for statistics and machine learning.

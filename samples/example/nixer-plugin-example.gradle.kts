@@ -40,9 +40,9 @@ dependencies {
 }
 
 tasks.getByName<BootJar>("bootJar") {
-    mainClassName = "eu.xword.nixer.example.NixerPluginApplication"
+    mainClassName = "io.nixer.example.NixerPluginApplication"
 }
 
 tasks.getByName<BootRun>("bootRun") {
-    main = "eu.xword.nixer.example.NixerPluginApplication"
+    main = "io.nixer.example.NixerPluginApplication"
 }

@@ -1,1 +1,1 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=eu.xword.nixer.nixerplugin.pwned.PwnedCheckAutoConfiguration
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=io.nixer.nixerplugin.pwned.PwnedCheckAutoConfiguration

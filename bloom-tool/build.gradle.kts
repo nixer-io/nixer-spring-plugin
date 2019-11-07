@@ -21,7 +21,7 @@ dependencies {
 }
 
 application {
-    mainClassName = "eu.xword.nixer.bloom.cli.BloomToolMainKt"
+    mainClassName = "io.nixer.bloom.cli.BloomToolMainKt"
 }
 
 tasks.withType<KotlinCompile> {

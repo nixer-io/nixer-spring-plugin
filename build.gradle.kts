@@ -5,7 +5,7 @@ plugins {
 defaultTasks("build")
 
 allprojects {
-    group = "eu.xword.nixer"
+    group = "io.nixer"
     version = "0.0.1-SNAPSHOT"
 
     repositories {
