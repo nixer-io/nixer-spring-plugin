@@ -1,0 +1,10 @@
+{
+  "keys": [
+    {
+      "kty": "oct",
+      "kid": "nixer-plugin-jwk-1",
+      "k": "5ex2ByvDRMn3cUdnuGWAX06pFZXJ22URrYkl-d68PV0",
+      "alg": "dir"
+    }
+  ]
+}

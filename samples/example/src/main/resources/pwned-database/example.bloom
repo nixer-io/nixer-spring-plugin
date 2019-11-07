@@ -1,0 +1,1 @@
+{"expectedInsertions":104,"falsePositivesProbability":1.0E-6,"numHashFunctions":20,"bitSize":2990,"strategy":"MURMUR128_MITZ_64","byteOrder":"LITTLE_ENDIAN"}
