@@ -1,7 +1,6 @@
 package io.nixer.nixerplugin.core.detection;
 
 import java.util.List;
-import javax.annotation.Resource;
 
 import io.nixer.nixerplugin.core.detection.config.AnomalyRulesProperties;
 import io.nixer.nixerplugin.core.detection.config.WindowThresholdRuleProperties;
@@ -16,8 +15,7 @@ import io.nixer.nixerplugin.core.detection.rules.AnomalyRulesRunner;
 import io.nixer.nixerplugin.core.detection.rules.LoginAnomalyRuleFactory;
 import io.nixer.nixerplugin.core.login.inmemory.CounterRegistry;
 import io.nixer.nixerplugin.core.login.inmemory.InMemoryLoginActivityRepository;
-import io.nixer.nixerplugin.core.login.inmemory.CounterRegistry;
-import io.nixer.nixerplugin.core.login.inmemory.InMemoryLoginActivityRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -62,7 +60,7 @@ public class DetectionConfiguration {
     @ConditionalOnProperty(prefix = "nixer.rules.failed-login-threshold.ip", name = "enabled", havingValue = "true")
     static class IpThresholdRule {
 
-        @Resource
+        @Autowired
         DetectionConfiguration detection;
 
         @Bean
@@ -94,7 +92,7 @@ public class DetectionConfiguration {
     @ConditionalOnProperty(prefix = "nixer.rules.failed-login-threshold.username", name = "enabled", havingValue = "true")
     static class UserAgentThresholdRule {
 
-        @Resource
+        @Autowired
         DetectionConfiguration detection;
 
         @Bean
@@ -126,7 +124,7 @@ public class DetectionConfiguration {
     @ConditionalOnProperty(prefix = "nixer.rules.failed-login-threshold.useragent", name = "enabled", havingValue = "true")
     static class UsernameThresholdRule {
 
-        @Resource
+        @Autowired
         DetectionConfiguration detection;
 
         @Bean
