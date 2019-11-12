@@ -21,7 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(SpringExtension.class)
-@WebMvcTest(controllers = RecaptchaTestController.class, secure = false)
+@WebMvcTest(controllers = RecaptchaTestController.class)
 @ContextConfiguration(classes = AppConfiguration.class)
 class CaptchaValidatorTest {
 

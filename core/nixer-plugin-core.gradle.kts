@@ -8,28 +8,18 @@ fun <T : Any> Closure<*>.toAction(): Action<T> =
 
 plugins {
     `java-library`
-    `maven-publish`
-    signing
-    id("io.spring.dependency-management") version "1.0.6.RELEASE"
     id("nebula.optional-base") version "5.0.3"
 }
 
-tasks.named("compileJava") {
-    dependsOn("processResources")
-}
-
-dependencyManagement {
-    imports {
-        mavenBom("org.springframework.boot:spring-boot-dependencies:2.1.6.RELEASE")
-    }
-}
 dependencies {
     annotationProcessor("org.springframework.boot", "spring-boot-autoconfigure-processor")
     annotationProcessor("org.springframework.boot", "spring-boot-configuration-processor")
 
-    implementation("com.google.guava", "guava", "28.0-jre") // consider removing (cache, immutable collections)
+    val guavaVersion: String by rootProject.extra
+    implementation("com.google.guava", "guava", guavaVersion) // consider removing (cache, immutable collections)
+
     api("com.nimbusds", "nimbus-jose-jwt", "7.5.1") // required for stigma tokens optional
-    api("javax.servlet", "javax.servlet-api", "3.1.0")
+    api("javax.servlet:javax.servlet-api")
     api("com.fasterxml.jackson.core", "jackson-annotations") // for captcha api
     api("com.fasterxml.jackson.core", "jackson-databind") // for captcha api
 
@@ -43,8 +33,8 @@ dependencies {
     api("org.springframework.security", "spring-security-web")
     api("org.springframework.security", "spring-security-config")
 
-    api("io.micrometer", "micrometer-core", "1.2.0", dependencyConfiguration = optional.toAction())
-    api("io.searchbox:jest:6.3.1", dependencyConfiguration = optional.toAction())
+    api("io.micrometer:micrometer-core")
+    api("io.searchbox:jest", dependencyConfiguration = optional.toAction())
 
     implementation("com.fasterxml.jackson.datatype", "jackson-datatype-jsr310", dependencyConfiguration = optional.toAction())
 
