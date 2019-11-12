@@ -29,6 +29,7 @@ subprojects {
             testImplementation("org.mockito", "mockito-junit-jupiter", "2.23.0")
             testImplementation("org.assertj:assertj-core:3.11.1")
             testImplementation("org.junit.jupiter", "junit-jupiter-api", "5.3.2")
+            testImplementation("org.junit.jupiter", "junit-jupiter-params", "5.3.2")
             testRuntimeOnly("org.junit.jupiter", "junit-jupiter-engine","5.3.2")
         }
 

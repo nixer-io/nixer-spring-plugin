@@ -1,11 +1,11 @@
 package io.nixer.nixerplugin.captcha.recaptcha;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import io.nixer.nixerplugin.captcha.error.CaptchaErrors;
+import org.apache.http.client.utils.URIBuilder;
 import org.springframework.util.Assert;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestOperations;
 
 /**
@@ -28,16 +28,19 @@ public class RecaptchaRestClient implements RecaptchaClient {
     }
 
     public RecaptchaVerifyResponse call(final String captcha) {
-        final String url = verifyUrl + "?secret={secret}&response={response}";
-
-        final Map<String, String> params = new HashMap<>();
-        params.put("secret", recaptchaSecret);
-        params.put("response", captcha);
         // TODO report service metrics (timeout/response time)
         try {
-            return restTemplate.getForObject(url, RecaptchaVerifyResponse.class, params);
-        } catch (RestClientException e) {
+            final URI url = captchaUri(captcha);
+            return restTemplate.getForObject(url, RecaptchaVerifyResponse.class);
+        } catch (Exception e) {
             throw CaptchaErrors.serviceFailure("Failed calling captcha verify", e);
         }
+    }
+
+    private URI captchaUri(final String captcha) throws URISyntaxException {
+        return new URIBuilder(verifyUrl)
+                .addParameter("secret", recaptchaSecret)
+                .addParameter("response", captcha)
+                .build();
     }
 }
