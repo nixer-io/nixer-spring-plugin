@@ -6,7 +6,7 @@ defaultTasks("build")
 
 allprojects {
     group = "io.nixer"
-    version = "0.0.1-SNAPSHOT"
+    version = "0.1.0.0-SNAPSHOT"
 
     repositories {
         mavenCentral()
@@ -44,26 +44,69 @@ subprojects {
 
         configure<PublishingExtension> {
             publications {
-                create<MavenPublication>("nixer-spring-plugin") {
+                create<MavenPublication>("nixerSpringPlugin") {
                     from(components["java"])
 
                     artifact(tasks["sourcesJar"])
                     artifact(tasks["javadocJar"])
+
+                    pom {
+                        name.set("nixer-spring-plugin")
+                        description.set("Nixer plugin for Spring framework")
+                        url.set("https://github.com/nixer-io/nixer-spring-plugin")
+
+                        licenses {
+                            license {
+                                name.set("The Apache License, Version 2.0")
+                                url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                            }
+                        }
+                        developers {
+                            developer {
+                                id.set("j-bron")
+                                name.set("Jan Broniowski")
+                                email.set("jan@broniow.ski")
+                            }
+                            developer {
+                                id.set("gcwiak")
+                                name.set("Grzegorz Ćwiak")
+                                email.set("grzegorz.cwiak@crosswordcybersecurity.com ")
+                            }
+                            developer {
+                                id.set("smifun")
+                                name.set("Kamil Wójcik")
+                                email.set("kamil.wojcik@crosswordcybersecurity.com ")
+                            }
+                        }
+                        scm {
+                            connection.set("scm:git:git://github.com:nixer-io/nixer-spring-plugin.git")
+                            developerConnection.set("scm:git:git@github.com:nixer-io/nixer-spring-plugin.git")
+                            url.set("https://github.com/nixer-io/nixer-spring-plugin")
+                        }
+                    }
                 }
             }
 
             repositories {
-
                 maven {
-                    name = "myRepo"
-                    url = uri("file://${buildDir}/repo")
+                    credentials {
+                        val ossrhUsername: String by project
+                        val ossrhPassword: String by project
+
+                        username = ossrhUsername
+                        password = ossrhPassword
+                    }
+
+                    val releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+                    val snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots"
+                    url = uri(if (version.toString().endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl)
                 }
             }
         }
 
         configure<SigningExtension> {
             configure<PublishingExtension> {
-                sign(this.publications["nixer-spring-plugin"])
+                sign(this.publications["nixerSpringPlugin"])
             }
         }
 
