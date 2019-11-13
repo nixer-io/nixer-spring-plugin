@@ -48,8 +48,3 @@
 ### Behavior
   To control behavior for IP range match you need to set target behavior for (find better name) `ipBlacklisting` rule. You may also create custom rule 
   if you want to create more complex conditions.  
-
-TODO
-put example how to set behavior
-
-TODO create section describing overall architecture and naming. eg. nixer filter, execution filter, facts etc.
