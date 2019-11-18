@@ -1,17 +1,17 @@
 package io.nixer.example.full;
 
-import io.nixer.nixerplugin.captcha.recaptcha.RecaptchaClientStub;
-import io.nixer.nixerplugin.captcha.security.CaptchaChecker;
-import io.nixer.nixerplugin.captcha.security.CaptchaCondition;
-import io.nixer.nixerplugin.core.detection.config.AnomalyRulesProperties;
-import io.nixer.nixerplugin.core.detection.filter.behavior.Behaviors;
-import io.nixer.nixerplugin.core.login.metrics.LoginCounters;
+import java.util.Random;
+
+import com.google.common.base.Joiner;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.nixer.example.LoginRequestBuilder;
 import io.nixer.nixerplugin.captcha.recaptcha.RecaptchaClientStub;
 import io.nixer.nixerplugin.captcha.security.CaptchaChecker;
 import io.nixer.nixerplugin.captcha.security.CaptchaCondition;
+import io.nixer.nixerplugin.core.detection.config.AnomalyRulesProperties;
+import io.nixer.nixerplugin.core.detection.filter.behavior.Behaviors;
+import io.nixer.nixerplugin.core.login.metrics.LoginCounters;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,7 +34,6 @@ import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.SmartRequestBuilder;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 
-import static io.nixer.example.LoginRequestBuilder.formLogin;
 import static io.nixer.nixerplugin.core.detection.config.AnomalyRulesProperties.Name.ip;
 import static io.nixer.nixerplugin.core.detection.config.AnomalyRulesProperties.Name.useragent;
 import static io.nixer.nixerplugin.core.detection.filter.RequestMetadata.USER_AGENT_FAILED_LOGIN_OVER_THRESHOLD;
@@ -64,7 +63,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Import(FullApplicationTest.TestConfig.class)
-@EnableAutoConfiguration(exclude= InfluxMetricsExportAutoConfiguration.class)
+@EnableAutoConfiguration(exclude = InfluxMetricsExportAutoConfiguration.class)
 public class FullApplicationTest {
 
     private static final String LOGIN_PAGE = "/login";
@@ -146,12 +145,14 @@ public class FullApplicationTest {
                     .andExpect(unauthenticated());
         }
         // @formatter:off
-        this.mockMvc.perform(get(LOGIN_PAGE).session(session).session(session))
+        this.mockMvc.perform(get(LOGIN_PAGE).session(session)
+                .with(remoteAddress(attackerDeviceIp)))
             .andExpect(status().isOk())
             .andExpect(captchaChallenge());
 
         this.mockMvc.perform(LoginRequestBuilder.formLogin().user("user").password("user").captcha(GOOD_CAPTCHA).build()
-                .session(session))
+                .session(session)
+                .with(remoteAddress(attackerDeviceIp)))
                 .andExpect(authenticated());
 
         final String newDeviceIp = "192.168.1.1";
@@ -170,7 +171,8 @@ public class FullApplicationTest {
         // @formatter:on
         for (int i = 0; i < ruleProperties.getFailedLoginThreshold().get(useragent).getThreshold() + 1; i++) {
             this.mockMvc.perform(LoginRequestBuilder.formLogin().user("user").password("guess").build()
-                    .header(USER_AGENT, FAKE_USER_AGENT))
+                    .header(USER_AGENT, FAKE_USER_AGENT)
+                    .with(remoteAddress(randomIp())))
                     .andExpect(unauthenticated())
                     .andExpect(request().attribute(USER_AGENT_FAILED_LOGIN_OVER_THRESHOLD, false));
         }
@@ -386,6 +388,17 @@ public class FullApplicationTest {
             request.setRemoteAddr(ip);
             return request;
         };
+    }
+
+    private String randomIp() {
+        final Random random = new Random();
+
+        return Joiner.on('.').join(
+                random.nextInt(256),
+                random.nextInt(256),
+                random.nextInt(256),
+                random.nextInt(256)
+        );
     }
 
     private void loginSuccessfully() throws Exception {
