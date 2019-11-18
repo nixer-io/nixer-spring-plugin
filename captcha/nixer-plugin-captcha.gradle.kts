@@ -39,4 +39,5 @@ dependencies {
         exclude(module = "junit")
     }
     testImplementation("org.springframework.security", "spring-security-test")
+    testImplementation("com.github.tomakehurst", "wiremock-jre8", "2.25.1")
 }
