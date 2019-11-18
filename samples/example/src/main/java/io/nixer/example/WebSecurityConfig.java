@@ -84,26 +84,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //                .withObjectPostProcessor(new CaptchaConfigurer(captchaChecker));
     }
 
-    //TODO should we expect it to be registered or should we register it if missing. What about other methods to register request context
-
-//    RequestContextListener doesn't set response
-//    @Bean
-//    public RequestContextListener requestContextListener() {
-//        return new RequestContextListener();
-//    }
-
-//    @Bean
-//    public RequestContextFilter requestContextFilter() {
-//        return new RequestContextFilter();
-//    }
-
-    @Bean
-    public RequestContextFilter requestContextFilter() {
-        OrderedRequestContextFilter filter = new OrderedRequestContextFilter();
-        filter.setOrder(-100001);
-        return filter;
-    }
-
     /**
      * Configures rules. Rules define what happens at what conditions.
      */
@@ -120,7 +100,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .then(CAPTCHA)
                 .buildRule()
                     .rule("userAgentLoginOverThreshold")
-                    .when(Conditions::isIpLoginOverThreshold)
+                    .when(Conditions::isUserAgentLoginOverThreshold)
                     .then(CAPTCHA)
                 .buildRule()
                     .rule("credentialStuffingActive")

@@ -8,21 +8,9 @@ fun <T : Any> Closure<*>.toAction(): Action<T> =
 
 plugins {
     `java-library`
-    `maven-publish`
-    signing
-    id("io.spring.dependency-management") version "1.0.6.RELEASE"
     id("nebula.optional-base") version "5.0.3"
 }
 
-tasks.named("compileJava") {
-    dependsOn("processResources")
-}
-
-dependencyManagement {
-    imports {
-        mavenBom("org.springframework.boot:spring-boot-dependencies:2.1.6.RELEASE")
-    }
-}
 dependencies {
     annotationProcessor("org.springframework.boot", "spring-boot-autoconfigure-processor")
     annotationProcessor("org.springframework.boot", "spring-boot-configuration-processor")
@@ -30,7 +18,7 @@ dependencies {
     implementation(project(":nixer-plugin-core"))
 
     implementation("javax.validation", "validation-api")
-    implementation("javax.servlet", "javax.servlet-api", "3.1.0")
+    implementation("javax.servlet:javax.servlet-api")
     implementation("com.fasterxml.jackson.core", "jackson-annotations") // for captcha api
     implementation("com.fasterxml.jackson.core", "jackson-databind") // for captcha api
 
@@ -41,11 +29,9 @@ dependencies {
 
     implementation("org.springframework.security", "spring-security-web")
     implementation("org.springframework.security", "spring-security-config")
-    implementation("org.apache.httpcomponents", "httpclient", "4.5.9")
+    implementation("org.apache.httpcomponents", "httpclient")
 
     implementation("org.springframework.boot", "spring-boot-starter-validation")
-
-    implementation("io.micrometer", "micrometer-core", "1.2.0", dependencyConfiguration = optional.toAction())
 
     testImplementation("org.springframework", "spring-test")
     testImplementation("org.springframework.boot", "spring-boot-starter-web")

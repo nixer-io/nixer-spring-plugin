@@ -4,17 +4,9 @@ import org.springframework.boot.gradle.tasks.run.BootRun
 plugins {
     id("java")
     id("org.springframework.boot") version "2.0.5.RELEASE"
-    id("io.spring.dependency-management") version "1.0.6.RELEASE"
 }
 
 apply(from = "../../config/it-config.gradle.kts")
-apply(plugin = "io.spring.dependency-management")
-
-dependencyManagement {
-    imports {
-        mavenBom("org.springframework.boot:spring-boot-dependencies:2.1.6.RELEASE")
-    }
-}
 
 dependencies {
     implementation(project(":nixer-plugin-core"))
@@ -26,7 +18,7 @@ dependencies {
     implementation("org.springframework.boot", "spring-boot-starter-security")
     implementation("org.springframework.boot", "spring-boot-starter-web")
 
-    implementation("io.micrometer", "micrometer-registry-influx", "1.2.0")
+    implementation("io.micrometer", "micrometer-registry-influx")
     runtimeOnly("com.h2database", "h2")
 
     implementation("com.fasterxml.jackson.datatype", "jackson-datatype-jsr310")

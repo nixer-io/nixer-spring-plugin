@@ -1,6 +1,6 @@
-## Nixer spring-plugin
+## Nixer spring-plugin by Crossword Cybersecurity
 
-A plugin for [Spring](https://github.com/spring-projects/spring-framework). The plugin provides protection against credential stuffing attacks to your Spring web application. 
+A plugin for [Spring](https://github.com/spring-projects/spring-framework) utilising Nixer's protection technologies by [Crossword Cybersecurity](https://www.crosswordcybersecurity.com/). The plugin provides protection against credential stuffing attacks to your Spring web application. 
 
 ## Credential Stuffing attack
 
@@ -10,9 +10,11 @@ To learn more about credential stuffing take a look at [OWASP definition](https:
 
 ## Credential Stuffing protection as a Spring library - why?
 
-The motivation for releasing this open-source plugin is to give more insight and control to the developers of the web applications. Majority of available protection software runs as an external piece complicating the architecture and introducing yet another point of failure into the system. In addition, the task of detecting credential stuffing often requires statistical learning or machine learning which results in a black-box software that can't explain its decisions. Also such third-party servers require access to the HTTP traffic, which creates data privacy and security concerns. Administrators are usually reluctant to adopt that kind of black-box protections. It is always not easy to propagate such decisions within the organization. 
+Artifacts are available in Maven Cetral repoository, groupID is [io.nixer](https://search.maven.org/search?q=io.nixer).
+
+The motivation for releasing this open-source plugin is to give more insight and control to the developers of the web applications. Majority of available protection software runs as an external piece complicating the architecture and introducing yet another point of failure into the system. In addition, the task of detecting credential stuffing often requires statistical learning or machine learning which results in a black-box software that can't explain its decisions. Also such third-party servers require access to the HTTP traffic, which creates data privacy and security concerns. Administrators are usually reluctant to adopt that kind of black-box protections. It is not easy to enforce adoption of such solutions within the organization. 
    
-Apart from privacy and infrastructure considerations, there are also data-science related advantages of such approach. External software needs to read a lot of things directly from HTTP traffic. The process of feature engineering and data augmentation is harder and usually results in complicated algorithms. By moving heuristics directly into the application, we are no longer forced to decode HTTP traffic and we have access to much broader application context. This is especially powerful in Spring, where a lot of configuration parameters about the application are available internally. By leverage Spring's well-though architecture, it is possible to create a library that provides control and ease of integration.
+Apart from privacy and infrastructure considerations, there are also data science related advantages of such approach. External software needs to read a lot of things directly from HTTP traffic. The process of feature engineering and data augmentation is harder and usually results in complicated algorithms. By moving heuristics directly into the application, we are no longer forced to decode HTTP traffic and we have access to much broader application context. This is especially powerful in Spring, where a lot of configuration parameters about the application are available internally. By leverage Spring's well-though architecture, it is possible to create a library that provides control and ease of integration.
 
 ## Features and concepts
 
@@ -42,9 +44,7 @@ We decided not to force developers to use any time-series database and we create
 Attackers use leaked credentials from data breaches. It makes sense to check whether credentials from data breach are used for login attempt. These credentials can be scraped from the dark web, bought, or found on security websites. What action you perform on match, is defined by your rules, you can display captcha for that IP or you can warn a user about leaked credentials after you make sure this is a genuine user. 
 
 We provide checking of hashes of credentials with a HTTP filter and bloom filter algorithm implementation. It offers great performance and can be
- used on hot-path, [read more here](https://github.com/nixer-io/nixer-spring-plugin/blob/master/bloom-filter). We provide bloom file that contains
-  credentials from [haveibeenpwned.com](https://haveibeenpwned.com/Passwords) but also we provide [tool for generating your own bloom filters
-  ](https://github.com/nixer-io/nixer-spring-plugin/tree/master/bloom-tool) with credentials you found on your own.
+ used on hot-path, [read more here](https://github.com/nixer-io/nixer-spring-plugin/blob/master/bloom-filter). We provide [bloom-tool](https://github.com/nixer-io/nixer-spring-plugin/tree/master/bloom-tool) that lets you generate your own credential filters. For example you can use vast leaked credential database -  [haveibeenpwned.com](https://haveibeenpwned.com/Passwords) for creating your own pool of suspicious login credentials. 
 
 ### Suspicious IPs
 Rating an IP can be a strong feature for attack detection algorithms. Or it can be used on its own to display captcha or monitor behavior. For country based services, maybe you expect traffic only from certain countries, or your application operates in an internal network and you expect traffic only from certain IPs. You can also obtain lists suspicious IPs from paid services same way crackers do etc. 
@@ -56,17 +56,17 @@ Some credential stuffing attacks use cloud providers to generate traffic, and it
     current IP lists. You can find more information [here](https://github.com/nixer-io/nixer-spring-plugin/tree/master/core).
 
 ### Stigma tokens
-Credential stuffing attack usually involves proxies. From the application perspective, proxies look like new devices that suddenly show up. You can observe such scenario by introducing a token that is send back to the user's browser. It can be stored in a Cookie. This simple mechanism has powerful ability of detecting proxies and is an important feature for statistics and machine learning.
+Credential stuffing attack usually involves proxies. From the application perspective, proxies look like new devices that suddenly show up. You can observe such scenario by introducing a token that is send back to the user's browser. It can be stored in a Cookie. This simple mechanism has powerful ability of detecting proxies and is an important feature for analytics.
 
 ### Monitoring
-By default, we publish events to micrometer. Also, we provide integration with Elastic stack. Because we use loosely coupled event-based architecture, you can extend logging and reporting mechanism to suit your needs. You can also configure rules to report, log, audit log any logging behavior you're interested in.
+By default, we publish events to Micrometer. Also, we provide integration with Elastic stack. Because we use loosely coupled event-based architecture, you can extend logging and reporting mechanism to suit your needs. You can also configure rules to report, log, audit log any logging behavior you're interested in.
 
 ### Protection by Captcha
-Google's Captcha V2 is a solid mechanism. We provide an example integration with Spring Security login form. You can configure the system to use other captcha providers. Sometime you may only wish to log suspicious behavior or maybe you want to redirect. 
+Google's Captcha V2 is a solid mechanism. We provide an example integration with Spring Security login form. You can also configure the system to use other captcha providers. 
 
 ## Licensing
 
-This plugin is an open source project licensed under version 2.0 of the Apache License.
+Nixer credential stuffing plugin is an open source project licensed under version 2.0 of the Apache License.
 
 
 
