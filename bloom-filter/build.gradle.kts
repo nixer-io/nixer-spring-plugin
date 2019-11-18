@@ -6,7 +6,8 @@ val jacksonVersion: String = "2.7.8"
 
 dependencies {
     // TODO externalize versions
-    implementation("com.google.guava:guava:28.0-jre")
+    val guavaVersion: String by rootProject.extra
+    implementation("com.google.guava", "guava", guavaVersion)
     implementation("com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}")
     implementation("com.fasterxml.jackson.core:jackson-core:${jacksonVersion}")
     implementation("com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}")
