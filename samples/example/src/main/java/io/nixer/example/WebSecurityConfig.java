@@ -7,8 +7,6 @@ import io.nixer.nixerplugin.captcha.config.CaptchaConfigurer;
 import io.nixer.nixerplugin.captcha.security.CaptchaChecker;
 import io.nixer.nixerplugin.core.detection.filter.FilterConfiguration;
 import io.nixer.nixerplugin.core.detection.filter.behavior.Conditions;
-import io.nixer.nixerplugin.captcha.config.CaptchaConfigurer;
-import io.nixer.nixerplugin.captcha.security.CaptchaChecker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.filter.OrderedRequestContextFilter;
 import org.springframework.context.annotation.Bean;
@@ -82,6 +80,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //                .passwordEncoder(encoder)
 //                .withUser("user").password(encoder.encode("user")).roles("USER")
 //                .withObjectPostProcessor(new CaptchaConfigurer(captchaChecker));
+    }
+
+    @Bean
+    public RequestContextFilter requestContextFilter() {
+        return new OrderedRequestContextFilter();
     }
 
     /**
