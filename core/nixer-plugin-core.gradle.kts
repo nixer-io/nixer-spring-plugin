@@ -41,6 +41,7 @@ dependencies {
     testImplementation("org.springframework", "spring-test")
     testImplementation("org.springframework.boot", "spring-boot-starter-web")
     testImplementation("org.springframework.boot", "spring-boot-starter-test") {
+        exclude(module = "junit-vintage-engine")
         exclude(module = "junit")
     }
     testImplementation("org.springframework.security", "spring-security-test")
