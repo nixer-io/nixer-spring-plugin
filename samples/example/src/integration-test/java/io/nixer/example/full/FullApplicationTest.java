@@ -10,6 +10,7 @@ import io.nixer.nixerplugin.captcha.recaptcha.RecaptchaClientStub;
 import io.nixer.nixerplugin.captcha.security.CaptchaChecker;
 import io.nixer.nixerplugin.captcha.security.CaptchaCondition;
 import io.nixer.nixerplugin.core.detection.config.AnomalyRulesProperties;
+import io.nixer.nixerplugin.core.detection.events.IpFailedLoginOverThresholdEvent;
 import io.nixer.nixerplugin.core.detection.filter.behavior.Behaviors;
 import io.nixer.nixerplugin.core.login.metrics.LoginCounters;
 import org.junit.jupiter.api.AfterEach;
@@ -21,6 +22,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
@@ -88,6 +90,9 @@ public class FullApplicationTest {
 
     @Autowired
     private AnomalyRulesProperties ruleProperties;
+
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
 
     @TestConfiguration
     public static class TestConfig {
@@ -161,6 +166,20 @@ public class FullApplicationTest {
                 .with(remoteAddress(newDeviceIp)))
             .andExpect(status().isOk())
             .andExpect(noCaptchaChallenge());
+    }
+
+    @Test
+    void shouldActiveCaptchaOnNewSessions() throws Exception {
+        // enable session controlled mode
+        this.captchaChecker.setCaptchaCondition(CaptchaCondition.SESSION_CONTROLLED);
+
+        final String attackerDeviceIp = "6.6.6.6";
+        eventPublisher.publishEvent(new IpFailedLoginOverThresholdEvent(attackerDeviceIp));
+
+        this.mockMvc.perform(get(LOGIN_PAGE)
+                .with(remoteAddress(attackerDeviceIp)))
+            .andExpect(status().isOk())
+            .andExpect(captchaChallenge());
     }
 
     @Test

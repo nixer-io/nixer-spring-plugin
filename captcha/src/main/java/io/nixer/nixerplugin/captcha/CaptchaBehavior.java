@@ -18,8 +18,6 @@ import static io.nixer.nixerplugin.core.detection.filter.behavior.Behaviors.CAPT
  */
 public class CaptchaBehavior implements Behavior {
 
-    private final Log logger = LogFactory.getLog(getClass());
-
     /**
      * Defines session attribute name that will be used to control captcha challenge.
      */
@@ -27,12 +25,8 @@ public class CaptchaBehavior implements Behavior {
 
     @Override
     public void act(final HttpServletRequest request, final HttpServletResponse response) throws IOException {
-        final HttpSession session = request.getSession(false);
-        if (session != null) {
-            session.setAttribute(CAPTCHA_CHALLENGE_SESSION_ATTR, true);
-        } else {
-            logger.warn("Expecting session to be created by this time");
-        }
+        final HttpSession session = request.getSession();
+        session.setAttribute(CAPTCHA_CHALLENGE_SESSION_ATTR, true);
     }
 
     @Override
