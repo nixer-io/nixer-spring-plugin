@@ -64,6 +64,7 @@ class IpMetadataFilterTest {
 
         filter.apply(request);
 
+        assertNull(request.getAttribute(RequestMetadata.IP_METADATA));
         verifyZeroInteractions(ipLookup);
     }
 
