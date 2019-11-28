@@ -82,6 +82,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //                .withObjectPostProcessor(new CaptchaConfigurer(captchaChecker));
     }
 
+    /**
+     * Plugin needs access to HttpServletRequest, because of that we need this been to set RequestContextHolder and
+     * make it possible for spring to inject proxy for request.
+     */
     @Bean
     public RequestContextFilter requestContextFilter() {
         return new OrderedRequestContextFilter();
