@@ -2,10 +2,7 @@ package io.nixer.nixerplugin.core.detection.filter.ip;
 
 import javax.servlet.http.HttpServletRequest;
 
-import io.nixer.nixerplugin.core.detection.filter.MetadataFilter;
-import io.nixer.nixerplugin.core.detection.filter.RequestMetadata;
-import io.nixer.nixerplugin.core.domain.ip.IpLookup;
-import io.nixer.nixerplugin.core.domain.ip.net.IpAddress;
+import com.google.common.net.InetAddresses;
 import io.nixer.nixerplugin.core.detection.filter.MetadataFilter;
 import io.nixer.nixerplugin.core.detection.filter.RequestMetadata;
 import io.nixer.nixerplugin.core.domain.ip.IpLookup;
@@ -30,6 +27,10 @@ public class IpMetadataFilter extends MetadataFilter {
     @Override
     protected void apply(final HttpServletRequest request) {
         final String ip = request.getRemoteAddr();
+        if (!InetAddresses.isInetAddress(ip)) {
+            // this case could happen if reverse proxy is inplace then x-forward headers could contain address that is not in IP format
+            return;
+        }
         final IpAddress address = ipLookup.lookup(ip);
 
         if (address != null) {
