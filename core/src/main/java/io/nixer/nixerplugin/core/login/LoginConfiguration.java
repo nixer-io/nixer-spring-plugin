@@ -33,12 +33,16 @@ public class LoginConfiguration {
     }
 
     @Bean
-    public LoginActivityListener loginActivityListener(HttpServletRequest httpServletRequest,
-                                                       LoginActivityService loginActivityService,
-                                                       LoginFailureTypeRegistry loginFailureTypeRegistry) {
+    public LoginContextFactory loginContextFactory(HttpServletRequest httpServletRequest,
+                                                   LoginFailureTypeRegistry loginFailureTypeRegistry) {
 
-        final LoginContextFactory loginContextFactory = new LoginContextFactory(httpServletRequest, loginFailureTypeRegistry);
+        return new LoginContextFactory(httpServletRequest, loginFailureTypeRegistry);
+    }
 
-        return new LoginActivityListener(loginActivityService, loginContextFactory);
+    @Bean
+    public LoginActivityListener loginActivityListener(LoginContextFactory loginContextFactory,
+                                                       List<LoginActivityHandler> loginActivityHandlers) {
+
+        return new LoginActivityListener(loginContextFactory, loginActivityHandlers);
     }
 }

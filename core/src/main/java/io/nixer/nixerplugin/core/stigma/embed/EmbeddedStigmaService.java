@@ -3,7 +3,6 @@ package io.nixer.nixerplugin.core.stigma.embed;
 import java.util.UUID;
 
 import com.nimbusds.jwt.JWT;
-import io.nixer.nixerplugin.core.login.LoginContext;
 import io.nixer.nixerplugin.core.login.LoginResult;
 import io.nixer.nixerplugin.core.stigma.StigmaService;
 import io.nixer.nixerplugin.core.stigma.StigmaToken;
@@ -11,10 +10,6 @@ import io.nixer.nixerplugin.core.stigma.storage.StigmaRepository;
 import io.nixer.nixerplugin.core.stigma.token.StigmaTokenProvider;
 import io.nixer.nixerplugin.core.stigma.token.validation.StigmaTokenValidator;
 import io.nixer.nixerplugin.core.stigma.token.validation.ValidationResult;
-import io.nixer.nixerplugin.core.login.LoginContext;
-import io.nixer.nixerplugin.core.login.LoginResult;
-import io.nixer.nixerplugin.core.stigma.StigmaService;
-import io.nixer.nixerplugin.core.stigma.StigmaToken;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -35,7 +30,7 @@ public class EmbeddedStigmaService implements StigmaService {
     }
 
     @Override
-    public StigmaToken refreshStigma(StigmaToken receivedStigma, final LoginResult loginResult, final LoginContext loginContext) {
+    public StigmaToken refreshStigma(StigmaToken receivedStigma, final LoginResult loginResult) {
         logger.info("Found token: " + receivedStigma);
 
         if (receivedStigma != null) {

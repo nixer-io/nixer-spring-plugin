@@ -1,11 +1,11 @@
 package io.nixer.example.full;
 
 import java.util.Random;
+import javax.servlet.http.Cookie;
 
 import com.google.common.base.Joiner;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
-import io.nixer.example.LoginRequestBuilder;
 import io.nixer.nixerplugin.captcha.recaptcha.RecaptchaClientStub;
 import io.nixer.nixerplugin.captcha.security.CaptchaChecker;
 import io.nixer.nixerplugin.captcha.security.CaptchaCondition;
@@ -15,8 +15,10 @@ import io.nixer.nixerplugin.core.detection.filter.behavior.Behaviors;
 import io.nixer.nixerplugin.core.login.metrics.LoginCounters;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.autoconfigure.metrics.export.influx.InfluxMetricsExportAutoConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -36,6 +38,7 @@ import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.SmartRequestBuilder;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 
+import static io.nixer.example.LoginRequestBuilder.formLogin;
 import static io.nixer.nixerplugin.core.detection.config.AnomalyRulesProperties.Name.ip;
 import static io.nixer.nixerplugin.core.detection.config.AnomalyRulesProperties.Name.useragent;
 import static io.nixer.nixerplugin.core.detection.filter.RequestMetadata.USER_AGENT_FAILED_LOGIN_OVER_THRESHOLD;
@@ -56,6 +59,7 @@ import static org.springframework.security.test.web.servlet.response.SecurityMoc
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.cookie;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.request;
@@ -75,6 +79,9 @@ public class FullApplicationTest {
     private static final String BAD_CAPTCHA = "bad-captcha";
     private static final String BLACKLISTED_IP_V6 = "5555:5555:5555:5555:5555:5555:5555:5555";
     private static final String BLACKLISTED_IP_V4 = "5.5.5.5";
+
+    @Value("${nixer.stigma.cookie}")
+    private String stigmaCookie;
 
     @Autowired
     private MockMvc mockMvc;
@@ -124,6 +131,59 @@ public class FullApplicationTest {
     }
 
     @Test
+    void shouldAssignStigmaAfterSuccessfulLogin() throws Exception {
+        final String stigmaToken = loginSuccessfully()
+                .andExpect(cookie().exists(stigmaCookie))
+                .andReturn().getResponse().getCookie(stigmaCookie).getValue();
+
+        // subsequent successful login with valid stigma does not require stigma refresh
+        loginSuccessfullyWithStigma(stigmaToken)
+                .andExpect(cookie().doesNotExist(stigmaCookie));
+    }
+
+    @Test
+    @Disabled("Not implemented yet.")
+    void shouldRefreshStigmaAfterFailedLogin() throws Exception {
+        final String firstStigmaToken = loginFailure()
+                .andExpect(cookie().exists(stigmaCookie))
+                .andReturn().getResponse().getCookie(stigmaCookie).getValue();
+
+        final String secondStigmaToken = loginFailureWithStigma(firstStigmaToken)
+                .andExpect(cookie().exists(stigmaCookie))
+                .andReturn().getResponse().getCookie(stigmaCookie).getValue();
+
+        assertThat(secondStigmaToken)
+                .isNotBlank()
+                .isNotEqualTo(firstStigmaToken);
+    }
+
+    @Test
+    void shouldRefreshInvalidStigmaAfterSuccessfulLogin() throws Exception {
+        final String invalidStigmaToken = "invalid-stigma-token";
+
+        final String newStigmaToken = loginSuccessfullyWithStigma(invalidStigmaToken)
+                .andExpect(cookie().exists(stigmaCookie))
+                .andReturn().getResponse().getCookie(stigmaCookie).getValue();
+
+        assertThat(newStigmaToken)
+                .isNotBlank()
+                .isNotEqualTo(invalidStigmaToken);
+    }
+
+    @Test
+    void shouldRefreshInvalidStigmaAfterFailedLogin() throws Exception {
+        final String invalidStigmaToken = "invalid-stigma-token";
+
+        final String newStigmaToken = loginFailureWithStigma(invalidStigmaToken)
+                .andExpect(cookie().exists(stigmaCookie))
+                .andReturn().getResponse().getCookie(stigmaCookie).getValue();
+
+        assertThat(newStigmaToken)
+                .isNotBlank()
+                .isNotEqualTo(invalidStigmaToken);
+    }
+
+    @Test
     void shouldReturnCaptchaChallengeIfActivated() throws Exception {
         //enable captcha
         this.captchaChecker.setCaptchaCondition(CaptchaCondition.ALWAYS);
@@ -144,7 +204,7 @@ public class FullApplicationTest {
         final MockHttpSession session = new MockHttpSession();
         // @formatter:on
         for (int i = 0; i < ruleProperties.getFailedLoginThreshold().get(ip).getThreshold() + 1; i++) {
-            this.mockMvc.perform(LoginRequestBuilder.formLogin().user("user").password("guess").build()
+            this.mockMvc.perform(formLogin().user("user").password("guess").build()
                     .session(session)
                     .with(remoteAddress(attackerDeviceIp)))
                     .andExpect(unauthenticated());
@@ -155,7 +215,7 @@ public class FullApplicationTest {
             .andExpect(status().isOk())
             .andExpect(captchaChallenge());
 
-        this.mockMvc.perform(LoginRequestBuilder.formLogin().user("user").password("user").captcha(GOOD_CAPTCHA).build()
+        this.mockMvc.perform(formLogin().user("user").password("user").captcha(GOOD_CAPTCHA).build()
                 .session(session)
                 .with(remoteAddress(attackerDeviceIp)))
                 .andExpect(authenticated());
@@ -183,13 +243,13 @@ public class FullApplicationTest {
     }
 
     @Test
-    void shouldSetFlatThatUserAgentOverThreshold() throws Exception {
+    void shouldSetFlagThatUserAgentOverThreshold() throws Exception {
         // enable session controlled mode
         this.captchaChecker.setCaptchaCondition(CaptchaCondition.SESSION_CONTROLLED);
 
         // @formatter:on
         for (int i = 0; i < ruleProperties.getFailedLoginThreshold().get(useragent).getThreshold() + 1; i++) {
-            this.mockMvc.perform(LoginRequestBuilder.formLogin().user("user").password("guess").build()
+            this.mockMvc.perform(formLogin().user("user").password("guess").build()
                     .header(USER_AGENT, FAKE_USER_AGENT)
                     .with(remoteAddress(randomIp())))
                     .andExpect(unauthenticated())
@@ -197,7 +257,7 @@ public class FullApplicationTest {
         }
         // @formatter:off
 
-        this.mockMvc.perform(LoginRequestBuilder.formLogin().user("user").password("guess").build()
+        this.mockMvc.perform(formLogin().user("user").password("guess").build()
                 .header(USER_AGENT, FAKE_USER_AGENT))
                 .andExpect(unauthenticated())
                 .andExpect(request().attribute(USER_AGENT_FAILED_LOGIN_OVER_THRESHOLD, true));
@@ -212,7 +272,7 @@ public class FullApplicationTest {
                 .andExpect(status().isOk())
                 .andExpect(captchaChallenge());
 
-        this.mockMvc.perform(LoginRequestBuilder.formLogin().user("user").password("user").captcha(GOOD_CAPTCHA).build())
+        this.mockMvc.perform(formLogin().user("user").password("user").captcha(GOOD_CAPTCHA).build())
                 .andExpect(authenticated());
     }
 
@@ -225,7 +285,7 @@ public class FullApplicationTest {
                 .andExpect(status().isOk())
                 .andExpect(captchaChallenge());
 
-        this.mockMvc.perform(LoginRequestBuilder.formLogin().user("user").password("guess").captcha(BAD_CAPTCHA).build())
+        this.mockMvc.perform(formLogin().user("user").password("guess").captcha(BAD_CAPTCHA).build())
                 .andExpect(unauthenticated());
     }
 
@@ -274,12 +334,12 @@ public class FullApplicationTest {
     }
 
     private ResultActions loginWithNotPwnedPassword() throws Exception {
-        return this.mockMvc.perform(LoginRequestBuilder.formLogin().user("user").password("not-pwned-password").build());
+        return this.mockMvc.perform(formLogin().user("user").password("not-pwned-password").build());
     }
 
     private ResultActions loginWithPwnedPassword() throws Exception {
         // using password from pwned-database
-        return this.mockMvc.perform(LoginRequestBuilder.formLogin().user("user").password("foobar1").build());
+        return this.mockMvc.perform(formLogin().user("user").password("foobar1").build());
     }
 
     @Test
@@ -299,7 +359,7 @@ public class FullApplicationTest {
     @Test
     void loginUserAccessProtected() throws Exception {
         // @formatter:off
-        final SmartRequestBuilder loginRequest = LoginRequestBuilder.formLogin().user("user").password("user").build();
+        final SmartRequestBuilder loginRequest = formLogin().user("user").password("user").build();
         MvcResult mvcResult = this.mockMvc.perform(loginRequest)
                 .andExpect(authenticated()).andReturn();
         // @formatter:on
@@ -364,7 +424,7 @@ public class FullApplicationTest {
     void shouldFailLoginFromBlacklistedIpv4() throws Exception {
         // @formatter:off
         this.mockMvc.perform(
-                LoginRequestBuilder.formLogin().user("user").password("fake").build()
+                formLogin().user("user").password("fake").build()
                         .with(remoteAddress(BLACKLISTED_IP_V4)))
                 .andExpect(isBlocked());
         // @formatter:on
@@ -374,7 +434,7 @@ public class FullApplicationTest {
     void shouldFailLoginFromBlacklistedIpv6() throws Exception {
         // @formatter:off
         this.mockMvc.perform(
-                LoginRequestBuilder.formLogin().user("user").password("fake").build()
+                formLogin().user("user").password("fake").build()
                         .with(remoteAddress(BLACKLISTED_IP_V6)))
                 .andExpect(isBlocked());
         // @formatter:on
@@ -420,18 +480,28 @@ public class FullApplicationTest {
         );
     }
 
-    private void loginSuccessfully() throws Exception {
-        // @formatter:off
-        this.mockMvc.perform(LoginRequestBuilder.formLogin().user("user").password("user").build())
+    private ResultActions loginSuccessfully() throws Exception {
+        return this.mockMvc
+                .perform(formLogin().user("user").password("user").build())
                 .andExpect(authenticated());
-        // @formatter:on
     }
 
-    private void loginFailure() throws Exception {
-        // @formatter:off
-        this.mockMvc.perform(LoginRequestBuilder.formLogin().user("user").password("bad-password").build())
+    private ResultActions loginSuccessfullyWithStigma(String stigmaToken) throws Exception {
+        return this.mockMvc
+                .perform(formLogin().user("user").password("user").build().cookie(new Cookie(stigmaCookie, stigmaToken)))
+                .andExpect(authenticated());
+    }
+
+    private ResultActions loginFailure() throws Exception {
+        return this.mockMvc
+                .perform(formLogin().user("user").password("bad-password").build())
                 .andExpect(unauthenticated());
-        // @formatter:on
+    }
+
+    private ResultActions loginFailureWithStigma(String stigmaToken) throws Exception {
+        return this.mockMvc
+                .perform(formLogin().user("user").password("bad-password").build().cookie(new Cookie(stigmaCookie, stigmaToken)))
+                .andExpect(unauthenticated());
     }
 
     private ResultMatcher isBlocked() {

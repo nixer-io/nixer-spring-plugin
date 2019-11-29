@@ -5,6 +5,8 @@ import java.io.FileNotFoundException;
 import java.time.Duration;
 import java.time.Instant;
 import javax.annotation.Nonnull;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 
 import io.nixer.nixerplugin.core.stigma.embed.EmbeddedStigmaService;
@@ -102,5 +104,12 @@ public class StigmaConfiguration {
     @Bean
     public EmbeddedStigmaService stigmaService(StigmaRepository stigmaRepository, StigmaTokenProvider tokenProvider, StigmaTokenValidator tokenValidator) {
         return new EmbeddedStigmaService(stigmaRepository, tokenProvider, tokenValidator);
+    }
+
+    @Bean
+    public StigmaHandler stigmaHandler(
+            HttpServletRequest request, HttpServletResponse response, StigmaUtils stigmaUtils, StigmaService stigmaService) {
+
+        return new StigmaHandler(request, response, stigmaUtils, stigmaService);
     }
 }
