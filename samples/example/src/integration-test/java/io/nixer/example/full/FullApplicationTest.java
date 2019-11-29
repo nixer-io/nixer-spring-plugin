@@ -15,7 +15,6 @@ import io.nixer.nixerplugin.core.detection.filter.behavior.Behaviors;
 import io.nixer.nixerplugin.core.login.metrics.LoginCounters;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -142,7 +141,6 @@ public class FullApplicationTest {
     }
 
     @Test
-    @Disabled("Not implemented yet.")
     void shouldRefreshStigmaAfterFailedLogin() throws Exception {
         final String firstStigmaToken = loginFailure()
                 .andExpect(cookie().exists(stigmaCookie))

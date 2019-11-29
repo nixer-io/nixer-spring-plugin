@@ -35,7 +35,7 @@ public class EmbeddedStigmaService implements StigmaService {
 
         if (receivedStigma != null) {
             final ValidationResult validationResult = stigmaTokenValidator.validate(receivedStigma.getValue());
-            if (validationResult.isValid()) {
+            if (validationResult.isValid() && loginResult.isSuccess()) {
 //                String stigmaValue = validationResult.getStigmaValue();
 //                stigmaRepository.save(stigmaValue, loginResult);
                 return receivedStigma;
