@@ -17,14 +17,10 @@ dependencies {
     testImplementation("junit:junit:4.12")
     testImplementation("pl.pragmatists:JUnitParams:1.0.6")
     testImplementation("com.github.stefanbirkner:system-rules:1.19.0")
-
-    testRuntimeOnly("org.junit.jupiter", "junit-jupiter-engine", "5.5.2")
-    testRuntimeOnly("org.junit.vintage", "junit-vintage-engine", "5.5.2")
-
     testImplementation("org.assertj:assertj-core:3.13.2")
-
     testImplementation("org.mockito", "mockito-core", "3.1.0")
-    testImplementation("org.mockito", "mockito-junit-jupiter", "3.1.0")
+
+    testRuntimeOnly("org.junit.vintage", "junit-vintage-engine", "5.5.2")
 }
 
 application {
