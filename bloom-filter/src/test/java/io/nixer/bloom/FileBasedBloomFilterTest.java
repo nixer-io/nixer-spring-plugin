@@ -1,14 +1,14 @@
 package io.nixer.bloom;
 
 import java.io.File;
-import java.io.IOException;
+import java.nio.file.Path;
 
 import com.google.common.hash.Funnels;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
 
 /**
  * Unit tests for {@link FileBasedBloomFilter}.
@@ -17,18 +17,17 @@ import static org.assertj.core.api.Assertions.assertThat;
  *
  * @author cezary
  */
-public class FileBasedBloomFilterTest {
-    @Rule
-    public final TemporaryFolder temporaryFolder = new TemporaryFolder();
+class FileBasedBloomFilterTest {
+
+    @TempDir
+    Path temporaryFolder;
 
     @Test
-    public void shouldCreate() throws IOException {
+    void shouldCreate() {
         // given
-        final File file = temporaryFolder.newFile("test.bloom");
-        delete(file);
+        final File file = temporaryFolder.resolve("test.bloom").toFile();
 
         // when
-
         final BloomFilter<Integer> filter = FileBasedBloomFilter.create(
                 file.toPath(), Funnels.integerFunnel(),
                 100,
@@ -40,12 +39,10 @@ public class FileBasedBloomFilterTest {
         assertThat(file).exists();
     }
 
-
     @Test
-    public void shouldNotFindAnythingBeforeInserting() throws IOException {
+    void shouldNotFindAnythingBeforeInserting() {
         // given
-        final File file = temporaryFolder.newFile("test.bloom");
-        delete(file);
+        final File file = temporaryFolder.resolve("test.bloom").toFile();
         final BloomFilter<Integer> filter = FileBasedBloomFilter.create(
                 file.toPath(), Funnels.integerFunnel(),
                 100,
@@ -62,10 +59,9 @@ public class FileBasedBloomFilterTest {
     }
 
     @Test
-    public void shouldFindAfterInserting() throws IOException {
+    void shouldFindAfterInserting() {
         // given
-        final File file = temporaryFolder.newFile("test.bloom");
-        delete(file);
+        final File file = temporaryFolder.resolve("test.bloom").toFile();
         final BloomFilter<Integer> filter = FileBasedBloomFilter.create(
                 file.toPath(), Funnels.integerFunnel(),
                 100,
@@ -82,10 +78,9 @@ public class FileBasedBloomFilterTest {
     }
 
     @Test
-    public void shouldFindAfterInsertingReopening() throws IOException {
+    void shouldFindAfterInsertingReopening() {
         // given
-        final File file = temporaryFolder.newFile("test.bloom");
-        delete(file);
+        final File file = temporaryFolder.resolve("test.bloom").toFile();
         final BloomFilter<Integer> filter = FileBasedBloomFilter.create(
                 file.toPath(), Funnels.integerFunnel(),
                 100,
@@ -101,11 +96,5 @@ public class FileBasedBloomFilterTest {
         // then
         assertThat(changed).isTrue();
         assertThat(found).isTrue();
-    }
-
-    private static void delete(final File file) throws IOException {
-        if (!file.delete()) {
-            throw new IOException("Failed to delete: " + file);
-        }
     }
 }

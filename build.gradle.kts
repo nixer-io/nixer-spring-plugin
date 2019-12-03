@@ -18,12 +18,26 @@ allprojects {
 
 configure(subprojects.filter { it.name.startsWith("nixer-plugin") }) {
     apply {
+        plugin("java")
         plugin("io.spring.dependency-management")
     }
     configure<DependencyManagementExtension> {
         imports {
             mavenBom("org.springframework.boot:spring-boot-dependencies:2.2.1.RELEASE")
         }
+    }
+
+    dependencies {
+        // Dependencies managed by SpringBoot BOM
+
+        testImplementation("org.junit.jupiter", "junit-jupiter-api")
+        testImplementation("org.junit.jupiter", "junit-jupiter-params")
+        testRuntimeOnly("org.junit.jupiter", "junit-jupiter-engine")
+
+        testImplementation("org.assertj", "assertj-core")
+
+        testImplementation("org.mockito", "mockito-core")
+        testImplementation("org.mockito", "mockito-junit-jupiter")
     }
 }
 
@@ -39,15 +53,6 @@ subprojects {
             testLogging {
                 events("passed", "skipped", "failed")
             }
-        }
-
-        dependencies {
-            testImplementation("org.mockito", "mockito-core", "2.21.0")
-            testImplementation("org.mockito", "mockito-junit-jupiter", "2.23.0")
-            testImplementation("org.assertj:assertj-core:3.11.1")
-            testImplementation("org.junit.jupiter", "junit-jupiter-api", "5.3.2")
-            testImplementation("org.junit.jupiter", "junit-jupiter-params", "5.3.2")
-            testRuntimeOnly("org.junit.jupiter", "junit-jupiter-engine", "5.3.2")
         }
 
         tasks.register<Jar>("sourcesJar") {
