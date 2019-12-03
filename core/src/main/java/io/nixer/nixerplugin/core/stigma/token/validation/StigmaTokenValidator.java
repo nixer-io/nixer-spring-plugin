@@ -57,7 +57,7 @@ public class StigmaTokenValidator {
     }
 
     private boolean missing(final String token) {
-        return StringUtils.isEmpty(token);
+        return !StringUtils.hasText(token);
     }
 
     private ValidationResult validatePresentToken(@Nonnull final String token) {
