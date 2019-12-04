@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 
-import io.nixer.nixerplugin.core.stigma.embed.EmbeddedStigmaService;
 import io.nixer.nixerplugin.core.stigma.jdbc.JdbcDAO;
 import io.nixer.nixerplugin.core.stigma.jdbc.JdbcDAOConfigurer;
 import io.nixer.nixerplugin.core.stigma.orig_codebase_migraiton.StigmaActionEvaluator;
@@ -19,7 +18,6 @@ import io.nixer.nixerplugin.core.stigma.orig_codebase_migraiton.StigmaTokenStora
 import io.nixer.nixerplugin.core.stigma.orig_codebase_migraiton.StigmaTokenStore;
 import io.nixer.nixerplugin.core.stigma.orig_codebase_migraiton.StigmaValidatingExtractorWithStorage;
 import io.nixer.nixerplugin.core.stigma.storage.JdbcStigmaRepository;
-import io.nixer.nixerplugin.core.stigma.storage.StigmaRepository;
 import io.nixer.nixerplugin.core.stigma.token.EncryptedStigmaTokenProvider;
 import io.nixer.nixerplugin.core.stigma.token.PlainStigmaTokenProvider;
 import io.nixer.nixerplugin.core.stigma.token.StigmaTokenConstants;
@@ -107,10 +105,6 @@ public class StigmaConfiguration {
         );
     }
 
-    @Bean
-    public EmbeddedStigmaService stigmaService(StigmaRepository stigmaRepository, StigmaTokenProvider tokenProvider, StigmaTokenValidator tokenValidator) {
-        return new EmbeddedStigmaService(stigmaRepository, tokenProvider, tokenValidator);
-    }
 
     @Bean
     public StigmaLoginActivityHandler stigmaLoginActivityHandler(HttpServletRequest request,
