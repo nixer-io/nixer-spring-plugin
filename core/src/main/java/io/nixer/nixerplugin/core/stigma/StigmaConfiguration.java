@@ -9,21 +9,20 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 
-import io.nixer.nixerplugin.core.stigma.storage.jdbc.JdbcDAO;
-import io.nixer.nixerplugin.core.stigma.storage.jdbc.JdbcDAOConfigurer;
+import io.nixer.nixerplugin.core.stigma.crypto.DirectDecrypterFactory;
+import io.nixer.nixerplugin.core.stigma.crypto.DirectEncrypterFactory;
+import io.nixer.nixerplugin.core.stigma.crypto.KeysLoader;
 import io.nixer.nixerplugin.core.stigma.evaluate.StigmaActionEvaluator;
 import io.nixer.nixerplugin.core.stigma.evaluate.StigmaExtractor;
 import io.nixer.nixerplugin.core.stigma.evaluate.StigmaTokenService;
-import io.nixer.nixerplugin.core.stigma.orig_codebase_migraiton.StigmaTokenStorage;
 import io.nixer.nixerplugin.core.stigma.evaluate.StigmaValidatingExtractorWithStorage;
-import io.nixer.nixerplugin.core.stigma.storage.JdbcStigmaRepository;
+import io.nixer.nixerplugin.core.stigma.orig_codebase_migraiton.StigmaTokenStorage;
+import io.nixer.nixerplugin.core.stigma.storage.jdbc.JdbcDAO;
+import io.nixer.nixerplugin.core.stigma.storage.jdbc.JdbcDAOConfigurer;
 import io.nixer.nixerplugin.core.stigma.token.EncryptedStigmaTokenProvider;
 import io.nixer.nixerplugin.core.stigma.token.PlainStigmaTokenProvider;
 import io.nixer.nixerplugin.core.stigma.token.StigmaTokenConstants;
 import io.nixer.nixerplugin.core.stigma.token.StigmaTokenProvider;
-import io.nixer.nixerplugin.core.stigma.crypto.DirectDecrypterFactory;
-import io.nixer.nixerplugin.core.stigma.crypto.DirectEncrypterFactory;
-import io.nixer.nixerplugin.core.stigma.crypto.KeysLoader;
 import io.nixer.nixerplugin.core.stigma.token.validation.EncryptedJwtValidator;
 import io.nixer.nixerplugin.core.stigma.token.validation.StigmaTokenPayloadValidator;
 import io.nixer.nixerplugin.core.stigma.token.validation.StigmaTokenValidator;
@@ -52,11 +51,6 @@ public class StigmaConfiguration {
     @Bean
     public StigmaCookieService stigmaCookieService() {
         return new StigmaCookieService();
-    }
-
-    @Bean
-    public JdbcStigmaRepository jdbcStigmaRepository(JdbcDAO jdbcDAO) {
-        return new JdbcStigmaRepository(jdbcDAO);
     }
 
     @Bean
