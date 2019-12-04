@@ -1,6 +1,5 @@
 package io.nixer.nixerplugin.core.stigma.orig_codebase_migraiton;
 
-import java.security.SecureRandom;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -26,9 +25,6 @@ public class StigmaTokenService implements StigmaTokenStore {
 
     @Nonnull
     private final StigmaExtractor stigmaExtractor;
-
-    // FIXME externalize stigmaSource
-    private final SecureRandom stigmaSource = new SecureRandom();
 
     public StigmaTokenService(@Nonnull final StigmaTokenProvider stigmaTokenProvider,
                               @Nonnull final StigmaTokenStorage stigmaTokenStorage,
@@ -97,7 +93,7 @@ public class StigmaTokenService implements StigmaTokenStore {
     private String newToken() {
 
         // FIXME persist the new stigma into a storage
-        final String stigmaValue = String.valueOf(stigmaSource.nextLong());//stigmaTokenStorage.fetchNewStigma();
+        final String stigmaValue = stigmaTokenStorage.fetchNewStigma().getValue();
 
         return stigmaTokenProvider.getToken(stigmaValue).serialize();
     }

@@ -1,5 +1,6 @@
 package io.nixer.nixerplugin.core.stigma.orig_codebase_migraiton;
 
+import java.security.SecureRandom;
 import java.util.UUID;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -36,10 +37,14 @@ public interface StigmaTokenStorage {
 
     class FakeStigmaTokenStorage implements StigmaTokenStorage {
 
+        // FIXME create a real implementation!
+
+        private final SecureRandom stigmaSource = new SecureRandom();
+
         @Nonnull
         @Override
         public Stigma fetchNewStigma() {
-            throw new UnsupportedOperationException("FakeStigmaTokenStorage.fetchNewStigma");
+            return new Stigma(String.valueOf(stigmaSource.nextLong()));
         }
 
         @Nullable
