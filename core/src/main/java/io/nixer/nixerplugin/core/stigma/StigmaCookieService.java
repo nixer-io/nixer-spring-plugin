@@ -8,13 +8,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.StringUtils;
 import org.springframework.web.util.WebUtils;
 
-public class StigmaUtils {
+public class StigmaCookieService {
 
     @Value("${nixer.stigma.cookie}")
-    private String stigmaCookie;
+    private String stigmaCookieName;
 
-    public StigmaToken findStigma(final HttpServletRequest request) {
-        final Cookie stigmaCookie = WebUtils.getCookie(request, this.stigmaCookie);
+    public StigmaToken readStigmaToken(final HttpServletRequest request) {
+        final Cookie stigmaCookie = WebUtils.getCookie(request, this.stigmaCookieName);
 
         return stigmaCookie != null
                 ? emptyToNull(stigmaCookie.getValue())
@@ -27,9 +27,9 @@ public class StigmaUtils {
                 : null;
     }
 
-    public void setStigmaCookie(final HttpServletResponse response, final StigmaToken stigma) {
+    public void writeStigmaToken(final HttpServletResponse response, final StigmaToken stigma) {
         if (stigma != null) {
-            response.addCookie(new Cookie(stigmaCookie, stigma.getValue()));
+            response.addCookie(new Cookie(stigmaCookieName, stigma.getValue()));
         }
     }
 }

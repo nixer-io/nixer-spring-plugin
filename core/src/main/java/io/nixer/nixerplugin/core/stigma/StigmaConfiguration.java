@@ -47,8 +47,8 @@ public class StigmaConfiguration {
     }
 
     @Bean
-    public StigmaUtils stigmaUtils() {
-        return new StigmaUtils();
+    public StigmaCookieService stigmaCookieService() {
+        return new StigmaCookieService();
     }
 
     @Bean
@@ -107,9 +107,9 @@ public class StigmaConfiguration {
     }
 
     @Bean
-    public StigmaHandler stigmaHandler(
-            HttpServletRequest request, HttpServletResponse response, StigmaUtils stigmaUtils, StigmaService stigmaService) {
+    public StigmaLoginActivityHandler stigmaLoginActivityHandler(
+            HttpServletRequest request, HttpServletResponse response, StigmaCookieService stigmaCookieService, StigmaService stigmaService) {
 
-        return new StigmaHandler(request, response, stigmaUtils, stigmaService);
+        return new StigmaLoginActivityHandler(request, response, stigmaCookieService, stigmaService);
     }
 }
