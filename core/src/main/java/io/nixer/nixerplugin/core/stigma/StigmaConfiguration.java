@@ -15,7 +15,6 @@ import io.nixer.nixerplugin.core.stigma.orig_codebase_migraiton.StigmaActionEval
 import io.nixer.nixerplugin.core.stigma.orig_codebase_migraiton.StigmaExtractor;
 import io.nixer.nixerplugin.core.stigma.orig_codebase_migraiton.StigmaTokenService;
 import io.nixer.nixerplugin.core.stigma.orig_codebase_migraiton.StigmaTokenStorage;
-import io.nixer.nixerplugin.core.stigma.orig_codebase_migraiton.StigmaTokenStore;
 import io.nixer.nixerplugin.core.stigma.orig_codebase_migraiton.StigmaValidatingExtractorWithStorage;
 import io.nixer.nixerplugin.core.stigma.storage.JdbcStigmaRepository;
 import io.nixer.nixerplugin.core.stigma.token.EncryptedStigmaTokenProvider;
@@ -116,14 +115,14 @@ public class StigmaConfiguration {
     }
 
     @Bean
-    public StigmaActionEvaluator stigmaActionEvaluator(StigmaTokenStore stigmaTokenStore) {
-        return new StigmaActionEvaluator(stigmaTokenStore);
+    public StigmaActionEvaluator stigmaActionEvaluator(StigmaTokenService stigmaTokenService) {
+        return new StigmaActionEvaluator(stigmaTokenService);
     }
 
     @Bean
-    public StigmaTokenStore stigmaTokenStore(StigmaTokenProvider stigmaTokenProvider,
-                                             StigmaTokenStorage stigmaTokenStorage,
-                                             StigmaExtractor stigmaExtractor) {
+    public StigmaTokenService stigmaTokenService(StigmaTokenProvider stigmaTokenProvider,
+                                                 StigmaTokenStorage stigmaTokenStorage,
+                                                 StigmaExtractor stigmaExtractor) {
 
         return new StigmaTokenService(stigmaTokenProvider, stigmaTokenStorage, stigmaExtractor);
     }

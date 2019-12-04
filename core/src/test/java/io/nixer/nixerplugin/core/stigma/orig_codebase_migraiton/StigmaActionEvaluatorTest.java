@@ -24,7 +24,7 @@ class StigmaActionEvaluatorTest {
     // TODO verify metrics when implemented
 
     @Mock
-    private StigmaTokenStore stigmaTokenStore;
+    private StigmaTokenService stigmaTokenService;
 
     @InjectMocks
     private StigmaActionEvaluator actionEvaluator;
@@ -33,7 +33,7 @@ class StigmaActionEvaluatorTest {
     void should_get_action_on_login_success_and_valid_token() {
         // given
         final String validToken = "valid-token";
-        given(stigmaTokenStore.fetchTokenOnLoginSuccess(validToken))
+        given(stigmaTokenService.fetchTokenOnLoginSuccess(validToken))
                 .willReturn(new StigmaTokenFetchResult(validToken, true));
 
         // when
@@ -49,7 +49,7 @@ class StigmaActionEvaluatorTest {
         // given
         final String invalidToken = "invalid-token";
         final String newToken = "new-token";
-        given(stigmaTokenStore.fetchTokenOnLoginSuccess(invalidToken))
+        given(stigmaTokenService.fetchTokenOnLoginSuccess(invalidToken))
                 .willReturn(new StigmaTokenFetchResult(newToken, false));
 
         // when
@@ -66,7 +66,7 @@ class StigmaActionEvaluatorTest {
         final String originalValidToken = "valid-token";
         final String newToken = "new-valid-token";
 
-        given(stigmaTokenStore.fetchTokenOnLoginFail(originalValidToken))
+        given(stigmaTokenService.fetchTokenOnLoginFail(originalValidToken))
                 .willReturn(new StigmaTokenFetchResult(newToken, true));
 
         // when
@@ -83,7 +83,7 @@ class StigmaActionEvaluatorTest {
         final String invalidToken = "invalid-token";
         final String newToken = "new-token";
 
-        given(stigmaTokenStore.fetchTokenOnLoginFail(invalidToken))
+        given(stigmaTokenService.fetchTokenOnLoginFail(invalidToken))
                 .willReturn(new StigmaTokenFetchResult(newToken, false));
 
         // when

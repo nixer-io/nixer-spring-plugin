@@ -15,16 +15,16 @@ import static io.nixer.nixerplugin.core.stigma.orig_codebase_migraiton.StigmaAct
  */
 public class StigmaActionEvaluator {
 
-    private final StigmaTokenStore stigmaTokenStore;
+    private final StigmaTokenService stigmaTokenService;
 
-    public StigmaActionEvaluator(final StigmaTokenStore stigmaTokenStore) {
-        this.stigmaTokenStore = stigmaTokenStore;
+    public StigmaActionEvaluator(final StigmaTokenService stigmaTokenService) {
+        this.stigmaTokenService = stigmaTokenService;
     }
 
     @Nonnull
     public StigmaAction onLoginSuccess(@Nullable final String token) {
 
-        final StigmaTokenFetchResult tokenFetchResult = stigmaTokenStore.fetchTokenOnLoginSuccess(token);
+        final StigmaTokenFetchResult tokenFetchResult = stigmaTokenService.fetchTokenOnLoginSuccess(token);
 
         final StigmaAction stigmaAction = tokenFetchResult.isOriginalTokenValid()
                 ? new StigmaAction(token, TOKEN_GOOD_LOGIN_SUCCESS)
@@ -38,7 +38,7 @@ public class StigmaActionEvaluator {
     @Nonnull
     public StigmaAction onLoginFail(@Nullable final String originalToken) {
 
-        final StigmaTokenFetchResult tokenFetchResult = stigmaTokenStore.fetchTokenOnLoginFail(originalToken);
+        final StigmaTokenFetchResult tokenFetchResult = stigmaTokenService.fetchTokenOnLoginFail(originalToken);
 
         final StigmaAction stigmaAction = tokenFetchResult.isOriginalTokenValid()
                 ? new StigmaAction(tokenFetchResult.getFetchedToken(), TOKEN_GOOD_LOGIN_FAIL)

@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author gcwiak
  */
-public class StigmaTokenService implements StigmaTokenStore {
+public class StigmaTokenService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StigmaTokenService.class);
 
@@ -34,7 +34,11 @@ public class StigmaTokenService implements StigmaTokenStore {
         this.stigmaExtractor = Preconditions.checkNotNull(stigmaExtractor, "stigmaExtractor");
     }
 
-    @Override
+    /**
+     * To be called after successful login attempt.
+     * Consumes the currently used raw stigma token (might be null or empty) and returns a new token for further usage
+     * with information about validity of the original token.
+     */
     @Nonnull
     public StigmaTokenFetchResult fetchTokenOnLoginSuccess(@Nullable final String originalRawToken) {
 
@@ -61,7 +65,11 @@ public class StigmaTokenService implements StigmaTokenStore {
                 && stigmaData.getStatus() == StigmaStatus.ACTIVE;
     }
 
-    @Override
+    /**
+     * To be called after failed login attempt.
+     * Consumes the currently used raw stigma token (might be null or empty) and returns a new token for further usage
+     * with information about validity of the original token.
+     */
     @Nonnull
     public StigmaTokenFetchResult fetchTokenOnLoginFail(@Nullable final String originalRawToken) {
 
