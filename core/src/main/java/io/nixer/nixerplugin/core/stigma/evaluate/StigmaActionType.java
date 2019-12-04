@@ -1,4 +1,4 @@
-package io.nixer.nixerplugin.core.stigma.orig_codebase_migraiton;
+package io.nixer.nixerplugin.core.stigma.evaluate;
 
 /**
  * Represents action related result of login attempt and current stigma token value.

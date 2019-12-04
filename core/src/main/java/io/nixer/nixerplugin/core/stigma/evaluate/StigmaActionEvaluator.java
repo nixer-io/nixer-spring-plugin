@@ -1,12 +1,12 @@
-package io.nixer.nixerplugin.core.stigma.orig_codebase_migraiton;
+package io.nixer.nixerplugin.core.stigma.evaluate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import static io.nixer.nixerplugin.core.stigma.orig_codebase_migraiton.StigmaActionType.TOKEN_BAD_LOGIN_FAIL;
-import static io.nixer.nixerplugin.core.stigma.orig_codebase_migraiton.StigmaActionType.TOKEN_BAD_LOGIN_SUCCESS;
-import static io.nixer.nixerplugin.core.stigma.orig_codebase_migraiton.StigmaActionType.TOKEN_GOOD_LOGIN_FAIL;
-import static io.nixer.nixerplugin.core.stigma.orig_codebase_migraiton.StigmaActionType.TOKEN_GOOD_LOGIN_SUCCESS;
+import static io.nixer.nixerplugin.core.stigma.evaluate.StigmaActionType.TOKEN_BAD_LOGIN_FAIL;
+import static io.nixer.nixerplugin.core.stigma.evaluate.StigmaActionType.TOKEN_BAD_LOGIN_SUCCESS;
+import static io.nixer.nixerplugin.core.stigma.evaluate.StigmaActionType.TOKEN_GOOD_LOGIN_FAIL;
+import static io.nixer.nixerplugin.core.stigma.evaluate.StigmaActionType.TOKEN_GOOD_LOGIN_SUCCESS;
 
 /**
  * Created on 2019-04-29.

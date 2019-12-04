@@ -1,9 +1,12 @@
-package io.nixer.nixerplugin.core.stigma.orig_codebase_migraiton;
+package io.nixer.nixerplugin.core.stigma.evaluate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.google.common.base.Preconditions;
+import io.nixer.nixerplugin.core.stigma.orig_codebase_migraiton.StigmaData;
+import io.nixer.nixerplugin.core.stigma.orig_codebase_migraiton.StigmaStatus;
+import io.nixer.nixerplugin.core.stigma.orig_codebase_migraiton.StigmaTokenStorage;
 import io.nixer.nixerplugin.core.stigma.token.StigmaTokenProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

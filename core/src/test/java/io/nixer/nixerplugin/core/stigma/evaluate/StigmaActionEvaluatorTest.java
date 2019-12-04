@@ -1,4 +1,4 @@
-package io.nixer.nixerplugin.core.stigma.orig_codebase_migraiton;
+package io.nixer.nixerplugin.core.stigma.evaluate;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -6,10 +6,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static io.nixer.nixerplugin.core.stigma.orig_codebase_migraiton.StigmaActionType.TOKEN_BAD_LOGIN_FAIL;
-import static io.nixer.nixerplugin.core.stigma.orig_codebase_migraiton.StigmaActionType.TOKEN_BAD_LOGIN_SUCCESS;
-import static io.nixer.nixerplugin.core.stigma.orig_codebase_migraiton.StigmaActionType.TOKEN_GOOD_LOGIN_FAIL;
-import static io.nixer.nixerplugin.core.stigma.orig_codebase_migraiton.StigmaActionType.TOKEN_GOOD_LOGIN_SUCCESS;
+import static io.nixer.nixerplugin.core.stigma.evaluate.StigmaActionType.TOKEN_BAD_LOGIN_FAIL;
+import static io.nixer.nixerplugin.core.stigma.evaluate.StigmaActionType.TOKEN_BAD_LOGIN_SUCCESS;
+import static io.nixer.nixerplugin.core.stigma.evaluate.StigmaActionType.TOKEN_GOOD_LOGIN_FAIL;
+import static io.nixer.nixerplugin.core.stigma.evaluate.StigmaActionType.TOKEN_GOOD_LOGIN_SUCCESS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 

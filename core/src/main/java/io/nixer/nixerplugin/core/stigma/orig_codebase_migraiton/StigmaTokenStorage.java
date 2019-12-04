@@ -5,6 +5,8 @@ import java.util.UUID;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import io.nixer.nixerplugin.core.stigma.evaluate.Stigma;
+
 /**
  * Created on 2019-06-12.
  *

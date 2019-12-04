@@ -1,4 +1,4 @@
-package io.nixer.nixerplugin.core.stigma.orig_codebase_migraiton;
+package io.nixer.nixerplugin.core.stigma.evaluate;
 
 import java.util.Objects;
 import java.util.StringJoiner;

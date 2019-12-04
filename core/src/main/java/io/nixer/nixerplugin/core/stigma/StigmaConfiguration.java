@@ -11,11 +11,11 @@ import javax.sql.DataSource;
 
 import io.nixer.nixerplugin.core.stigma.storage.jdbc.JdbcDAO;
 import io.nixer.nixerplugin.core.stigma.storage.jdbc.JdbcDAOConfigurer;
-import io.nixer.nixerplugin.core.stigma.orig_codebase_migraiton.StigmaActionEvaluator;
-import io.nixer.nixerplugin.core.stigma.orig_codebase_migraiton.StigmaExtractor;
-import io.nixer.nixerplugin.core.stigma.orig_codebase_migraiton.StigmaTokenService;
+import io.nixer.nixerplugin.core.stigma.evaluate.StigmaActionEvaluator;
+import io.nixer.nixerplugin.core.stigma.evaluate.StigmaExtractor;
+import io.nixer.nixerplugin.core.stigma.evaluate.StigmaTokenService;
 import io.nixer.nixerplugin.core.stigma.orig_codebase_migraiton.StigmaTokenStorage;
-import io.nixer.nixerplugin.core.stigma.orig_codebase_migraiton.StigmaValidatingExtractorWithStorage;
+import io.nixer.nixerplugin.core.stigma.evaluate.StigmaValidatingExtractorWithStorage;
 import io.nixer.nixerplugin.core.stigma.storage.JdbcStigmaRepository;
 import io.nixer.nixerplugin.core.stigma.token.EncryptedStigmaTokenProvider;
 import io.nixer.nixerplugin.core.stigma.token.PlainStigmaTokenProvider;

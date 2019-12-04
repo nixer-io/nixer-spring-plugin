@@ -6,8 +6,8 @@ import javax.servlet.http.HttpServletResponse;
 import io.nixer.nixerplugin.core.login.LoginActivityHandler;
 import io.nixer.nixerplugin.core.login.LoginContext;
 import io.nixer.nixerplugin.core.login.LoginResult;
-import io.nixer.nixerplugin.core.stigma.orig_codebase_migraiton.StigmaAction;
-import io.nixer.nixerplugin.core.stigma.orig_codebase_migraiton.StigmaActionEvaluator;
+import io.nixer.nixerplugin.core.stigma.evaluate.StigmaAction;
+import io.nixer.nixerplugin.core.stigma.evaluate.StigmaActionEvaluator;
 
 /**
  * Entry point for StigmaToken-based credential stuffing protection mechanism.
