@@ -9,8 +9,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 
-import io.nixer.nixerplugin.core.stigma.jdbc.JdbcDAO;
-import io.nixer.nixerplugin.core.stigma.jdbc.JdbcDAOConfigurer;
+import io.nixer.nixerplugin.core.stigma.storage.jdbc.JdbcDAO;
+import io.nixer.nixerplugin.core.stigma.storage.jdbc.JdbcDAOConfigurer;
 import io.nixer.nixerplugin.core.stigma.orig_codebase_migraiton.StigmaActionEvaluator;
 import io.nixer.nixerplugin.core.stigma.orig_codebase_migraiton.StigmaExtractor;
 import io.nixer.nixerplugin.core.stigma.orig_codebase_migraiton.StigmaTokenService;

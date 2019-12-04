@@ -1,4 +1,4 @@
-package io.nixer.nixerplugin.core.stigma.jdbc;
+package io.nixer.nixerplugin.core.stigma.storage.jdbc;
 
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 

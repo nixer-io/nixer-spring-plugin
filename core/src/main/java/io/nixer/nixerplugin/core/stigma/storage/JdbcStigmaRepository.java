@@ -1,9 +1,7 @@
 package io.nixer.nixerplugin.core.stigma.storage;
 
 import io.nixer.nixerplugin.core.login.LoginResult;
-import io.nixer.nixerplugin.core.stigma.jdbc.JdbcDAO;
-import io.nixer.nixerplugin.core.login.LoginResult;
-import io.nixer.nixerplugin.core.stigma.jdbc.JdbcDAO;
+import io.nixer.nixerplugin.core.stigma.storage.jdbc.JdbcDAO;
 import org.springframework.util.Assert;
 
 public class JdbcStigmaRepository implements StigmaRepository {
