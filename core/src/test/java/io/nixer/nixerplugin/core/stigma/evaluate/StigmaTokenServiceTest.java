@@ -3,9 +3,9 @@ package io.nixer.nixerplugin.core.stigma.evaluate;
 import java.util.UUID;
 
 import com.nimbusds.jwt.JWT;
-import io.nixer.nixerplugin.core.stigma.orig_codebase_migraiton.StigmaData;
-import io.nixer.nixerplugin.core.stigma.orig_codebase_migraiton.StigmaStatus;
-import io.nixer.nixerplugin.core.stigma.orig_codebase_migraiton.StigmaTokenStorage;
+import io.nixer.nixerplugin.core.stigma.storage.StigmaData;
+import io.nixer.nixerplugin.core.stigma.storage.StigmaStatus;
+import io.nixer.nixerplugin.core.stigma.storage.StigmaTokenStorage;
 import io.nixer.nixerplugin.core.stigma.token.StigmaTokenProvider;
 import io.nixer.nixerplugin.core.stigma.token.validation.StigmaTokenValidator;
 import io.nixer.nixerplugin.core.stigma.token.validation.ValidationResult;

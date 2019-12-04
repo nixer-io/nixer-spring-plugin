@@ -2,7 +2,7 @@ package io.nixer.nixerplugin.core.stigma.evaluate;
 
 import javax.annotation.Nullable;
 
-import io.nixer.nixerplugin.core.stigma.orig_codebase_migraiton.StigmaData;
+import io.nixer.nixerplugin.core.stigma.storage.StigmaData;
 
 /**
  * Created on 2019-06-28.

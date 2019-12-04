@@ -4,8 +4,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.google.common.base.Preconditions;
-import io.nixer.nixerplugin.core.stigma.orig_codebase_migraiton.StigmaData;
-import io.nixer.nixerplugin.core.stigma.orig_codebase_migraiton.StigmaTokenStorage;
+import io.nixer.nixerplugin.core.stigma.storage.StigmaData;
+import io.nixer.nixerplugin.core.stigma.storage.StigmaTokenStorage;
 import io.nixer.nixerplugin.core.stigma.token.validation.StigmaTokenValidator;
 import io.nixer.nixerplugin.core.stigma.token.validation.ValidationResult;
 import org.slf4j.Logger;

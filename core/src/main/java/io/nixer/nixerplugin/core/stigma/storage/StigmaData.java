@@ -1,4 +1,4 @@
-package io.nixer.nixerplugin.core.stigma.orig_codebase_migraiton;
+package io.nixer.nixerplugin.core.stigma.storage;
 
 import java.beans.ConstructorProperties;
 import java.util.Objects;

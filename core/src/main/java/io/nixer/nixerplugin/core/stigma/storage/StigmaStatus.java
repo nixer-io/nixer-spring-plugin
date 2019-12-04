@@ -1,4 +1,4 @@
-package io.nixer.nixerplugin.core.stigma.orig_codebase_migraiton;
+package io.nixer.nixerplugin.core.stigma.storage;
 
 /**
  * Represents possible statuses of stigma value.
