@@ -3,8 +3,6 @@ package io.nixer.nixerplugin.core.stigma.orig_codebase_migraiton;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import static io.nixer.nixerplugin.core.stigma.orig_codebase_migraiton.StigmaActionType.TOKEN_BAD_LOGIN_FAIL;
 import static io.nixer.nixerplugin.core.stigma.orig_codebase_migraiton.StigmaActionType.TOKEN_BAD_LOGIN_SUCCESS;
 import static io.nixer.nixerplugin.core.stigma.orig_codebase_migraiton.StigmaActionType.TOKEN_GOOD_LOGIN_FAIL;
@@ -17,17 +15,11 @@ import static io.nixer.nixerplugin.core.stigma.orig_codebase_migraiton.StigmaAct
  */
 public class StigmaActionEvaluator {
 
-    @Autowired // TODO inject via constructor
-    private StigmaTokenStore stigmaTokenStore;
+    private final StigmaTokenStore stigmaTokenStore;
 
-//    @Nonnull
-//    private final StigmaMetricsService stigmaMetricsService;
-
-//    public StigmaActionEvaluator(@Nonnull final StigmaTokenStore stigmaTokenStore,
-//                                 @Nonnull final StigmaMetricsService stigmaMetricsService) {
-//        this.stigmaTokenStore = Preconditions.checkNotNull(stigmaTokenStore, "stigmaTokenStore");
-//        this.stigmaMetricsService = Preconditions.checkNotNull(stigmaMetricsService, "stigmaMetricsService");
-//    }
+    public StigmaActionEvaluator(final StigmaTokenStore stigmaTokenStore) {
+        this.stigmaTokenStore = stigmaTokenStore;
+    }
 
     @Nonnull
     public StigmaAction onLoginSuccess(@Nullable final String token) {
@@ -68,6 +60,6 @@ public class StigmaActionEvaluator {
 
     private void writeToMetrics(final StigmaAction stigmaAction) {
         // TODO implement!
-//        stigmaMetricsService.rememberStigmaActionType(stigmaAction.getType());
+        // stigmaMetricsService.rememberStigmaActionType(stigmaAction.getType());
     }
 }

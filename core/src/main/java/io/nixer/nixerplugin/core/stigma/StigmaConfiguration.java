@@ -12,6 +12,12 @@ import javax.sql.DataSource;
 import io.nixer.nixerplugin.core.stigma.embed.EmbeddedStigmaService;
 import io.nixer.nixerplugin.core.stigma.jdbc.JdbcDAO;
 import io.nixer.nixerplugin.core.stigma.jdbc.JdbcDAOConfigurer;
+import io.nixer.nixerplugin.core.stigma.orig_codebase_migraiton.StigmaActionEvaluator;
+import io.nixer.nixerplugin.core.stigma.orig_codebase_migraiton.StigmaExtractor;
+import io.nixer.nixerplugin.core.stigma.orig_codebase_migraiton.StigmaTokenService;
+import io.nixer.nixerplugin.core.stigma.orig_codebase_migraiton.StigmaTokenStorage;
+import io.nixer.nixerplugin.core.stigma.orig_codebase_migraiton.StigmaTokenStore;
+import io.nixer.nixerplugin.core.stigma.orig_codebase_migraiton.StigmaValidatingExtractorWithStorage;
 import io.nixer.nixerplugin.core.stigma.storage.JdbcStigmaRepository;
 import io.nixer.nixerplugin.core.stigma.storage.StigmaRepository;
 import io.nixer.nixerplugin.core.stigma.token.EncryptedStigmaTokenProvider;
@@ -107,9 +113,35 @@ public class StigmaConfiguration {
     }
 
     @Bean
-    public StigmaLoginActivityHandler stigmaLoginActivityHandler(
-            HttpServletRequest request, HttpServletResponse response, StigmaCookieService stigmaCookieService, StigmaService stigmaService) {
+    public StigmaLoginActivityHandler stigmaLoginActivityHandler(HttpServletRequest request,
+                                                                 HttpServletResponse response,
+                                                                 StigmaCookieService stigmaCookieService,
+                                                                 StigmaActionEvaluator stigmaActionEvaluator) {
 
-        return new StigmaLoginActivityHandler(request, response, stigmaCookieService, stigmaService);
+        return new StigmaLoginActivityHandler(request, response, stigmaCookieService, stigmaActionEvaluator);
+    }
+
+    @Bean
+    public StigmaActionEvaluator stigmaActionEvaluator(StigmaTokenStore stigmaTokenStore) {
+        return new StigmaActionEvaluator(stigmaTokenStore);
+    }
+
+    @Bean
+    public StigmaTokenStore stigmaTokenStore(StigmaTokenProvider stigmaTokenProvider,
+                                             StigmaTokenStorage stigmaTokenStorage,
+                                             StigmaExtractor stigmaExtractor) {
+
+        return new StigmaTokenService(stigmaTokenProvider, stigmaTokenStorage, stigmaExtractor);
+    }
+
+    @Bean
+    public StigmaTokenStorage stigmaTokenStorage() {
+        return new StigmaTokenStorage.FakeStigmaTokenStorage();
+    }
+
+    @Bean
+    public StigmaExtractor stigmaExtractor(StigmaTokenValidator stigmaTokenValidator,
+                                           StigmaTokenStorage stigmaTokenStorage) {
+        return new StigmaValidatingExtractorWithStorage(stigmaTokenValidator, stigmaTokenStorage);
     }
 }
