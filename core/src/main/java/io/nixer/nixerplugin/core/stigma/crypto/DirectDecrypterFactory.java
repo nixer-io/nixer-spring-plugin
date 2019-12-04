@@ -1,4 +1,4 @@
-package io.nixer.nixerplugin.core.stigma.token.crypto;
+package io.nixer.nixerplugin.core.stigma.crypto;
 
 import java.security.Key;
 import java.util.List;

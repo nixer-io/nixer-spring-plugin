@@ -7,8 +7,7 @@ import com.nimbusds.jose.JWEHeader;
 import com.nimbusds.jwt.EncryptedJWT;
 import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTClaimsSet;
-import io.nixer.nixerplugin.core.stigma.token.crypto.EncrypterFactory;
-import io.nixer.nixerplugin.core.stigma.token.crypto.EncrypterFactory;
+import io.nixer.nixerplugin.core.stigma.crypto.EncrypterFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

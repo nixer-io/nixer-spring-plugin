@@ -6,14 +6,9 @@ import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWEHeader;
 import com.nimbusds.jwt.EncryptedJWT;
 import com.nimbusds.jwt.JWT;
-import io.nixer.nixerplugin.core.stigma.token.crypto.DecrypterFactory;
-import io.nixer.nixerplugin.core.stigma.token.crypto.DecrypterFactory;
+import io.nixer.nixerplugin.core.stigma.crypto.DecrypterFactory;
 import org.springframework.util.Assert;
 
-import static io.nixer.nixerplugin.core.stigma.token.validation.ValidationStatus.DECRYPTION_ERROR;
-import static io.nixer.nixerplugin.core.stigma.token.validation.ValidationStatus.NOT_ENCRYPTED;
-import static io.nixer.nixerplugin.core.stigma.token.validation.ValidationStatus.WRONG_ALG;
-import static io.nixer.nixerplugin.core.stigma.token.validation.ValidationStatus.WRONG_ENC;
 import static java.lang.String.format;
 
 /**

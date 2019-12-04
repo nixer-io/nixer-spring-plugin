@@ -1,4 +1,4 @@
-package io.nixer.nixerplugin.core.stigma.token.crypto;
+package io.nixer.nixerplugin.core.stigma.crypto;
 
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JWEAlgorithm;

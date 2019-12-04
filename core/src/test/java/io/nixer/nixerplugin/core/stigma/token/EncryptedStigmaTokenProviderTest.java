@@ -14,7 +14,7 @@ import com.nimbusds.jwt.EncryptedJWT;
 import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.PlainJWT;
-import io.nixer.nixerplugin.core.stigma.token.crypto.DirectEncrypterFactory;
+import io.nixer.nixerplugin.core.stigma.crypto.DirectEncrypterFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
