@@ -17,7 +17,7 @@ import org.springframework.util.StringUtils;
  *
  * @author gcwiak
  */
-public class StigmaValidatingExtractorWithStorage implements StigmaExtractor {
+public class StigmaValidatingExtractorWithStorage {
 
     // TODO split this class
 
@@ -35,7 +35,6 @@ public class StigmaValidatingExtractorWithStorage implements StigmaExtractor {
         this.stigmaTokenStorage = Preconditions.checkNotNull(stigmaTokenStorage, "stigmaTokenStorage");
     }
 
-    @Override
     @Nullable
     public StigmaData tryExtractingStigma(@Nullable final String rawToken) {
 

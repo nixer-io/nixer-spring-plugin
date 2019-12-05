@@ -27,11 +27,11 @@ public class StigmaTokenService {
     private final StigmaTokenStorage stigmaTokenStorage;
 
     @Nonnull
-    private final StigmaExtractor stigmaExtractor;
+    private final StigmaValidatingExtractorWithStorage stigmaExtractor;
 
     public StigmaTokenService(@Nonnull final StigmaTokenProvider stigmaTokenProvider,
                               @Nonnull final StigmaTokenStorage stigmaTokenStorage,
-                              @Nonnull final StigmaExtractor stigmaExtractor) {
+                              @Nonnull final StigmaValidatingExtractorWithStorage stigmaExtractor) {
         this.stigmaTokenProvider = Preconditions.checkNotNull(stigmaTokenProvider, "stigmaTokenProvider");
         this.stigmaTokenStorage = Preconditions.checkNotNull(stigmaTokenStorage, "stigmaTokenStorage");
         this.stigmaExtractor = Preconditions.checkNotNull(stigmaExtractor, "stigmaExtractor");
