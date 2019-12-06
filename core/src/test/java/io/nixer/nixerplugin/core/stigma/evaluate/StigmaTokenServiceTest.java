@@ -7,6 +7,7 @@ import io.nixer.nixerplugin.core.stigma.storage.StigmaData;
 import io.nixer.nixerplugin.core.stigma.storage.StigmaStatus;
 import io.nixer.nixerplugin.core.stigma.storage.StigmaTokenStorage;
 import io.nixer.nixerplugin.core.stigma.token.StigmaTokenProvider;
+import io.nixer.nixerplugin.core.stigma.token.StigmaValuesGenerator;
 import io.nixer.nixerplugin.core.stigma.token.validation.StigmaTokenValidator;
 import io.nixer.nixerplugin.core.stigma.token.validation.ValidationResult;
 import io.nixer.nixerplugin.core.stigma.token.validation.ValidationStatus;
@@ -54,10 +55,15 @@ class StigmaTokenServiceTest {
 
     @Mock
     private StigmaTokenProvider stigmaTokenProvider;
+
     @Mock
     private StigmaTokenValidator stigmaTokenValidator;
+
     @Mock
     private StigmaTokenStorage stigmaTokenStorage;
+
+    @Mock
+    private StigmaValuesGenerator stigmaValuesGenerator;
 
     private StigmaTokenService stigmaTokenService;
 
@@ -66,6 +72,7 @@ class StigmaTokenServiceTest {
         stigmaTokenService = new StigmaTokenService(
                 stigmaTokenProvider,
                 stigmaTokenStorage,
+                stigmaValuesGenerator,
                 // TODO mock the extractor here and test it separately
                 new StigmaValidatingExtractorWithStorage(stigmaTokenValidator, stigmaTokenStorage)
         );
@@ -75,7 +82,8 @@ class StigmaTokenServiceTest {
 
     private void fetchNewTokenSetUp() {
         final String newStigmaValue = "new-stigma-value";
-        given(stigmaTokenStorage.fetchNewStigma()).willReturn(new Stigma(newStigmaValue));
+        given(stigmaValuesGenerator.newStigma()).willReturn(newStigmaValue);
+        given(stigmaTokenStorage.createStigma(newStigmaValue, StigmaStatus.ACTIVE)).willReturn(new Stigma(newStigmaValue));
 
         final JWT jwtToken = Mockito.mock(JWT.class);
         given(stigmaTokenProvider.getToken(newStigmaValue)).willReturn(jwtToken);
@@ -87,7 +95,7 @@ class StigmaTokenServiceTest {
     void should_fetch_token_on_login_success_and_original_token_valid() {
         // given
         given(stigmaTokenValidator.validate(RAW_TOKEN)).willReturn(ValidationResult.valid(STIGMA_VALUE));
-        given(stigmaTokenStorage.findStigmaValueData(new Stigma(STIGMA_VALUE))).willReturn(VALID_STIGMA_VALUE_DATA);
+        given(stigmaTokenStorage.findStigmaData(new Stigma(STIGMA_VALUE))).willReturn(VALID_STIGMA_VALUE_DATA);
 
         // when
         final StigmaTokenFetchResult stigmaTokenFetchResult = stigmaTokenService.fetchTokenOnLoginSuccess(RAW_TOKEN);
@@ -96,7 +104,7 @@ class StigmaTokenServiceTest {
         assertThat(stigmaTokenFetchResult).isEqualTo(new StigmaTokenFetchResult(RAW_TOKEN, true));
         verify(stigmaTokenStorage).recordStigmaObservation(VALID_STIGMA_VALUE_DATA);
         verify(stigmaTokenStorage, never()).recordSpottingUnknownStigma(any());
-        verify(stigmaTokenStorage, never()).fetchNewStigma();
+        verify(stigmaTokenStorage, never()).createStigma(any(), any());
     }
 
     @Test
@@ -131,7 +139,7 @@ class StigmaTokenServiceTest {
     void should_fetch_token_on_login_success_and_original_stigma_invalid() {
         //given
         given(stigmaTokenValidator.validate(RAW_TOKEN)).willReturn(ValidationResult.valid(STIGMA_VALUE));
-        given(stigmaTokenStorage.findStigmaValueData(new Stigma(STIGMA_VALUE))).willReturn(INVALID_STIGMA_VALUE_DATA);
+        given(stigmaTokenStorage.findStigmaData(new Stigma(STIGMA_VALUE))).willReturn(INVALID_STIGMA_VALUE_DATA);
 
         // when
         final StigmaTokenFetchResult stigmaTokenFetchResult = stigmaTokenService.fetchTokenOnLoginSuccess(RAW_TOKEN);
@@ -145,7 +153,7 @@ class StigmaTokenServiceTest {
     void should_fetch_token_on_login_success_and_original_stigma_unknown() {
         //given
         given(stigmaTokenValidator.validate(RAW_TOKEN)).willReturn(ValidationResult.valid(STIGMA_VALUE));
-        given(stigmaTokenStorage.findStigmaValueData(new Stigma(STIGMA_VALUE))).willReturn(null);
+        given(stigmaTokenStorage.findStigmaData(new Stigma(STIGMA_VALUE))).willReturn(null);
 
         // when
         final StigmaTokenFetchResult stigmaTokenFetchResult = stigmaTokenService.fetchTokenOnLoginSuccess(RAW_TOKEN);
@@ -160,7 +168,7 @@ class StigmaTokenServiceTest {
     void should_fetch_token_on_login_fail_and_original_token_valid() {
         // given
         given(stigmaTokenValidator.validate(RAW_TOKEN)).willReturn(ValidationResult.valid(STIGMA_VALUE));
-        given(stigmaTokenStorage.findStigmaValueData(new Stigma(STIGMA_VALUE))).willReturn(VALID_STIGMA_VALUE_DATA);
+        given(stigmaTokenStorage.findStigmaData(new Stigma(STIGMA_VALUE))).willReturn(VALID_STIGMA_VALUE_DATA);
 
         // when
         final StigmaTokenFetchResult stigmaTokenFetchResult = stigmaTokenService.fetchTokenOnLoginFail(RAW_TOKEN);
@@ -203,7 +211,7 @@ class StigmaTokenServiceTest {
     void should_fetch_token_on_login_fail_and_original_stigma_invalid() {
         //given
         given(stigmaTokenValidator.validate(RAW_TOKEN)).willReturn(ValidationResult.valid(STIGMA_VALUE));
-        given(stigmaTokenStorage.findStigmaValueData(new Stigma(STIGMA_VALUE))).willReturn(INVALID_STIGMA_VALUE_DATA);
+        given(stigmaTokenStorage.findStigmaData(new Stigma(STIGMA_VALUE))).willReturn(INVALID_STIGMA_VALUE_DATA);
 
         // when
         final StigmaTokenFetchResult stigmaTokenFetchResult = stigmaTokenService.fetchTokenOnLoginFail(RAW_TOKEN);

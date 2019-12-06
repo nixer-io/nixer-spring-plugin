@@ -57,7 +57,7 @@ public class StigmaValidatingExtractorWithStorage {
 
             final Stigma stigma = new Stigma(tokenValidationResult.getStigmaValue());
 
-            final StigmaData stigmaValueData = stigmaTokenStorage.findStigmaValueData(stigma);
+            final StigmaData stigmaValueData = stigmaTokenStorage.findStigmaData(stigma);
 
             if (stigmaValueData != null) {
                 stigmaTokenStorage.recordStigmaObservation(stigmaValueData);

@@ -23,7 +23,7 @@ public class JdbcDAOConfigurer implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() {
-        this.initScripts.add(new ClassPathResource("io/nixer/nixerplugin/core/stigma/storage/jdbc/schema.ddl"));
+        this.initScripts.add(new ClassPathResource("io/nixer/nixerplugin/core/stigma/storage/jdbc/V1__initial_schema.sql"));
         getDataSourceInit().afterPropertiesSet();
     }
 

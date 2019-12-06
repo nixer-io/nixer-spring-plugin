@@ -8,6 +8,7 @@ import io.nixer.nixerplugin.core.stigma.storage.StigmaData;
 import io.nixer.nixerplugin.core.stigma.storage.StigmaStatus;
 import io.nixer.nixerplugin.core.stigma.storage.StigmaTokenStorage;
 import io.nixer.nixerplugin.core.stigma.token.StigmaTokenProvider;
+import io.nixer.nixerplugin.core.stigma.token.StigmaValuesGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,13 +28,18 @@ public class StigmaTokenService {
     private final StigmaTokenStorage stigmaTokenStorage;
 
     @Nonnull
+    private final StigmaValuesGenerator stigmaValuesGenerator;
+
+    @Nonnull
     private final StigmaValidatingExtractorWithStorage stigmaExtractor;
 
     public StigmaTokenService(@Nonnull final StigmaTokenProvider stigmaTokenProvider,
                               @Nonnull final StigmaTokenStorage stigmaTokenStorage,
+                              @Nonnull final StigmaValuesGenerator stigmaValuesGenerator,
                               @Nonnull final StigmaValidatingExtractorWithStorage stigmaExtractor) {
         this.stigmaTokenProvider = Preconditions.checkNotNull(stigmaTokenProvider, "stigmaTokenProvider");
         this.stigmaTokenStorage = Preconditions.checkNotNull(stigmaTokenStorage, "stigmaTokenStorage");
+        this.stigmaValuesGenerator = stigmaValuesGenerator;
         this.stigmaExtractor = Preconditions.checkNotNull(stigmaExtractor, "stigmaExtractor");
     }
 
@@ -103,8 +109,9 @@ public class StigmaTokenService {
     @Nonnull
     private String newToken() {
 
-        // FIXME persist the new stigma into a storage
-        final String stigmaValue = stigmaTokenStorage.fetchNewStigma().getValue();
+        final String newStigmaValue = stigmaValuesGenerator.newStigma();
+
+        final String stigmaValue = stigmaTokenStorage.createStigma(newStigmaValue, StigmaStatus.ACTIVE).getValue();
 
         return stigmaTokenProvider.getToken(stigmaValue).serialize();
     }

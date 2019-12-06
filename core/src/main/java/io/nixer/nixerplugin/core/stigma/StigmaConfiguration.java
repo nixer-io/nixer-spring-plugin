@@ -16,12 +16,14 @@ import io.nixer.nixerplugin.core.stigma.evaluate.StigmaActionEvaluator;
 import io.nixer.nixerplugin.core.stigma.evaluate.StigmaTokenService;
 import io.nixer.nixerplugin.core.stigma.evaluate.StigmaValidatingExtractorWithStorage;
 import io.nixer.nixerplugin.core.stigma.storage.StigmaTokenStorage;
-import io.nixer.nixerplugin.core.stigma.storage.jdbc.JdbcDAO;
 import io.nixer.nixerplugin.core.stigma.storage.jdbc.JdbcDAOConfigurer;
+import io.nixer.nixerplugin.core.stigma.storage.jdbc.StigmasJdbcDAO;
+import io.nixer.nixerplugin.core.stigma.storage.jdbc.StigmasJdbcStorage;
 import io.nixer.nixerplugin.core.stigma.token.EncryptedStigmaTokenProvider;
 import io.nixer.nixerplugin.core.stigma.token.PlainStigmaTokenProvider;
 import io.nixer.nixerplugin.core.stigma.token.StigmaTokenConstants;
 import io.nixer.nixerplugin.core.stigma.token.StigmaTokenProvider;
+import io.nixer.nixerplugin.core.stigma.token.StigmaValuesGenerator;
 import io.nixer.nixerplugin.core.stigma.token.validation.EncryptedJwtValidator;
 import io.nixer.nixerplugin.core.stigma.token.validation.StigmaTokenPayloadValidator;
 import io.nixer.nixerplugin.core.stigma.token.validation.StigmaTokenValidator;
@@ -36,8 +38,8 @@ import org.springframework.util.StringUtils;
 public class StigmaConfiguration {
 
     @Bean
-    public JdbcDAO jdbcDAO(DataSource dataSource) {
-        final JdbcDAO jdbcDAO = new JdbcDAO();
+    public StigmasJdbcDAO stigmasJdbcDAO(DataSource dataSource) {
+        final StigmasJdbcDAO jdbcDAO = new StigmasJdbcDAO();
         jdbcDAO.setDataSource(dataSource);
         return jdbcDAO;
     }
@@ -113,16 +115,22 @@ public class StigmaConfiguration {
     }
 
     @Bean
-    public StigmaTokenService stigmaTokenService(StigmaTokenProvider stigmaTokenProvider,
-                                                 StigmaTokenStorage stigmaTokenStorage,
-                                                 StigmaValidatingExtractorWithStorage stigmaExtractor) {
-
-        return new StigmaTokenService(stigmaTokenProvider, stigmaTokenStorage, stigmaExtractor);
+    public StigmaValuesGenerator stigmaValuesGenerator() {
+        return new StigmaValuesGenerator();
     }
 
     @Bean
-    public StigmaTokenStorage stigmaTokenStorage() {
-        return new StigmaTokenStorage.FakeStigmaTokenStorage();
+    public StigmaTokenService stigmaTokenService(StigmaTokenProvider stigmaTokenProvider,
+                                                 StigmaTokenStorage stigmaTokenStorage,
+                                                 StigmaValidatingExtractorWithStorage stigmaExtractor,
+                                                 StigmaValuesGenerator stigmaValuesGenerator) {
+
+        return new StigmaTokenService(stigmaTokenProvider, stigmaTokenStorage, stigmaValuesGenerator, stigmaExtractor);
+    }
+
+    @Bean
+    public StigmaTokenStorage stigmaTokenStorage(StigmasJdbcDAO stigmasJdbcDAO) {
+        return new StigmasJdbcStorage(stigmasJdbcDAO);
     }
 
     @Bean
