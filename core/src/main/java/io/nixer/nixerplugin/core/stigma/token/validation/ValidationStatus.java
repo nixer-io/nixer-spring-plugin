@@ -29,6 +29,9 @@ public enum ValidationStatus {
     private final boolean isReadable;
 
     ValidationStatus(final boolean isValid, final boolean isReadable) {
+        if (isValid && !isReadable) {
+            throw new IllegalArgumentException("'valid' must also be 'readable'");
+        }
         this.isValid = isValid;
         this.isReadable = isReadable;
     }

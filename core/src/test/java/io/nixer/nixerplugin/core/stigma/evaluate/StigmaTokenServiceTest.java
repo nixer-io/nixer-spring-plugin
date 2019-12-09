@@ -69,8 +69,7 @@ class StigmaTokenServiceTest {
                 stigmaTokenProvider,
                 stigmaTokenStorage,
                 stigmaValuesGenerator,
-                // TODO mock the extractor here and test it separately
-                new StigmaValidatingExtractorWithStorage(stigmaTokenValidator, stigmaTokenStorage)
+                stigmaTokenValidator
         );
 
         fetchNewTokenSetUp();

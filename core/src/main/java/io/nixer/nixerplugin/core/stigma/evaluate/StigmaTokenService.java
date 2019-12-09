@@ -9,8 +9,11 @@ import io.nixer.nixerplugin.core.stigma.storage.StigmaStatus;
 import io.nixer.nixerplugin.core.stigma.storage.StigmaTokenStorage;
 import io.nixer.nixerplugin.core.stigma.token.StigmaTokenProvider;
 import io.nixer.nixerplugin.core.stigma.token.StigmaValuesGenerator;
+import io.nixer.nixerplugin.core.stigma.token.validation.StigmaTokenValidator;
+import io.nixer.nixerplugin.core.stigma.token.validation.ValidationResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
 /**
  * Created on 2019-04-29.
@@ -31,16 +34,16 @@ public class StigmaTokenService {
     private final StigmaValuesGenerator stigmaValuesGenerator;
 
     @Nonnull
-    private final StigmaValidatingExtractorWithStorage stigmaExtractor;
+    private final StigmaTokenValidator stigmaTokenValidator;
 
     public StigmaTokenService(@Nonnull final StigmaTokenProvider stigmaTokenProvider,
                               @Nonnull final StigmaTokenStorage stigmaTokenStorage,
                               @Nonnull final StigmaValuesGenerator stigmaValuesGenerator,
-                              @Nonnull final StigmaValidatingExtractorWithStorage stigmaExtractor) {
+                              @Nonnull final StigmaTokenValidator stigmaTokenValidator) {
         this.stigmaTokenProvider = Preconditions.checkNotNull(stigmaTokenProvider, "stigmaTokenProvider");
         this.stigmaTokenStorage = Preconditions.checkNotNull(stigmaTokenStorage, "stigmaTokenStorage");
-        this.stigmaValuesGenerator = stigmaValuesGenerator;
-        this.stigmaExtractor = Preconditions.checkNotNull(stigmaExtractor, "stigmaExtractor");
+        this.stigmaValuesGenerator = Preconditions.checkNotNull(stigmaValuesGenerator, "stigmaValuesGenerator");
+        this.stigmaTokenValidator = Preconditions.checkNotNull(stigmaTokenValidator, "stigmaTokenValidator");
     }
 
     /**
@@ -51,9 +54,9 @@ public class StigmaTokenService {
     @Nonnull
     public StigmaTokenFetchResult fetchTokenOnLoginSuccess(@Nullable final String originalRawToken) {
 
-        @Nullable final StigmaData stigmaData = stigmaExtractor.tryExtractingStigma(originalRawToken);
+        @Nullable final StigmaData stigmaData = tryObtainingStigma(originalRawToken);
 
-        if (isStigmaValid(stigmaData)) {
+        if (isStigmaActive(stigmaData)) {
             // TODO do we need this recording?
             // covered by observed: active->active
             // stigmaTokenStorage.recordLoginSuccessTokenValid(stigmaData.getStigmaValue());
@@ -65,13 +68,8 @@ public class StigmaTokenService {
             // covered by observed event or recording incoming_unreadable_token
             // stigmaTokenStorage.recordLoginSuccessTokenInvalid(originalRawToken, stigmaValueData.toString());
 
-            return new StigmaTokenFetchResult(newToken(), false);
+            return new StigmaTokenFetchResult(newStigmaToken(), false);
         }
-    }
-
-    private boolean isStigmaValid(@Nullable final StigmaData stigmaData) {
-        return stigmaData != null
-                && stigmaData.getStatus() == StigmaStatus.ACTIVE;
     }
 
     /**
@@ -82,20 +80,73 @@ public class StigmaTokenService {
     @Nonnull
     public StigmaTokenFetchResult fetchTokenOnLoginFail(@Nullable final String originalRawToken) {
 
-        @Nullable final StigmaData stigmaData = stigmaExtractor.tryExtractingStigma(originalRawToken);
+        @Nullable final StigmaData stigmaData = tryObtainingStigma(originalRawToken);
 
-        if (isStigmaValid(stigmaData)) {
+        if (isStigmaActive(stigmaData)) {
+
             revokeStigma(stigmaData);
 
-            return new StigmaTokenFetchResult(newToken(), true);
+            return new StigmaTokenFetchResult(newStigmaToken(), true);
 
         } else {
             // TODO do we need this recording?
             // covered by observe event or recording incoming_unreadable_token
             // stigmaTokenStorage.recordLoginFailTokenInvalid(originalRawToken, stigmaTokenCheckResult.toString());
 
-            return new StigmaTokenFetchResult(newToken(), false);
+            return new StigmaTokenFetchResult(newStigmaToken(), false);
         }
+    }
+
+    @Nullable
+    private StigmaData tryObtainingStigma(@Nullable final String rawToken) {
+
+        try {
+            return obtainStigma(rawToken);
+
+        } catch (Exception e) {
+            LOGGER.error("Could not extract stigma from raw token: '{}'", rawToken, e);
+            return null;
+        }
+    }
+
+    @Nullable
+    private StigmaData obtainStigma(@Nullable final String rawToken) {
+
+        final ValidationResult tokenValidationResult = stigmaTokenValidator.validate(rawToken);
+
+        if (tokenValidationResult.isValid() || tokenValidationResult.isReadable()) {
+
+            return lookForStigmaInStorage(tokenValidationResult.getStigmaValue());
+
+        } else {
+
+            if (StringUtils.hasText(rawToken)) {
+                // TODO record validation result as well
+                stigmaTokenStorage.recordUnreadableToken(rawToken);
+            } // TODO record missing token????
+
+            return null;
+        }
+    }
+
+    private StigmaData lookForStigmaInStorage(final String stigmaValue) {
+
+        final Stigma stigma = new Stigma(stigmaValue);
+
+        final StigmaData stigmaValueData = stigmaTokenStorage.findStigmaData(stigma);
+
+        if (stigmaValueData != null) {
+            stigmaTokenStorage.recordStigmaObservation(stigmaValueData);
+        } else {
+            stigmaTokenStorage.recordSpottingUnknownStigma(stigma);
+        }
+
+        return stigmaValueData;
+    }
+
+    private boolean isStigmaActive(@Nullable final StigmaData stigmaData) {
+        return stigmaData != null
+                && stigmaData.getStatus() == StigmaStatus.ACTIVE;
     }
 
     private void revokeStigma(final StigmaData stigmaData) {
@@ -107,7 +158,7 @@ public class StigmaTokenService {
     }
 
     @Nonnull
-    private String newToken() {
+    private String newStigmaToken() {
 
         final String newStigmaValue = stigmaValuesGenerator.newStigma();
 
