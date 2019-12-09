@@ -176,7 +176,7 @@ class StigmaTokenServiceTest {
         // then
         assertThat(stigmaTokenFetchResult).isEqualTo(new StigmaTokenFetchResult(NEW_RAW_TOKEN, true));
         verify(stigmaTokenStorage).recordStigmaObservation(VALID_STIGMA_VALUE_DATA);
-        verify(stigmaTokenStorage).revokeStigma(VALID_STIGMA_VALUE_DATA);
+        verify(stigmaTokenStorage).revokeStigma(VALID_STIGMA_VALUE_DATA.getStigmaValue());
     }
 
     @Test

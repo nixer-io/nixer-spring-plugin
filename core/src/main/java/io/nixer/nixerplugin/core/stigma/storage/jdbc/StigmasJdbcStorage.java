@@ -42,8 +42,8 @@ public class StigmasJdbcStorage implements StigmaTokenStorage {
     }
 
     @Override
-    public void revokeStigma(@Nonnull final StigmaData stigmaValueData) {
-
+    public void revokeStigma(@Nonnull final String stigmaValue) {
+        stigmasDAO.updateStigmaStatus(stigmaValue, StigmaStatus.REVOKED);
     }
 
     @Override

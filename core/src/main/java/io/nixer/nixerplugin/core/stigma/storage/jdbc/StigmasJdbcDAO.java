@@ -31,6 +31,13 @@ public class StigmasJdbcDAO extends JdbcDaoSupport {
         );
     }
 
+    public void updateStigmaStatus(final String stigmaValue, final StigmaStatus status) {
+        getJdbcTemplate().update(
+                "UPDATE stigmas SET status = ? WHERE stigma_value = ?",
+                status.name(), stigmaValue
+        );
+    }
+
     public List<StigmaData> getAll() {
 
         return getJdbcTemplate().query(

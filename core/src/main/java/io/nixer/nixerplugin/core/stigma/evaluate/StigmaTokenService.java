@@ -98,11 +98,11 @@ public class StigmaTokenService {
         }
     }
 
-    private void revokeStigma(final StigmaData stigmaValueData) {
+    private void revokeStigma(final StigmaData stigmaData) {
         try {
-            stigmaTokenStorage.revokeStigma(stigmaValueData);
+            stigmaTokenStorage.revokeStigma(stigmaData.getStigmaValue());
         } catch (Exception e) {
-            LOGGER.error("Could not revoke stigma for stigma value data: '{}'", stigmaValueData, e);
+            LOGGER.error("Could not revoke stigma for stigma value data: '{}'", stigmaData, e);
         }
     }
 

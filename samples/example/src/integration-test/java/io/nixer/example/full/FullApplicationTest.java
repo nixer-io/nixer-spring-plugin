@@ -19,7 +19,6 @@ import io.nixer.nixerplugin.core.stigma.storage.StigmaStatus;
 import io.nixer.nixerplugin.core.stigma.storage.jdbc.StigmasJdbcDAO;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -161,9 +160,8 @@ public class FullApplicationTest {
         assertThat(stigmaDAO.getAll()).isEqualTo(stigmasAfterFirstLogin);
     }
 
-    @Disabled("Not implemented yet")
     @Test
-    void shouldRefreshValidStigmaAfterSubsequentLoginFailure() throws Exception {
+    void shouldRevokeValidStigmaAfterSubsequentLoginFailure() throws Exception {
         assertThat(stigmaDAO.getAll()).isEmpty();
 
         final String stigmaToken = loginSuccessfully()

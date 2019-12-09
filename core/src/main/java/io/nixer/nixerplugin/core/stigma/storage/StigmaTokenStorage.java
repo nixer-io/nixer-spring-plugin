@@ -18,7 +18,7 @@ public interface StigmaTokenStorage {
     @Nullable
     StigmaData findStigmaData(@Nonnull final Stigma stigma);
 
-    void revokeStigma(@Nonnull final StigmaData stigmaValueData);
+    void revokeStigma(@Nonnull final String stigmaValue);
 
     void recordSpottingUnknownStigma(@Nonnull final Stigma stigma);
 
