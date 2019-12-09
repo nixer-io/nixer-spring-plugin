@@ -13,7 +13,7 @@ public class StigmaCookieService {
     @Value("${nixer.stigma.cookie}")
     private String stigmaCookieName;
 
-    public StigmaToken readStigmaToken(final HttpServletRequest request) {
+    public RawStigmaToken readStigmaToken(final HttpServletRequest request) {
         final Cookie stigmaCookie = WebUtils.getCookie(request, this.stigmaCookieName);
 
         return stigmaCookie != null
@@ -21,13 +21,13 @@ public class StigmaCookieService {
                 : null;
     }
 
-    private StigmaToken emptyToNull(String value) {
+    private RawStigmaToken emptyToNull(String value) {
         return StringUtils.hasText(value)
-                ? new StigmaToken(value)
+                ? new RawStigmaToken(value)
                 : null;
     }
 
-    public void writeStigmaToken(final HttpServletResponse response, final StigmaToken stigma) {
+    public void writeStigmaToken(final HttpServletResponse response, final RawStigmaToken stigma) {
         if (stigma != null) {
             response.addCookie(new Cookie(stigmaCookieName, stigma.getValue()));
         }

@@ -37,7 +37,7 @@ public class StigmaLoginActivityHandler implements LoginActivityHandler {
     @Override
     public void handle(final LoginResult loginResult, final LoginContext ignored) {
 
-        final StigmaToken receivedStigmaToken = stigmaCookieService.readStigmaToken(request);
+        final RawStigmaToken receivedStigmaToken = stigmaCookieService.readStigmaToken(request);
 
         // FIXME fix this awkward null handling
         final String receivedStigmaTokenValue = receivedStigmaToken != null
@@ -51,7 +51,7 @@ public class StigmaLoginActivityHandler implements LoginActivityHandler {
         if (action.isTokenRefreshRequired()) {
             // FIXME include login result and stigma state into the decision
             // and move this logic to proper place
-            stigmaCookieService.writeStigmaToken(response, new StigmaToken((action.getStigmaToken()))); // TODO remove wrapping
+            stigmaCookieService.writeStigmaToken(response, new RawStigmaToken((action.getStigmaToken()))); // TODO remove wrapping
         }
     }
 }
