@@ -14,6 +14,8 @@ import io.nixer.nixerplugin.core.stigma.crypto.DirectEncrypterFactory;
 import io.nixer.nixerplugin.core.stigma.crypto.KeysLoader;
 import io.nixer.nixerplugin.core.stigma.evaluate.StigmaActionEvaluator;
 import io.nixer.nixerplugin.core.stigma.evaluate.StigmaTokenService;
+import io.nixer.nixerplugin.core.stigma.login.StigmaCookieService;
+import io.nixer.nixerplugin.core.stigma.login.StigmaLoginActivityHandler;
 import io.nixer.nixerplugin.core.stigma.storage.StigmaTokenStorage;
 import io.nixer.nixerplugin.core.stigma.storage.jdbc.JdbcDAOConfigurer;
 import io.nixer.nixerplugin.core.stigma.storage.jdbc.StigmasJdbcDAO;

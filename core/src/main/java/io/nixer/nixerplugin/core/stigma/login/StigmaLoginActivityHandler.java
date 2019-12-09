@@ -1,4 +1,4 @@
-package io.nixer.nixerplugin.core.stigma;
+package io.nixer.nixerplugin.core.stigma.login;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletResponse;
 import io.nixer.nixerplugin.core.login.LoginActivityHandler;
 import io.nixer.nixerplugin.core.login.LoginContext;
 import io.nixer.nixerplugin.core.login.LoginResult;
+import io.nixer.nixerplugin.core.stigma.RawStigmaToken;
 import io.nixer.nixerplugin.core.stigma.evaluate.StigmaAction;
 import io.nixer.nixerplugin.core.stigma.evaluate.StigmaActionEvaluator;
 

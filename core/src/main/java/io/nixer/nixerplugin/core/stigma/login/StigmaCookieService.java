@@ -1,9 +1,10 @@
-package io.nixer.nixerplugin.core.stigma;
+package io.nixer.nixerplugin.core.stigma.login;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import io.nixer.nixerplugin.core.stigma.RawStigmaToken;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.StringUtils;
 import org.springframework.web.util.WebUtils;
