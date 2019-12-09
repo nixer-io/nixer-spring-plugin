@@ -1,7 +1,5 @@
 package io.nixer.nixerplugin.core.stigma.evaluate;
 
-import java.util.UUID;
-
 import com.nimbusds.jwt.JWT;
 import io.nixer.nixerplugin.core.stigma.storage.StigmaData;
 import io.nixer.nixerplugin.core.stigma.storage.StigmaStatus;
@@ -42,13 +40,11 @@ class StigmaTokenServiceTest {
     private static final String STIGMA_VALUE = "stigma-value";
 
     private static final StigmaData VALID_STIGMA_VALUE_DATA = new StigmaData(
-            UUID.fromString("e51e923d-b526-4fd6-b82e-3edb23907952"),
             STIGMA_VALUE,
             StigmaStatus.ACTIVE
     );
 
     private static final StigmaData INVALID_STIGMA_VALUE_DATA = new StigmaData(
-            UUID.fromString("e51e923d-b526-4fd6-b82e-3edb23907952"),
             STIGMA_VALUE,
             StigmaStatus.REVOKED
     );

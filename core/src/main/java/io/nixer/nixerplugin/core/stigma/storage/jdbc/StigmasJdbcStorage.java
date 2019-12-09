@@ -27,7 +27,7 @@ public class StigmasJdbcStorage implements StigmaTokenStorage {
     public Stigma createStigma(String stigmaValue, final StigmaStatus status) {
         stigmasDAO.create(
                 new StigmaData(
-                        UUID.randomUUID(), stigmaValue, status
+                        stigmaValue, status
                 )
         );
 
