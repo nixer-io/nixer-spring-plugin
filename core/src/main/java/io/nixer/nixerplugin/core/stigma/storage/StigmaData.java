@@ -6,6 +6,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 
 import com.google.common.base.Preconditions;
+import io.nixer.nixerplugin.core.stigma.domain.StigmaStatus;
 
 /**
  * Created on 2019-06-05.

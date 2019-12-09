@@ -1,12 +1,11 @@
 package io.nixer.nixerplugin.core.stigma.storage.jdbc;
 
-import java.util.UUID;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import io.nixer.nixerplugin.core.stigma.evaluate.Stigma;
+import io.nixer.nixerplugin.core.stigma.domain.Stigma;
+import io.nixer.nixerplugin.core.stigma.domain.StigmaStatus;
 import io.nixer.nixerplugin.core.stigma.storage.StigmaData;
-import io.nixer.nixerplugin.core.stigma.storage.StigmaStatus;
 import io.nixer.nixerplugin.core.stigma.storage.StigmaTokenStorage;
 
 /**

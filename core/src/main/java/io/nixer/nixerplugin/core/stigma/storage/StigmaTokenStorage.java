@@ -3,7 +3,8 @@ package io.nixer.nixerplugin.core.stigma.storage;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import io.nixer.nixerplugin.core.stigma.evaluate.Stigma;
+import io.nixer.nixerplugin.core.stigma.domain.Stigma;
+import io.nixer.nixerplugin.core.stigma.domain.StigmaStatus;
 
 /**
  * Created on 2019-06-12.

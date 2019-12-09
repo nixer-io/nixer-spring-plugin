@@ -1,4 +1,4 @@
-package io.nixer.nixerplugin.core.stigma.storage;
+package io.nixer.nixerplugin.core.stigma.domain;
 
 /**
  * Represents possible statuses of stigma value.

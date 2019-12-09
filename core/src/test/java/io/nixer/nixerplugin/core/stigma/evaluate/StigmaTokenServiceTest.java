@@ -1,8 +1,9 @@
 package io.nixer.nixerplugin.core.stigma.evaluate;
 
 import com.nimbusds.jwt.JWT;
+import io.nixer.nixerplugin.core.stigma.domain.Stigma;
+import io.nixer.nixerplugin.core.stigma.domain.StigmaStatus;
 import io.nixer.nixerplugin.core.stigma.storage.StigmaData;
-import io.nixer.nixerplugin.core.stigma.storage.StigmaStatus;
 import io.nixer.nixerplugin.core.stigma.storage.StigmaTokenStorage;
 import io.nixer.nixerplugin.core.stigma.token.StigmaTokenProvider;
 import io.nixer.nixerplugin.core.stigma.token.StigmaValuesGenerator;

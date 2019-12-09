@@ -4,7 +4,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import io.nixer.nixerplugin.core.stigma.RawStigmaToken;
+import io.nixer.nixerplugin.core.stigma.domain.RawStigmaToken;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.StringUtils;
 import org.springframework.web.util.WebUtils;

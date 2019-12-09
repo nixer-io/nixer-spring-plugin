@@ -2,8 +2,8 @@ package io.nixer.nixerplugin.core.stigma.storage.jdbc;
 
 import java.util.List;
 
+import io.nixer.nixerplugin.core.stigma.domain.StigmaStatus;
 import io.nixer.nixerplugin.core.stigma.storage.StigmaData;
-import io.nixer.nixerplugin.core.stigma.storage.StigmaStatus;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 

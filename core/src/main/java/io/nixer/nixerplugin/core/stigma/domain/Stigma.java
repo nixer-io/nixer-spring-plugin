@@ -1,4 +1,4 @@
-package io.nixer.nixerplugin.core.stigma.evaluate;
+package io.nixer.nixerplugin.core.stigma.domain;
 
 import java.util.Objects;
 import java.util.StringJoiner;
