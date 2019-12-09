@@ -6,6 +6,7 @@ import javax.servlet.http.Cookie;
 import io.nixer.nixerplugin.core.stigma.storage.StigmaData;
 import io.nixer.nixerplugin.core.stigma.storage.StigmaStatus;
 import io.nixer.nixerplugin.core.stigma.storage.jdbc.StigmasJdbcDAO;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,7 +37,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 class StigmaTest {
 
-    // TODO verify Stigma statuses
     // TODO verify Stigma metrics
 
     @Autowired
@@ -48,13 +48,14 @@ class StigmaTest {
     @Autowired
     private StigmasJdbcDAO stigmaDAO;
 
+    @BeforeEach
+    void setUp() {
+        assertThat(stigmaDAO.getAll()).isEmpty();
+    }
+
     @Test
     void shouldAssignStigmaAfterSuccessfulLogin() throws Exception {
-        assertThat(stigmaDAO.getAll()).isEmpty();
-
-        final String stigmaToken = loginSuccessfully()
-                .andExpect(cookie().exists(stigmaCookie))
-                .andReturn().getResponse().getCookie(stigmaCookie).getValue();
+        final String stigmaToken = loginSuccessfullyAndGetStigma();
 
         final List<StigmaData> stigmasAfterFirstLogin = stigmaDAO.getAll();
         assertThat(stigmasAfterFirstLogin).hasSize(1)
@@ -67,12 +68,8 @@ class StigmaTest {
     }
 
     @Test
-    void shouldRevokeValidStigmaAfterSubsequentLoginFailure() throws Exception {
-        assertThat(stigmaDAO.getAll()).isEmpty();
-
-        final String stigmaToken = loginSuccessfully()
-                .andExpect(cookie().exists(stigmaCookie))
-                .andReturn().getResponse().getCookie(stigmaCookie).getValue();
+    void shouldRefreshValidStigmaAfterSubsequentLoginFailure() throws Exception {
+        final String stigmaToken = loginSuccessfullyAndGetStigma();
 
         final List<StigmaData> stigmasAfterFirstLogin = stigmaDAO.getAll();
         assertThat(stigmasAfterFirstLogin).hasSize(1)
@@ -109,6 +106,9 @@ class StigmaTest {
         assertThat(secondStigmaToken)
                 .isNotBlank()
                 .isNotEqualTo(firstStigmaToken);
+
+        assertThat(stigmaDAO.getAll()).hasSize(2)
+                .extracting(StigmaData::getStatus).containsExactly(StigmaStatus.REVOKED, StigmaStatus.ACTIVE);
     }
 
     @Test
@@ -122,6 +122,9 @@ class StigmaTest {
         assertThat(newStigmaToken)
                 .isNotBlank()
                 .isNotEqualTo(invalidStigmaToken);
+
+        assertThat(stigmaDAO.getAll()).hasSize(1)
+                .extracting(StigmaData::getStatus).containsExactly(StigmaStatus.ACTIVE);
     }
 
     @Test
@@ -135,6 +138,15 @@ class StigmaTest {
         assertThat(newStigmaToken)
                 .isNotBlank()
                 .isNotEqualTo(invalidStigmaToken);
+
+        assertThat(stigmaDAO.getAll()).hasSize(1)
+                .extracting(StigmaData::getStatus).containsExactly(StigmaStatus.ACTIVE);
+    }
+
+    private String loginSuccessfullyAndGetStigma() throws Exception {
+        return loginSuccessfully()
+                .andExpect(cookie().exists(stigmaCookie))
+                .andReturn().getResponse().getCookie(stigmaCookie).getValue();
     }
 
     private ResultActions loginSuccessfully() throws Exception {
