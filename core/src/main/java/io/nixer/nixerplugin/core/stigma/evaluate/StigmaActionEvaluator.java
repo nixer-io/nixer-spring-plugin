@@ -49,15 +49,6 @@ public class StigmaActionEvaluator {
         return stigmaAction;
     }
 
-    @Nonnull
-    public StigmaAction onLoginResultUnknown(@Nullable final String token) {
-        // FIXME is this applicable?
-
-        writeToMetrics(StigmaAction.STIGMA_ACTION_NOOP);
-
-        return StigmaAction.STIGMA_ACTION_NOOP;
-    }
-
     private void writeToMetrics(final StigmaAction stigmaAction) {
         // TODO implement!
         // stigmaMetricsService.rememberStigmaActionType(stigmaAction.getType());

@@ -93,17 +93,4 @@ class StigmaActionEvaluatorTest {
         assertThat(action).isEqualTo(new StigmaAction(newToken, TOKEN_BAD_LOGIN_FAIL));
         //        verify(stigmaMetricsService).rememberStigmaActionType(TOKEN_BAD_LOGIN_FAIL);
     }
-
-    @Test
-    void should_get_action_on_unknown_login_result() { // TODO is this necessary?
-        // given
-        final String token = "token";
-
-        // when
-        final StigmaAction action = actionEvaluator.onLoginResultUnknown(token);
-
-        // then
-        assertThat(action).isEqualTo(StigmaAction.STIGMA_ACTION_NOOP);
-        //        verify(stigmaMetricsService).rememberStigmaActionType(SKIP_ACTION);
-    }
 }
