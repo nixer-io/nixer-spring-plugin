@@ -3,6 +3,8 @@ package io.nixer.nixerplugin.core.stigma.evaluate;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import io.nixer.nixerplugin.core.stigma.domain.RawStigmaToken;
+
 import static io.nixer.nixerplugin.core.stigma.evaluate.StigmaActionType.TOKEN_BAD_LOGIN_FAIL;
 import static io.nixer.nixerplugin.core.stigma.evaluate.StigmaActionType.TOKEN_BAD_LOGIN_SUCCESS;
 import static io.nixer.nixerplugin.core.stigma.evaluate.StigmaActionType.TOKEN_GOOD_LOGIN_FAIL;
@@ -22,12 +24,12 @@ public class StigmaActionEvaluator {
     }
 
     @Nonnull
-    public StigmaAction onLoginSuccess(@Nullable final String token) {
+    public StigmaAction onLoginSuccess(@Nullable final RawStigmaToken originalToken) {
 
-        final StigmaTokenFetchResult tokenFetchResult = stigmaTokenService.fetchTokenOnLoginSuccess(token);
+        final StigmaTokenFetchResult tokenFetchResult = stigmaTokenService.fetchTokenOnLoginSuccess(originalToken);
 
         final StigmaAction stigmaAction = tokenFetchResult.isOriginalTokenValid()
-                ? new StigmaAction(token, TOKEN_GOOD_LOGIN_SUCCESS)
+                ? new StigmaAction(originalToken, TOKEN_GOOD_LOGIN_SUCCESS)
                 : new StigmaAction(tokenFetchResult.getFetchedToken(), TOKEN_BAD_LOGIN_SUCCESS);
 
         writeToMetrics(stigmaAction);
@@ -36,7 +38,7 @@ public class StigmaActionEvaluator {
     }
 
     @Nonnull
-    public StigmaAction onLoginFail(@Nullable final String originalToken) {
+    public StigmaAction onLoginFail(@Nullable final RawStigmaToken originalToken) {
 
         final StigmaTokenFetchResult tokenFetchResult = stigmaTokenService.fetchTokenOnLoginFail(originalToken);
 

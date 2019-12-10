@@ -1,5 +1,6 @@
 package io.nixer.nixerplugin.core.stigma.evaluate;
 
+import io.nixer.nixerplugin.core.stigma.domain.RawStigmaToken;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -32,7 +33,7 @@ class StigmaActionEvaluatorTest {
     @Test
     void should_get_action_on_login_success_and_valid_token() {
         // given
-        final String validToken = "valid-token";
+        final RawStigmaToken validToken = new RawStigmaToken("valid-token");
         given(stigmaTokenService.fetchTokenOnLoginSuccess(validToken))
                 .willReturn(new StigmaTokenFetchResult(validToken, true));
 
@@ -47,8 +48,8 @@ class StigmaActionEvaluatorTest {
     @Test
     void should_get_action_on_login_success_and_invalid_token() {
         // given
-        final String invalidToken = "invalid-token";
-        final String newToken = "new-token";
+        final RawStigmaToken invalidToken = new RawStigmaToken("invalid-token");
+        final RawStigmaToken newToken = new RawStigmaToken("new-token");
         given(stigmaTokenService.fetchTokenOnLoginSuccess(invalidToken))
                 .willReturn(new StigmaTokenFetchResult(newToken, false));
 
@@ -63,8 +64,8 @@ class StigmaActionEvaluatorTest {
     @Test
     void should_get_action_on_login_failure_and_valid_token() {
         // given
-        final String originalValidToken = "valid-token";
-        final String newToken = "new-valid-token";
+        final RawStigmaToken originalValidToken = new RawStigmaToken("valid-token");
+        final RawStigmaToken newToken = new RawStigmaToken("new-valid-token");
 
         given(stigmaTokenService.fetchTokenOnLoginFail(originalValidToken))
                 .willReturn(new StigmaTokenFetchResult(newToken, true));
@@ -80,8 +81,8 @@ class StigmaActionEvaluatorTest {
     @Test
     void should_get_action_on_login_failure_and_invalid_token() {
         // given
-        final String invalidToken = "invalid-token";
-        final String newToken = "new-token";
+        final RawStigmaToken invalidToken = new RawStigmaToken("invalid-token");
+        final RawStigmaToken newToken = new RawStigmaToken("new-token");
 
         given(stigmaTokenService.fetchTokenOnLoginFail(invalidToken))
                 .willReturn(new StigmaTokenFetchResult(newToken, false));

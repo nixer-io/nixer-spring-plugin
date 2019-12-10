@@ -40,19 +40,14 @@ public class StigmaLoginActivityHandler implements LoginActivityHandler {
 
         final RawStigmaToken receivedStigmaToken = stigmaCookieService.readStigmaToken(request);
 
-        // FIXME fix this awkward null handling
-        final String receivedStigmaTokenValue = receivedStigmaToken != null
-                ? receivedStigmaToken.getValue()
-                : null;
-
         final StigmaAction action = loginResult.isSuccess()
-                ? stigmaActionEvaluator.onLoginSuccess(receivedStigmaTokenValue)
-                : stigmaActionEvaluator.onLoginFail(receivedStigmaTokenValue);
+                ? stigmaActionEvaluator.onLoginSuccess(receivedStigmaToken)
+                : stigmaActionEvaluator.onLoginFail(receivedStigmaToken);
 
         if (action.isTokenRefreshRequired()) {
             // FIXME include login result and stigma state into the decision
             // and move this logic to proper place
-            stigmaCookieService.writeStigmaToken(response, new RawStigmaToken((action.getStigmaToken()))); // TODO remove wrapping
+            stigmaCookieService.writeStigmaToken(response, action.getStigmaToken());
         }
     }
 }

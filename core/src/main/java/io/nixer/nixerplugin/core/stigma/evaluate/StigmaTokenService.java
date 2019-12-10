@@ -4,6 +4,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.google.common.base.Preconditions;
+import io.nixer.nixerplugin.core.stigma.domain.RawStigmaToken;
 import io.nixer.nixerplugin.core.stigma.domain.Stigma;
 import io.nixer.nixerplugin.core.stigma.domain.StigmaStatus;
 import io.nixer.nixerplugin.core.stigma.storage.StigmaData;
@@ -53,16 +54,16 @@ public class StigmaTokenService {
      * with information about validity of the original token.
      */
     @Nonnull
-    public StigmaTokenFetchResult fetchTokenOnLoginSuccess(@Nullable final String originalRawToken) {
+    public StigmaTokenFetchResult fetchTokenOnLoginSuccess(@Nullable final RawStigmaToken originalToken) {
 
-        @Nullable final StigmaData stigmaData = tryObtainingStigma(originalRawToken);
+        @Nullable final StigmaData stigmaData = tryObtainingStigmaData(originalToken);
 
         if (isStigmaActive(stigmaData)) {
             // TODO do we need this recording?
             // covered by observed: active->active
             // stigmaTokenStorage.recordLoginSuccessTokenValid(stigmaData.getStigmaValue());
 
-            return new StigmaTokenFetchResult(originalRawToken, true);
+            return new StigmaTokenFetchResult(originalToken, true);
 
         } else {
             // TODO do we need this recording?
@@ -79,9 +80,9 @@ public class StigmaTokenService {
      * with information about validity of the original token.
      */
     @Nonnull
-    public StigmaTokenFetchResult fetchTokenOnLoginFail(@Nullable final String originalRawToken) {
+    public StigmaTokenFetchResult fetchTokenOnLoginFail(@Nullable final RawStigmaToken originalToken) {
 
-        @Nullable final StigmaData stigmaData = tryObtainingStigma(originalRawToken);
+        @Nullable final StigmaData stigmaData = tryObtainingStigmaData(originalToken);
 
         if (isStigmaActive(stigmaData)) {
 
@@ -99,38 +100,42 @@ public class StigmaTokenService {
     }
 
     @Nullable
-    private StigmaData tryObtainingStigma(@Nullable final String rawToken) {
+    private StigmaData tryObtainingStigmaData(@Nullable final RawStigmaToken originalToken) {
 
         try {
-            return obtainStigma(rawToken);
+            return obtainStigmaData(originalToken);
 
         } catch (Exception e) {
-            LOGGER.error("Could not extract stigma from raw token: '{}'", rawToken, e);
+            LOGGER.error("Could not obtain stigma data for raw token: '{}'", originalToken, e);
             return null;
         }
     }
 
     @Nullable
-    private StigmaData obtainStigma(@Nullable final String rawToken) {
+    private StigmaData obtainStigmaData(@Nullable final RawStigmaToken originalToken) {
 
-        final ValidationResult tokenValidationResult = stigmaTokenValidator.validate(rawToken);
+        final ValidationResult tokenValidationResult = stigmaTokenValidator.validate(originalToken);
 
         if (tokenValidationResult.isValid() || tokenValidationResult.isReadable()) {
 
-            return lookForStigmaInStorage(tokenValidationResult.getStigmaValue());
+            return findStigmaDataInStorage(tokenValidationResult.getStigmaValue());
 
         } else {
 
-            if (StringUtils.hasText(rawToken)) {
+            if (hasAnyValue(originalToken)) {
                 // TODO record validation result as well
-                stigmaTokenStorage.recordUnreadableToken(rawToken);
+                stigmaTokenStorage.recordUnreadableToken(originalToken);
             } // TODO record missing token????
 
             return null;
         }
     }
 
-    private StigmaData lookForStigmaInStorage(final String stigmaValue) {
+    private boolean hasAnyValue(final RawStigmaToken originalToken) {
+        return originalToken != null && StringUtils.hasText(originalToken.getValue());
+    }
+
+    private StigmaData findStigmaDataInStorage(final String stigmaValue) {
 
         final Stigma stigma = new Stigma(stigmaValue);
 
@@ -159,12 +164,12 @@ public class StigmaTokenService {
     }
 
     @Nonnull
-    private String newStigmaToken() {
+    private RawStigmaToken newStigmaToken() {
 
         final String newStigmaValue = stigmaValuesGenerator.newStigma();
 
         final String stigmaValue = stigmaTokenStorage.createStigma(newStigmaValue, StigmaStatus.ACTIVE).getValue();
 
-        return stigmaTokenProvider.getToken(stigmaValue).serialize();
+        return new RawStigmaToken(stigmaTokenProvider.getToken(stigmaValue).serialize());
     }
 }

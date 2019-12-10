@@ -25,10 +25,11 @@ import com.nimbusds.jose.jwk.gen.OctetSequenceKeyGenerator;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.PlainJWT;
-import io.nixer.nixerplugin.core.stigma.token.EncryptedStigmaTokenProvider;
-import io.nixer.nixerplugin.core.stigma.token.StigmaTokenProvider;
 import io.nixer.nixerplugin.core.stigma.crypto.DirectDecrypterFactory;
 import io.nixer.nixerplugin.core.stigma.crypto.DirectEncrypterFactory;
+import io.nixer.nixerplugin.core.stigma.domain.RawStigmaToken;
+import io.nixer.nixerplugin.core.stigma.token.EncryptedStigmaTokenProvider;
+import io.nixer.nixerplugin.core.stigma.token.StigmaTokenProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -75,7 +76,7 @@ class StigmaTokenValidatorTest {
 
     @ParameterizedTest
     @MethodSource("missingTokenExamples")
-    void should_fail_validation_on_missing_token(final String missingToken) {
+    void should_fail_validation_on_missing_token(final RawStigmaToken missingToken) {
         // when
         final ValidationResult result = validator.validate(missingToken);
 
@@ -83,19 +84,19 @@ class StigmaTokenValidatorTest {
         assertThat(result.getStatus()).isEqualTo(ValidationStatus.MISSING);
     }
 
-    static Stream<String> missingTokenExamples() {
+    static Stream<RawStigmaToken> missingTokenExamples() {
         return Stream.of(
                 null,
-                "",
-                " ",
-                "   "
+                new RawStigmaToken(""),
+                new RawStigmaToken(" "),
+                new RawStigmaToken("   ")
         );
     }
 
     @Test
     void should_pass_validation() {
         // given
-        final String stigmaToken = givenEncryptedToken(
+        final RawStigmaToken stigmaToken = givenEncryptedToken(
                 with -> with.subject(SUBJECT)
                         .issueTime(ISSUE_TIME)
                         .claim(STIGMA_VALUE_FIELD_NAME, STIGMA_VALUE)
@@ -130,7 +131,7 @@ class StigmaTokenValidatorTest {
                 }
         );
 
-        final String stigmaToken = encryptedTokenProvider.getToken(STIGMA_VALUE).serialize();
+        final RawStigmaToken stigmaToken = new RawStigmaToken(encryptedTokenProvider.getToken(STIGMA_VALUE).serialize());
 
         // when
         final ValidationResult result = validator.validate(stigmaToken);
@@ -158,7 +159,7 @@ class StigmaTokenValidatorTest {
 
         validator = new StigmaTokenValidator(jwtValidator);
 
-        final String stigmaToken = givenEncryptedToken(
+        final RawStigmaToken stigmaToken = givenEncryptedToken(
                 with -> with.subject(SUBJECT)
                         .issueTime(ISSUE_TIME)
                         .claim(STIGMA_VALUE_FIELD_NAME, STIGMA_VALUE)
@@ -181,7 +182,7 @@ class StigmaTokenValidatorTest {
                 .build());
 
         // when
-        final ValidationResult result = validator.validate(plainJWT.serialize());
+        final ValidationResult result = validator.validate(new RawStigmaToken(plainJWT.serialize()));
 
         // then
         assertThat(result.getStatus()).isEqualTo(ValidationStatus.NOT_ENCRYPTED);
@@ -190,7 +191,7 @@ class StigmaTokenValidatorTest {
     @Test
     void should_fail_validation_on_incorrect_subject() {
         // given
-        final String stigmaToken = givenEncryptedToken(
+        final RawStigmaToken stigmaToken = givenEncryptedToken(
                 with -> with.subject("INVALID_SUBJECT")
                         .issueTime(ISSUE_TIME)
                         .claim(STIGMA_VALUE_FIELD_NAME, STIGMA_VALUE)
@@ -206,7 +207,7 @@ class StigmaTokenValidatorTest {
     @Test
     void should_fail_validation_on_missing_random_stigma() {
         // given
-        final String stigmaToken = givenEncryptedToken(
+        final RawStigmaToken stigmaToken = givenEncryptedToken(
                 with -> with.subject(SUBJECT)
                         .issueTime(ISSUE_TIME)
         );
@@ -221,7 +222,7 @@ class StigmaTokenValidatorTest {
     @Test
     void should_fail_validation_on_missing_issue_time() {
         // given
-        final String stigmaToken = givenEncryptedToken(
+        final RawStigmaToken stigmaToken = givenEncryptedToken(
                 with -> with.subject(SUBJECT)
                         .claim(STIGMA_VALUE_FIELD_NAME, STIGMA_VALUE)
         );
@@ -238,7 +239,7 @@ class StigmaTokenValidatorTest {
         // given
         final Date expiredIssueTime = Date.from(ISSUE_TIME.toInstant().minus(TOKEN_LIFETIME.plusDays(1)));
 
-        final String stigmaToken = givenEncryptedToken(
+        final RawStigmaToken stigmaToken = givenEncryptedToken(
                 with -> with.subject(SUBJECT)
                         .issueTime(expiredIssueTime)
                         .claim(STIGMA_VALUE_FIELD_NAME, STIGMA_VALUE)
@@ -254,7 +255,7 @@ class StigmaTokenValidatorTest {
     @Test
     void should_fail_validation_on_parsing_error() {
         // when
-        final ValidationResult result = validator.validate("not parsable JWE");
+        final ValidationResult result = validator.validate(new RawStigmaToken("not parsable JWE"));
 
         // then
         assertThat(result.getStatus()).isEqualTo(ValidationStatus.PARSING_ERROR);
@@ -273,7 +274,7 @@ class StigmaTokenValidatorTest {
         final JWEObject jweObject = new JWEObject(header, payload);
         jweObject.encrypt(encryptionSpec.encrypter());
 
-        final String stigmaToken = jweObject.serialize();
+        final RawStigmaToken stigmaToken = new RawStigmaToken(jweObject.serialize());
 
         // when
         final ValidationResult result = validator.validate(stigmaToken);
@@ -287,7 +288,7 @@ class StigmaTokenValidatorTest {
         // given
         final OctetSequenceKey anotherKeyWithMatchingID = new OctetSequenceKeyGenerator(256).keyID(jwk.getKeyID()).generate();
 
-        final String stigmaToken = givenEncryptedToken(anotherKeyWithMatchingID,
+        final RawStigmaToken stigmaToken = givenEncryptedToken(anotherKeyWithMatchingID,
                 with -> with.subject(SUBJECT)
                         .issueTime(ISSUE_TIME)
                         .claim(STIGMA_VALUE_FIELD_NAME, STIGMA_VALUE)
@@ -300,7 +301,7 @@ class StigmaTokenValidatorTest {
         assertThat(result.getStatus()).isEqualTo(ValidationStatus.DECRYPTION_ERROR);
     }
 
-    private String givenEncryptedToken(final OctetSequenceKey encryptionKey, final Consumer<JWTClaimsSet.Builder> claimsAssigner) {
+    private RawStigmaToken givenEncryptedToken(final OctetSequenceKey encryptionKey, final Consumer<JWTClaimsSet.Builder> claimsAssigner) {
         final JWTClaimsSet.Builder builder = new JWTClaimsSet.Builder();
         claimsAssigner.accept(builder);
         final PlainJWT plainJWT = new PlainJWT(builder.build());
@@ -311,10 +312,10 @@ class StigmaTokenValidatorTest {
         final EncryptedStigmaTokenProvider encryptedTokenProvider =
                 new EncryptedStigmaTokenProvider(plainTokenProvider, new DirectEncrypterFactory(encryptionKey));
 
-        return encryptedTokenProvider.getToken(STIGMA_VALUE).serialize();
+        return new RawStigmaToken(encryptedTokenProvider.getToken(STIGMA_VALUE).serialize());
     }
 
-    private String givenEncryptedToken(final Consumer<JWTClaimsSet.Builder> claimsAssigner) {
+    private RawStigmaToken givenEncryptedToken(final Consumer<JWTClaimsSet.Builder> claimsAssigner) {
         return givenEncryptedToken(this.jwk, claimsAssigner);
     }
 }

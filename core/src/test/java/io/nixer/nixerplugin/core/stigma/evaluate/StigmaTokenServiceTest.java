@@ -1,6 +1,7 @@
 package io.nixer.nixerplugin.core.stigma.evaluate;
 
 import com.nimbusds.jwt.JWT;
+import io.nixer.nixerplugin.core.stigma.domain.RawStigmaToken;
 import io.nixer.nixerplugin.core.stigma.domain.Stigma;
 import io.nixer.nixerplugin.core.stigma.domain.StigmaStatus;
 import io.nixer.nixerplugin.core.stigma.storage.StigmaData;
@@ -35,8 +36,8 @@ import static org.mockito.Mockito.verify;
 @MockitoSettings(strictness = Strictness.LENIENT)
 class StigmaTokenServiceTest {
 
-    private static final String RAW_TOKEN = "raw-token";
-    private static final String NEW_RAW_TOKEN = "new-raw-token";
+    private static final RawStigmaToken RAW_TOKEN = new RawStigmaToken("raw-token");
+    private static final RawStigmaToken NEW_RAW_TOKEN = new RawStigmaToken("new-raw-token");
 
     private static final String STIGMA_VALUE = "stigma-value";
 
@@ -84,7 +85,7 @@ class StigmaTokenServiceTest {
         final JWT jwtToken = Mockito.mock(JWT.class);
         given(stigmaTokenProvider.getToken(newStigmaValue)).willReturn(jwtToken);
 
-        given(jwtToken.serialize()).willReturn(NEW_RAW_TOKEN);
+        given(jwtToken.serialize()).willReturn(NEW_RAW_TOKEN.getValue());
     }
 
     @Test

@@ -3,6 +3,7 @@ package io.nixer.nixerplugin.core.stigma.storage;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import io.nixer.nixerplugin.core.stigma.domain.RawStigmaToken;
 import io.nixer.nixerplugin.core.stigma.domain.Stigma;
 import io.nixer.nixerplugin.core.stigma.domain.StigmaStatus;
 
@@ -28,6 +29,6 @@ public interface StigmaTokenStorage {
     }
 
     // TODO historical
-    default void recordUnreadableToken(@Nonnull final String rawToken) {
+    default void recordUnreadableToken(@Nonnull final RawStigmaToken rawToken) {
     }
 }

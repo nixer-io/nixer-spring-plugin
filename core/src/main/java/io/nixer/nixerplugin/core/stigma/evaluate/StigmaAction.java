@@ -5,6 +5,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 
 import com.google.common.base.Preconditions;
+import io.nixer.nixerplugin.core.stigma.domain.RawStigmaToken;
 
 /**
  * DTO representing action related to a StigmaToken.
@@ -16,28 +17,19 @@ import com.google.common.base.Preconditions;
 @Immutable
 public class StigmaAction {
 
-    // FIXME is this action applicable at all?
-    public static final StigmaAction STIGMA_ACTION_NOOP = new StigmaAction("", StigmaActionType.SKIP_ACTION) {
-        @Nonnull
-        @Override
-        public String getStigmaToken() {
-            throw new UnsupportedOperationException("getStigmaToken not supported on action of type SKIP_ACTION.");
-        }
-    };
-
     @Nonnull
-    private final String stigmaToken;
+    private final RawStigmaToken stigmaToken;
 
     @Nonnull
     private final StigmaActionType type;
 
-    public StigmaAction(@Nonnull final String stigmaToken, @Nonnull final StigmaActionType type) {
+    public StigmaAction(@Nonnull final RawStigmaToken stigmaToken, @Nonnull final StigmaActionType type) {
         this.stigmaToken = Preconditions.checkNotNull(stigmaToken, "stigmaToken");
         this.type = Preconditions.checkNotNull(type, "type");
     }
 
     @Nonnull
-    public String getStigmaToken() {
+    public RawStigmaToken getStigmaToken() {
         return stigmaToken;
     }
 

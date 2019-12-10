@@ -5,6 +5,7 @@ import java.util.StringJoiner;
 import javax.annotation.Nonnull;
 
 import com.google.common.base.Preconditions;
+import io.nixer.nixerplugin.core.stigma.domain.RawStigmaToken;
 
 /**
  * Represents a raw serialized stigma token and information if the previously used token was valid or not.
@@ -16,17 +17,17 @@ import com.google.common.base.Preconditions;
 public class StigmaTokenFetchResult {
 
     @Nonnull
-    private final String fetchedToken;
+    private final RawStigmaToken fetchedToken;
 
     private final boolean originalTokenValid;
 
-    public StigmaTokenFetchResult(@Nonnull final String fetchedToken, final boolean originalTokenValid) {
+    public StigmaTokenFetchResult(@Nonnull final RawStigmaToken fetchedToken, final boolean originalTokenValid) {
         this.fetchedToken = Preconditions.checkNotNull(fetchedToken, "fetchedToken");
         this.originalTokenValid = originalTokenValid;
     }
 
     @Nonnull
-    public String getFetchedToken() {
+    public RawStigmaToken getFetchedToken() {
         return fetchedToken;
     }
 

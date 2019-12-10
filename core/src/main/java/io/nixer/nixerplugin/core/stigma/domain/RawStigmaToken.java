@@ -1,6 +1,7 @@
 package io.nixer.nixerplugin.core.stigma.domain;
 
 import com.google.common.base.Objects;
+import org.springframework.util.Assert;
 
 /**
  * Represents raw, not parsed, stigma token, e.g. serialized JWT.
@@ -10,6 +11,7 @@ public class RawStigmaToken {
     private final String value;
 
     public RawStigmaToken(final String value) {
+        Assert.notNull(value, "value must not be null");
         this.value = value;
     }
 
