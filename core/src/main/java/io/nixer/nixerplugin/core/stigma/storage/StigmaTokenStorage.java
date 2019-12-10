@@ -14,13 +14,12 @@ import io.nixer.nixerplugin.core.stigma.domain.StigmaStatus;
  */
 public interface StigmaTokenStorage {
 
-    @Nonnull
-    Stigma createStigma(Stigma stigma, final StigmaStatus status);
+    void createStigma(Stigma stigma, final StigmaStatus status);
 
     @Nullable
     StigmaData findStigmaData(@Nonnull final Stigma stigma);
 
-    void revokeStigma(@Nonnull final Stigma stigma);
+    void updateStatus(@Nonnull final Stigma stigma, final StigmaStatus status);
 
     // TODO historical
     default void recordSpottingUnknownStigma(@Nonnull final Stigma stigma) {

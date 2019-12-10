@@ -156,7 +156,7 @@ public class StigmaTokenService {
 
     private void revokeStigma(final StigmaData stigmaData) {
         try {
-            stigmaTokenStorage.revokeStigma(stigmaData.getStigma());
+            stigmaTokenStorage.updateStatus(stigmaData.getStigma(), StigmaStatus.REVOKED);
         } catch (Exception e) {
             LOGGER.error("Could not revoke stigma for stigma value data: '{}'", stigmaData, e);
         }
@@ -167,10 +167,18 @@ public class StigmaTokenService {
 
         final Stigma newStigma = stigmaValuesGenerator.newStigma();
 
-        stigmaTokenStorage.createStigma(newStigma, StigmaStatus.ACTIVE); // TODO check and handle storing failure
+        storeActiveStigma(newStigma);
 
         final JWT token = stigmaTokenProvider.getToken(newStigma);
 
         return new RawStigmaToken(token.serialize());
+    }
+
+    private void storeActiveStigma(final Stigma newStigma) {
+        try {
+            stigmaTokenStorage.createStigma(newStigma, StigmaStatus.ACTIVE);
+        } catch (Exception e) {
+            LOGGER.error("Could not store active stigma for stigma value: '{}'", newStigma, e);
+        }
     }
 }

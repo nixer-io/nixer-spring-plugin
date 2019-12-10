@@ -15,8 +15,8 @@ public class StigmasJdbcDAO extends JdbcDaoSupport {
             StigmaStatus.valueOf(rs.getString("status"))
     );
 
-    public void create(final StigmaData stigmaData) {
-        getJdbcTemplate().update(
+    public int create(final StigmaData stigmaData) {
+        return getJdbcTemplate().update(
                 "INSERT INTO stigmas (stigma_value, status) VALUES (?, ?)",
                 stigmaData.getStigma().getValue(), stigmaData.getStatus().name()
         );
@@ -30,18 +30,14 @@ public class StigmasJdbcDAO extends JdbcDaoSupport {
         );
     }
 
-    public void updateStigmaStatus(final Stigma stigma, final StigmaStatus status) {
-        getJdbcTemplate().update(
+    public int updateStatus(final Stigma stigma, final StigmaStatus newStatus) {
+        return getJdbcTemplate().update(
                 "UPDATE stigmas SET status = ? WHERE stigma_value = ?",
-                status.name(), stigma.getValue()
+                newStatus.name(), stigma.getValue()
         );
     }
 
     public List<StigmaData> getAll() {
-
-        return getJdbcTemplate().query(
-                "SELECT * FROM stigmas",
-                STIGMA_DATA_MAPPER
-        );
+        return getJdbcTemplate().query("SELECT * FROM stigmas", STIGMA_DATA_MAPPER);
     }
 }

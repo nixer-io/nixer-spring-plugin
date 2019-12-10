@@ -7,6 +7,7 @@ import io.nixer.nixerplugin.core.stigma.domain.Stigma;
 import io.nixer.nixerplugin.core.stigma.domain.StigmaStatus;
 import io.nixer.nixerplugin.core.stigma.storage.StigmaData;
 import io.nixer.nixerplugin.core.stigma.storage.StigmaTokenStorage;
+import org.springframework.util.Assert;
 
 /**
  * Created on 05/12/2019.
@@ -21,13 +22,10 @@ public class StigmasJdbcStorage implements StigmaTokenStorage {
         this.stigmasDAO = stigmasDAO;
     }
 
-    @Nonnull
     @Override
-    public Stigma createStigma(@Nonnull final Stigma stigma, @Nonnull final  StigmaStatus status) {
-        stigmasDAO.create(new StigmaData(stigma, status));
-
-        // FIXME return more reasonable object
-        return stigma;
+    public void createStigma(@Nonnull final Stigma stigma, @Nonnull final StigmaStatus status) {
+        final int created = stigmasDAO.create(new StigmaData(stigma, status));
+        Assert.state(created == 1, () -> "Expected to create exactly one entry but was: " + created);
     }
 
     @Nullable
@@ -37,7 +35,8 @@ public class StigmasJdbcStorage implements StigmaTokenStorage {
     }
 
     @Override
-    public void revokeStigma(@Nonnull final Stigma stigma) {
-        stigmasDAO.updateStigmaStatus(stigma, StigmaStatus.REVOKED);
+    public void updateStatus(@Nonnull final Stigma stigma, final StigmaStatus newStatus) {
+        final int updated = stigmasDAO.updateStatus(stigma, newStatus);
+        Assert.state(updated == 1, () -> "Expected to update exactly one entry but was: " + updated);
     }
 }
