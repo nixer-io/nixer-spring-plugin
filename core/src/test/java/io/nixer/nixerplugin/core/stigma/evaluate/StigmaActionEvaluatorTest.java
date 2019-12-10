@@ -24,6 +24,9 @@ class StigmaActionEvaluatorTest {
 
     // TODO verify metrics when implemented
 
+    private static final RawStigmaToken VALID_TOKEN = new RawStigmaToken("valid-token");
+    private static final RawStigmaToken INVALID_TOKEN = new RawStigmaToken("invalid-token");
+
     @Mock
     private StigmaTokenService stigmaTokenService;
 
@@ -33,65 +36,58 @@ class StigmaActionEvaluatorTest {
     @Test
     void should_get_action_on_login_success_and_valid_token() {
         // given
-        final RawStigmaToken validToken = new RawStigmaToken("valid-token");
-        given(stigmaTokenService.fetchTokenOnLoginSuccess(validToken))
-                .willReturn(new StigmaTokenFetchResult(validToken, true));
+        given(stigmaTokenService.fetchTokenOnLoginSuccess(VALID_TOKEN))
+                .willReturn(new StigmaTokenFetchResult(VALID_TOKEN, true));
 
         // when
-        final StigmaAction action = actionEvaluator.onLoginSuccess(validToken);
+        final StigmaAction action = actionEvaluator.onLoginSuccess(VALID_TOKEN);
 
         // then
-        assertThat(action).isEqualTo(new StigmaAction(validToken, TOKEN_GOOD_LOGIN_SUCCESS));
+        assertThat(action).isEqualTo(new StigmaAction(VALID_TOKEN, TOKEN_GOOD_LOGIN_SUCCESS));
         //        verify(stigmaMetricsService).rememberStigmaActionType(TOKEN_GOOD_LOGIN_SUCCESS);
     }
 
     @Test
     void should_get_action_on_login_success_and_invalid_token() {
         // given
-        final RawStigmaToken invalidToken = new RawStigmaToken("invalid-token");
-        final RawStigmaToken newToken = new RawStigmaToken("new-token");
-        given(stigmaTokenService.fetchTokenOnLoginSuccess(invalidToken))
-                .willReturn(new StigmaTokenFetchResult(newToken, false));
+        given(stigmaTokenService.fetchTokenOnLoginSuccess(INVALID_TOKEN))
+                .willReturn(new StigmaTokenFetchResult(VALID_TOKEN, false));
 
         // when
-        final StigmaAction action = actionEvaluator.onLoginSuccess(invalidToken);
+        final StigmaAction action = actionEvaluator.onLoginSuccess(INVALID_TOKEN);
 
         // then
-        assertThat(action).isEqualTo(new StigmaAction(newToken, TOKEN_BAD_LOGIN_SUCCESS));
+        assertThat(action).isEqualTo(new StigmaAction(VALID_TOKEN, TOKEN_BAD_LOGIN_SUCCESS));
         //        verify(stigmaMetricsService).rememberStigmaActionType(TOKEN_BAD_LOGIN_SUCCESS);
     }
 
     @Test
     void should_get_action_on_login_failure_and_valid_token() {
         // given
-        final RawStigmaToken originalValidToken = new RawStigmaToken("valid-token");
-        final RawStigmaToken newToken = new RawStigmaToken("new-valid-token");
+        final RawStigmaToken newValidToken = new RawStigmaToken("new-valid-token");
 
-        given(stigmaTokenService.fetchTokenOnLoginFail(originalValidToken))
-                .willReturn(new StigmaTokenFetchResult(newToken, true));
+        given(stigmaTokenService.fetchTokenOnLoginFail(VALID_TOKEN))
+                .willReturn(new StigmaTokenFetchResult(newValidToken, true));
 
         // when
-        final StigmaAction action = actionEvaluator.onLoginFail(originalValidToken);
+        final StigmaAction action = actionEvaluator.onLoginFail(VALID_TOKEN);
 
         // then
-        assertThat(action).isEqualTo(new StigmaAction(newToken, TOKEN_GOOD_LOGIN_FAIL));
+        assertThat(action).isEqualTo(new StigmaAction(newValidToken, TOKEN_GOOD_LOGIN_FAIL));
         //        verify(stigmaMetricsService).rememberStigmaActionType(TOKEN_GOOD_LOGIN_FAIL);
     }
 
     @Test
     void should_get_action_on_login_failure_and_invalid_token() {
         // given
-        final RawStigmaToken invalidToken = new RawStigmaToken("invalid-token");
-        final RawStigmaToken newToken = new RawStigmaToken("new-token");
-
-        given(stigmaTokenService.fetchTokenOnLoginFail(invalidToken))
-                .willReturn(new StigmaTokenFetchResult(newToken, false));
+        given(stigmaTokenService.fetchTokenOnLoginFail(INVALID_TOKEN))
+                .willReturn(new StigmaTokenFetchResult(VALID_TOKEN, false));
 
         // when
-        final StigmaAction action = actionEvaluator.onLoginFail(invalidToken);
+        final StigmaAction action = actionEvaluator.onLoginFail(INVALID_TOKEN);
 
         // then
-        assertThat(action).isEqualTo(new StigmaAction(newToken, TOKEN_BAD_LOGIN_FAIL));
+        assertThat(action).isEqualTo(new StigmaAction(VALID_TOKEN, TOKEN_BAD_LOGIN_FAIL));
         //        verify(stigmaMetricsService).rememberStigmaActionType(TOKEN_BAD_LOGIN_FAIL);
     }
 }

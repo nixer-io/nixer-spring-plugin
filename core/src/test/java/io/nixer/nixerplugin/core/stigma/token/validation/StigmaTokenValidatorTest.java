@@ -23,6 +23,7 @@ import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.OctetSequenceKey;
 import com.nimbusds.jose.jwk.gen.OctetSequenceKeyGenerator;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
+import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.PlainJWT;
 import io.nixer.nixerplugin.core.stigma.crypto.DirectDecrypterFactory;
@@ -312,7 +313,9 @@ class StigmaTokenValidatorTest {
         final EncryptedStigmaTokenProvider encryptedTokenProvider =
                 new EncryptedStigmaTokenProvider(plainTokenProvider, new DirectEncrypterFactory(encryptionKey));
 
-        return new RawStigmaToken(encryptedTokenProvider.getToken(STIGMA_VALUE).serialize());
+        final JWT token = encryptedTokenProvider.getToken(STIGMA_VALUE);
+
+        return new RawStigmaToken(token.serialize());
     }
 
     private RawStigmaToken givenEncryptedToken(final Consumer<JWTClaimsSet.Builder> claimsAssigner) {

@@ -4,6 +4,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.google.common.base.Preconditions;
+import com.nimbusds.jwt.JWT;
 import io.nixer.nixerplugin.core.stigma.domain.RawStigmaToken;
 import io.nixer.nixerplugin.core.stigma.domain.Stigma;
 import io.nixer.nixerplugin.core.stigma.domain.StigmaStatus;
@@ -170,6 +171,8 @@ public class StigmaTokenService {
 
         final String stigmaValue = stigmaTokenStorage.createStigma(newStigmaValue, StigmaStatus.ACTIVE).getValue();
 
-        return new RawStigmaToken(stigmaTokenProvider.getToken(stigmaValue).serialize());
+        final JWT token = stigmaTokenProvider.getToken(stigmaValue);
+
+        return new RawStigmaToken(token.serialize());
     }
 }

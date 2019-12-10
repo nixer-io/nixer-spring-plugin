@@ -45,8 +45,6 @@ public class StigmaLoginActivityHandler implements LoginActivityHandler {
                 : stigmaActionEvaluator.onLoginFail(receivedStigmaToken);
 
         if (action.isTokenRefreshRequired()) {
-            // FIXME include login result and stigma state into the decision
-            // and move this logic to proper place
             stigmaCookieService.writeStigmaToken(response, action.getStigmaToken());
         }
     }

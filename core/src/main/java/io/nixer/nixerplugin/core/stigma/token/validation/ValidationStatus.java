@@ -13,7 +13,7 @@ public enum ValidationStatus {
     // Invalid results
     MISSING,
     MISSING_STIGMA,
-    EXPIRED(false, true), // FIXME to be removed as expiration is checked against DB
+    EXPIRED(false, true), // TODO consider removing as expiration could be determined by a JWT claim or a timestamp in storage
     INVALID_PAYLOAD(false, true),
     PARSING_ERROR,
     WRONG_ENC,
