@@ -42,7 +42,7 @@ class StigmaTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @Value("${nixer.stigma.cookie}")
+    @Value("${nixer.stigma.cookieName}")
     private String stigmaCookie;
 
     @Autowired

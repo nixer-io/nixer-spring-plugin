@@ -5,14 +5,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import io.nixer.nixerplugin.core.stigma.domain.RawStigmaToken;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.web.util.WebUtils;
 
 public class StigmaCookieService {
 
-    @Value("${nixer.stigma.cookie}")
-    private String stigmaCookieName;
+    private final String stigmaCookieName;
+
+    public StigmaCookieService(final String stigmaCookieName) {
+        Assert.notNull(stigmaCookieName, "stigmaCookieName must not be null");
+        this.stigmaCookieName = stigmaCookieName;
+    }
 
     public RawStigmaToken readStigmaToken(final HttpServletRequest request) {
         final Cookie stigmaCookie = WebUtils.getCookie(request, this.stigmaCookieName);

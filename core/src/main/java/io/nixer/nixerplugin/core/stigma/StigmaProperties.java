@@ -4,21 +4,23 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "nixer.stigma")
 public class StigmaProperties {
-    private String cookie;
+
+    private static final String DEFAULT_STIGMA_COOKIE_NAME = "stgtk";
+
+    private String cookieName = DEFAULT_STIGMA_COOKIE_NAME;
 
     private String tokenLifetime;
 
     private String decryptionKeyFile;
     private String encryptionKeyFile;
 
-    public String getCookie() {
-        return cookie;
+    public String getCookieName() {
+        return cookieName;
     }
 
-    public void setCookie(final String cookie) {
-        this.cookie = cookie;
+    public void setCookieName(final String cookieName) {
+        this.cookieName = cookieName;
     }
-
 
     public String getTokenLifetime() {
         return tokenLifetime;

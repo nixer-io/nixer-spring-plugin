@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.time.Duration;
 import java.time.Instant;
-import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
@@ -51,12 +50,12 @@ public class StigmaConfiguration {
     }
 
     @Bean
-    public StigmaCookieService stigmaCookieService() {
-        return new StigmaCookieService();
+    public StigmaCookieService stigmaCookieService(StigmaProperties stigmaProperties) {
+        return new StigmaCookieService(stigmaProperties.getCookieName());
     }
 
     @Bean
-    public StigmaTokenValidator buildStigmaTokenValidator(@Nonnull final EncryptedJwtValidator encryptedJwtValidator) {
+    public StigmaTokenValidator buildStigmaTokenValidator(final EncryptedJwtValidator encryptedJwtValidator) {
 
         return new StigmaTokenValidator(encryptedJwtValidator);
     }
