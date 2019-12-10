@@ -15,6 +15,7 @@ import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.PlainJWT;
 import io.nixer.nixerplugin.core.stigma.crypto.DirectEncrypterFactory;
+import io.nixer.nixerplugin.core.stigma.domain.Stigma;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -30,7 +31,7 @@ import static org.mockito.BDDMockito.given;
  */
 class EncryptedStigmaTokenProviderTest {
 
-    private static final String STIGMA_VALUE = "123456789000";
+    private static final Stigma STIGMA = new Stigma("123456789000");
 
     private StigmaTokenProvider delegateProvider = Mockito.mock(StigmaTokenProvider.class);
 
@@ -52,13 +53,13 @@ class EncryptedStigmaTokenProviderTest {
         final JWTClaimsSet unencryptedPayload = new JWTClaimsSet.Builder()
                 .subject(StigmaTokenConstants.SUBJECT)
                 .issueTime(Date.from(LocalDateTime.of(2019, 5, 20, 13, 50, 15).toInstant(UTC)))
-                .claim(StigmaTokenConstants.STIGMA_VALUE_FIELD_NAME, STIGMA_VALUE)
+                .claim(StigmaTokenConstants.STIGMA_VALUE_FIELD_NAME, STIGMA.getValue())
                 .build();
 
-        given(delegateProvider.getToken(STIGMA_VALUE)).willReturn(new PlainJWT(unencryptedPayload));
+        given(delegateProvider.getToken(STIGMA)).willReturn(new PlainJWT(unencryptedPayload));
 
         // when
-        final JWT token = stigmaTokenProvider.getToken(STIGMA_VALUE);
+        final JWT token = stigmaTokenProvider.getToken(STIGMA);
 
         // then
         assertThat(token).isNotNull().isInstanceOf(EncryptedJWT.class);

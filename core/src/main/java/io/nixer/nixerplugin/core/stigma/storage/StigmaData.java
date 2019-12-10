@@ -6,6 +6,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 
 import com.google.common.base.Preconditions;
+import io.nixer.nixerplugin.core.stigma.domain.Stigma;
 import io.nixer.nixerplugin.core.stigma.domain.StigmaStatus;
 
 /**
@@ -17,20 +18,20 @@ import io.nixer.nixerplugin.core.stigma.domain.StigmaStatus;
 public class StigmaData {
 
     @Nonnull
-    private final String stigmaValue;
+    private final Stigma stigma;
 
     @Nonnull
     private final StigmaStatus status;
 
-    public StigmaData(@Nonnull final String stigmaValue,
+    public StigmaData(@Nonnull final Stigma stigma,
                       @Nonnull final StigmaStatus status) {
-        this.stigmaValue = Preconditions.checkNotNull(stigmaValue, "stigmaValue");
+        this.stigma = Preconditions.checkNotNull(stigma, "stigma");
         this.status = Preconditions.checkNotNull(status, "status");
     }
 
     @Nonnull
-    public String getStigmaValue() {
-        return stigmaValue;
+    public Stigma getStigma() {
+        return stigma;
     }
 
     @Nonnull
@@ -43,19 +44,19 @@ public class StigmaData {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         final StigmaData that = (StigmaData) o;
-        return stigmaValue.equals(that.stigmaValue) &&
+        return stigma.equals(that.stigma) &&
                 status == that.status;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(stigmaValue, status);
+        return Objects.hash(stigma, status);
     }
 
     @Override
     public String toString() {
         return new StringJoiner(", ", StigmaData.class.getSimpleName() + "[", "]")
-                .add("stigmaValue='" + stigmaValue + "'")
+                .add("stigma='" + stigma + "'")
                 .add("status=" + status)
                 .toString();
     }

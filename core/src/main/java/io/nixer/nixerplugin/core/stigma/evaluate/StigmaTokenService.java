@@ -119,7 +119,7 @@ public class StigmaTokenService {
 
         if (tokenValidationResult.isValid() || tokenValidationResult.isReadable()) {
 
-            return findStigmaDataInStorage(tokenValidationResult.getStigmaValue());
+            return findStigmaDataInStorage(tokenValidationResult.getStigma());
 
         } else {
 
@@ -136,9 +136,7 @@ public class StigmaTokenService {
         return originalToken != null && StringUtils.hasText(originalToken.getValue());
     }
 
-    private StigmaData findStigmaDataInStorage(final String stigmaValue) {
-
-        final Stigma stigma = new Stigma(stigmaValue);
+    private StigmaData findStigmaDataInStorage(final Stigma stigma) {
 
         final StigmaData stigmaValueData = stigmaTokenStorage.findStigmaData(stigma);
 
@@ -158,7 +156,7 @@ public class StigmaTokenService {
 
     private void revokeStigma(final StigmaData stigmaData) {
         try {
-            stigmaTokenStorage.revokeStigma(stigmaData.getStigmaValue());
+            stigmaTokenStorage.revokeStigma(stigmaData.getStigma());
         } catch (Exception e) {
             LOGGER.error("Could not revoke stigma for stigma value data: '{}'", stigmaData, e);
         }
@@ -167,11 +165,11 @@ public class StigmaTokenService {
     @Nonnull
     private RawStigmaToken newStigmaToken() {
 
-        final String newStigmaValue = stigmaValuesGenerator.newStigma();
+        final Stigma newStigma = stigmaValuesGenerator.newStigma();
 
-        final String stigmaValue = stigmaTokenStorage.createStigma(newStigmaValue, StigmaStatus.ACTIVE).getValue();
+        stigmaTokenStorage.createStigma(newStigma, StigmaStatus.ACTIVE); // TODO check and handle storing failure
 
-        final JWT token = stigmaTokenProvider.getToken(stigmaValue);
+        final JWT token = stigmaTokenProvider.getToken(newStigma);
 
         return new RawStigmaToken(token.serialize());
     }

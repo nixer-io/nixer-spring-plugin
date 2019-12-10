@@ -23,30 +23,21 @@ public class StigmasJdbcStorage implements StigmaTokenStorage {
 
     @Nonnull
     @Override
-    public Stigma createStigma(String stigmaValue, final StigmaStatus status) {
-        stigmasDAO.create(
-                new StigmaData(
-                        stigmaValue, status
-                )
-        );
+    public Stigma createStigma(@Nonnull final Stigma stigma, @Nonnull final  StigmaStatus status) {
+        stigmasDAO.create(new StigmaData(stigma, status));
 
         // FIXME return more reasonable object
-        return new Stigma(stigmaValue);
+        return stigma;
     }
 
     @Nullable
     @Override
     public StigmaData findStigmaData(@Nonnull final Stigma stigma) {
-        return stigmasDAO.findByStigmaValue(stigma.getValue());
+        return stigmasDAO.findStigmaData(stigma);
     }
 
     @Override
-    public void revokeStigma(@Nonnull final String stigmaValue) {
-        stigmasDAO.updateStigmaStatus(stigmaValue, StigmaStatus.REVOKED);
-    }
-
-    @Override
-    public void recordSpottingUnknownStigma(@Nonnull final Stigma stigma) {
-
+    public void revokeStigma(@Nonnull final Stigma stigma) {
+        stigmasDAO.updateStigmaStatus(stigma, StigmaStatus.REVOKED);
     }
 }

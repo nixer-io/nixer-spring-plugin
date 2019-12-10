@@ -2,6 +2,7 @@ package io.nixer.nixerplugin.core.stigma.storage.jdbc;
 
 import java.util.List;
 
+import io.nixer.nixerplugin.core.stigma.domain.Stigma;
 import io.nixer.nixerplugin.core.stigma.domain.StigmaStatus;
 import io.nixer.nixerplugin.core.stigma.storage.StigmaData;
 import org.springframework.jdbc.core.RowMapper;
@@ -10,29 +11,29 @@ import org.springframework.jdbc.core.support.JdbcDaoSupport;
 public class StigmasJdbcDAO extends JdbcDaoSupport {
 
     private static final RowMapper<StigmaData> STIGMA_DATA_MAPPER = (rs, rowNum) -> new StigmaData(
-            rs.getString("stigma_value"),
+            new Stigma(rs.getString("stigma_value")),
             StigmaStatus.valueOf(rs.getString("status"))
     );
 
     public void create(final StigmaData stigmaData) {
         getJdbcTemplate().update(
                 "INSERT INTO stigmas (stigma_value, status) VALUES (?, ?)",
-                stigmaData.getStigmaValue(), stigmaData.getStatus().name()
+                stigmaData.getStigma().getValue(), stigmaData.getStatus().name()
         );
     }
 
-    public StigmaData findByStigmaValue(final String stigmaValue) {
+    public StigmaData findStigmaData(final Stigma stigma) {
         return getJdbcTemplate().queryForObject(
                 "SELECT * FROM stigmas WHERE stigma_value = ?",
-                new Object[]{stigmaValue},
+                new Object[]{stigma.getValue()},
                 STIGMA_DATA_MAPPER
         );
     }
 
-    public void updateStigmaStatus(final String stigmaValue, final StigmaStatus status) {
+    public void updateStigmaStatus(final Stigma stigma, final StigmaStatus status) {
         getJdbcTemplate().update(
                 "UPDATE stigmas SET status = ? WHERE stigma_value = ?",
-                status.name(), stigmaValue
+                status.name(), stigma.getValue()
         );
     }
 

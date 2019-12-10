@@ -29,6 +29,7 @@ import com.nimbusds.jwt.PlainJWT;
 import io.nixer.nixerplugin.core.stigma.crypto.DirectDecrypterFactory;
 import io.nixer.nixerplugin.core.stigma.crypto.DirectEncrypterFactory;
 import io.nixer.nixerplugin.core.stigma.domain.RawStigmaToken;
+import io.nixer.nixerplugin.core.stigma.domain.Stigma;
 import io.nixer.nixerplugin.core.stigma.token.EncryptedStigmaTokenProvider;
 import io.nixer.nixerplugin.core.stigma.token.StigmaTokenProvider;
 import org.junit.jupiter.api.BeforeEach;
@@ -52,7 +53,7 @@ class StigmaTokenValidatorTest {
     private static final Date ISSUE_TIME = Date.from(LocalDateTime.of(2019, 5, 19, 12, 45, 56).toInstant(ZoneOffset.UTC));
     private static final Duration TOKEN_LIFETIME = Duration.ofDays(30);
     private static final Instant NOW = LocalDateTime.of(2019, 5, 20, 13, 50, 15).toInstant(ZoneOffset.UTC);
-    private static final String STIGMA_VALUE = "random-stigma-value";
+    private static final Stigma STIGMA = new Stigma("random-stigma-value");
 
     private OctetSequenceKey jwk;
 
@@ -100,14 +101,14 @@ class StigmaTokenValidatorTest {
         final RawStigmaToken stigmaToken = givenEncryptedToken(
                 with -> with.subject(SUBJECT)
                         .issueTime(ISSUE_TIME)
-                        .claim(STIGMA_VALUE_FIELD_NAME, STIGMA_VALUE)
+                        .claim(STIGMA_VALUE_FIELD_NAME, STIGMA.getValue())
         );
 
         // when
         final ValidationResult result = validator.validate(stigmaToken);
 
         // then
-        assertThat(result).isEqualTo(ValidationResult.valid(STIGMA_VALUE));
+        assertThat(result).isEqualTo(ValidationResult.valid(STIGMA));
     }
 
     @Test
@@ -116,10 +117,10 @@ class StigmaTokenValidatorTest {
         final PlainJWT plainJWT = new PlainJWT(new JWTClaimsSet.Builder()
                 .subject(SUBJECT)
                 .issueTime(ISSUE_TIME)
-                .claim(STIGMA_VALUE_FIELD_NAME, STIGMA_VALUE)
+                .claim(STIGMA_VALUE_FIELD_NAME, STIGMA.getValue())
                 .build());
         final StigmaTokenProvider plainTokenProvider = Mockito.mock(StigmaTokenProvider.class);
-        given(plainTokenProvider.getToken(STIGMA_VALUE)).willReturn(plainJWT);
+        given(plainTokenProvider.getToken(STIGMA)).willReturn(plainJWT);
 
         final EncryptedStigmaTokenProvider encryptedTokenProvider = new EncryptedStigmaTokenProvider(
                 plainTokenProvider,
@@ -132,7 +133,7 @@ class StigmaTokenValidatorTest {
                 }
         );
 
-        final RawStigmaToken stigmaToken = new RawStigmaToken(encryptedTokenProvider.getToken(STIGMA_VALUE).serialize());
+        final RawStigmaToken stigmaToken = new RawStigmaToken(encryptedTokenProvider.getToken(STIGMA).serialize());
 
         // when
         final ValidationResult result = validator.validate(stigmaToken);
@@ -163,7 +164,7 @@ class StigmaTokenValidatorTest {
         final RawStigmaToken stigmaToken = givenEncryptedToken(
                 with -> with.subject(SUBJECT)
                         .issueTime(ISSUE_TIME)
-                        .claim(STIGMA_VALUE_FIELD_NAME, STIGMA_VALUE)
+                        .claim(STIGMA_VALUE_FIELD_NAME, STIGMA.getValue())
         );
 
         // when
@@ -179,7 +180,7 @@ class StigmaTokenValidatorTest {
         final PlainJWT plainJWT = new PlainJWT(new JWTClaimsSet.Builder()
                 .subject(SUBJECT)
                 .issueTime(ISSUE_TIME)
-                .claim(STIGMA_VALUE_FIELD_NAME, STIGMA_VALUE)
+                .claim(STIGMA_VALUE_FIELD_NAME, STIGMA.getValue())
                 .build());
 
         // when
@@ -195,7 +196,7 @@ class StigmaTokenValidatorTest {
         final RawStigmaToken stigmaToken = givenEncryptedToken(
                 with -> with.subject("INVALID_SUBJECT")
                         .issueTime(ISSUE_TIME)
-                        .claim(STIGMA_VALUE_FIELD_NAME, STIGMA_VALUE)
+                        .claim(STIGMA_VALUE_FIELD_NAME, STIGMA.getValue())
         );
 
         // when
@@ -225,7 +226,7 @@ class StigmaTokenValidatorTest {
         // given
         final RawStigmaToken stigmaToken = givenEncryptedToken(
                 with -> with.subject(SUBJECT)
-                        .claim(STIGMA_VALUE_FIELD_NAME, STIGMA_VALUE)
+                        .claim(STIGMA_VALUE_FIELD_NAME, STIGMA.getValue())
         );
 
         // when
@@ -243,7 +244,7 @@ class StigmaTokenValidatorTest {
         final RawStigmaToken stigmaToken = givenEncryptedToken(
                 with -> with.subject(SUBJECT)
                         .issueTime(expiredIssueTime)
-                        .claim(STIGMA_VALUE_FIELD_NAME, STIGMA_VALUE)
+                        .claim(STIGMA_VALUE_FIELD_NAME, STIGMA.getValue())
         );
 
         // when
@@ -292,7 +293,7 @@ class StigmaTokenValidatorTest {
         final RawStigmaToken stigmaToken = givenEncryptedToken(anotherKeyWithMatchingID,
                 with -> with.subject(SUBJECT)
                         .issueTime(ISSUE_TIME)
-                        .claim(STIGMA_VALUE_FIELD_NAME, STIGMA_VALUE)
+                        .claim(STIGMA_VALUE_FIELD_NAME, STIGMA.getValue())
         );
 
         // when
@@ -308,12 +309,12 @@ class StigmaTokenValidatorTest {
         final PlainJWT plainJWT = new PlainJWT(builder.build());
 
         final StigmaTokenProvider plainTokenProvider = Mockito.mock(StigmaTokenProvider.class);
-        given(plainTokenProvider.getToken(STIGMA_VALUE)).willReturn(plainJWT);
+        given(plainTokenProvider.getToken(STIGMA)).willReturn(plainJWT);
 
         final EncryptedStigmaTokenProvider encryptedTokenProvider =
                 new EncryptedStigmaTokenProvider(plainTokenProvider, new DirectEncrypterFactory(encryptionKey));
 
-        final JWT token = encryptedTokenProvider.getToken(STIGMA_VALUE);
+        final JWT token = encryptedTokenProvider.getToken(STIGMA);
 
         return new RawStigmaToken(token.serialize());
     }

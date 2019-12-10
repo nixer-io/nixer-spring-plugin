@@ -7,6 +7,7 @@ import java.util.function.Supplier;
 import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.PlainJWT;
+import io.nixer.nixerplugin.core.stigma.domain.Stigma;
 
 /**
  * Creates StigmaToken as a plain JSON Web Token (JWT).
@@ -25,12 +26,12 @@ public class PlainStigmaTokenProvider implements StigmaTokenProvider {
     }
 
     @Override
-    public JWT getToken(final String stigmaValue) {
+    public JWT getToken(final Stigma stigma) {
 
         final JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
                 .subject(StigmaTokenConstants.SUBJECT)
                 .issueTime(Date.from(nowSource.get()))
-                .claim(StigmaTokenConstants.STIGMA_VALUE_FIELD_NAME, stigmaValue)
+                .claim(StigmaTokenConstants.STIGMA_VALUE_FIELD_NAME, stigma.getValue())
                 .build();
 
         return new PlainJWT(claimsSet);

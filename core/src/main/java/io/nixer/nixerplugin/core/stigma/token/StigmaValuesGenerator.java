@@ -2,6 +2,8 @@ package io.nixer.nixerplugin.core.stigma.token;
 
 import java.security.SecureRandom;
 
+import io.nixer.nixerplugin.core.stigma.domain.Stigma;
+
 /**
  * Created on 06/12/2019.
  *
@@ -19,7 +21,9 @@ public class StigmaValuesGenerator {
         this.random = random;
     }
 
-    public String newStigma() {
-        return String.valueOf(random.nextLong());
+    public Stigma newStigma() {
+        final String stigmaValue = String.valueOf(random.nextLong());
+
+        return new Stigma(stigmaValue);
     }
 }

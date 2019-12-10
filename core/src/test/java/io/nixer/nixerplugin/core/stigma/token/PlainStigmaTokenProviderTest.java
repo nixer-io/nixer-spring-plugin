@@ -10,6 +10,7 @@ import java.util.Map;
 import com.nimbusds.jose.Algorithm;
 import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.PlainJWT;
+import io.nixer.nixerplugin.core.stigma.domain.Stigma;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -23,7 +24,7 @@ import static org.assertj.core.api.Assertions.entry;
 class PlainStigmaTokenProviderTest {
 
     private static final Instant NOW = LocalDateTime.of(2019, 5, 20, 13, 50, 15).toInstant(ZoneOffset.UTC);
-    private static final String STIGMA_VALUE = "1234567890";
+    private static final Stigma STIGMA = new Stigma("1234567890");
 
     private PlainStigmaTokenProvider stigmaTokenProvider = new PlainStigmaTokenProvider(() -> NOW);
 
@@ -31,7 +32,7 @@ class PlainStigmaTokenProviderTest {
     void should_generate_stigma_token_as_plain_unsigned_JWT() throws ParseException {
         // given
         // when
-        final JWT token = stigmaTokenProvider.getToken(STIGMA_VALUE);
+        final JWT token = stigmaTokenProvider.getToken(STIGMA);
 
         // then
         assertThat(token).isNotNull().isInstanceOf(PlainJWT.class);
@@ -40,7 +41,7 @@ class PlainStigmaTokenProviderTest {
         assertThat(claims).contains(
                 entry("sub", StigmaTokenConstants.SUBJECT),
                 entry("iat", Date.from(NOW)),
-                entry(StigmaTokenConstants.STIGMA_VALUE_FIELD_NAME, STIGMA_VALUE)
+                entry(StigmaTokenConstants.STIGMA_VALUE_FIELD_NAME, STIGMA.getValue())
         );
 
         assertThat(token.getHeader().getAlgorithm()).isEqualTo(Algorithm.NONE);
