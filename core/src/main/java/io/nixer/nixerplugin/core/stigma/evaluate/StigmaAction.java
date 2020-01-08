@@ -34,7 +34,7 @@ public class StigmaAction {
     }
 
     @Nonnull
-    StigmaActionType getType() {
+    public StigmaActionType getType() {
         return type;
     }
 

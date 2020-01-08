@@ -4,7 +4,6 @@ package io.nixer.nixerplugin.core.stigma.domain;
  * Represents possible statuses of stigma value.
  */
 public enum StigmaStatus {
-    ISSUED,         // Stigma sent to proxy, but not yet used (not yet attached to HTTP traffic with set-cookie)
     ACTIVE,         // Stigma in usage
     REVOKED,        // Revoked status is set by software algorithm
     BANNED,         // Banned status is set by admin user manually

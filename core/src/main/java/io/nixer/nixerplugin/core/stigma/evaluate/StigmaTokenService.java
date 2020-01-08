@@ -60,17 +60,8 @@ public class StigmaTokenService {
         @Nullable final StigmaData stigmaData = tryObtainingStigmaData(originalToken);
 
         if (isStigmaActive(stigmaData)) {
-            // TODO do we need this recording?
-            // covered by observed: active->active
-            // stigmaTokenStorage.recordLoginSuccessTokenValid(stigmaData.getStigmaValue());
-
             return new StigmaTokenFetchResult(originalToken, true);
-
         } else {
-            // TODO do we need this recording?
-            // covered by observed event or recording incoming_unreadable_token
-            // stigmaTokenStorage.recordLoginSuccessTokenInvalid(originalRawToken, stigmaValueData.toString());
-
             return new StigmaTokenFetchResult(newStigmaToken(), false);
         }
     }
@@ -92,10 +83,6 @@ public class StigmaTokenService {
             return new StigmaTokenFetchResult(newStigmaToken(), true);
 
         } else {
-            // TODO do we need this recording?
-            // covered by observe event or recording incoming_unreadable_token
-            // stigmaTokenStorage.recordLoginFailTokenInvalid(originalRawToken, stigmaTokenCheckResult.toString());
-
             return new StigmaTokenFetchResult(newStigmaToken(), false);
         }
     }
