@@ -23,7 +23,7 @@ public class StigmasJdbcStorage implements StigmaTokenStorage {
     }
 
     @Override
-    public void createStigma(@Nonnull final Stigma stigma, @Nonnull final StigmaStatus status) {
+    public void saveStigma(@Nonnull final Stigma stigma, @Nonnull final StigmaStatus status) {
         final int created = stigmasDAO.create(new StigmaData(stigma, status));
         Assert.state(created == 1, () -> "Expected to create exactly one entry but was: " + created);
     }

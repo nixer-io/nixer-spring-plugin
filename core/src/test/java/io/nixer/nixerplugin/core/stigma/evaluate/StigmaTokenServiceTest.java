@@ -100,7 +100,7 @@ class StigmaTokenServiceTest {
         assertThat(stigmaTokenFetchResult).isEqualTo(new StigmaTokenFetchResult(RAW_TOKEN, true));
         verify(stigmaTokenStorage).recordStigmaObservation(VALID_STIGMA_VALUE_DATA);
         verify(stigmaTokenStorage, never()).recordSpottingUnknownStigma(any());
-        verify(stigmaTokenStorage, never()).createStigma(any(), any());
+        verify(stigmaTokenStorage, never()).saveStigma(any(), any());
     }
 
     @Test
@@ -115,7 +115,7 @@ class StigmaTokenServiceTest {
         // then
         assertThat(stigmaTokenFetchResult).isEqualTo(new StigmaTokenFetchResult(NEW_RAW_TOKEN, false));
         verify(stigmaTokenStorage).recordUnreadableToken(RAW_TOKEN);
-        verify(stigmaTokenStorage).createStigma(NEW_STIGMA, StigmaStatus.ACTIVE);
+        verify(stigmaTokenStorage).saveStigma(NEW_STIGMA, StigmaStatus.ACTIVE);
     }
 
     @Test
@@ -130,7 +130,7 @@ class StigmaTokenServiceTest {
         // then
         assertThat(stigmaTokenFetchResult).isEqualTo(new StigmaTokenFetchResult(NEW_RAW_TOKEN, false));
         verify(stigmaTokenStorage, never()).recordUnreadableToken(any());
-        verify(stigmaTokenStorage).createStigma(NEW_STIGMA, StigmaStatus.ACTIVE);
+        verify(stigmaTokenStorage).saveStigma(NEW_STIGMA, StigmaStatus.ACTIVE);
     }
 
     @Test
@@ -145,7 +145,7 @@ class StigmaTokenServiceTest {
         // then
         assertThat(stigmaTokenFetchResult).isEqualTo(new StigmaTokenFetchResult(NEW_RAW_TOKEN, false));
         verify(stigmaTokenStorage).recordStigmaObservation(INVALID_STIGMA_VALUE_DATA);
-        verify(stigmaTokenStorage).createStigma(NEW_STIGMA, StigmaStatus.ACTIVE);
+        verify(stigmaTokenStorage).saveStigma(NEW_STIGMA, StigmaStatus.ACTIVE);
     }
 
     @Test
@@ -161,7 +161,7 @@ class StigmaTokenServiceTest {
         assertThat(stigmaTokenFetchResult).isEqualTo(new StigmaTokenFetchResult(NEW_RAW_TOKEN, false));
         verify(stigmaTokenStorage).recordSpottingUnknownStigma(STIGMA);
         verify(stigmaTokenStorage, never()).recordStigmaObservation(any());
-        verify(stigmaTokenStorage).createStigma(NEW_STIGMA, StigmaStatus.ACTIVE);
+        verify(stigmaTokenStorage).saveStigma(NEW_STIGMA, StigmaStatus.ACTIVE);
     }
 
     @Test
@@ -177,7 +177,7 @@ class StigmaTokenServiceTest {
         assertThat(stigmaTokenFetchResult).isEqualTo(new StigmaTokenFetchResult(NEW_RAW_TOKEN, true));
         verify(stigmaTokenStorage).recordStigmaObservation(VALID_STIGMA_VALUE_DATA);
         verify(stigmaTokenStorage).updateStatus(VALID_STIGMA_VALUE_DATA.getStigma(), StigmaStatus.REVOKED);
-        verify(stigmaTokenStorage).createStigma(NEW_STIGMA, StigmaStatus.ACTIVE);
+        verify(stigmaTokenStorage).saveStigma(NEW_STIGMA, StigmaStatus.ACTIVE);
     }
 
     @Test
@@ -192,7 +192,7 @@ class StigmaTokenServiceTest {
         // then
         assertThat(stigmaTokenFetchResult).isEqualTo(new StigmaTokenFetchResult(NEW_RAW_TOKEN, false));
         verify(stigmaTokenStorage).recordUnreadableToken(RAW_TOKEN);
-        verify(stigmaTokenStorage).createStigma(NEW_STIGMA, StigmaStatus.ACTIVE);
+        verify(stigmaTokenStorage).saveStigma(NEW_STIGMA, StigmaStatus.ACTIVE);
     }
 
     @Test
@@ -207,7 +207,7 @@ class StigmaTokenServiceTest {
         // then
         assertThat(stigmaTokenFetchResult).isEqualTo(new StigmaTokenFetchResult(NEW_RAW_TOKEN, false));
         verify(stigmaTokenStorage, never()).recordUnreadableToken(any());
-        verify(stigmaTokenStorage).createStigma(NEW_STIGMA, StigmaStatus.ACTIVE);
+        verify(stigmaTokenStorage).saveStigma(NEW_STIGMA, StigmaStatus.ACTIVE);
     }
 
     @Test
@@ -222,6 +222,6 @@ class StigmaTokenServiceTest {
         // then
         assertThat(stigmaTokenFetchResult).isEqualTo(new StigmaTokenFetchResult(NEW_RAW_TOKEN, false));
         verify(stigmaTokenStorage).recordStigmaObservation(INVALID_STIGMA_VALUE_DATA);
-        verify(stigmaTokenStorage).createStigma(NEW_STIGMA, StigmaStatus.ACTIVE);
+        verify(stigmaTokenStorage).saveStigma(NEW_STIGMA, StigmaStatus.ACTIVE);
     }
 }

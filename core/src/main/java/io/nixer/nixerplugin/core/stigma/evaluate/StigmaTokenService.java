@@ -163,7 +163,7 @@ public class StigmaTokenService {
 
     private void storeActiveStigma(final Stigma newStigma) {
         try {
-            stigmaTokenStorage.createStigma(newStigma, StigmaStatus.ACTIVE);
+            stigmaTokenStorage.saveStigma(newStigma, StigmaStatus.ACTIVE);
         } catch (Exception e) {
             LOGGER.error("Could not store active stigma for stigma value: '{}'", newStigma, e);
         }
