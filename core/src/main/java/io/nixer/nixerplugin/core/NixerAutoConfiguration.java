@@ -6,6 +6,7 @@ import io.nixer.nixerplugin.core.detection.events.log.EventLogConfiguration;
 import io.nixer.nixerplugin.core.detection.filter.FilterConfiguration;
 import io.nixer.nixerplugin.core.login.LoginConfiguration;
 import io.nixer.nixerplugin.core.metrics.MetricsConfiguration;
+import io.nixer.nixerplugin.core.stigma.StigmaConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -20,7 +21,8 @@ import static io.nixer.nixerplugin.core.NixerAutoConfiguration.ORDER;
         LoginConfiguration.class,
         MetricsConfiguration.class,
         EventLogConfiguration.class,
-        ElasticLoggingAutoConfiguration.class
+        ElasticLoggingAutoConfiguration.class,
+        StigmaConfiguration.class
 })
 public class NixerAutoConfiguration {
 

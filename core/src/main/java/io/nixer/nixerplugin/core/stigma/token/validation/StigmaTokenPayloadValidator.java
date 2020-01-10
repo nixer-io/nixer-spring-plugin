@@ -9,15 +9,11 @@ import javax.annotation.Nonnull;
 
 import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTClaimsSet;
+import io.nixer.nixerplugin.core.stigma.domain.Stigma;
 import io.nixer.nixerplugin.core.stigma.token.StigmaTokenConstants;
-import io.nixer.nixerplugin.core.stigma.token.StigmaTokenConstants;
-import org.springframework.util.StringUtils;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 
-import static io.nixer.nixerplugin.core.stigma.token.validation.ValidationStatus.EXPIRED;
-import static io.nixer.nixerplugin.core.stigma.token.validation.ValidationStatus.INVALID_PAYLOAD;
-import static io.nixer.nixerplugin.core.stigma.token.validation.ValidationStatus.MISSING_STIGMA;
-import static io.nixer.nixerplugin.core.stigma.token.validation.ValidationStatus.PAYLOAD_PARSING_ERROR;
 import static java.lang.String.format;
 
 /**
@@ -68,15 +64,15 @@ public class StigmaTokenPayloadValidator implements JwtValidator {
             return ValidationResult.invalid(ValidationStatus.MISSING_STIGMA, "Missing stigma value");
         }
 
-        final String validStigma = stigmaValue.toString();
+        final Stigma stigma = new Stigma(stigmaValue.toString());
 
         if (!StigmaTokenConstants.SUBJECT.equals(claims.getSubject())) {
-            return ValidationResult.invalid(ValidationStatus.INVALID_PAYLOAD, format("Invalid subject: [%s]", claims.getSubject()), validStigma);
+            return ValidationResult.invalid(ValidationStatus.INVALID_PAYLOAD, format("Invalid subject: [%s]", claims.getSubject()), stigma);
         }
 
         final Date issueTime = claims.getIssueTime();
         if (issueTime == null) {
-            return ValidationResult.invalid(ValidationStatus.INVALID_PAYLOAD, "Missing issued-at", validStigma);
+            return ValidationResult.invalid(ValidationStatus.INVALID_PAYLOAD, "Missing issued-at", stigma);
         }
 
         final Instant expirationTime = issueTime.toInstant().plus(tokenLifetime);
@@ -84,9 +80,9 @@ public class StigmaTokenPayloadValidator implements JwtValidator {
         if (now.isAfter(expirationTime)) {
             return ValidationResult.invalid(ValidationStatus.EXPIRED,
                     format("Expired token. Issued at: [%s], validation time: [%s], token lifetime: [%s] ", issueTime, now, tokenLifetime),
-                    validStigma);
+                    stigma);
         }
 
-        return ValidationResult.valid(validStigma);
+        return ValidationResult.valid(stigma);
     }
 }

@@ -1,0 +1,10 @@
+{
+  "keys": [
+    {
+      "kty": "oct",
+      "kid": "stigma-test-key-1",
+      "alg": "dir",
+      "k": "2zUFSf5c0m_E1MjSSiS5iwZ9lzQY-9sqQXHnU1KqW8w"
+    }
+  ]
+}

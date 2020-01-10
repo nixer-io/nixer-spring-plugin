@@ -5,7 +5,6 @@ import java.util.Random;
 import com.google.common.base.Joiner;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
-import io.nixer.example.LoginRequestBuilder;
 import io.nixer.nixerplugin.captcha.recaptcha.RecaptchaClientStub;
 import io.nixer.nixerplugin.captcha.security.CaptchaChecker;
 import io.nixer.nixerplugin.captcha.security.CaptchaCondition;
@@ -36,6 +35,7 @@ import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.SmartRequestBuilder;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 
+import static io.nixer.example.LoginRequestBuilder.formLogin;
 import static io.nixer.nixerplugin.core.detection.config.AnomalyRulesProperties.Name.ip;
 import static io.nixer.nixerplugin.core.detection.config.AnomalyRulesProperties.Name.useragent;
 import static io.nixer.nixerplugin.core.detection.filter.RequestMetadata.USER_AGENT_FAILED_LOGIN_OVER_THRESHOLD;
@@ -144,7 +144,7 @@ public class FullApplicationTest {
         final MockHttpSession session = new MockHttpSession();
         // @formatter:on
         for (int i = 0; i < ruleProperties.getFailedLoginThreshold().get(ip).getThreshold() + 1; i++) {
-            this.mockMvc.perform(LoginRequestBuilder.formLogin().user("user").password("guess").build()
+            this.mockMvc.perform(formLogin().user("user").password("guess").build()
                     .session(session)
                     .with(remoteAddress(attackerDeviceIp)))
                     .andExpect(unauthenticated());
@@ -155,7 +155,7 @@ public class FullApplicationTest {
             .andExpect(status().isOk())
             .andExpect(captchaChallenge());
 
-        this.mockMvc.perform(LoginRequestBuilder.formLogin().user("user").password("user").captcha(GOOD_CAPTCHA).build()
+        this.mockMvc.perform(formLogin().user("user").password("user").captcha(GOOD_CAPTCHA).build()
                 .session(session)
                 .with(remoteAddress(attackerDeviceIp)))
                 .andExpect(authenticated());
@@ -183,13 +183,13 @@ public class FullApplicationTest {
     }
 
     @Test
-    void shouldSetFlatThatUserAgentOverThreshold() throws Exception {
+    void shouldSetFlagThatUserAgentOverThreshold() throws Exception {
         // enable session controlled mode
         this.captchaChecker.setCaptchaCondition(CaptchaCondition.SESSION_CONTROLLED);
 
         // @formatter:on
         for (int i = 0; i < ruleProperties.getFailedLoginThreshold().get(useragent).getThreshold() + 1; i++) {
-            this.mockMvc.perform(LoginRequestBuilder.formLogin().user("user").password("guess").build()
+            this.mockMvc.perform(formLogin().user("user").password("guess").build()
                     .header(USER_AGENT, FAKE_USER_AGENT)
                     .with(remoteAddress(randomIp())))
                     .andExpect(unauthenticated())
@@ -197,7 +197,7 @@ public class FullApplicationTest {
         }
         // @formatter:off
 
-        this.mockMvc.perform(LoginRequestBuilder.formLogin().user("user").password("guess").build()
+        this.mockMvc.perform(formLogin().user("user").password("guess").build()
                 .header(USER_AGENT, FAKE_USER_AGENT))
                 .andExpect(unauthenticated())
                 .andExpect(request().attribute(USER_AGENT_FAILED_LOGIN_OVER_THRESHOLD, true));
@@ -212,7 +212,7 @@ public class FullApplicationTest {
                 .andExpect(status().isOk())
                 .andExpect(captchaChallenge());
 
-        this.mockMvc.perform(LoginRequestBuilder.formLogin().user("user").password("user").captcha(GOOD_CAPTCHA).build())
+        this.mockMvc.perform(formLogin().user("user").password("user").captcha(GOOD_CAPTCHA).build())
                 .andExpect(authenticated());
     }
 
@@ -225,7 +225,7 @@ public class FullApplicationTest {
                 .andExpect(status().isOk())
                 .andExpect(captchaChallenge());
 
-        this.mockMvc.perform(LoginRequestBuilder.formLogin().user("user").password("guess").captcha(BAD_CAPTCHA).build())
+        this.mockMvc.perform(formLogin().user("user").password("guess").captcha(BAD_CAPTCHA).build())
                 .andExpect(unauthenticated());
     }
 
@@ -274,12 +274,12 @@ public class FullApplicationTest {
     }
 
     private ResultActions loginWithNotPwnedPassword() throws Exception {
-        return this.mockMvc.perform(LoginRequestBuilder.formLogin().user("user").password("not-pwned-password").build());
+        return this.mockMvc.perform(formLogin().user("user").password("not-pwned-password").build());
     }
 
     private ResultActions loginWithPwnedPassword() throws Exception {
         // using password from pwned-database
-        return this.mockMvc.perform(LoginRequestBuilder.formLogin().user("user").password("foobar1").build());
+        return this.mockMvc.perform(formLogin().user("user").password("foobar1").build());
     }
 
     @Test
@@ -299,7 +299,7 @@ public class FullApplicationTest {
     @Test
     void loginUserAccessProtected() throws Exception {
         // @formatter:off
-        final SmartRequestBuilder loginRequest = LoginRequestBuilder.formLogin().user("user").password("user").build();
+        final SmartRequestBuilder loginRequest = formLogin().user("user").password("user").build();
         MvcResult mvcResult = this.mockMvc.perform(loginRequest)
                 .andExpect(authenticated()).andReturn();
         // @formatter:on
@@ -364,7 +364,7 @@ public class FullApplicationTest {
     void shouldFailLoginFromBlacklistedIpv4() throws Exception {
         // @formatter:off
         this.mockMvc.perform(
-                LoginRequestBuilder.formLogin().user("user").password("fake").build()
+                formLogin().user("user").password("fake").build()
                         .with(remoteAddress(BLACKLISTED_IP_V4)))
                 .andExpect(isBlocked());
         // @formatter:on
@@ -374,7 +374,7 @@ public class FullApplicationTest {
     void shouldFailLoginFromBlacklistedIpv6() throws Exception {
         // @formatter:off
         this.mockMvc.perform(
-                LoginRequestBuilder.formLogin().user("user").password("fake").build()
+                formLogin().user("user").password("fake").build()
                         .with(remoteAddress(BLACKLISTED_IP_V6)))
                 .andExpect(isBlocked());
         // @formatter:on
@@ -420,18 +420,16 @@ public class FullApplicationTest {
         );
     }
 
-    private void loginSuccessfully() throws Exception {
-        // @formatter:off
-        this.mockMvc.perform(LoginRequestBuilder.formLogin().user("user").password("user").build())
+    private ResultActions loginSuccessfully() throws Exception {
+        return this.mockMvc
+                .perform(formLogin().user("user").password("user").build())
                 .andExpect(authenticated());
-        // @formatter:on
     }
 
-    private void loginFailure() throws Exception {
-        // @formatter:off
-        this.mockMvc.perform(LoginRequestBuilder.formLogin().user("user").password("bad-password").build())
+    private ResultActions loginFailure() throws Exception {
+        return this.mockMvc
+                .perform(formLogin().user("user").password("bad-password").build())
                 .andExpect(unauthenticated());
-        // @formatter:on
     }
 
     private ResultMatcher isBlocked() {

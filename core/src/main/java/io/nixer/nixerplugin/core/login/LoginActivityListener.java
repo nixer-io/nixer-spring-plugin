@@ -1,24 +1,28 @@
 package io.nixer.nixerplugin.core.login;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.springframework.context.ApplicationListener;
 import org.springframework.security.authentication.event.AbstractAuthenticationEvent;
 import org.springframework.util.Assert;
 
 /**
- * Listens for Spring {@link AbstractAuthenticationEvent} and processed them.
+ * Listens for Spring {@link AbstractAuthenticationEvent} and delegates processing to, possibly multiple, {@link LoginActivityHandler}s.
  */
 public class LoginActivityListener implements ApplicationListener<AbstractAuthenticationEvent> {
 
-    private final LoginActivityService loginActivityService;
     private final LoginContextFactory loginContextFactory;
 
-    public LoginActivityListener(final LoginActivityService loginActivityService,
-                                 final LoginContextFactory loginContextFactory) {
-        Assert.notNull(loginActivityService, "LoginActivityService must not be null");
-        this.loginActivityService = loginActivityService;
+    private final List<LoginActivityHandler> loginActivityHandlers;
 
+    public LoginActivityListener(final LoginContextFactory loginContextFactory,
+                                 final List<LoginActivityHandler> loginActivityHandlers) {
         Assert.notNull(loginContextFactory, "LoginContextFactory must not be null");
         this.loginContextFactory = loginContextFactory;
+
+        Assert.notNull(loginActivityHandlers, "loginActivityHandlers must not be null");
+        this.loginActivityHandlers = Collections.unmodifiableList(loginActivityHandlers);
     }
 
     @Override
@@ -26,7 +30,8 @@ public class LoginActivityListener implements ApplicationListener<AbstractAuthen
         final LoginResult loginResult = loginContextFactory.getLoginResult(event);
         if (loginResult != null) {
             final LoginContext context = loginContextFactory.create(event);
-            loginActivityService.save(loginResult, context);
+
+            loginActivityHandlers.forEach(it -> it.handle(loginResult, context));
         }
     }
 }

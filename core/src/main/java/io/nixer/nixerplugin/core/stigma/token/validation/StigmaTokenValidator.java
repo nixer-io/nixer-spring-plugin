@@ -6,14 +6,12 @@ import javax.annotation.Nullable;
 
 import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTParser;
-import org.springframework.util.StringUtils;
+import io.nixer.nixerplugin.core.stigma.domain.RawStigmaToken;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 
-import static io.nixer.nixerplugin.core.stigma.token.validation.ValidationStatus.MISSING;
-import static io.nixer.nixerplugin.core.stigma.token.validation.ValidationStatus.PARSING_ERROR;
-import static io.nixer.nixerplugin.core.stigma.token.validation.ValidationStatus.UNEXPECTED_VALIDATION_ERROR;
 import static java.lang.String.format;
 
 /**
@@ -36,7 +34,7 @@ public class StigmaTokenValidator {
     }
 
     @Nonnull
-    public ValidationResult validate(@Nullable final String token) {
+    public ValidationResult validate(@Nullable final RawStigmaToken token) {
 
         if (missing(token)) {
             logger.trace("Missing token");
@@ -44,7 +42,7 @@ public class StigmaTokenValidator {
         }
 
         try {
-            final ValidationResult result = validatePresentToken(token);
+            final ValidationResult result = validatePresentToken(token.getValue());
             if (!result.isValid() && logger.isDebugEnabled()) {
                 logger.debug("Invalid token: " + result);
             }
@@ -56,8 +54,8 @@ public class StigmaTokenValidator {
         }
     }
 
-    private boolean missing(final String token) {
-        return StringUtils.isEmpty(token);
+    private boolean missing(final RawStigmaToken token) {
+        return token == null || !StringUtils.hasText(token.getValue());
     }
 
     private ValidationResult validatePresentToken(@Nonnull final String token) {

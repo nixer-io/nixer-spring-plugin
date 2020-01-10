@@ -7,8 +7,8 @@ import com.nimbusds.jose.JWEHeader;
 import com.nimbusds.jwt.EncryptedJWT;
 import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTClaimsSet;
-import io.nixer.nixerplugin.core.stigma.token.crypto.EncrypterFactory;
-import io.nixer.nixerplugin.core.stigma.token.crypto.EncrypterFactory;
+import io.nixer.nixerplugin.core.stigma.crypto.EncrypterFactory;
+import io.nixer.nixerplugin.core.stigma.domain.Stigma;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -36,9 +36,9 @@ public class EncryptedStigmaTokenProvider implements StigmaTokenProvider {
 
 
     @Override
-    public JWT getToken(final String stigmaValue) {
+    public JWT getToken(final Stigma stigma) {
 
-        final JWTClaimsSet claimsSet = getClaims(stigmaValue);
+        final JWTClaimsSet claimsSet = getClaims(stigma);
 
         final JWEHeader header =
                 new JWEHeader.Builder(encrypterFactory.getAlgorithm(), encrypterFactory.getEncryptionMethod())
@@ -56,9 +56,9 @@ public class EncryptedStigmaTokenProvider implements StigmaTokenProvider {
         return jwe;
     }
 
-    private JWTClaimsSet getClaims(final String stigmaValue) {
+    private JWTClaimsSet getClaims(final Stigma stigma) {
         try {
-            return delegate.getToken(stigmaValue).getJWTClaimsSet();
+            return delegate.getToken(stigma).getJWTClaimsSet();
         } catch (ParseException e) {
             logger.error("Unable to extract claims from plain token", e);
             throw new RuntimeException(e);
