@@ -3,22 +3,14 @@ package io.nixer.nixerplugin.core.detection.rules;
 import java.time.Duration;
 
 import io.nixer.nixerplugin.core.detection.rules.threshold.IpFailedLoginOverThresholdRule;
-import io.nixer.nixerplugin.core.detection.rules.threshold.UserAgentLoginOverThresholdRule;
+import io.nixer.nixerplugin.core.detection.rules.threshold.UserAgentFailedLoginOverThresholdRule;
 import io.nixer.nixerplugin.core.detection.rules.threshold.UsernameFailedLoginOverThresholdRule;
 import io.nixer.nixerplugin.core.login.inmemory.CounterRegistry;
 import io.nixer.nixerplugin.core.login.inmemory.CountingStrategies;
 import io.nixer.nixerplugin.core.login.inmemory.LoginCounter;
 import io.nixer.nixerplugin.core.login.inmemory.LoginCounterBuilder;
-import io.nixer.nixerplugin.core.login.inmemory.CounterRegistry;
-import io.nixer.nixerplugin.core.login.inmemory.CountingStrategies;
 import io.nixer.nixerplugin.core.login.inmemory.FeatureKey;
-import io.nixer.nixerplugin.core.login.inmemory.LoginCounter;
-import io.nixer.nixerplugin.core.login.inmemory.LoginCounterBuilder;
 import org.springframework.util.Assert;
-
-import static io.nixer.nixerplugin.core.login.inmemory.FeatureKey.Features.IP;
-import static io.nixer.nixerplugin.core.login.inmemory.FeatureKey.Features.USERNAME;
-import static io.nixer.nixerplugin.core.login.inmemory.FeatureKey.Features.USER_AGENT_TOKEN;
 
 public class LoginAnomalyRuleFactory {
 
@@ -44,14 +36,14 @@ public class LoginAnomalyRuleFactory {
         return rule;
     }
 
-    public UserAgentLoginOverThresholdRule createUserAgentRule(final Duration window, final Integer threshold) {
+    public UserAgentFailedLoginOverThresholdRule createUserAgentRule(final Duration window, final Integer threshold) {
         final LoginCounter counter = LoginCounterBuilder.counter(FeatureKey.Features.USER_AGENT_TOKEN)
                 .window(window)
                 .count(CountingStrategies.TOTAL_FAILS)
                 .build();
         counterRegistry.registerCounter(counter);
 
-        final UserAgentLoginOverThresholdRule rule = new UserAgentLoginOverThresholdRule(counter);
+        final UserAgentFailedLoginOverThresholdRule rule = new UserAgentFailedLoginOverThresholdRule(counter);
         if (threshold != null) {
             rule.setThreshold(threshold);
         }

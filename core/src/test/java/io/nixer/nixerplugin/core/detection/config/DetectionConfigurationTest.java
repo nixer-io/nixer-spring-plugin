@@ -10,15 +10,7 @@ import io.nixer.nixerplugin.core.detection.registry.UsernameOverLoginThresholdRe
 import io.nixer.nixerplugin.core.detection.rules.AnomalyRule;
 import io.nixer.nixerplugin.core.detection.rules.AnomalyRulesRunner;
 import io.nixer.nixerplugin.core.detection.rules.threshold.IpFailedLoginOverThresholdRule;
-import io.nixer.nixerplugin.core.detection.rules.threshold.UserAgentLoginOverThresholdRule;
-import io.nixer.nixerplugin.core.detection.rules.threshold.UsernameFailedLoginOverThresholdRule;
-import io.nixer.nixerplugin.core.login.inmemory.CounterRegistry;
-import io.nixer.nixerplugin.core.login.inmemory.InMemoryLoginActivityRepository;
-import io.nixer.nixerplugin.core.detection.DetectionConfiguration;
-import io.nixer.nixerplugin.core.detection.rules.AnomalyRule;
-import io.nixer.nixerplugin.core.detection.rules.AnomalyRulesRunner;
-import io.nixer.nixerplugin.core.detection.rules.threshold.IpFailedLoginOverThresholdRule;
-import io.nixer.nixerplugin.core.detection.rules.threshold.UserAgentLoginOverThresholdRule;
+import io.nixer.nixerplugin.core.detection.rules.threshold.UserAgentFailedLoginOverThresholdRule;
 import io.nixer.nixerplugin.core.detection.rules.threshold.UsernameFailedLoginOverThresholdRule;
 import io.nixer.nixerplugin.core.login.inmemory.CounterRegistry;
 import io.nixer.nixerplugin.core.login.inmemory.InMemoryLoginActivityRepository;
@@ -69,7 +61,7 @@ class DetectionConfigurationTest {
                 .run(context -> {
                     assertThat(context).hasSingleBean(AnomalyRulesRunner.class);
                     assertThat(context).hasSingleBean(IpFailedLoginOverThresholdRule.class);
-                    assertThat(context).hasSingleBean(UserAgentLoginOverThresholdRule.class);
+                    assertThat(context).hasSingleBean(UserAgentFailedLoginOverThresholdRule.class);
                     assertThat(context).hasSingleBean(UsernameFailedLoginOverThresholdRule.class);
                     assertThat(context).getBeanNames(AnomalyRule.class).hasSize(3);
                 });
@@ -101,7 +93,7 @@ class DetectionConfigurationTest {
                 .withUserConfiguration(DetectionConfiguration.class)
                 .run(context -> {
                     assertThat(context).hasSingleBean(AnomalyRulesRunner.class);
-                    assertThat(context).hasSingleBean(UserAgentLoginOverThresholdRule.class);
+                    assertThat(context).hasSingleBean(UserAgentFailedLoginOverThresholdRule.class);
                     assertThat(context).getBeanNames(AnomalyRule.class).hasSize(1);
                     assertThat(context).hasSingleBean(UserAgentFailedLoginOverThresholdFilter.class);
                     assertThat(context).hasSingleBean(UserAgentOverLoginThresholdRegistry.class);

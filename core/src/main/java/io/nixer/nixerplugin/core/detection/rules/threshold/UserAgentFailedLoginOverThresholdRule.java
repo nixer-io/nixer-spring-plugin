@@ -11,15 +11,15 @@ import io.nixer.nixerplugin.core.login.inmemory.LoginMetric;
 import org.springframework.util.Assert;
 
 /**
- * Rule that checks if number of login failures for useragent exceeds threshold and emits {@link IpFailedLoginOverThresholdEvent} event if it does.
+ * Rule that checks if number of login failures for useragent exceeds threshold and emits {@link UserAgentFailedLoginOverThresholdEvent} event if it does.
  */
-public class UserAgentLoginOverThresholdRule extends ThresholdAnomalyRule {
+public class UserAgentFailedLoginOverThresholdRule extends ThresholdAnomalyRule {
 
     private static final int THRESHOLD_VALUE = 10;
 
     private final LoginMetric failedLoginMetric;
 
-    public UserAgentLoginOverThresholdRule(final LoginMetric failedLoginMetric) {
+    public UserAgentFailedLoginOverThresholdRule(final LoginMetric failedLoginMetric) {
         super(THRESHOLD_VALUE);
         Assert.notNull(failedLoginMetric, "LoginMetric must not be null");
         this.failedLoginMetric = failedLoginMetric;
