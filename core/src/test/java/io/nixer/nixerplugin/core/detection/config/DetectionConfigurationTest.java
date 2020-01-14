@@ -1,6 +1,12 @@
 package io.nixer.nixerplugin.core.detection.config;
 
 import io.nixer.nixerplugin.core.detection.DetectionConfiguration;
+import io.nixer.nixerplugin.core.detection.filter.login.IpFailedLoginOverThresholdFilter;
+import io.nixer.nixerplugin.core.detection.filter.login.UserAgentFailedLoginOverThresholdFilter;
+import io.nixer.nixerplugin.core.detection.filter.login.UsernameFailedLoginOverThresholdFilter;
+import io.nixer.nixerplugin.core.detection.registry.IpOverLoginThresholdRegistry;
+import io.nixer.nixerplugin.core.detection.registry.UserAgentOverLoginThresholdRegistry;
+import io.nixer.nixerplugin.core.detection.registry.UsernameOverLoginThresholdRegistry;
 import io.nixer.nixerplugin.core.detection.rules.AnomalyRule;
 import io.nixer.nixerplugin.core.detection.rules.AnomalyRulesRunner;
 import io.nixer.nixerplugin.core.detection.rules.threshold.IpFailedLoginOverThresholdRule;
@@ -66,6 +72,55 @@ class DetectionConfigurationTest {
                     assertThat(context).hasSingleBean(UserAgentLoginOverThresholdRule.class);
                     assertThat(context).hasSingleBean(UsernameFailedLoginOverThresholdRule.class);
                     assertThat(context).getBeanNames(AnomalyRule.class).hasSize(3);
+                });
+    }
+
+    @Test
+    void shouldRegisterEnabledUsernameRules() {
+        contextRunner
+                .withPropertyValues(
+                        "nixer.rules.failed-login-threshold.username.enabled=true"
+                )
+                .withUserConfiguration(DetectionConfiguration.class)
+                .run(context -> {
+                    assertThat(context).hasSingleBean(AnomalyRulesRunner.class);
+                    assertThat(context).hasSingleBean(UsernameFailedLoginOverThresholdRule.class);
+                    assertThat(context).getBeanNames(AnomalyRule.class).hasSize(1);
+                    assertThat(context).hasSingleBean(UsernameFailedLoginOverThresholdFilter.class);
+                    assertThat(context).hasSingleBean(UsernameOverLoginThresholdRegistry.class);
+                });
+    }
+
+
+    @Test
+    void shouldRegisterEnabledUserAgentRules() {
+        contextRunner
+                .withPropertyValues(
+                        "nixer.rules.failed-login-threshold.useragent.enabled=true"
+                )
+                .withUserConfiguration(DetectionConfiguration.class)
+                .run(context -> {
+                    assertThat(context).hasSingleBean(AnomalyRulesRunner.class);
+                    assertThat(context).hasSingleBean(UserAgentLoginOverThresholdRule.class);
+                    assertThat(context).getBeanNames(AnomalyRule.class).hasSize(1);
+                    assertThat(context).hasSingleBean(UserAgentFailedLoginOverThresholdFilter.class);
+                    assertThat(context).hasSingleBean(UserAgentOverLoginThresholdRegistry.class);
+                });
+    }
+
+    @Test
+    void shouldRegisterEnabledIpRules() {
+        contextRunner
+                .withPropertyValues(
+                        "nixer.rules.failed-login-threshold.ip.enabled=true"
+                )
+                .withUserConfiguration(DetectionConfiguration.class)
+                .run(context -> {
+                    assertThat(context).hasSingleBean(AnomalyRulesRunner.class);
+                    assertThat(context).hasSingleBean(IpFailedLoginOverThresholdRule.class);
+                    assertThat(context).getBeanNames(AnomalyRule.class).hasSize(1);
+                    assertThat(context).hasSingleBean(IpFailedLoginOverThresholdFilter.class);
+                    assertThat(context).hasSingleBean(IpOverLoginThresholdRegistry.class);
                 });
     }
 
