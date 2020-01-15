@@ -90,7 +90,7 @@ public class DetectionConfiguration {
 
     @Configuration
     @ConditionalOnProperty(prefix = "nixer.rules.failed-login-threshold.username", name = "enabled", havingValue = "true")
-    static class UserAgentThresholdRule {
+    static class UsernameThresholdRule {
 
         @Autowired
         DetectionConfiguration detection;
@@ -110,19 +110,19 @@ public class DetectionConfiguration {
         }
 
         @Bean
-        public UserAgentFailedLoginOverThresholdFilter userAgentFilter() {
-            return new UserAgentFailedLoginOverThresholdFilter(userAgentRegistry());
+        public UsernameFailedLoginOverThresholdFilter usernameFilter() {
+            return new UsernameFailedLoginOverThresholdFilter(usernameRegistry());
         }
 
         @Bean
-        public UserAgentOverLoginThresholdRegistry userAgentRegistry() {
-            return new UserAgentOverLoginThresholdRegistry();
+        public UsernameOverLoginThresholdRegistry usernameRegistry() {
+            return new UsernameOverLoginThresholdRegistry();
         }
     }
 
     @Configuration
     @ConditionalOnProperty(prefix = "nixer.rules.failed-login-threshold.useragent", name = "enabled", havingValue = "true")
-    static class UsernameThresholdRule {
+    static class UserAgentThresholdRule {
 
         @Autowired
         DetectionConfiguration detection;
@@ -142,13 +142,13 @@ public class DetectionConfiguration {
         }
 
         @Bean
-        public UsernameFailedLoginOverThresholdFilter usernameFilter() {
-            return new UsernameFailedLoginOverThresholdFilter(usernameRegistry());
+        public UserAgentFailedLoginOverThresholdFilter userAgentFilter() {
+            return new UserAgentFailedLoginOverThresholdFilter(userAgentRegistry());
         }
 
         @Bean
-        public UsernameOverLoginThresholdRegistry usernameRegistry() {
-            return new UsernameOverLoginThresholdRegistry();
+        public UserAgentOverLoginThresholdRegistry userAgentRegistry() {
+            return new UserAgentOverLoginThresholdRegistry();
         }
     }
 

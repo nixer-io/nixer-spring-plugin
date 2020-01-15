@@ -3,12 +3,8 @@ package io.nixer.nixerplugin.core.detection.rules;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.nixer.nixerplugin.core.detection.rules.threshold.UserAgentLoginOverThresholdRule;
+import io.nixer.nixerplugin.core.detection.rules.threshold.UserAgentFailedLoginOverThresholdRule;
 import io.nixer.nixerplugin.core.detection.events.UserAgentFailedLoginOverThresholdEvent;
-import io.nixer.nixerplugin.core.login.LoginContext;
-import io.nixer.nixerplugin.core.login.inmemory.LoginMetric;
-import io.nixer.nixerplugin.core.detection.events.UserAgentFailedLoginOverThresholdEvent;
-import io.nixer.nixerplugin.core.detection.rules.threshold.UserAgentLoginOverThresholdRule;
 import io.nixer.nixerplugin.core.login.LoginContext;
 import io.nixer.nixerplugin.core.login.inmemory.LoginMetric;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,13 +26,13 @@ class UserAgentFailedLoginOverThresholdRuleTest {
     @Mock
     private LoginMetric loginMetric;
 
-    private UserAgentLoginOverThresholdRule rule;
+    private UserAgentFailedLoginOverThresholdRule rule;
 
     private static final String UAS_TOKEN = "uas-token";
 
     @BeforeEach
     void setup() {
-        rule = new UserAgentLoginOverThresholdRule(loginMetric);
+        rule = new UserAgentFailedLoginOverThresholdRule(loginMetric);
         rule.setThreshold(THRESHOLD);
     }
 
