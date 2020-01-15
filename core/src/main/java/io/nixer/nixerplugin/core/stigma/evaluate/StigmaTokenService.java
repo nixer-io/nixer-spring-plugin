@@ -49,43 +49,13 @@ public class StigmaTokenService {
         this.stigmaTokenValidator = Preconditions.checkNotNull(stigmaTokenValidator, "stigmaTokenValidator");
     }
 
-    /**
-     * To be called after successful login attempt.
-     * Consumes the currently used raw stigma token (might be null or empty) and returns a new token for further usage
-     * with information about validity of the original token.
-     */
-    @Nonnull
-    public StigmaTokenFetchResult fetchTokenOnLoginSuccess(@Nullable final RawStigmaToken originalToken) {
 
-        @Nullable final StigmaData stigmaData = tryObtainingStigmaData(originalToken);
+    @Nullable
+    public StigmaData findStigmaData(@Nullable final RawStigmaToken originalToken) {
 
-        if (isStigmaActive(stigmaData)) {
-            return new StigmaTokenFetchResult(originalToken, true);
-        } else {
-            return new StigmaTokenFetchResult(newStigmaToken(), false);
-        }
+        return tryObtainingStigmaData(originalToken);
     }
 
-    /**
-     * To be called after failed login attempt.
-     * Consumes the currently used raw stigma token (might be null or empty) and returns a new token for further usage
-     * with information about validity of the original token.
-     */
-    @Nonnull
-    public StigmaTokenFetchResult fetchTokenOnLoginFail(@Nullable final RawStigmaToken originalToken) {
-
-        @Nullable final StigmaData stigmaData = tryObtainingStigmaData(originalToken);
-
-        if (isStigmaActive(stigmaData)) {
-
-            revokeStigma(stigmaData);
-
-            return new StigmaTokenFetchResult(newStigmaToken(), true);
-
-        } else {
-            return new StigmaTokenFetchResult(newStigmaToken(), false);
-        }
-    }
 
     @Nullable
     private StigmaData tryObtainingStigmaData(@Nullable final RawStigmaToken originalToken) {
@@ -136,21 +106,16 @@ public class StigmaTokenService {
         return stigmaValueData;
     }
 
-    private boolean isStigmaActive(@Nullable final StigmaData stigmaData) {
-        return stigmaData != null
-                && stigmaData.getStatus() == StigmaStatus.ACTIVE;
-    }
-
-    private void revokeStigma(final StigmaData stigmaData) {
+    public void revokeStigma(@Nonnull final Stigma stigma) {
         try {
-            stigmaTokenStorage.updateStatus(stigmaData.getStigma(), StigmaStatus.REVOKED);
+            stigmaTokenStorage.updateStatus(stigma, StigmaStatus.REVOKED);
         } catch (Exception e) {
-            LOGGER.error("Could not revoke stigma for stigma value data: '{}'", stigmaData, e);
+            LOGGER.error("Could not revoke stigma: '{}'", stigma, e);
         }
     }
 
     @Nonnull
-    private RawStigmaToken newStigmaToken() {
+    public RawStigmaToken newStigmaToken() {
 
         final Stigma newStigma = stigmaValuesGenerator.newStigma();
 

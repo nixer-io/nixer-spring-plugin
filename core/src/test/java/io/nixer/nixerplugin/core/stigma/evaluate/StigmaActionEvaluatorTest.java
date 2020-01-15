@@ -1,6 +1,10 @@
 package io.nixer.nixerplugin.core.stigma.evaluate;
 
 import io.nixer.nixerplugin.core.stigma.domain.RawStigmaToken;
+import io.nixer.nixerplugin.core.stigma.domain.Stigma;
+import io.nixer.nixerplugin.core.stigma.domain.StigmaStatus;
+import io.nixer.nixerplugin.core.stigma.storage.StigmaData;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -13,6 +17,7 @@ import static io.nixer.nixerplugin.core.stigma.evaluate.StigmaActionType.TOKEN_G
 import static io.nixer.nixerplugin.core.stigma.evaluate.StigmaActionType.TOKEN_GOOD_LOGIN_SUCCESS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.lenient;
 
 /**
  * Created on 2019-04-29.
@@ -26,6 +31,10 @@ class StigmaActionEvaluatorTest {
 
     private static final RawStigmaToken VALID_TOKEN = new RawStigmaToken("valid-token");
     private static final RawStigmaToken INVALID_TOKEN = new RawStigmaToken("invalid-token");
+    private static final RawStigmaToken REFRESHED_TOKEN = new RawStigmaToken("refreshed-token");
+
+    private static final StigmaData REVOKED_STIGMA = new StigmaData(new Stigma("revoked-stigma"), StigmaStatus.REVOKED);
+    private static final StigmaData ACTIVE_STIGMA = new StigmaData(new Stigma("active-stigma"), StigmaStatus.ACTIVE);
 
     @Mock
     private StigmaTokenService stigmaTokenService;
@@ -33,11 +42,15 @@ class StigmaActionEvaluatorTest {
     @InjectMocks
     private StigmaActionEvaluator actionEvaluator;
 
+    @BeforeEach
+    void setUp() {
+        lenient().when(stigmaTokenService.newStigmaToken()).thenReturn(REFRESHED_TOKEN);
+    }
+
     @Test
-    void should_get_action_on_login_success_and_valid_token() {
+    void should_get_action_on_login_success_and_valid_stigma() {
         // given
-        given(stigmaTokenService.fetchTokenOnLoginSuccess(VALID_TOKEN))
-                .willReturn(new StigmaTokenFetchResult(VALID_TOKEN, true));
+        given(stigmaTokenService.findStigmaData(VALID_TOKEN)).willReturn(ACTIVE_STIGMA);
 
         // when
         final StigmaAction action = actionEvaluator.onLoginSuccess(VALID_TOKEN);
@@ -50,44 +63,65 @@ class StigmaActionEvaluatorTest {
     @Test
     void should_get_action_on_login_success_and_invalid_token() {
         // given
-        given(stigmaTokenService.fetchTokenOnLoginSuccess(INVALID_TOKEN))
-                .willReturn(new StigmaTokenFetchResult(VALID_TOKEN, false));
+        given(stigmaTokenService.findStigmaData(INVALID_TOKEN)).willReturn(null);
 
         // when
         final StigmaAction action = actionEvaluator.onLoginSuccess(INVALID_TOKEN);
 
         // then
-        assertThat(action).isEqualTo(new StigmaAction(VALID_TOKEN, TOKEN_BAD_LOGIN_SUCCESS));
+        assertThat(action).isEqualTo(new StigmaAction(REFRESHED_TOKEN, TOKEN_BAD_LOGIN_SUCCESS));
+        //        verify(stigmaMetricsService).rememberStigmaActionType(TOKEN_BAD_LOGIN_SUCCESS);
+    }
+
+    @Test
+    void should_get_action_on_login_success_and_not_active_stigma() {
+        // given
+        given(stigmaTokenService.findStigmaData(VALID_TOKEN)).willReturn(REVOKED_STIGMA);
+
+        // when
+        final StigmaAction action = actionEvaluator.onLoginSuccess(VALID_TOKEN);
+
+        // then
+        assertThat(action).isEqualTo(new StigmaAction(REFRESHED_TOKEN, TOKEN_BAD_LOGIN_SUCCESS));
         //        verify(stigmaMetricsService).rememberStigmaActionType(TOKEN_BAD_LOGIN_SUCCESS);
     }
 
     @Test
     void should_get_action_on_login_failure_and_valid_token() {
         // given
-        final RawStigmaToken newValidToken = new RawStigmaToken("new-valid-token");
-
-        given(stigmaTokenService.fetchTokenOnLoginFail(VALID_TOKEN))
-                .willReturn(new StigmaTokenFetchResult(newValidToken, true));
+        given(stigmaTokenService.findStigmaData(VALID_TOKEN)).willReturn(ACTIVE_STIGMA);
 
         // when
         final StigmaAction action = actionEvaluator.onLoginFail(VALID_TOKEN);
 
         // then
-        assertThat(action).isEqualTo(new StigmaAction(newValidToken, TOKEN_GOOD_LOGIN_FAIL));
+        assertThat(action).isEqualTo(new StigmaAction(REFRESHED_TOKEN, TOKEN_GOOD_LOGIN_FAIL));
         //        verify(stigmaMetricsService).rememberStigmaActionType(TOKEN_GOOD_LOGIN_FAIL);
     }
 
     @Test
     void should_get_action_on_login_failure_and_invalid_token() {
         // given
-        given(stigmaTokenService.fetchTokenOnLoginFail(INVALID_TOKEN))
-                .willReturn(new StigmaTokenFetchResult(VALID_TOKEN, false));
+        given(stigmaTokenService.findStigmaData(INVALID_TOKEN)).willReturn(null);
 
         // when
         final StigmaAction action = actionEvaluator.onLoginFail(INVALID_TOKEN);
 
         // then
-        assertThat(action).isEqualTo(new StigmaAction(VALID_TOKEN, TOKEN_BAD_LOGIN_FAIL));
+        assertThat(action).isEqualTo(new StigmaAction(REFRESHED_TOKEN, TOKEN_BAD_LOGIN_FAIL));
+        //        verify(stigmaMetricsService).rememberStigmaActionType(TOKEN_BAD_LOGIN_FAIL);
+    }
+
+    @Test
+    void should_get_action_on_login_failure_and_not_active_stigma() {
+        // given
+        given(stigmaTokenService.findStigmaData(VALID_TOKEN)).willReturn(REVOKED_STIGMA);
+
+        // when
+        final StigmaAction action = actionEvaluator.onLoginFail(VALID_TOKEN);
+
+        // then
+        assertThat(action).isEqualTo(new StigmaAction(REFRESHED_TOKEN, TOKEN_BAD_LOGIN_FAIL));
         //        verify(stigmaMetricsService).rememberStigmaActionType(TOKEN_BAD_LOGIN_FAIL);
     }
 }
