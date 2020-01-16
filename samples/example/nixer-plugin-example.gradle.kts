@@ -12,6 +12,7 @@ dependencies {
     implementation(project(":nixer-plugin-core"))
     implementation(project(":nixer-plugin-captcha"))
     implementation(project(":nixer-plugin-pwned-check"))
+    implementation(project(":nixer-plugin-stigma"))
     implementation("org.springframework.boot", "spring-boot")
     implementation("org.springframework.boot", "spring-boot-starter-thymeleaf")
     implementation("org.springframework.boot", "spring-boot-starter-actuator")
