@@ -1,5 +1,7 @@
 package io.nixer.nixerplugin.core.stigma.domain;
 
+import javax.annotation.Nonnull;
+
 import com.google.common.base.Objects;
 import org.springframework.util.Assert;
 
@@ -8,6 +10,7 @@ import org.springframework.util.Assert;
  */
 public class RawStigmaToken {
 
+    @Nonnull
     private final String value;
 
     public RawStigmaToken(final String value) {
@@ -15,6 +18,7 @@ public class RawStigmaToken {
         this.value = value;
     }
 
+    @Nonnull
     public String getValue() {
         return value;
     }

@@ -25,7 +25,9 @@ public class StigmaExtractor {
     }
 
     @Nullable
-    public Stigma extractStigma(@Nullable final RawStigmaToken stigmaToken) {
+    public Stigma extractStigma(@Nonnull final RawStigmaToken stigmaToken) {
+        Assert.notNull(stigmaToken, "stigmaToken must not be null");
+
         final ValidationResult validationResult = stigmaTokenValidator.validate(stigmaToken);
 
         return validationResult.isValid()
