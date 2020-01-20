@@ -31,7 +31,6 @@ public class ValidationResult {
                                            @Nonnull final String details) {
         Assert.notNull(status, "status");
         Assert.state(!status.isValid(), () -> "Passed status " + status + " must not represent a valid one.");
-        Assert.state(!status.isReadable(), () -> "Passed status " + status + " must represent one with readable stigma.");
         Assert.notNull(details, "details");
 
         return new ValidationResult(status, details, null);
@@ -43,7 +42,6 @@ public class ValidationResult {
                                            @Nonnull final Stigma stigma) {
         Assert.notNull(status, "status");
         Assert.state(!status.isValid(), () -> "Passed status " + status + " must not represent a valid one.");
-        Assert.state(status.isReadable(), () -> "Passed status " + status + " must represent one with readable stigma.");
         Assert.notNull(details, "details");
         Assert.notNull(stigma, "stigma");
 
@@ -79,10 +77,6 @@ public class ValidationResult {
 
     public boolean isValid() {
         return this.status.isValid();
-    }
-
-    public boolean isReadable() {
-        return status.isReadable();
     }
 
     @Override

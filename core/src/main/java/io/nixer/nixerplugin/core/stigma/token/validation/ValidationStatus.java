@@ -8,13 +8,13 @@ package io.nixer.nixerplugin.core.stigma.token.validation;
 public enum ValidationStatus {
 
     // One and only valid result
-    VALID(true, true),
+    VALID(true),
 
     // Invalid results
     MISSING,
     MISSING_STIGMA,
-    EXPIRED(false, true), // TODO consider removing as expiration could be determined by a JWT claim or a timestamp in storage
-    INVALID_PAYLOAD(false, true),
+    EXPIRED, // TODO consider removing as expiration could be determined by a JWT claim or a timestamp in storage
+    INVALID_PAYLOAD,
     PARSING_ERROR,
     WRONG_ENC,
     WRONG_ALG,
@@ -26,25 +26,16 @@ public enum ValidationStatus {
     UNEXPECTED_VALIDATION_ERROR;
 
     private final boolean isValid;
-    private final boolean isReadable;
 
-    ValidationStatus(final boolean isValid, final boolean isReadable) {
-        if (isValid && !isReadable) {
-            throw new IllegalArgumentException("'valid' must also be 'readable'");
-        }
+    ValidationStatus(final boolean isValid) {
         this.isValid = isValid;
-        this.isReadable = isReadable;
     }
 
     ValidationStatus() {
-        this(false, false);
+        this(false);
     }
 
     public boolean isValid() {
         return isValid;
-    }
-
-    public boolean isReadable() {
-        return isReadable;
     }
 }
