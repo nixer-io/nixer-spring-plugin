@@ -21,6 +21,7 @@ import io.nixer.nixerplugin.core.stigma.storage.jdbc.StigmasJdbcDAO;
 import io.nixer.nixerplugin.core.stigma.storage.jdbc.StigmasJdbcStorage;
 import io.nixer.nixerplugin.core.stigma.token.EncryptedStigmaTokenProvider;
 import io.nixer.nixerplugin.core.stigma.token.PlainStigmaTokenProvider;
+import io.nixer.nixerplugin.core.stigma.token.StigmaExtractor;
 import io.nixer.nixerplugin.core.stigma.token.StigmaTokenConstants;
 import io.nixer.nixerplugin.core.stigma.token.StigmaTokenProvider;
 import io.nixer.nixerplugin.core.stigma.token.StigmaValuesGenerator;
@@ -110,22 +111,26 @@ public class StigmaConfiguration {
     }
 
     @Bean
-    public StigmaActionEvaluator stigmaActionEvaluator(StigmaTokenService stigmaTokenService) {
-        return new StigmaActionEvaluator(stigmaTokenService);
+    public StigmaActionEvaluator stigmaActionEvaluator(StigmaExtractor stigmaExtractor, StigmaTokenService stigmaTokenService) {
+        return new StigmaActionEvaluator(stigmaExtractor, stigmaTokenService);
     }
 
     @Bean
-    public StigmaValuesGenerator stigmaValuesGenerator() {
-        return new StigmaValuesGenerator();
+    public StigmaExtractor stigmaExtractor(StigmaTokenValidator stigmaTokenValidator) {
+        return new StigmaExtractor(stigmaTokenValidator);
     }
 
     @Bean
     public StigmaTokenService stigmaTokenService(StigmaTokenProvider stigmaTokenProvider,
                                                  StigmaTokenStorage stigmaTokenStorage,
-                                                 StigmaTokenValidator stigmaTokenValidator,
                                                  StigmaValuesGenerator stigmaValuesGenerator) {
 
-        return new StigmaTokenService(stigmaTokenProvider, stigmaTokenStorage, stigmaValuesGenerator, stigmaTokenValidator);
+        return new StigmaTokenService(stigmaTokenProvider, stigmaTokenStorage, stigmaValuesGenerator);
+    }
+
+    @Bean
+    public StigmaValuesGenerator stigmaValuesGenerator() {
+        return new StigmaValuesGenerator();
     }
 
     @Bean

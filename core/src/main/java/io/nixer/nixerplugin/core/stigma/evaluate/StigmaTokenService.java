@@ -12,11 +12,9 @@ import io.nixer.nixerplugin.core.stigma.storage.StigmaData;
 import io.nixer.nixerplugin.core.stigma.storage.StigmaTokenStorage;
 import io.nixer.nixerplugin.core.stigma.token.StigmaTokenProvider;
 import io.nixer.nixerplugin.core.stigma.token.StigmaValuesGenerator;
-import io.nixer.nixerplugin.core.stigma.token.validation.StigmaTokenValidator;
-import io.nixer.nixerplugin.core.stigma.token.validation.ValidationResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.StringUtils;
+import org.springframework.util.Assert;
 
 /**
  * Created on 2019-04-29.
@@ -36,61 +34,23 @@ public class StigmaTokenService {
     @Nonnull
     private final StigmaValuesGenerator stigmaValuesGenerator;
 
-    @Nonnull
-    private final StigmaTokenValidator stigmaTokenValidator;
-
     public StigmaTokenService(@Nonnull final StigmaTokenProvider stigmaTokenProvider,
                               @Nonnull final StigmaTokenStorage stigmaTokenStorage,
-                              @Nonnull final StigmaValuesGenerator stigmaValuesGenerator,
-                              @Nonnull final StigmaTokenValidator stigmaTokenValidator) {
+                              @Nonnull final StigmaValuesGenerator stigmaValuesGenerator) {
         this.stigmaTokenProvider = Preconditions.checkNotNull(stigmaTokenProvider, "stigmaTokenProvider");
         this.stigmaTokenStorage = Preconditions.checkNotNull(stigmaTokenStorage, "stigmaTokenStorage");
         this.stigmaValuesGenerator = Preconditions.checkNotNull(stigmaValuesGenerator, "stigmaValuesGenerator");
-        this.stigmaTokenValidator = Preconditions.checkNotNull(stigmaTokenValidator, "stigmaTokenValidator");
     }
 
-
     @Nullable
-    public StigmaData findStigmaData(@Nullable final RawStigmaToken originalToken) {
-
-        return tryObtainingStigmaData(originalToken);
-    }
-
-
-    @Nullable
-    private StigmaData tryObtainingStigmaData(@Nullable final RawStigmaToken originalToken) {
-
+    public StigmaData findStigmaData(@Nonnull final Stigma stigma) {
+        Assert.notNull(stigma, "stigma must not be null");
         try {
-            return obtainStigmaData(originalToken);
-
+            return findStigmaDataInStorage(stigma);
         } catch (Exception e) {
-            LOGGER.error("Could not obtain stigma data for raw token: '{}'", originalToken, e);
+            LOGGER.error("Could not obtain stigma data for stigma: '{}'", stigma, e);
             return null;
         }
-    }
-
-    @Nullable
-    private StigmaData obtainStigmaData(@Nullable final RawStigmaToken originalToken) {
-
-        final ValidationResult tokenValidationResult = stigmaTokenValidator.validate(originalToken);
-
-        if (tokenValidationResult.isValid() || tokenValidationResult.isReadable()) {
-
-            return findStigmaDataInStorage(tokenValidationResult.getStigma());
-
-        } else {
-
-            if (hasAnyValue(originalToken)) {
-                // TODO record validation result as well
-                stigmaTokenStorage.recordUnreadableToken(originalToken);
-            } // TODO record missing token????
-
-            return null;
-        }
-    }
-
-    private boolean hasAnyValue(final RawStigmaToken originalToken) {
-        return originalToken != null && StringUtils.hasText(originalToken.getValue());
     }
 
     private StigmaData findStigmaDataInStorage(final Stigma stigma) {
@@ -107,6 +67,7 @@ public class StigmaTokenService {
     }
 
     public void revokeStigma(@Nonnull final Stigma stigma) {
+        Assert.notNull(stigma, "stigma must not be null");
         try {
             stigmaTokenStorage.updateStatus(stigma, StigmaStatus.REVOKED);
         } catch (Exception e) {
