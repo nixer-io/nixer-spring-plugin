@@ -12,7 +12,6 @@ public enum ValidationStatus {
 
     // Invalid results
     MISSING_STIGMA,
-    EXPIRED, // TODO consider removing as expiration could be determined by a JWT claim or a timestamp in storage
     INVALID_PAYLOAD,
     PARSING_ERROR,
     WRONG_ENC,
