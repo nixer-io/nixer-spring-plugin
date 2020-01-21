@@ -1,6 +1,9 @@
 package io.nixer.nixerplugin.core.stigma.evaluate;
 
+import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.stream.Stream;
 
 import io.nixer.nixerplugin.core.stigma.domain.Stigma;
@@ -10,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import static java.time.temporal.ChronoUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -19,13 +23,16 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class StigmaValidatorTest {
 
-    private StigmaValidator stigmaValidator = new StigmaValidator();
+    private static final Instant NOW = LocalDateTime.of(2019, 5, 20, 13, 50, 15).toInstant(ZoneOffset.UTC);
+    private static final Duration STIGMA_LIFETIME = Duration.ofDays(30);
+
+    private StigmaValidator stigmaValidator = new StigmaValidator(() -> NOW, STIGMA_LIFETIME);
 
     @Test
     void should_pass_validation() {
         // given
         final StigmaData stigmaData =
-                new StigmaData(new Stigma("stigma-value"), StigmaStatus.ACTIVE, Instant.parse("2020-01-21T10:25:43.511Z"));
+                new StigmaData(new Stigma("stigma-value"), StigmaStatus.ACTIVE, NOW.minus(STIGMA_LIFETIME));
 
         // when
         final boolean result = stigmaValidator.isValid(stigmaData);
@@ -46,7 +53,8 @@ class StigmaValidatorTest {
 
     static Stream<StigmaData> invalidStigmaExamples() {
         return Stream.of(
-                new StigmaData(new Stigma("stigma-value"), StigmaStatus.REVOKED, Instant.parse("2020-01-21T10:25:43.511Z")),
+                new StigmaData(new Stigma("stigma-value"), StigmaStatus.REVOKED, NOW.minus(STIGMA_LIFETIME)), // revoked
+                new StigmaData(new Stigma("stigma-value"), StigmaStatus.ACTIVE, NOW.minus(STIGMA_LIFETIME).minus(1, SECONDS)), // expired
                 null
         );
     }

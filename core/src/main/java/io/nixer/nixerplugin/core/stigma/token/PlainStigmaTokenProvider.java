@@ -1,9 +1,5 @@
 package io.nixer.nixerplugin.core.stigma.token;
 
-import java.time.Instant;
-import java.util.Date;
-import java.util.function.Supplier;
-
 import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.PlainJWT;
@@ -19,18 +15,11 @@ import io.nixer.nixerplugin.core.stigma.domain.Stigma;
  */
 public class PlainStigmaTokenProvider implements StigmaTokenProvider {
 
-    private final Supplier<Instant> nowSource;
-
-    public PlainStigmaTokenProvider(final Supplier<Instant> nowSource) {
-        this.nowSource = nowSource;
-    }
-
     @Override
     public JWT getToken(final Stigma stigma) {
 
         final JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
                 .subject(StigmaTokenConstants.SUBJECT)
-                .issueTime(Date.from(nowSource.get()))
                 .claim(StigmaTokenConstants.STIGMA_VALUE_FIELD_NAME, stigma.getValue())
                 .build();
 

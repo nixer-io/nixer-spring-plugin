@@ -32,6 +32,7 @@ import io.nixer.nixerplugin.core.stigma.token.validation.StigmaTokenValidator;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.util.ResourceUtils;
 import org.springframework.util.StringUtils;
 
@@ -81,26 +82,25 @@ public class StigmaConfiguration {
     }
 
     @Bean
-    public StigmaTokenPayloadValidator buildStigmaTokenPayloadValidator(final StigmaProperties stigmaProperties) {
-        final Duration tokenLifetime = !StringUtils.isEmpty(stigmaProperties.getTokenLifetime())
-                ? Duration.parse(stigmaProperties.getTokenLifetime())
-                : StigmaTokenConstants.DEFAULT_TOKEN_LIFETIME;
-
-        return new StigmaTokenPayloadValidator(
-                Instant::now,
-                tokenLifetime
-        );
+    public StigmaTokenPayloadValidator stigmaTokenPayloadValidator() {
+        return new StigmaTokenPayloadValidator();
     }
 
+    @Primary
     @Bean
-    public EncryptedStigmaTokenProvider buildEncryptedStigmaTokenProvider(final KeysLoader keysLoader) {
+    public EncryptedStigmaTokenProvider encryptedStigmaTokenProvider(KeysLoader keysLoader,
+                                                                     PlainStigmaTokenProvider plainStigmaTokenProvider) {
 
         return new EncryptedStigmaTokenProvider(
-                new PlainStigmaTokenProvider(Instant::now),
+                plainStigmaTokenProvider,
                 DirectEncrypterFactory.withKeysFrom(keysLoader)
         );
     }
 
+    @Bean
+    public PlainStigmaTokenProvider plainStigmaTokenProvider() {
+        return new PlainStigmaTokenProvider();
+    }
 
     @Bean
     public StigmaLoginActivityHandler stigmaLoginActivityHandler(HttpServletRequest request,
@@ -132,8 +132,12 @@ public class StigmaConfiguration {
     }
 
     @Bean
-    public StigmaValidator stigmaValidator() {
-        return new StigmaValidator();
+    public StigmaValidator stigmaValidator(StigmaProperties stigmaProperties) {
+        final Duration stigmaLifetime = !StringUtils.isEmpty(stigmaProperties.getTokenLifetime())
+                ? Duration.parse(stigmaProperties.getTokenLifetime())
+                : StigmaTokenConstants.DEFAULT_STIGMA_LIFETIME;
+
+        return new StigmaValidator(Instant::now, stigmaLifetime);
     }
 
     @Bean
