@@ -13,6 +13,7 @@ import io.nixer.nixerplugin.core.stigma.crypto.DirectEncrypterFactory;
 import io.nixer.nixerplugin.core.stigma.crypto.KeysLoader;
 import io.nixer.nixerplugin.core.stigma.evaluate.StigmaActionEvaluator;
 import io.nixer.nixerplugin.core.stigma.evaluate.StigmaTokenService;
+import io.nixer.nixerplugin.core.stigma.evaluate.StigmaValidator;
 import io.nixer.nixerplugin.core.stigma.login.StigmaCookieService;
 import io.nixer.nixerplugin.core.stigma.login.StigmaLoginActivityHandler;
 import io.nixer.nixerplugin.core.stigma.storage.StigmaTokenStorage;
@@ -111,8 +112,10 @@ public class StigmaConfiguration {
     }
 
     @Bean
-    public StigmaActionEvaluator stigmaActionEvaluator(StigmaExtractor stigmaExtractor, StigmaTokenService stigmaTokenService) {
-        return new StigmaActionEvaluator(stigmaExtractor, stigmaTokenService);
+    public StigmaActionEvaluator stigmaActionEvaluator(StigmaExtractor stigmaExtractor,
+                                                       StigmaTokenService stigmaTokenService,
+                                                       StigmaValidator stigmaValidator) {
+        return new StigmaActionEvaluator(stigmaExtractor, stigmaTokenService, stigmaValidator);
     }
 
     @Bean
@@ -126,6 +129,11 @@ public class StigmaConfiguration {
                                                  StigmaValuesGenerator stigmaValuesGenerator) {
 
         return new StigmaTokenService(stigmaTokenProvider, stigmaTokenStorage, stigmaValuesGenerator);
+    }
+
+    @Bean
+    public StigmaValidator stigmaValidator() {
+        return new StigmaValidator();
     }
 
     @Bean

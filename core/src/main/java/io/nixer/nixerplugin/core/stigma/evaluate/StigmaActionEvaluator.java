@@ -25,9 +25,14 @@ public class StigmaActionEvaluator {
 
     private final StigmaTokenService stigmaTokenService;
 
-    public StigmaActionEvaluator(final StigmaExtractor stigmaExtractor, final StigmaTokenService stigmaTokenService) {
+    private final StigmaValidator stigmaValidator;
+
+    public StigmaActionEvaluator(final StigmaExtractor stigmaExtractor,
+                                 final StigmaTokenService stigmaTokenService,
+                                 final StigmaValidator stigmaValidator) {
         this.stigmaExtractor = stigmaExtractor;
         this.stigmaTokenService = stigmaTokenService;
+        this.stigmaValidator = stigmaValidator;
     }
 
     /**
@@ -40,7 +45,7 @@ public class StigmaActionEvaluator {
 
         final StigmaData stigmaData = findStigmaData(originalToken);
 
-        final StigmaAction stigmaAction = isStigmaActive(stigmaData)
+        final StigmaAction stigmaAction = isStigmaValid(stigmaData)
                 ? new StigmaAction(originalToken, TOKEN_GOOD_LOGIN_SUCCESS)
                 : new StigmaAction(stigmaTokenService.newStigmaToken(), TOKEN_BAD_LOGIN_SUCCESS);
 
@@ -60,7 +65,7 @@ public class StigmaActionEvaluator {
         final StigmaData stigmaData = findStigmaData(originalToken);
 
         final StigmaAction stigmaAction;
-        if (isStigmaActive(stigmaData)) {
+        if (isStigmaValid(stigmaData)) {
             stigmaTokenService.revokeStigma(stigmaData.getStigma());
             stigmaAction = new StigmaAction(stigmaTokenService.newStigmaToken(), TOKEN_GOOD_LOGIN_FAIL);
         } else {
@@ -90,9 +95,8 @@ public class StigmaActionEvaluator {
         return stigmaExtractor.extractStigma(originalToken);
     }
 
-    private boolean isStigmaActive(@Nullable final StigmaData stigmaData) {
-        return stigmaData != null
-                && stigmaData.getStatus() == StigmaStatus.ACTIVE;
+    private boolean isStigmaValid(final StigmaData stigmaData) {
+        return stigmaValidator.isValid(stigmaData);
     }
 
     private void writeToMetrics(final StigmaAction stigmaAction) {
