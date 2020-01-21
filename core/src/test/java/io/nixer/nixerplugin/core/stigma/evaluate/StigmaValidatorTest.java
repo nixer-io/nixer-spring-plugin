@@ -1,5 +1,6 @@
 package io.nixer.nixerplugin.core.stigma.evaluate;
 
+import java.time.Instant;
 import java.util.stream.Stream;
 
 import io.nixer.nixerplugin.core.stigma.domain.Stigma;
@@ -23,7 +24,8 @@ class StigmaValidatorTest {
     @Test
     void should_pass_validation() {
         // given
-        final StigmaData stigmaData = new StigmaData(new Stigma("stigma-value"), StigmaStatus.ACTIVE);
+        final StigmaData stigmaData =
+                new StigmaData(new Stigma("stigma-value"), StigmaStatus.ACTIVE, Instant.parse("2020-01-21T10:25:43.511Z"));
 
         // when
         final boolean result = stigmaValidator.isValid(stigmaData);
@@ -44,7 +46,7 @@ class StigmaValidatorTest {
 
     static Stream<StigmaData> invalidStigmaExamples() {
         return Stream.of(
-                new StigmaData(new Stigma("stigma-value"), StigmaStatus.REVOKED),
+                new StigmaData(new Stigma("stigma-value"), StigmaStatus.REVOKED, Instant.parse("2020-01-21T10:25:43.511Z")),
                 null
         );
     }

@@ -1,5 +1,7 @@
 package io.nixer.nixerplugin.core.stigma.evaluate;
 
+import java.time.Instant;
+
 import io.nixer.nixerplugin.core.stigma.domain.RawStigmaToken;
 import io.nixer.nixerplugin.core.stigma.domain.Stigma;
 import io.nixer.nixerplugin.core.stigma.domain.StigmaStatus;
@@ -34,7 +36,7 @@ class StigmaActionEvaluatorTest {
     private static final RawStigmaToken REFRESHED_STIGMA_TOKEN = new RawStigmaToken("refreshed-token");
 
     private static final Stigma STIGMA = new Stigma("stigma-value");
-    private static final StigmaData STIGMA_DATA = new StigmaData(STIGMA, StigmaStatus.ACTIVE);
+    private static final StigmaData STIGMA_DATA = new StigmaData(STIGMA, StigmaStatus.ACTIVE, Instant.parse("2020-01-21T10:25:43.511Z"));
 
     @Mock
     private StigmaExtractor stigmaExtractor;

@@ -138,7 +138,7 @@ public class StigmaConfiguration {
 
     @Bean
     public StigmaValuesGenerator stigmaValuesGenerator() {
-        return new StigmaValuesGenerator();
+        return new StigmaValuesGenerator(Instant::now);
     }
 
     @Bean

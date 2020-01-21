@@ -1,5 +1,7 @@
 package io.nixer.nixerplugin.core.stigma.evaluate;
 
+import java.time.Instant;
+
 import com.nimbusds.jwt.JWT;
 import io.nixer.nixerplugin.core.stigma.domain.RawStigmaToken;
 import io.nixer.nixerplugin.core.stigma.domain.Stigma;
@@ -31,8 +33,8 @@ class StigmaTokenServiceTest {
 
     private static final StigmaData STIGMA_DATA = new StigmaData(
             STIGMA,
-            StigmaStatus.ACTIVE
-    );
+            StigmaStatus.ACTIVE,
+            Instant.parse("2020-01-21T10:25:43.511Z"));
 
     @Mock
     private StigmaTokenProvider stigmaTokenProvider;
@@ -85,7 +87,8 @@ class StigmaTokenServiceTest {
     void should_generate_new_stigma_token() {
         // given
         final Stigma stigma = new Stigma("new-stigma-value");
-        given(stigmaValuesGenerator.newStigma()).willReturn(stigma);
+        final StigmaData stigmaData = new StigmaData(stigma, StigmaStatus.ACTIVE, Instant.parse("2020-01-22T11:26:44.512Z"));
+        given(stigmaValuesGenerator.newStigma()).willReturn(stigmaData);
 
         final JWT token = Mockito.mock(JWT.class);
         final String serializedToken = "serialized-token";
@@ -98,6 +101,6 @@ class StigmaTokenServiceTest {
 
         // then
         assertThat(newStigmaToken).isEqualTo(new RawStigmaToken(serializedToken));
-        verify(stigmaTokenStorage).saveStigma(stigma, StigmaStatus.ACTIVE);
+        verify(stigmaTokenStorage).saveStigma(stigmaData);
     }
 }

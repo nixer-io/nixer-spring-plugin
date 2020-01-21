@@ -14,7 +14,7 @@ import io.nixer.nixerplugin.core.stigma.domain.StigmaStatus;
  */
 public interface StigmaTokenStorage {
 
-    void saveStigma(Stigma stigma, final StigmaStatus status);
+    void saveStigma(@Nonnull final StigmaData stigmaData);
 
     @Nullable
     StigmaData findStigmaData(@Nonnull final Stigma stigma);

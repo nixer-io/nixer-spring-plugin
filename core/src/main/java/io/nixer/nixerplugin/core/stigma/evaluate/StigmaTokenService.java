@@ -78,20 +78,20 @@ public class StigmaTokenService {
     @Nonnull
     public RawStigmaToken newStigmaToken() {
 
-        final Stigma newStigma = stigmaValuesGenerator.newStigma();
+        final StigmaData newStigma = stigmaValuesGenerator.newStigma();
 
-        storeActiveStigma(newStigma);
+        storeStigma(newStigma);
 
-        final JWT token = stigmaTokenProvider.getToken(newStigma);
+        final JWT token = stigmaTokenProvider.getToken(newStigma.getStigma());
 
         return new RawStigmaToken(token.serialize());
     }
 
-    private void storeActiveStigma(final Stigma newStigma) {
+    private void storeStigma(final StigmaData stigmaData) {
         try {
-            stigmaTokenStorage.saveStigma(newStigma, StigmaStatus.ACTIVE);
+            stigmaTokenStorage.saveStigma(stigmaData);
         } catch (Exception e) {
-            LOGGER.error("Could not store active stigma for stigma value: '{}'", newStigma, e);
+            LOGGER.error("Could not store stigma for stigma value: '{}'", stigmaData, e);
         }
     }
 }
