@@ -3,10 +3,14 @@ package io.nixer.nixerplugin.core.stigma.domain;
 import javax.annotation.Nonnull;
 
 import com.google.common.base.Objects;
+import io.nixer.nixerplugin.core.stigma.token.StigmaExtractor;
+import io.nixer.nixerplugin.core.stigma.token.validation.StigmaTokenValidator;
 import org.springframework.util.Assert;
 
 /**
- * Represents raw, not parsed, stigma token, e.g. serialized JWT.
+ * Represents serialized stigma token, i.e. serialized JWT containing {@link Stigma}.
+ *
+ * See also {@link StigmaExtractor} and {@link StigmaTokenValidator}.
  */
 public class RawStigmaToken {
 
