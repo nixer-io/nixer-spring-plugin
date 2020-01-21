@@ -2,7 +2,6 @@ package io.nixer.nixerplugin.core.stigma;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.time.Duration;
 import java.time.Instant;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -23,7 +22,6 @@ import io.nixer.nixerplugin.core.stigma.storage.jdbc.StigmasJdbcStorage;
 import io.nixer.nixerplugin.core.stigma.token.EncryptedStigmaTokenProvider;
 import io.nixer.nixerplugin.core.stigma.token.PlainStigmaTokenProvider;
 import io.nixer.nixerplugin.core.stigma.token.StigmaExtractor;
-import io.nixer.nixerplugin.core.stigma.token.StigmaTokenConstants;
 import io.nixer.nixerplugin.core.stigma.token.StigmaTokenProvider;
 import io.nixer.nixerplugin.core.stigma.token.StigmaValuesGenerator;
 import io.nixer.nixerplugin.core.stigma.token.validation.EncryptedJwtValidator;
@@ -34,7 +32,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.util.ResourceUtils;
-import org.springframework.util.StringUtils;
 
 @Configuration
 @EnableConfigurationProperties(value = {StigmaProperties.class})
@@ -133,11 +130,7 @@ public class StigmaConfiguration {
 
     @Bean
     public StigmaValidator stigmaValidator(StigmaProperties stigmaProperties) {
-        final Duration stigmaLifetime = !StringUtils.isEmpty(stigmaProperties.getTokenLifetime())
-                ? Duration.parse(stigmaProperties.getTokenLifetime())
-                : StigmaTokenConstants.DEFAULT_STIGMA_LIFETIME;
-
-        return new StigmaValidator(Instant::now, stigmaLifetime);
+        return new StigmaValidator(Instant::now, stigmaProperties.getStigmaLifetime());
     }
 
     @Bean
