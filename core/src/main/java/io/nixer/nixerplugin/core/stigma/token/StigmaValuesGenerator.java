@@ -1,12 +1,11 @@
 package io.nixer.nixerplugin.core.stigma.token;
 
 import java.security.SecureRandom;
-import java.time.Instant;
-import java.util.function.Supplier;
 
 import io.nixer.nixerplugin.core.stigma.domain.Stigma;
 import io.nixer.nixerplugin.core.stigma.domain.StigmaStatus;
 import io.nixer.nixerplugin.core.stigma.storage.StigmaData;
+import io.nixer.nixerplugin.core.util.NowSource;
 
 /**
  * Created on 06/12/2019.
@@ -17,13 +16,13 @@ public class StigmaValuesGenerator {
 
     private final SecureRandom random;
 
-    private final Supplier<Instant> nowSource;
+    private final NowSource nowSource;
 
-    public StigmaValuesGenerator(final Supplier<Instant> nowSource) {
+    public StigmaValuesGenerator(final NowSource nowSource) {
         this(new SecureRandom(), nowSource);
     }
 
-    public StigmaValuesGenerator(final SecureRandom random, final Supplier<Instant> nowSource) {
+    public StigmaValuesGenerator(final SecureRandom random, final NowSource nowSource) {
         this.random = random;
         this.nowSource = nowSource;
     }
@@ -34,7 +33,7 @@ public class StigmaValuesGenerator {
         return new StigmaData(
                 new Stigma(stigmaValue),
                 StigmaStatus.ACTIVE,
-                nowSource.get()
+                nowSource.now()
         );
     }
 }

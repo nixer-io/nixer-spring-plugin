@@ -2,7 +2,6 @@ package io.nixer.nixerplugin.core.stigma;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.time.Instant;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
@@ -27,6 +26,7 @@ import io.nixer.nixerplugin.core.stigma.token.StigmaValuesGenerator;
 import io.nixer.nixerplugin.core.stigma.token.validation.EncryptedJwtValidator;
 import io.nixer.nixerplugin.core.stigma.token.validation.StigmaTokenPayloadValidator;
 import io.nixer.nixerplugin.core.stigma.token.validation.StigmaTokenValidator;
+import io.nixer.nixerplugin.core.util.NowSource;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -129,13 +129,13 @@ public class StigmaConfiguration {
     }
 
     @Bean
-    public StigmaValidator stigmaValidator(StigmaProperties stigmaProperties) {
-        return new StigmaValidator(Instant::now, stigmaProperties.getStigmaLifetime());
+    public StigmaValidator stigmaValidator(NowSource nowSource, StigmaProperties stigmaProperties) {
+        return new StigmaValidator(nowSource, stigmaProperties.getStigmaLifetime());
     }
 
     @Bean
-    public StigmaValuesGenerator stigmaValuesGenerator() {
-        return new StigmaValuesGenerator(Instant::now);
+    public StigmaValuesGenerator stigmaValuesGenerator(NowSource nowSource) {
+        return new StigmaValuesGenerator(nowSource);
     }
 
     @Bean
