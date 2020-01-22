@@ -8,8 +8,24 @@ import io.nixer.nixerplugin.core.stigma.token.validation.StigmaTokenValidator;
 import org.springframework.util.Assert;
 
 /**
- * Represents serialized stigma token, i.e. serialized JWT containing {@link Stigma}.
+ * Represents raw, not parsed, Stigma Token, i.e. a string that is kept by a browser as Cookie.
+ * <br>
+ * <br>
+ * Stigma Token wraps {@link Stigma} providing confidentiality and integrity.
+ * <pre>
+ * +---------------------------+
+ * | Stigma Token              |
+ * |                           |
+ * |            +-----------+  |
+ * |            | Stigma    |  |
+ * |            |           |  |
+ * |            +-----------+  |
+ * +---------------------------+
+ * </pre>
  *
+ * Stigma Token is implemented as encrypted <a href="https://en.wikipedia.org/wiki/JSON_Web_Token">JWT</a>.
+ * <br>
+ * <br>
  * See also {@link StigmaExtractor} and {@link StigmaTokenValidator}.
  */
 public class RawStigmaToken {
