@@ -1,7 +1,7 @@
 package io.nixer.nixerplugin.core.stigma.domain;
 
 /**
- * Represents possible statuses of stigma value.
+ * Represents possible statuses of {@link Stigma}.
  */
 public enum StigmaStatus {
     ACTIVE,         // Stigma in usage
