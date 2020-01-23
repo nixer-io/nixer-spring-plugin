@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 
+import io.nixer.nixerplugin.core.NixerAutoConfiguration;
 import io.nixer.nixerplugin.stigma.crypto.DirectDecrypterFactory;
 import io.nixer.nixerplugin.stigma.crypto.DirectEncrypterFactory;
 import io.nixer.nixerplugin.stigma.crypto.KeysLoader;
@@ -27,16 +28,17 @@ import io.nixer.nixerplugin.stigma.token.StigmaValuesGenerator;
 import io.nixer.nixerplugin.stigma.token.validation.EncryptedJwtValidator;
 import io.nixer.nixerplugin.stigma.token.validation.StigmaTokenPayloadValidator;
 import io.nixer.nixerplugin.stigma.token.validation.StigmaTokenValidator;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.ResourceUtils;
 import org.springframework.util.StringUtils;
 
-//todo: auto configuration needed, no longer imported by the main class
 @Configuration
 @EnableConfigurationProperties(value = {StigmaProperties.class})
-public class StigmaConfiguration {
+@AutoConfigureOrder(NixerAutoConfiguration.ORDER + 1)
+public class StigmaAutoConfiguration {
 
     @Bean
     public StigmasJdbcDAO stigmasJdbcDAO(DataSource dataSource) {

@@ -6,9 +6,7 @@ import javax.servlet.http.Cookie;
 import io.nixer.nixerplugin.stigma.domain.StigmaStatus;
 import io.nixer.nixerplugin.stigma.storage.StigmaData;
 import io.nixer.nixerplugin.stigma.storage.jdbc.StigmasJdbcDAO;
-import org.junit.Ignore;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,8 +30,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  *
  * @author Grzegorz Cwiak (gcwiak)
  */
-//todo: this test is disabled
-@Disabled
 @SpringBootTest
 @AutoConfigureMockMvc
 @AutoConfigureTestDatabase
@@ -55,6 +51,20 @@ class StigmaTest {
     @BeforeEach
     void setUp() {
         assertThat(stigmaDAO.getAll()).isEmpty();
+    }
+
+    @Test
+    void shouldAssignStigmaAfterSuccessfulLogin() throws Exception {
+        final String stigmaToken = loginSuccessfullyAndGetStigma();
+
+        final List<StigmaData> stigmasAfterFirstLogin = stigmaDAO.getAll();
+        assertThat(stigmasAfterFirstLogin).hasSize(1)
+                .extracting(StigmaData::getStatus).containsExactly(StigmaStatus.ACTIVE);
+
+        // subsequent successful login with valid stigma does not require stigma refresh
+        loginSuccessfullyWithStigma(stigmaToken)
+                .andExpect(cookie().doesNotExist(stigmaCookie));
+        assertThat(stigmaDAO.getAll()).isEqualTo(stigmasAfterFirstLogin);
     }
 
     @Test
@@ -81,20 +91,6 @@ class StigmaTest {
 
         assertThat(stigmaDAO.getAll()).hasSize(2)
                 .extracting(StigmaData::getStatus).containsExactly(StigmaStatus.REVOKED, StigmaStatus.ACTIVE);
-    }
-
-    @Test
-    void shouldAssignStigmaAfterSuccessfulLogin() throws Exception {
-        final String stigmaToken = loginSuccessfullyAndGetStigma();
-
-        final List<StigmaData> stigmasAfterFirstLogin = stigmaDAO.getAll();
-        assertThat(stigmasAfterFirstLogin).hasSize(1)
-                .extracting(StigmaData::getStatus).containsExactly(StigmaStatus.ACTIVE);
-
-        // subsequent successful login with valid stigma does not require stigma refresh
-        loginSuccessfullyWithStigma(stigmaToken)
-                .andExpect(cookie().doesNotExist(stigmaCookie));
-        assertThat(stigmaDAO.getAll()).isEqualTo(stigmasAfterFirstLogin);
     }
 
     @Test
