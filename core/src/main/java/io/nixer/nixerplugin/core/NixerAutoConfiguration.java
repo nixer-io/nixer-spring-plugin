@@ -7,7 +7,9 @@ import io.nixer.nixerplugin.core.detection.filter.FilterConfiguration;
 import io.nixer.nixerplugin.core.login.LoginConfiguration;
 import io.nixer.nixerplugin.core.metrics.MetricsConfiguration;
 import io.nixer.nixerplugin.core.stigma.StigmaConfiguration;
+import io.nixer.nixerplugin.core.util.NowSource;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
@@ -28,4 +30,8 @@ public class NixerAutoConfiguration {
 
     public static final int ORDER = 10;
 
+    @Bean
+    public NowSource nowSource() {
+        return new NowSource();
+    }
 }
