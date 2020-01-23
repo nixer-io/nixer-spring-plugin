@@ -10,7 +10,6 @@ package io.nixer.nixerplugin.core.stigma.evaluate;
 public enum StigmaActionType {
 
     TOKEN_GOOD_LOGIN_SUCCESS(false),
-    SKIP_ACTION(false), // reserved for exceptional cases, e.g. 5xx server errors
 
     TOKEN_GOOD_LOGIN_FAIL(true),
     TOKEN_BAD_LOGIN_SUCCESS(true),

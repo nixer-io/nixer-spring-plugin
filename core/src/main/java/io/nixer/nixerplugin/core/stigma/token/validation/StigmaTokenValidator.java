@@ -2,7 +2,6 @@ package io.nixer.nixerplugin.core.stigma.token.validation;
 
 import java.text.ParseException;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTParser;
@@ -10,7 +9,6 @@ import io.nixer.nixerplugin.core.stigma.domain.RawStigmaToken;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 
 import static java.lang.String.format;
 
@@ -23,8 +21,6 @@ public class StigmaTokenValidator {
 
     private final Log logger = LogFactory.getLog(getClass());
 
-    private static final ValidationResult MISSING_TOKEN_RESULT = ValidationResult.invalid(ValidationStatus.MISSING, "Missing token");
-
     private JwtValidator jwtValidator;
 
     public StigmaTokenValidator(@Nonnull final JwtValidator jwtValidator) {
@@ -34,15 +30,11 @@ public class StigmaTokenValidator {
     }
 
     @Nonnull
-    public ValidationResult validate(@Nullable final RawStigmaToken token) {
-
-        if (missing(token)) {
-            logger.trace("Missing token");
-            return MISSING_TOKEN_RESULT;
-        }
+    public ValidationResult validate(@Nonnull final RawStigmaToken token) {
+        Assert.notNull(token, "token must not be null");
 
         try {
-            final ValidationResult result = validatePresentToken(token.getValue());
+            final ValidationResult result = validateToken(token.getValue());
             if (!result.isValid() && logger.isDebugEnabled()) {
                 logger.debug("Invalid token: " + result);
             }
@@ -54,11 +46,7 @@ public class StigmaTokenValidator {
         }
     }
 
-    private boolean missing(final RawStigmaToken token) {
-        return token == null || !StringUtils.hasText(token.getValue());
-    }
-
-    private ValidationResult validatePresentToken(@Nonnull final String token) {
+    private ValidationResult validateToken(@Nonnull final String token) {
 
         final JWT jwt;
 

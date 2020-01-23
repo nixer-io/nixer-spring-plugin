@@ -2,7 +2,6 @@ package io.nixer.nixerplugin.core.stigma;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.time.Duration;
 import java.time.Instant;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -13,6 +12,7 @@ import io.nixer.nixerplugin.core.stigma.crypto.DirectEncrypterFactory;
 import io.nixer.nixerplugin.core.stigma.crypto.KeysLoader;
 import io.nixer.nixerplugin.core.stigma.evaluate.StigmaActionEvaluator;
 import io.nixer.nixerplugin.core.stigma.evaluate.StigmaTokenService;
+import io.nixer.nixerplugin.core.stigma.evaluate.StigmaValidator;
 import io.nixer.nixerplugin.core.stigma.login.StigmaCookieService;
 import io.nixer.nixerplugin.core.stigma.login.StigmaLoginActivityHandler;
 import io.nixer.nixerplugin.core.stigma.storage.StigmaTokenStorage;
@@ -21,7 +21,7 @@ import io.nixer.nixerplugin.core.stigma.storage.jdbc.StigmasJdbcDAO;
 import io.nixer.nixerplugin.core.stigma.storage.jdbc.StigmasJdbcStorage;
 import io.nixer.nixerplugin.core.stigma.token.EncryptedStigmaTokenProvider;
 import io.nixer.nixerplugin.core.stigma.token.PlainStigmaTokenProvider;
-import io.nixer.nixerplugin.core.stigma.token.StigmaTokenConstants;
+import io.nixer.nixerplugin.core.stigma.token.StigmaExtractor;
 import io.nixer.nixerplugin.core.stigma.token.StigmaTokenProvider;
 import io.nixer.nixerplugin.core.stigma.token.StigmaValuesGenerator;
 import io.nixer.nixerplugin.core.stigma.token.validation.EncryptedJwtValidator;
@@ -30,8 +30,8 @@ import io.nixer.nixerplugin.core.stigma.token.validation.StigmaTokenValidator;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.util.ResourceUtils;
-import org.springframework.util.StringUtils;
 
 @Configuration
 @EnableConfigurationProperties(value = {StigmaProperties.class})
@@ -79,26 +79,25 @@ public class StigmaConfiguration {
     }
 
     @Bean
-    public StigmaTokenPayloadValidator buildStigmaTokenPayloadValidator(final StigmaProperties stigmaProperties) {
-        final Duration tokenLifetime = !StringUtils.isEmpty(stigmaProperties.getTokenLifetime())
-                ? Duration.parse(stigmaProperties.getTokenLifetime())
-                : StigmaTokenConstants.DEFAULT_TOKEN_LIFETIME;
-
-        return new StigmaTokenPayloadValidator(
-                Instant::now,
-                tokenLifetime
-        );
+    public StigmaTokenPayloadValidator stigmaTokenPayloadValidator() {
+        return new StigmaTokenPayloadValidator();
     }
 
+    @Primary
     @Bean
-    public EncryptedStigmaTokenProvider buildEncryptedStigmaTokenProvider(final KeysLoader keysLoader) {
+    public EncryptedStigmaTokenProvider encryptedStigmaTokenProvider(KeysLoader keysLoader,
+                                                                     PlainStigmaTokenProvider plainStigmaTokenProvider) {
 
         return new EncryptedStigmaTokenProvider(
-                new PlainStigmaTokenProvider(Instant::now),
+                plainStigmaTokenProvider,
                 DirectEncrypterFactory.withKeysFrom(keysLoader)
         );
     }
 
+    @Bean
+    public PlainStigmaTokenProvider plainStigmaTokenProvider() {
+        return new PlainStigmaTokenProvider();
+    }
 
     @Bean
     public StigmaLoginActivityHandler stigmaLoginActivityHandler(HttpServletRequest request,
@@ -110,22 +109,33 @@ public class StigmaConfiguration {
     }
 
     @Bean
-    public StigmaActionEvaluator stigmaActionEvaluator(StigmaTokenService stigmaTokenService) {
-        return new StigmaActionEvaluator(stigmaTokenService);
+    public StigmaActionEvaluator stigmaActionEvaluator(StigmaExtractor stigmaExtractor,
+                                                       StigmaTokenService stigmaTokenService,
+                                                       StigmaValidator stigmaValidator) {
+        return new StigmaActionEvaluator(stigmaExtractor, stigmaTokenService, stigmaValidator);
     }
 
     @Bean
-    public StigmaValuesGenerator stigmaValuesGenerator() {
-        return new StigmaValuesGenerator();
+    public StigmaExtractor stigmaExtractor(StigmaTokenValidator stigmaTokenValidator) {
+        return new StigmaExtractor(stigmaTokenValidator);
     }
 
     @Bean
     public StigmaTokenService stigmaTokenService(StigmaTokenProvider stigmaTokenProvider,
                                                  StigmaTokenStorage stigmaTokenStorage,
-                                                 StigmaTokenValidator stigmaTokenValidator,
                                                  StigmaValuesGenerator stigmaValuesGenerator) {
 
-        return new StigmaTokenService(stigmaTokenProvider, stigmaTokenStorage, stigmaValuesGenerator, stigmaTokenValidator);
+        return new StigmaTokenService(stigmaTokenProvider, stigmaTokenStorage, stigmaValuesGenerator);
+    }
+
+    @Bean
+    public StigmaValidator stigmaValidator(StigmaProperties stigmaProperties) {
+        return new StigmaValidator(Instant::now, stigmaProperties.getStigmaLifetime());
+    }
+
+    @Bean
+    public StigmaValuesGenerator stigmaValuesGenerator() {
+        return new StigmaValuesGenerator(Instant::now);
     }
 
     @Bean
