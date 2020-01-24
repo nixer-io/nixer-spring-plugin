@@ -1,0 +1,1 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=io.nixer.nixerplugin.stigma.StigmaAutoConfiguration
