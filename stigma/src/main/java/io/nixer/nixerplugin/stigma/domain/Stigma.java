@@ -8,8 +8,10 @@ import javax.annotation.concurrent.Immutable;
 import com.google.common.base.Preconditions;
 
 /**
- * Represents value of a stigma which is a part of a stigma token.
- *
+ * Represents value of a stigma which is part of stigma token.
+ * <br>
+ * For more details see {@link RawStigmaToken}.
+ * <br>
  * Created on 2019-06-17.
  *
  * @author gcwiak

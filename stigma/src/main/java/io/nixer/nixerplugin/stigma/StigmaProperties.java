@@ -1,6 +1,10 @@
 package io.nixer.nixerplugin.stigma;
 
+import java.time.Duration;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
+
+import static io.nixer.nixerplugin.stigma.token.StigmaTokenConstants.DEFAULT_STIGMA_LIFETIME;
 
 @ConfigurationProperties(prefix = "nixer.stigma")
 public class StigmaProperties {
@@ -9,7 +13,7 @@ public class StigmaProperties {
 
     private String cookieName = DEFAULT_STIGMA_COOKIE_NAME;
 
-    private String tokenLifetime;
+    private Duration stigmaLifetime = DEFAULT_STIGMA_LIFETIME;
 
     private String decryptionKeyFile;
     private String encryptionKeyFile;
@@ -22,12 +26,12 @@ public class StigmaProperties {
         this.cookieName = cookieName;
     }
 
-    public String getTokenLifetime() {
-        return tokenLifetime;
+    public Duration getStigmaLifetime() {
+        return stigmaLifetime;
     }
 
-    public void setTokenLifetime(final String tokenLifetime) {
-        this.tokenLifetime = tokenLifetime;
+    public void setStigmaLifetime(final Duration stigmaLifetime) {
+        this.stigmaLifetime = stigmaLifetime;
     }
 
     public String getDecryptionKeyFile() {

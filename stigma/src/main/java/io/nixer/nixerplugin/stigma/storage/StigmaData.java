@@ -1,5 +1,6 @@
 package io.nixer.nixerplugin.stigma.storage;
 
+import java.time.Instant;
 import java.util.Objects;
 import java.util.StringJoiner;
 import javax.annotation.Nonnull;
@@ -23,10 +24,15 @@ public class StigmaData {
     @Nonnull
     private final StigmaStatus status;
 
+    @Nonnull
+    private final Instant creationDate;
+
     public StigmaData(@Nonnull final Stigma stigma,
-                      @Nonnull final StigmaStatus status) {
+                      @Nonnull final StigmaStatus status,
+                      @Nonnull final Instant creationDate) {
         this.stigma = Preconditions.checkNotNull(stigma, "stigma");
         this.status = Preconditions.checkNotNull(status, "status");
+        this.creationDate = Preconditions.checkNotNull(creationDate, "creationDate");
     }
 
     @Nonnull
@@ -39,25 +45,32 @@ public class StigmaData {
         return status;
     }
 
+    @Nonnull
+    public Instant getCreationDate() {
+        return creationDate;
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         final StigmaData that = (StigmaData) o;
         return stigma.equals(that.stigma) &&
-                status == that.status;
+                status == that.status &&
+                creationDate.equals(that.creationDate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(stigma, status);
+        return Objects.hash(stigma, status, creationDate);
     }
 
     @Override
     public String toString() {
         return new StringJoiner(", ", StigmaData.class.getSimpleName() + "[", "]")
-                .add("stigma='" + stigma + "'")
+                .add("stigma=" + stigma)
                 .add("status=" + status)
+                .add("creationDate=" + creationDate)
                 .toString();
     }
 }

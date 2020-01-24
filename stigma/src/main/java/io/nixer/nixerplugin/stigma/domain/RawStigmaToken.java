@@ -1,13 +1,36 @@
 package io.nixer.nixerplugin.stigma.domain;
 
+import javax.annotation.Nonnull;
+
 import com.google.common.base.Objects;
+import io.nixer.nixerplugin.stigma.token.StigmaExtractor;
+import io.nixer.nixerplugin.stigma.token.validation.StigmaTokenValidator;
 import org.springframework.util.Assert;
 
 /**
- * Represents raw, not parsed, stigma token, e.g. serialized JWT.
+ * Represents raw, not parsed, Stigma Token, i.e. a string that is kept by a browser as Cookie.
+ * <br>
+ * <br>
+ * Stigma Token wraps {@link Stigma} providing confidentiality and integrity.
+ * <pre>
+ * +---------------------------+
+ * | Stigma Token              |
+ * |                           |
+ * |            +-----------+  |
+ * |            | Stigma    |  |
+ * |            |           |  |
+ * |            +-----------+  |
+ * +---------------------------+
+ * </pre>
+ *
+ * Stigma Token is implemented as encrypted <a href="https://en.wikipedia.org/wiki/JSON_Web_Token">JWT</a>.
+ * <br>
+ * <br>
+ * See also {@link StigmaExtractor} and {@link StigmaTokenValidator}.
  */
 public class RawStigmaToken {
 
+    @Nonnull
     private final String value;
 
     public RawStigmaToken(final String value) {
@@ -15,6 +38,7 @@ public class RawStigmaToken {
         this.value = value;
     }
 
+    @Nonnull
     public String getValue() {
         return value;
     }

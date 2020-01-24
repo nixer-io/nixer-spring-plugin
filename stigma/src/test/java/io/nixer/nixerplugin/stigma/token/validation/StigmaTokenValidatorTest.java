@@ -26,7 +26,6 @@ import static io.nixer.nixerplugin.stigma.token.StigmaTokenConstants.SUBJECT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.verifyNoInteractions;
 import static org.mockito.Mockito.verify;
 
 /**
@@ -48,26 +47,6 @@ class StigmaTokenValidatorTest {
 
     @InjectMocks
     private StigmaTokenValidator stigmaTokenValidator;
-
-    @ParameterizedTest
-    @MethodSource("missingTokenExamples")
-    void should_fail_validation_on_missing_token(final RawStigmaToken missingToken) {
-        // when
-        final ValidationResult result = stigmaTokenValidator.validate(missingToken);
-
-        // then
-        assertThat(result.getStatus()).isEqualTo(ValidationStatus.MISSING);
-        verifyNoInteractions(jwtValidator);
-    }
-
-    static Stream<RawStigmaToken> missingTokenExamples() {
-        return Stream.of(
-                null,
-                new RawStigmaToken(""),
-                new RawStigmaToken(" "),
-                new RawStigmaToken("   ")
-        );
-    }
 
     @Test
     void should_pass_validation() throws ParseException {
@@ -92,13 +71,23 @@ class StigmaTokenValidatorTest {
         assertThat(jwtCaptor.getValue().getJWTClaimsSet()).isEqualTo(givenClaims);
     }
 
-    @Test
-    void should_fail_validation_on_parsing_error() {
+    @ParameterizedTest
+    @MethodSource("notParsableTokenExamples")
+    void should_fail_validation_on_parsing_error(final RawStigmaToken notParsableToken) {
         // when
-        final ValidationResult result = stigmaTokenValidator.validate(new RawStigmaToken("not parsable JWE"));
+        final ValidationResult result = stigmaTokenValidator.validate(notParsableToken);
 
         // then
         assertThat(result.getStatus()).isEqualTo(ValidationStatus.PARSING_ERROR);
+    }
+
+    static Stream<RawStigmaToken> notParsableTokenExamples() {
+        return Stream.of(
+                new RawStigmaToken("not parsable JWE"),
+                new RawStigmaToken(""),
+                new RawStigmaToken(" "),
+                new RawStigmaToken("   ")
+        );
     }
 
 }

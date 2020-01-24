@@ -12,13 +12,14 @@ public class StigmasJdbcDAO extends JdbcDaoSupport {
 
     private static final RowMapper<StigmaData> STIGMA_DATA_MAPPER = (rs, rowNum) -> new StigmaData(
             new Stigma(rs.getString("stigma_value")),
-            StigmaStatus.valueOf(rs.getString("status"))
+            StigmaStatus.valueOf(rs.getString("status")),
+            rs.getTimestamp("creation_date").toInstant()
     );
 
     public int create(final StigmaData stigmaData) {
         return getJdbcTemplate().update(
-                "INSERT INTO stigmas (stigma_value, status) VALUES (?, ?)",
-                stigmaData.getStigma().getValue(), stigmaData.getStatus().name()
+                "INSERT INTO stigmas (stigma_value, status, creation_date) VALUES (?, ?, ?)",
+                stigmaData.getStigma().getValue(), stigmaData.getStatus().name(), stigmaData.getCreationDate()
         );
     }
 

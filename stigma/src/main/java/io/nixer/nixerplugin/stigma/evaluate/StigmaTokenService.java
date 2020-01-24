@@ -12,11 +12,9 @@ import io.nixer.nixerplugin.stigma.storage.StigmaData;
 import io.nixer.nixerplugin.stigma.storage.StigmaTokenStorage;
 import io.nixer.nixerplugin.stigma.token.StigmaTokenProvider;
 import io.nixer.nixerplugin.stigma.token.StigmaValuesGenerator;
-import io.nixer.nixerplugin.stigma.token.validation.StigmaTokenValidator;
-import io.nixer.nixerplugin.stigma.token.validation.ValidationResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.StringUtils;
+import org.springframework.util.Assert;
 
 /**
  * Created on 2019-04-29.
@@ -36,91 +34,23 @@ public class StigmaTokenService {
     @Nonnull
     private final StigmaValuesGenerator stigmaValuesGenerator;
 
-    @Nonnull
-    private final StigmaTokenValidator stigmaTokenValidator;
-
     public StigmaTokenService(@Nonnull final StigmaTokenProvider stigmaTokenProvider,
                               @Nonnull final StigmaTokenStorage stigmaTokenStorage,
-                              @Nonnull final StigmaValuesGenerator stigmaValuesGenerator,
-                              @Nonnull final StigmaTokenValidator stigmaTokenValidator) {
+                              @Nonnull final StigmaValuesGenerator stigmaValuesGenerator) {
         this.stigmaTokenProvider = Preconditions.checkNotNull(stigmaTokenProvider, "stigmaTokenProvider");
         this.stigmaTokenStorage = Preconditions.checkNotNull(stigmaTokenStorage, "stigmaTokenStorage");
         this.stigmaValuesGenerator = Preconditions.checkNotNull(stigmaValuesGenerator, "stigmaValuesGenerator");
-        this.stigmaTokenValidator = Preconditions.checkNotNull(stigmaTokenValidator, "stigmaTokenValidator");
-    }
-
-    /**
-     * To be called after successful login attempt.
-     * Consumes the currently used raw stigma token (might be null or empty) and returns a new token for further usage
-     * with information about validity of the original token.
-     */
-    @Nonnull
-    public StigmaTokenFetchResult fetchTokenOnLoginSuccess(@Nullable final RawStigmaToken originalToken) {
-
-        @Nullable final StigmaData stigmaData = tryObtainingStigmaData(originalToken);
-
-        if (isStigmaActive(stigmaData)) {
-            return new StigmaTokenFetchResult(originalToken, true);
-        } else {
-            return new StigmaTokenFetchResult(newStigmaToken(), false);
-        }
-    }
-
-    /**
-     * To be called after failed login attempt.
-     * Consumes the currently used raw stigma token (might be null or empty) and returns a new token for further usage
-     * with information about validity of the original token.
-     */
-    @Nonnull
-    public StigmaTokenFetchResult fetchTokenOnLoginFail(@Nullable final RawStigmaToken originalToken) {
-
-        @Nullable final StigmaData stigmaData = tryObtainingStigmaData(originalToken);
-
-        if (isStigmaActive(stigmaData)) {
-
-            revokeStigma(stigmaData);
-
-            return new StigmaTokenFetchResult(newStigmaToken(), true);
-
-        } else {
-            return new StigmaTokenFetchResult(newStigmaToken(), false);
-        }
     }
 
     @Nullable
-    private StigmaData tryObtainingStigmaData(@Nullable final RawStigmaToken originalToken) {
-
+    public StigmaData findStigmaData(@Nonnull final Stigma stigma) {
+        Assert.notNull(stigma, "stigma must not be null");
         try {
-            return obtainStigmaData(originalToken);
-
+            return findStigmaDataInStorage(stigma);
         } catch (Exception e) {
-            LOGGER.error("Could not obtain stigma data for raw token: '{}'", originalToken, e);
+            LOGGER.error("Could not obtain stigma data for stigma: '{}'", stigma, e);
             return null;
         }
-    }
-
-    @Nullable
-    private StigmaData obtainStigmaData(@Nullable final RawStigmaToken originalToken) {
-
-        final ValidationResult tokenValidationResult = stigmaTokenValidator.validate(originalToken);
-
-        if (tokenValidationResult.isValid() || tokenValidationResult.isReadable()) {
-
-            return findStigmaDataInStorage(tokenValidationResult.getStigma());
-
-        } else {
-
-            if (hasAnyValue(originalToken)) {
-                // TODO record validation result as well
-                stigmaTokenStorage.recordUnreadableToken(originalToken);
-            } // TODO record missing token????
-
-            return null;
-        }
-    }
-
-    private boolean hasAnyValue(final RawStigmaToken originalToken) {
-        return originalToken != null && StringUtils.hasText(originalToken.getValue());
     }
 
     private StigmaData findStigmaDataInStorage(final Stigma stigma) {
@@ -136,36 +66,32 @@ public class StigmaTokenService {
         return stigmaValueData;
     }
 
-    private boolean isStigmaActive(@Nullable final StigmaData stigmaData) {
-        return stigmaData != null
-                && stigmaData.getStatus() == StigmaStatus.ACTIVE;
-    }
-
-    private void revokeStigma(final StigmaData stigmaData) {
+    public void revokeStigma(@Nonnull final Stigma stigma) {
+        Assert.notNull(stigma, "stigma must not be null");
         try {
-            stigmaTokenStorage.updateStatus(stigmaData.getStigma(), StigmaStatus.REVOKED);
+            stigmaTokenStorage.updateStatus(stigma, StigmaStatus.REVOKED);
         } catch (Exception e) {
-            LOGGER.error("Could not revoke stigma for stigma value data: '{}'", stigmaData, e);
+            LOGGER.error("Could not revoke stigma: '{}'", stigma, e);
         }
     }
 
     @Nonnull
-    private RawStigmaToken newStigmaToken() {
+    public RawStigmaToken newStigmaToken() {
 
-        final Stigma newStigma = stigmaValuesGenerator.newStigma();
+        final StigmaData newStigma = stigmaValuesGenerator.newStigma();
 
-        storeActiveStigma(newStigma);
+        storeStigma(newStigma);
 
-        final JWT token = stigmaTokenProvider.getToken(newStigma);
+        final JWT token = stigmaTokenProvider.getToken(newStigma.getStigma());
 
         return new RawStigmaToken(token.serialize());
     }
 
-    private void storeActiveStigma(final Stigma newStigma) {
+    private void storeStigma(final StigmaData stigmaData) {
         try {
-            stigmaTokenStorage.saveStigma(newStigma, StigmaStatus.ACTIVE);
+            stigmaTokenStorage.saveStigma(stigmaData);
         } catch (Exception e) {
-            LOGGER.error("Could not store active stigma for stigma value: '{}'", newStigma, e);
+            LOGGER.error("Could not store stigma for stigma value: '{}'", stigmaData, e);
         }
     }
 }

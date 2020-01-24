@@ -1,5 +1,7 @@
 package io.nixer.nixerplugin.stigma.evaluate;
 
+import java.time.Instant;
+
 import com.nimbusds.jwt.JWT;
 import io.nixer.nixerplugin.stigma.domain.RawStigmaToken;
 import io.nixer.nixerplugin.stigma.domain.Stigma;
@@ -8,22 +10,15 @@ import io.nixer.nixerplugin.stigma.storage.StigmaData;
 import io.nixer.nixerplugin.stigma.storage.StigmaTokenStorage;
 import io.nixer.nixerplugin.stigma.token.StigmaTokenProvider;
 import io.nixer.nixerplugin.stigma.token.StigmaValuesGenerator;
-import io.nixer.nixerplugin.stigma.token.validation.StigmaTokenValidator;
-import io.nixer.nixerplugin.stigma.token.validation.ValidationResult;
-import io.nixer.nixerplugin.stigma.token.validation.ValidationStatus;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.junit.jupiter.MockitoSettings;
-import org.mockito.quality.Strictness;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 /**
@@ -32,31 +27,17 @@ import static org.mockito.Mockito.verify;
  * @author gcwiak
  */
 @ExtendWith(MockitoExtension.class)
-// TODO refactor tests so lenient setting is not necessary
-@MockitoSettings(strictness = Strictness.LENIENT)
 class StigmaTokenServiceTest {
 
-    private static final RawStigmaToken RAW_TOKEN = new RawStigmaToken("raw-token");
-    private static final RawStigmaToken NEW_RAW_TOKEN = new RawStigmaToken("new-raw-token");
-
     private static final Stigma STIGMA = new Stigma("stigma-value");
-    private static final Stigma NEW_STIGMA = new Stigma("new-stigma-value");
 
-    private static final StigmaData VALID_STIGMA_VALUE_DATA = new StigmaData(
+    private static final StigmaData STIGMA_DATA = new StigmaData(
             STIGMA,
-            StigmaStatus.ACTIVE
-    );
-
-    private static final StigmaData INVALID_STIGMA_VALUE_DATA = new StigmaData(
-            STIGMA,
-            StigmaStatus.REVOKED
-    );
+            StigmaStatus.ACTIVE,
+            Instant.parse("2020-01-21T10:25:43.511Z"));
 
     @Mock
     private StigmaTokenProvider stigmaTokenProvider;
-
-    @Mock
-    private StigmaTokenValidator stigmaTokenValidator;
 
     @Mock
     private StigmaTokenStorage stigmaTokenStorage;
@@ -64,164 +45,62 @@ class StigmaTokenServiceTest {
     @Mock
     private StigmaValuesGenerator stigmaValuesGenerator;
 
+    @InjectMocks
     private StigmaTokenService stigmaTokenService;
 
-    @BeforeEach
-    void setUp() {
-        stigmaTokenService = new StigmaTokenService(
-                stigmaTokenProvider,
-                stigmaTokenStorage,
-                stigmaValuesGenerator,
-                stigmaTokenValidator
-        );
-
-        fetchNewTokenSetUp();
-    }
-
-    private void fetchNewTokenSetUp() {
-        given(stigmaValuesGenerator.newStigma()).willReturn(NEW_STIGMA);
-
-        final JWT jwtToken = Mockito.mock(JWT.class);
-        given(stigmaTokenProvider.getToken(NEW_STIGMA)).willReturn(jwtToken);
-
-        given(jwtToken.serialize()).willReturn(NEW_RAW_TOKEN.getValue());
-    }
-
     @Test
-    void should_fetch_token_on_login_success_and_original_token_valid() {
+    void should_find_stigma_data_for_valid_token() {
         // given
-        given(stigmaTokenValidator.validate(RAW_TOKEN)).willReturn(ValidationResult.valid(STIGMA));
-        given(stigmaTokenStorage.findStigmaData(STIGMA)).willReturn(VALID_STIGMA_VALUE_DATA);
+        given(stigmaTokenStorage.findStigmaData(STIGMA)).willReturn(STIGMA_DATA);
 
         // when
-        final StigmaTokenFetchResult stigmaTokenFetchResult = stigmaTokenService.fetchTokenOnLoginSuccess(RAW_TOKEN);
+        final StigmaData stigmaData = stigmaTokenService.findStigmaData(STIGMA);
 
         // then
-        assertThat(stigmaTokenFetchResult).isEqualTo(new StigmaTokenFetchResult(RAW_TOKEN, true));
-        verify(stigmaTokenStorage).recordStigmaObservation(VALID_STIGMA_VALUE_DATA);
-        verify(stigmaTokenStorage, never()).recordSpottingUnknownStigma(any());
-        verify(stigmaTokenStorage, never()).saveStigma(any(), any());
+        assertThat(stigmaData).isEqualTo(STIGMA_DATA);
+        verify(stigmaTokenStorage).recordStigmaObservation(STIGMA_DATA);
     }
 
     @Test
-    void should_fetch_token_on_login_success_and_original_token_invalid() {
+    void should_return_empty_result_when_stigma_not_found_in_storage() {
         // given
-        given(stigmaTokenValidator.validate(RAW_TOKEN))
-                .willReturn(ValidationResult.invalid(ValidationStatus.DECRYPTION_ERROR, "invalid-token-details"));
-
-        // when
-        final StigmaTokenFetchResult stigmaTokenFetchResult = stigmaTokenService.fetchTokenOnLoginSuccess(RAW_TOKEN);
-
-        // then
-        assertThat(stigmaTokenFetchResult).isEqualTo(new StigmaTokenFetchResult(NEW_RAW_TOKEN, false));
-        verify(stigmaTokenStorage).recordUnreadableToken(RAW_TOKEN);
-        verify(stigmaTokenStorage).saveStigma(NEW_STIGMA, StigmaStatus.ACTIVE);
-    }
-
-    @Test
-    void should_fetch_token_on_login_success_and_original_token_missing() {
-        // given
-        given(stigmaTokenValidator.validate(null))
-                .willReturn(ValidationResult.invalid(ValidationStatus.MISSING, "invalid-token-details"));
-
-        // when
-        final StigmaTokenFetchResult stigmaTokenFetchResult = stigmaTokenService.fetchTokenOnLoginSuccess(null);
-
-        // then
-        assertThat(stigmaTokenFetchResult).isEqualTo(new StigmaTokenFetchResult(NEW_RAW_TOKEN, false));
-        verify(stigmaTokenStorage, never()).recordUnreadableToken(any());
-        verify(stigmaTokenStorage).saveStigma(NEW_STIGMA, StigmaStatus.ACTIVE);
-    }
-
-    @Test
-    void should_fetch_token_on_login_success_and_original_stigma_invalid() {
-        //given
-        given(stigmaTokenValidator.validate(RAW_TOKEN)).willReturn(ValidationResult.valid(STIGMA));
-        given(stigmaTokenStorage.findStigmaData(STIGMA)).willReturn(INVALID_STIGMA_VALUE_DATA);
-
-        // when
-        final StigmaTokenFetchResult stigmaTokenFetchResult = stigmaTokenService.fetchTokenOnLoginSuccess(RAW_TOKEN);
-
-        // then
-        assertThat(stigmaTokenFetchResult).isEqualTo(new StigmaTokenFetchResult(NEW_RAW_TOKEN, false));
-        verify(stigmaTokenStorage).recordStigmaObservation(INVALID_STIGMA_VALUE_DATA);
-        verify(stigmaTokenStorage).saveStigma(NEW_STIGMA, StigmaStatus.ACTIVE);
-    }
-
-    @Test
-    void should_fetch_token_on_login_success_and_original_stigma_unknown() {
-        //given
-        given(stigmaTokenValidator.validate(RAW_TOKEN)).willReturn(ValidationResult.valid(STIGMA));
         given(stigmaTokenStorage.findStigmaData(STIGMA)).willReturn(null);
 
         // when
-        final StigmaTokenFetchResult stigmaTokenFetchResult = stigmaTokenService.fetchTokenOnLoginSuccess(RAW_TOKEN);
+        final StigmaData stigmaData = stigmaTokenService.findStigmaData(STIGMA);
 
         // then
-        assertThat(stigmaTokenFetchResult).isEqualTo(new StigmaTokenFetchResult(NEW_RAW_TOKEN, false));
+        assertThat(stigmaData).isNull();
         verify(stigmaTokenStorage).recordSpottingUnknownStigma(STIGMA);
-        verify(stigmaTokenStorage, never()).recordStigmaObservation(any());
-        verify(stigmaTokenStorage).saveStigma(NEW_STIGMA, StigmaStatus.ACTIVE);
     }
 
     @Test
-    void should_fetch_token_on_login_fail_and_original_token_valid() {
+    void should_revoke_stigma() {
+        // when
+        stigmaTokenService.revokeStigma(STIGMA);
+
+        // then
+        verify(stigmaTokenStorage).updateStatus(STIGMA, StigmaStatus.REVOKED);
+    }
+
+    @Test
+    void should_generate_new_stigma_token() {
         // given
-        given(stigmaTokenValidator.validate(RAW_TOKEN)).willReturn(ValidationResult.valid(STIGMA));
-        given(stigmaTokenStorage.findStigmaData(STIGMA)).willReturn(VALID_STIGMA_VALUE_DATA);
+        final Stigma stigma = new Stigma("new-stigma-value");
+        final StigmaData stigmaData = new StigmaData(stigma, StigmaStatus.ACTIVE, Instant.parse("2020-01-22T11:26:44.512Z"));
+        given(stigmaValuesGenerator.newStigma()).willReturn(stigmaData);
+
+        final JWT token = Mockito.mock(JWT.class);
+        final String serializedToken = "serialized-token";
+        given(token.serialize()).willReturn(serializedToken);
+
+        given(stigmaTokenProvider.getToken(stigma)).willReturn(token);
 
         // when
-        final StigmaTokenFetchResult stigmaTokenFetchResult = stigmaTokenService.fetchTokenOnLoginFail(RAW_TOKEN);
+        final RawStigmaToken newStigmaToken = stigmaTokenService.newStigmaToken();
 
         // then
-        assertThat(stigmaTokenFetchResult).isEqualTo(new StigmaTokenFetchResult(NEW_RAW_TOKEN, true));
-        verify(stigmaTokenStorage).recordStigmaObservation(VALID_STIGMA_VALUE_DATA);
-        verify(stigmaTokenStorage).updateStatus(VALID_STIGMA_VALUE_DATA.getStigma(), StigmaStatus.REVOKED);
-        verify(stigmaTokenStorage).saveStigma(NEW_STIGMA, StigmaStatus.ACTIVE);
-    }
-
-    @Test
-    void should_fetch_token_on_login_fail_and_original_token_invalid() {
-        // given
-        given(stigmaTokenValidator.validate(RAW_TOKEN))
-                .willReturn(ValidationResult.invalid(ValidationStatus.DECRYPTION_ERROR, "invalid-token-details"));
-
-        // when
-        final StigmaTokenFetchResult stigmaTokenFetchResult = stigmaTokenService.fetchTokenOnLoginFail(RAW_TOKEN);
-
-        // then
-        assertThat(stigmaTokenFetchResult).isEqualTo(new StigmaTokenFetchResult(NEW_RAW_TOKEN, false));
-        verify(stigmaTokenStorage).recordUnreadableToken(RAW_TOKEN);
-        verify(stigmaTokenStorage).saveStigma(NEW_STIGMA, StigmaStatus.ACTIVE);
-    }
-
-    @Test
-    void should_fetch_token_on_login_fail_and_original_token_missing() {
-        // given
-        given(stigmaTokenValidator.validate(null))
-                .willReturn(ValidationResult.invalid(ValidationStatus.MISSING, "invalid-token-details"));
-
-        // when
-        final StigmaTokenFetchResult stigmaTokenFetchResult = stigmaTokenService.fetchTokenOnLoginFail(null);
-
-        // then
-        assertThat(stigmaTokenFetchResult).isEqualTo(new StigmaTokenFetchResult(NEW_RAW_TOKEN, false));
-        verify(stigmaTokenStorage, never()).recordUnreadableToken(any());
-        verify(stigmaTokenStorage).saveStigma(NEW_STIGMA, StigmaStatus.ACTIVE);
-    }
-
-    @Test
-    void should_fetch_token_on_login_fail_and_original_stigma_invalid() {
-        //given
-        given(stigmaTokenValidator.validate(RAW_TOKEN)).willReturn(ValidationResult.valid(STIGMA));
-        given(stigmaTokenStorage.findStigmaData(STIGMA)).willReturn(INVALID_STIGMA_VALUE_DATA);
-
-        // when
-        final StigmaTokenFetchResult stigmaTokenFetchResult = stigmaTokenService.fetchTokenOnLoginFail(RAW_TOKEN);
-
-        // then
-        assertThat(stigmaTokenFetchResult).isEqualTo(new StigmaTokenFetchResult(NEW_RAW_TOKEN, false));
-        verify(stigmaTokenStorage).recordStigmaObservation(INVALID_STIGMA_VALUE_DATA);
-        verify(stigmaTokenStorage).saveStigma(NEW_STIGMA, StigmaStatus.ACTIVE);
+        assertThat(newStigmaToken).isEqualTo(new RawStigmaToken(serializedToken));
+        verify(stigmaTokenStorage).saveStigma(stigmaData);
     }
 }
