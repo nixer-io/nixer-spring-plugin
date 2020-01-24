@@ -37,6 +37,7 @@ configure(subprojects.filter { it.name.startsWith("nixer-plugin") }) {
         testImplementation("org.assertj", "assertj-core")
 
         testImplementation("org.mockito", "mockito-core")
+        testImplementation("org.mockito", "mockito-inline")
         testImplementation("org.mockito", "mockito-junit-jupiter")
     }
 }
