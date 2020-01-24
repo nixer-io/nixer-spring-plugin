@@ -10,7 +10,7 @@ import io.nixer.nixerplugin.stigma.domain.Stigma;
 import io.nixer.nixerplugin.stigma.domain.StigmaStatus;
 import io.nixer.nixerplugin.stigma.storage.StigmaData;
 import io.nixer.nixerplugin.stigma.storage.StigmaTokenStorage;
-import io.nixer.nixerplugin.stigma.token.StigmaTokenProvider;
+import io.nixer.nixerplugin.stigma.token.EncryptedStigmaTokenProvider;
 import io.nixer.nixerplugin.stigma.token.StigmaValuesGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +26,7 @@ public class StigmaTokenService {
     private static final Logger LOGGER = LoggerFactory.getLogger(StigmaTokenService.class);
 
     @Nonnull
-    private final StigmaTokenProvider stigmaTokenProvider;
+    private final EncryptedStigmaTokenProvider stigmaTokenProvider;
 
     @Nonnull
     private final StigmaTokenStorage stigmaTokenStorage;
@@ -34,7 +34,7 @@ public class StigmaTokenService {
     @Nonnull
     private final StigmaValuesGenerator stigmaValuesGenerator;
 
-    public StigmaTokenService(@Nonnull final StigmaTokenProvider stigmaTokenProvider,
+    public StigmaTokenService(@Nonnull final EncryptedStigmaTokenProvider stigmaTokenProvider,
                               @Nonnull final StigmaTokenStorage stigmaTokenStorage,
                               @Nonnull final StigmaValuesGenerator stigmaValuesGenerator) {
         this.stigmaTokenProvider = Preconditions.checkNotNull(stigmaTokenProvider, "stigmaTokenProvider");

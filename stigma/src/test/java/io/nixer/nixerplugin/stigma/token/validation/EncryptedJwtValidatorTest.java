@@ -6,7 +6,6 @@ import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
-import java.util.function.Consumer;
 import javax.annotation.Nonnull;
 
 import com.google.common.collect.Iterables;
@@ -24,12 +23,10 @@ import io.nixer.nixerplugin.stigma.crypto.DirectDecrypterFactory;
 import io.nixer.nixerplugin.stigma.crypto.DirectEncrypterFactory;
 import io.nixer.nixerplugin.stigma.domain.Stigma;
 import io.nixer.nixerplugin.stigma.token.EncryptedStigmaTokenProvider;
-import io.nixer.nixerplugin.stigma.token.StigmaTokenProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static io.nixer.nixerplugin.stigma.token.StigmaTokenConstants.STIGMA_VALUE_FIELD_NAME;
@@ -70,11 +67,7 @@ class EncryptedJwtValidatorTest {
     @Test
     void should_pass_validation() {
         // given
-        final JWT stigmaToken = givenEncryptedToken(
-                with -> with.subject(SUBJECT)
-                        .issueTime(ISSUE_TIME)
-                        .claim(STIGMA_VALUE_FIELD_NAME, STIGMA.getValue())
-        );
+        final JWT stigmaToken = givenEncryptedToken(jwk);
         given(delegateValidator.validate(any(JWT.class))).willReturn(ValidationResult.valid(STIGMA));
 
         // when
@@ -87,17 +80,8 @@ class EncryptedJwtValidatorTest {
     @Test
     void should_fail_validation_on_incorrect_encryption_method() {
         // given
-        final PlainJWT plainJWT = new PlainJWT(new JWTClaimsSet.Builder()
-                .subject(SUBJECT)
-                .issueTime(ISSUE_TIME)
-                .claim(STIGMA_VALUE_FIELD_NAME, STIGMA.getValue())
-                .build());
-        final StigmaTokenProvider plainTokenProvider = Mockito.mock(StigmaTokenProvider.class);
-        given(plainTokenProvider.getToken(STIGMA)).willReturn(plainJWT);
-
         final EncryptedStigmaTokenProvider encryptedTokenProvider = new EncryptedStigmaTokenProvider(
-                plainTokenProvider,
-                new DirectEncrypterFactory(this.jwk) {
+                new DirectEncrypterFactory(jwk) {
                     @Nonnull
                     @Override
                     public EncryptionMethod getEncryptionMethod() {
@@ -132,11 +116,7 @@ class EncryptedJwtValidatorTest {
                 delegateValidator
         );
 
-        final JWT stigmaToken = givenEncryptedToken(
-                with -> with.subject(SUBJECT)
-                        .issueTime(ISSUE_TIME)
-                        .claim(STIGMA_VALUE_FIELD_NAME, STIGMA.getValue())
-        );
+        final JWT stigmaToken = givenEncryptedToken(this.jwk);
 
         // when
         final ValidationResult result = validator.validate(stigmaToken);
@@ -166,11 +146,7 @@ class EncryptedJwtValidatorTest {
         // given
         final OctetSequenceKey anotherKeyWithMatchingID = new OctetSequenceKeyGenerator(256).keyID(jwk.getKeyID()).generate();
 
-        final JWT stigmaToken = givenEncryptedToken(anotherKeyWithMatchingID,
-                with -> with.subject(SUBJECT)
-                        .issueTime(ISSUE_TIME)
-                        .claim(STIGMA_VALUE_FIELD_NAME, STIGMA.getValue())
-        );
+        final JWT stigmaToken = givenEncryptedToken(anotherKeyWithMatchingID);
 
         // when
         final ValidationResult result = validator.validate(stigmaToken);
@@ -179,21 +155,9 @@ class EncryptedJwtValidatorTest {
         assertThat(result.getStatus()).isEqualTo(ValidationStatus.DECRYPTION_ERROR);
     }
 
-    private JWT givenEncryptedToken(final OctetSequenceKey encryptionKey, final Consumer<JWTClaimsSet.Builder> claimsAssigner) {
-        final JWTClaimsSet.Builder builder = new JWTClaimsSet.Builder();
-        claimsAssigner.accept(builder);
-        final PlainJWT plainJWT = new PlainJWT(builder.build());
-
-        final StigmaTokenProvider plainTokenProvider = Mockito.mock(StigmaTokenProvider.class);
-        given(plainTokenProvider.getToken(STIGMA)).willReturn(plainJWT);
-
-        final EncryptedStigmaTokenProvider encryptedTokenProvider =
-                new EncryptedStigmaTokenProvider(plainTokenProvider, new DirectEncrypterFactory(encryptionKey));
+    private JWT givenEncryptedToken(final OctetSequenceKey encryptionKey) {
+        final EncryptedStigmaTokenProvider encryptedTokenProvider = new EncryptedStigmaTokenProvider(new DirectEncrypterFactory(encryptionKey));
 
         return encryptedTokenProvider.getToken(STIGMA);
-    }
-
-    private JWT givenEncryptedToken(final Consumer<JWTClaimsSet.Builder> claimsAssigner) {
-        return givenEncryptedToken(this.jwk, claimsAssigner);
     }
 }

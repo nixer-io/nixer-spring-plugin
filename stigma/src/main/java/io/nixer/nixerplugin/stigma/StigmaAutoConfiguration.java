@@ -21,9 +21,7 @@ import io.nixer.nixerplugin.stigma.storage.jdbc.JdbcDAOConfigurer;
 import io.nixer.nixerplugin.stigma.storage.jdbc.StigmasJdbcDAO;
 import io.nixer.nixerplugin.stigma.storage.jdbc.StigmasJdbcStorage;
 import io.nixer.nixerplugin.stigma.token.EncryptedStigmaTokenProvider;
-import io.nixer.nixerplugin.stigma.token.PlainStigmaTokenProvider;
 import io.nixer.nixerplugin.stigma.token.StigmaExtractor;
-import io.nixer.nixerplugin.stigma.token.StigmaTokenProvider;
 import io.nixer.nixerplugin.stigma.token.StigmaValuesGenerator;
 import io.nixer.nixerplugin.stigma.token.validation.EncryptedJwtValidator;
 import io.nixer.nixerplugin.stigma.token.validation.StigmaTokenPayloadValidator;
@@ -88,18 +86,9 @@ public class StigmaAutoConfiguration {
 
     @Primary
     @Bean
-    public EncryptedStigmaTokenProvider encryptedStigmaTokenProvider(KeysLoader keysLoader,
-                                                                     PlainStigmaTokenProvider plainStigmaTokenProvider) {
+    public EncryptedStigmaTokenProvider encryptedStigmaTokenProvider(KeysLoader keysLoader) {
 
-        return new EncryptedStigmaTokenProvider(
-                plainStigmaTokenProvider,
-                DirectEncrypterFactory.withKeysFrom(keysLoader)
-        );
-    }
-
-    @Bean
-    public PlainStigmaTokenProvider plainStigmaTokenProvider() {
-        return new PlainStigmaTokenProvider();
+        return new EncryptedStigmaTokenProvider(DirectEncrypterFactory.withKeysFrom(keysLoader));
     }
 
     @Bean
@@ -124,7 +113,7 @@ public class StigmaAutoConfiguration {
     }
 
     @Bean
-    public StigmaTokenService stigmaTokenService(StigmaTokenProvider stigmaTokenProvider,
+    public StigmaTokenService stigmaTokenService(EncryptedStigmaTokenProvider stigmaTokenProvider,
                                                  StigmaTokenStorage stigmaTokenStorage,
                                                  StigmaValuesGenerator stigmaValuesGenerator) {
 
