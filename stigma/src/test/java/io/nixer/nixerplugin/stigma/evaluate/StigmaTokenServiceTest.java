@@ -2,19 +2,15 @@ package io.nixer.nixerplugin.stigma.evaluate;
 
 import java.time.Instant;
 
-import com.nimbusds.jwt.JWT;
-import io.nixer.nixerplugin.stigma.domain.RawStigmaToken;
 import io.nixer.nixerplugin.stigma.domain.Stigma;
 import io.nixer.nixerplugin.stigma.domain.StigmaStatus;
 import io.nixer.nixerplugin.stigma.storage.StigmaData;
 import io.nixer.nixerplugin.stigma.storage.StigmaTokenStorage;
-import io.nixer.nixerplugin.stigma.token.StigmaTokenFactory;
 import io.nixer.nixerplugin.stigma.token.StigmaValuesGenerator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -35,9 +31,6 @@ class StigmaTokenServiceTest {
             STIGMA,
             StigmaStatus.ACTIVE,
             Instant.parse("2020-01-21T10:25:43.511Z"));
-
-    @Mock
-    private StigmaTokenFactory stigmaTokenFactory;
 
     @Mock
     private StigmaTokenStorage stigmaTokenStorage;
@@ -90,17 +83,11 @@ class StigmaTokenServiceTest {
         final StigmaData stigmaData = new StigmaData(stigma, StigmaStatus.ACTIVE, Instant.parse("2020-01-22T11:26:44.512Z"));
         given(stigmaValuesGenerator.newStigma()).willReturn(stigmaData);
 
-        final JWT token = Mockito.mock(JWT.class);
-        final String serializedToken = "serialized-token";
-        given(token.serialize()).willReturn(serializedToken);
-
-        given(stigmaTokenFactory.getToken(stigma)).willReturn(token);
-
         // when
-        final RawStigmaToken newStigmaToken = stigmaTokenService.newStigmaToken();
+        final StigmaData result = stigmaTokenService.getNewStigma();
 
         // then
-        assertThat(newStigmaToken).isEqualTo(new RawStigmaToken(serializedToken));
+        assertThat(result).isEqualTo(stigmaData);
         verify(stigmaTokenStorage).saveStigma(stigmaData);
     }
 }

@@ -4,13 +4,10 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.google.common.base.Preconditions;
-import com.nimbusds.jwt.JWT;
-import io.nixer.nixerplugin.stigma.domain.RawStigmaToken;
 import io.nixer.nixerplugin.stigma.domain.Stigma;
 import io.nixer.nixerplugin.stigma.domain.StigmaStatus;
 import io.nixer.nixerplugin.stigma.storage.StigmaData;
 import io.nixer.nixerplugin.stigma.storage.StigmaTokenStorage;
-import io.nixer.nixerplugin.stigma.token.StigmaTokenFactory;
 import io.nixer.nixerplugin.stigma.token.StigmaValuesGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,18 +23,13 @@ public class StigmaTokenService {
     private static final Logger LOGGER = LoggerFactory.getLogger(StigmaTokenService.class);
 
     @Nonnull
-    private final StigmaTokenFactory stigmaTokenFactory;
-
-    @Nonnull
     private final StigmaTokenStorage stigmaTokenStorage;
 
     @Nonnull
     private final StigmaValuesGenerator stigmaValuesGenerator;
 
-    public StigmaTokenService(@Nonnull final StigmaTokenFactory stigmaTokenFactory,
-                              @Nonnull final StigmaTokenStorage stigmaTokenStorage,
+    public StigmaTokenService(@Nonnull final StigmaTokenStorage stigmaTokenStorage,
                               @Nonnull final StigmaValuesGenerator stigmaValuesGenerator) {
-        this.stigmaTokenFactory = Preconditions.checkNotNull(stigmaTokenFactory, "stigmaTokenFactory");
         this.stigmaTokenStorage = Preconditions.checkNotNull(stigmaTokenStorage, "stigmaTokenStorage");
         this.stigmaValuesGenerator = Preconditions.checkNotNull(stigmaValuesGenerator, "stigmaValuesGenerator");
     }
@@ -76,15 +68,13 @@ public class StigmaTokenService {
     }
 
     @Nonnull
-    public RawStigmaToken newStigmaToken() {
+    public StigmaData getNewStigma() {
 
         final StigmaData newStigma = stigmaValuesGenerator.newStigma();
 
         storeStigma(newStigma);
 
-        final JWT token = stigmaTokenFactory.getToken(newStigma.getStigma());
-
-        return new RawStigmaToken(token.serialize());
+        return newStigma;
     }
 
     private void storeStigma(final StigmaData stigmaData) {

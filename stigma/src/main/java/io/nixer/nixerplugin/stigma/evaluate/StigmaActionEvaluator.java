@@ -7,6 +7,7 @@ import io.nixer.nixerplugin.stigma.domain.RawStigmaToken;
 import io.nixer.nixerplugin.stigma.domain.Stigma;
 import io.nixer.nixerplugin.stigma.storage.StigmaData;
 import io.nixer.nixerplugin.stigma.token.StigmaExtractor;
+import io.nixer.nixerplugin.stigma.token.StigmaTokenFactory;
 
 import static io.nixer.nixerplugin.stigma.evaluate.StigmaActionType.TOKEN_BAD_LOGIN_FAIL;
 import static io.nixer.nixerplugin.stigma.evaluate.StigmaActionType.TOKEN_BAD_LOGIN_SUCCESS;
@@ -24,13 +25,17 @@ public class StigmaActionEvaluator {
 
     private final StigmaTokenService stigmaTokenService;
 
+    private final StigmaTokenFactory stigmaTokenFactory;
+
     private final StigmaValidator stigmaValidator;
 
     public StigmaActionEvaluator(final StigmaExtractor stigmaExtractor,
                                  final StigmaTokenService stigmaTokenService,
+                                 final StigmaTokenFactory stigmaTokenFactory,
                                  final StigmaValidator stigmaValidator) {
         this.stigmaExtractor = stigmaExtractor;
         this.stigmaTokenService = stigmaTokenService;
+        this.stigmaTokenFactory = stigmaTokenFactory;
         this.stigmaValidator = stigmaValidator;
     }
 
@@ -46,7 +51,7 @@ public class StigmaActionEvaluator {
 
         final StigmaAction stigmaAction = isStigmaValid(stigmaData)
                 ? new StigmaAction(originalToken, TOKEN_GOOD_LOGIN_SUCCESS)
-                : new StigmaAction(stigmaTokenService.newStigmaToken(), TOKEN_BAD_LOGIN_SUCCESS);
+                : new StigmaAction(newStigmaToken(), TOKEN_BAD_LOGIN_SUCCESS);
 
         writeToMetrics(stigmaAction);
 
@@ -66,9 +71,9 @@ public class StigmaActionEvaluator {
         final StigmaAction stigmaAction;
         if (isStigmaValid(stigmaData)) {
             stigmaTokenService.revokeStigma(stigmaData.getStigma());
-            stigmaAction = new StigmaAction(stigmaTokenService.newStigmaToken(), TOKEN_GOOD_LOGIN_FAIL);
+            stigmaAction = new StigmaAction(newStigmaToken(), TOKEN_GOOD_LOGIN_FAIL);
         } else {
-            stigmaAction = new StigmaAction(stigmaTokenService.newStigmaToken(), TOKEN_BAD_LOGIN_FAIL);
+            stigmaAction = new StigmaAction(newStigmaToken(), TOKEN_BAD_LOGIN_FAIL);
         }
 
         writeToMetrics(stigmaAction);
@@ -96,6 +101,12 @@ public class StigmaActionEvaluator {
 
     private boolean isStigmaValid(final StigmaData stigmaData) {
         return stigmaValidator.isValid(stigmaData);
+    }
+
+    private RawStigmaToken newStigmaToken() {
+        final StigmaData newStigma = stigmaTokenService.getNewStigma();
+
+        return stigmaTokenFactory.getToken(newStigma.getStigma());
     }
 
     private void writeToMetrics(final StigmaAction stigmaAction) {

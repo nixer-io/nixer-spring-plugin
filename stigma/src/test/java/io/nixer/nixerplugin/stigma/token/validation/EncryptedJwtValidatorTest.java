@@ -18,6 +18,7 @@ import com.nimbusds.jose.jwk.gen.OctetSequenceKeyGenerator;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.JWTParser;
 import com.nimbusds.jwt.PlainJWT;
 import io.nixer.nixerplugin.stigma.crypto.DirectDecrypterFactory;
 import io.nixer.nixerplugin.stigma.crypto.DirectEncrypterFactory;
@@ -65,7 +66,7 @@ class EncryptedJwtValidatorTest {
     }
 
     @Test
-    void should_pass_validation() {
+    void should_pass_validation() throws ParseException {
         // given
         final JWT stigmaToken = givenEncryptedToken(jwk);
         given(delegateValidator.validate(any(JWT.class))).willReturn(ValidationResult.valid(STIGMA));
@@ -78,7 +79,7 @@ class EncryptedJwtValidatorTest {
     }
 
     @Test
-    void should_fail_validation_on_incorrect_encryption_method() {
+    void should_fail_validation_on_incorrect_encryption_method() throws ParseException {
         // given
         final StigmaTokenFactory stigmaTokenFactory = new StigmaTokenFactory(
                 new DirectEncrypterFactory(jwk) {
@@ -90,7 +91,7 @@ class EncryptedJwtValidatorTest {
                 }
         );
 
-        final JWT stigmaToken = stigmaTokenFactory.getToken(STIGMA);
+        final JWT stigmaToken = JWTParser.parse(stigmaTokenFactory.getToken(STIGMA).getValue());
 
         // when
         final ValidationResult result = validator.validate(stigmaToken);
@@ -142,7 +143,7 @@ class EncryptedJwtValidatorTest {
     }
 
     @Test
-    void should_fail_validation_on_decryption_error() throws JOSEException {
+    void should_fail_validation_on_decryption_error() throws JOSEException, ParseException {
         // given
         final OctetSequenceKey anotherKeyWithMatchingID = new OctetSequenceKeyGenerator(256).keyID(jwk.getKeyID()).generate();
 
@@ -155,9 +156,9 @@ class EncryptedJwtValidatorTest {
         assertThat(result.getStatus()).isEqualTo(ValidationStatus.DECRYPTION_ERROR);
     }
 
-    private JWT givenEncryptedToken(final OctetSequenceKey encryptionKey) {
+    private JWT givenEncryptedToken(final OctetSequenceKey encryptionKey) throws ParseException {
         final StigmaTokenFactory stigmaTokenFactory = new StigmaTokenFactory(new DirectEncrypterFactory(encryptionKey));
 
-        return stigmaTokenFactory.getToken(STIGMA);
+        return JWTParser.parse(stigmaTokenFactory.getToken(STIGMA).getValue());
     }
 }

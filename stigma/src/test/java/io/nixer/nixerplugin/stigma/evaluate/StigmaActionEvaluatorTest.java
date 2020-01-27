@@ -4,9 +4,9 @@ import java.time.Instant;
 
 import io.nixer.nixerplugin.stigma.domain.RawStigmaToken;
 import io.nixer.nixerplugin.stigma.domain.Stigma;
-import io.nixer.nixerplugin.stigma.domain.StigmaStatus;
 import io.nixer.nixerplugin.stigma.storage.StigmaData;
 import io.nixer.nixerplugin.stigma.token.StigmaExtractor;
+import io.nixer.nixerplugin.stigma.token.StigmaTokenFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,6 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static io.nixer.nixerplugin.stigma.domain.StigmaStatus.ACTIVE;
 import static io.nixer.nixerplugin.stigma.evaluate.StigmaActionType.TOKEN_BAD_LOGIN_FAIL;
 import static io.nixer.nixerplugin.stigma.evaluate.StigmaActionType.TOKEN_BAD_LOGIN_SUCCESS;
 import static io.nixer.nixerplugin.stigma.evaluate.StigmaActionType.TOKEN_GOOD_LOGIN_FAIL;
@@ -32,11 +33,13 @@ class StigmaActionEvaluatorTest {
 
     // TODO verify metrics when implemented
 
-    private static final RawStigmaToken STIGMA_TOKEN = new RawStigmaToken("valid-token");
-    private static final RawStigmaToken REFRESHED_STIGMA_TOKEN = new RawStigmaToken("refreshed-token");
-
     private static final Stigma STIGMA = new Stigma("stigma-value");
-    private static final StigmaData STIGMA_DATA = new StigmaData(STIGMA, StigmaStatus.ACTIVE, Instant.parse("2020-01-21T10:25:43.511Z"));
+    private static final StigmaData STIGMA_DATA = new StigmaData(STIGMA, ACTIVE, Instant.parse("2020-01-21T10:25:43.511Z"));
+    private static final RawStigmaToken STIGMA_TOKEN = new RawStigmaToken("valid-token");
+
+    private static final Stigma REFRESHED_STIGMA = new Stigma("refreshed-stigma-value");
+    private static final StigmaData REFRESHED_STIGMA_DATA = new StigmaData(REFRESHED_STIGMA, ACTIVE, Instant.parse("2020-01-22T11:26:45.512Z"));
+    private static final RawStigmaToken REFRESHED_STIGMA_TOKEN = new RawStigmaToken("refreshed-token");
 
     @Mock
     private StigmaExtractor stigmaExtractor;
@@ -47,12 +50,16 @@ class StigmaActionEvaluatorTest {
     @Mock
     private StigmaValidator stigmaValidator;
 
+    @Mock
+    private StigmaTokenFactory stigmaTokenFactory;
+
     @InjectMocks
     private StigmaActionEvaluator actionEvaluator;
 
     @BeforeEach
     void setUp() {
-        lenient().when(stigmaTokenService.newStigmaToken()).thenReturn(REFRESHED_STIGMA_TOKEN);
+        lenient().when(stigmaTokenService.getNewStigma()).thenReturn(REFRESHED_STIGMA_DATA);
+        lenient().when(stigmaTokenFactory.getToken(REFRESHED_STIGMA)).thenReturn(REFRESHED_STIGMA_TOKEN);
     }
 
     @Test

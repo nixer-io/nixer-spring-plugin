@@ -8,6 +8,7 @@ import com.nimbusds.jwt.EncryptedJWT;
 import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTClaimsSet;
 import io.nixer.nixerplugin.stigma.crypto.EncrypterFactory;
+import io.nixer.nixerplugin.stigma.domain.RawStigmaToken;
 import io.nixer.nixerplugin.stigma.domain.Stigma;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -33,10 +34,22 @@ public class StigmaTokenFactory {
         this.encrypterFactory = encrypterFactory;
     }
 
+    /**
+     * Creates stigma token as JWT serialized to String and wrapped with {@link RawStigmaToken}.
+     *
+     * @param stigma value of stigma to be put inside stigma token, into JWT claims.
+     * @return serialized stigma token.
+     */
     @Nonnull
-    public JWT getToken(@Nonnull final Stigma stigma) {
+    public RawStigmaToken getToken(@Nonnull final Stigma stigma) {
         Assert.notNull(stigma, "stigma must not be null");
 
+        final JWT jwt = getJWT(stigma);
+
+        return new RawStigmaToken(jwt.serialize());
+    }
+
+    private JWT getJWT(final Stigma stigma) {
         final JWTClaimsSet claimsSet = buildClaims(stigma);
 
         final JWEHeader header =

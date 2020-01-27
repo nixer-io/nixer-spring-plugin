@@ -4,6 +4,7 @@ import javax.annotation.Nonnull;
 
 import com.google.common.base.Objects;
 import io.nixer.nixerplugin.stigma.token.StigmaExtractor;
+import io.nixer.nixerplugin.stigma.token.StigmaTokenFactory;
 import io.nixer.nixerplugin.stigma.token.validation.StigmaTokenValidator;
 import org.springframework.util.Assert;
 
@@ -26,7 +27,7 @@ import org.springframework.util.Assert;
  * Stigma Token is implemented as encrypted <a href="https://en.wikipedia.org/wiki/JSON_Web_Token">JWT</a>.
  * <br>
  * <br>
- * See also {@link StigmaExtractor} and {@link StigmaTokenValidator}.
+ * See also {@link StigmaTokenFactory}, {@link StigmaExtractor} and {@link StigmaTokenValidator}.
  */
 public class RawStigmaToken {
 

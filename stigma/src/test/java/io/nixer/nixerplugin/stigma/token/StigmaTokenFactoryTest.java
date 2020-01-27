@@ -11,7 +11,9 @@ import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.OctetSequenceKey;
 import com.nimbusds.jwt.EncryptedJWT;
 import com.nimbusds.jwt.JWT;
+import com.nimbusds.jwt.JWTParser;
 import io.nixer.nixerplugin.stigma.crypto.DirectEncrypterFactory;
+import io.nixer.nixerplugin.stigma.domain.RawStigmaToken;
 import io.nixer.nixerplugin.stigma.domain.Stigma;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -45,9 +47,10 @@ class StigmaTokenFactoryTest {
     @Test
     void should_create_encrypted_token() throws JOSEException, ParseException {
         // when
-        final JWT token = stigmaTokenFactory.getToken(STIGMA);
+        final RawStigmaToken rawStigmaToken = stigmaTokenFactory.getToken(STIGMA);
 
         // then
+        final JWT token = JWTParser.parse(rawStigmaToken.getValue());
         assertThat(token).isNotNull().isInstanceOf(EncryptedJWT.class);
 
         final EncryptedJWT jwe = (EncryptedJWT) token;
