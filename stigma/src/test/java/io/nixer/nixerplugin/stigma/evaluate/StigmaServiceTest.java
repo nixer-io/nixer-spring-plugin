@@ -6,7 +6,7 @@ import io.nixer.nixerplugin.stigma.domain.Stigma;
 import io.nixer.nixerplugin.stigma.domain.StigmaStatus;
 import io.nixer.nixerplugin.stigma.storage.StigmaData;
 import io.nixer.nixerplugin.stigma.storage.StigmaStorage;
-import io.nixer.nixerplugin.stigma.token.StigmaValuesGenerator;
+import io.nixer.nixerplugin.stigma.token.StigmaGenerator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -36,7 +36,7 @@ class StigmaServiceTest {
     private StigmaStorage stigmaStorage;
 
     @Mock
-    private StigmaValuesGenerator stigmaValuesGenerator;
+    private StigmaGenerator stigmaGenerator;
 
     @InjectMocks
     private StigmaService stigmaService;
@@ -81,7 +81,7 @@ class StigmaServiceTest {
         // given
         final Stigma stigma = new Stigma("new-stigma-value");
         final StigmaData stigmaData = new StigmaData(stigma, StigmaStatus.ACTIVE, Instant.parse("2020-01-22T11:26:44.512Z"));
-        given(stigmaValuesGenerator.newStigma()).willReturn(stigmaData);
+        given(stigmaGenerator.newStigma()).willReturn(stigmaData);
 
         // when
         final StigmaData result = stigmaService.getNewStigma();

@@ -8,7 +8,7 @@ import io.nixer.nixerplugin.stigma.domain.Stigma;
 import io.nixer.nixerplugin.stigma.domain.StigmaStatus;
 import io.nixer.nixerplugin.stigma.storage.StigmaData;
 import io.nixer.nixerplugin.stigma.storage.StigmaStorage;
-import io.nixer.nixerplugin.stigma.token.StigmaValuesGenerator;
+import io.nixer.nixerplugin.stigma.token.StigmaGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
@@ -26,12 +26,12 @@ public class StigmaService {
     private final StigmaStorage stigmaStorage;
 
     @Nonnull
-    private final StigmaValuesGenerator stigmaValuesGenerator;
+    private final StigmaGenerator stigmaGenerator;
 
     public StigmaService(@Nonnull final StigmaStorage stigmaStorage,
-                         @Nonnull final StigmaValuesGenerator stigmaValuesGenerator) {
+                         @Nonnull final StigmaGenerator stigmaGenerator) {
         this.stigmaStorage = Preconditions.checkNotNull(stigmaStorage, "stigmaStorage");
-        this.stigmaValuesGenerator = Preconditions.checkNotNull(stigmaValuesGenerator, "stigmaValuesGenerator");
+        this.stigmaGenerator = Preconditions.checkNotNull(stigmaGenerator, "stigmaGenerator");
     }
 
     @Nullable
@@ -70,7 +70,7 @@ public class StigmaService {
     @Nonnull
     public StigmaData getNewStigma() {
 
-        final StigmaData newStigma = stigmaValuesGenerator.newStigma();
+        final StigmaData newStigma = stigmaGenerator.newStigma();
 
         storeStigma(newStigma);
 
