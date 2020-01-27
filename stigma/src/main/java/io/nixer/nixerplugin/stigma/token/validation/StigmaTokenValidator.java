@@ -21,12 +21,11 @@ public class StigmaTokenValidator {
 
     private final Log logger = LogFactory.getLog(getClass());
 
-    private JwtValidator jwtValidator;
+    private EncryptedJwtValidator encryptedJwtValidator;
 
-    public StigmaTokenValidator(@Nonnull final JwtValidator jwtValidator) {
-        Assert.notNull(jwtValidator, "JwtValidator must not be null");
-
-        this.jwtValidator = jwtValidator;
+    public StigmaTokenValidator(@Nonnull final EncryptedJwtValidator encryptedJwtValidator) {
+        Assert.notNull(encryptedJwtValidator, "encryptedJwtValidator must not be null");
+        this.encryptedJwtValidator = encryptedJwtValidator;
     }
 
     @Nonnull
@@ -56,6 +55,6 @@ public class StigmaTokenValidator {
             return ValidationResult.invalid(ValidationStatus.PARSING_ERROR, format("Details: [%s]", e.getMessage()));
         }
 
-        return jwtValidator.validate(jwt);
+        return encryptedJwtValidator.validate(jwt);
     }
 }

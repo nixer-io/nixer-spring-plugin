@@ -48,7 +48,7 @@ class EncryptedJwtValidatorTest {
     private static final Date ISSUE_TIME = Date.from(LocalDateTime.of(2019, 5, 19, 12, 45, 56).toInstant(ZoneOffset.UTC));
 
     @Mock
-    private JwtValidator delegateValidator;
+    private StigmaTokenPayloadValidator payloadValidator;
 
     private OctetSequenceKey jwk;
 
@@ -61,7 +61,7 @@ class EncryptedJwtValidatorTest {
 
         validator = new EncryptedJwtValidator(
                 new DirectDecrypterFactory(new ImmutableJWKSet(jwkSet)),
-                delegateValidator
+                payloadValidator
         );
     }
 
@@ -69,7 +69,7 @@ class EncryptedJwtValidatorTest {
     void should_pass_validation() throws ParseException {
         // given
         final JWT stigmaToken = givenEncryptedToken(jwk);
-        given(delegateValidator.validate(any(JWT.class))).willReturn(ValidationResult.valid(STIGMA));
+        given(payloadValidator.validate(any(JWT.class))).willReturn(ValidationResult.valid(STIGMA));
 
         // when
         final ValidationResult result = validator.validate(stigmaToken);
@@ -106,7 +106,7 @@ class EncryptedJwtValidatorTest {
         JWKSet jwkSet = JWKSet.load(new File("src/test/resources/stigma-jwk.json"));
         jwk = (OctetSequenceKey) Iterables.getOnlyElement(jwkSet.getKeys());
 
-        final JwtValidator validator = new EncryptedJwtValidator( // TODO try reusing the instance field
+        final EncryptedJwtValidator validator = new EncryptedJwtValidator( // TODO try reusing the instance field
                 new DirectDecrypterFactory(new ImmutableJWKSet(jwkSet)) {
                     @Nonnull
                     @Override
@@ -114,7 +114,7 @@ class EncryptedJwtValidatorTest {
                         return JWEAlgorithm.A128KW;
                     }
                 },
-                delegateValidator
+                payloadValidator
         );
 
         final JWT stigmaToken = givenEncryptedToken(this.jwk);

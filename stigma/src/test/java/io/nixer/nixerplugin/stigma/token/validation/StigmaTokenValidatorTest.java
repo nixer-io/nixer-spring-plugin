@@ -40,7 +40,7 @@ class StigmaTokenValidatorTest {
     private static final Stigma STIGMA = new Stigma("random-stigma-value");
 
     @Mock
-    private JwtValidator jwtValidator;
+    private EncryptedJwtValidator jwtValidator;
 
     @Captor
     private ArgumentCaptor<JWT> jwtCaptor;

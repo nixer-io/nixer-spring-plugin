@@ -13,30 +13,30 @@ import static java.lang.String.format;
 
 /**
  * Verifies if the passed JWT is encrypted with the expected algorithm and method, failing fast in case any mismatch.
- * After encryption parameters are successfully verified the JWT is decrypted and passed to the {@link #delegate} validator
+ * After encryption parameters are successfully verified the JWT is decrypted and passed to the {@link #stigmaTokenPayloadValidator} validator
  * for further verification.
  *
  * Created on 2019-05-29.
  *
  * @author gcwiak
  */
-public class EncryptedJwtValidator implements JwtValidator {
+public class EncryptedJwtValidator {
 
     @Nonnull
     private final DecrypterFactory decrypterFactory;
 
     @Nonnull
-    private final JwtValidator delegate;
+    private final StigmaTokenPayloadValidator stigmaTokenPayloadValidator;
 
-    public EncryptedJwtValidator(@Nonnull final DecrypterFactory decrypterFactory, @Nonnull final JwtValidator delegate) {
-        Assert.notNull(decrypterFactory, "DecrypterFactory must not be null");
+    public EncryptedJwtValidator(@Nonnull final DecrypterFactory decrypterFactory,
+                                 @Nonnull final StigmaTokenPayloadValidator stigmaTokenPayloadValidator) {
+        Assert.notNull(stigmaTokenPayloadValidator, "stigmaTokenPayloadValidator must not be null");
+        Assert.notNull(decrypterFactory, "decrypterFactory must not be null");
         this.decrypterFactory = decrypterFactory;
-
-        Assert.notNull(delegate, "JwtValidator must not be null");
-        this.delegate = delegate;
+        this.stigmaTokenPayloadValidator = stigmaTokenPayloadValidator;
     }
 
-    @Override
+    @Nonnull
     public ValidationResult validate(@Nonnull final JWT jwt) {
         Assert.notNull(jwt, "JWT must not be null");
 
@@ -62,14 +62,16 @@ public class EncryptedJwtValidator implements JwtValidator {
             );
         }
 
-        // TODO validate header.getContentType();
-
         try {
             encryptedJWT.decrypt(decrypterFactory.decrypter(header));
         } catch (JOSEException e) {
             return ValidationResult.invalid(ValidationStatus.DECRYPTION_ERROR, format("Decryption error: [%s]", e.getMessage()));
         }
 
-        return delegate.validate(encryptedJWT);
+        return validatePayload(encryptedJWT);
+    }
+
+    private ValidationResult validatePayload(final EncryptedJWT encryptedJWT) {
+        return stigmaTokenPayloadValidator.validate(encryptedJWT);
     }
 }

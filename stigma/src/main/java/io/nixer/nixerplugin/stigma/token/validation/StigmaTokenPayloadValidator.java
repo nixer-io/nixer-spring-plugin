@@ -13,15 +13,15 @@ import org.springframework.util.StringUtils;
 import static java.lang.String.format;
 
 /**
- * Verifies if the passed JWT is parsable and it's payload contains a valid Stigma Token.
+ * Verifies if the passed JWT is parsable and it's payload contains {@link Stigma}.
  *
  * Created on 2019-05-29.
  *
  * @author gcwiak
  */
-public class StigmaTokenPayloadValidator implements JwtValidator {
+public class StigmaTokenPayloadValidator {
 
-    @Override
+    @Nonnull
     public ValidationResult validate(@Nonnull final JWT jwt) {
         Assert.notNull(jwt, "JWT must not be null");
 
