@@ -45,7 +45,7 @@ class StigmaActionEvaluatorTest {
     private StigmaExtractor stigmaExtractor;
 
     @Mock
-    private StigmaTokenService stigmaTokenService;
+    private StigmaService stigmaService;
 
     @Mock
     private StigmaValidator stigmaValidator;
@@ -58,7 +58,7 @@ class StigmaActionEvaluatorTest {
 
     @BeforeEach
     void setUp() {
-        lenient().when(stigmaTokenService.getNewStigma()).thenReturn(REFRESHED_STIGMA_DATA);
+        lenient().when(stigmaService.getNewStigma()).thenReturn(REFRESHED_STIGMA_DATA);
         lenient().when(stigmaTokenFactory.getToken(REFRESHED_STIGMA)).thenReturn(REFRESHED_STIGMA_TOKEN);
     }
 
@@ -66,7 +66,7 @@ class StigmaActionEvaluatorTest {
     void should_get_action_on_login_success_and_valid_stigma() {
         // given
         given(stigmaExtractor.extractStigma(STIGMA_TOKEN)).willReturn(STIGMA);
-        given(stigmaTokenService.findStigmaData(STIGMA)).willReturn(STIGMA_DATA);
+        given(stigmaService.findStigmaData(STIGMA)).willReturn(STIGMA_DATA);
         given(stigmaValidator.isValid(STIGMA_DATA)).willReturn(true);
 
         // when
@@ -94,7 +94,7 @@ class StigmaActionEvaluatorTest {
     void should_get_action_on_login_success_and_not_active_stigma() {
         // given
         given(stigmaExtractor.extractStigma(STIGMA_TOKEN)).willReturn(STIGMA);
-        given(stigmaTokenService.findStigmaData(STIGMA)).willReturn(STIGMA_DATA);
+        given(stigmaService.findStigmaData(STIGMA)).willReturn(STIGMA_DATA);
         given(stigmaValidator.isValid(STIGMA_DATA)).willReturn(false);
 
         // when
@@ -109,7 +109,7 @@ class StigmaActionEvaluatorTest {
     void should_get_action_on_login_failure_and_valid_token() {
         // given
         given(stigmaExtractor.extractStigma(STIGMA_TOKEN)).willReturn(STIGMA);
-        given(stigmaTokenService.findStigmaData(STIGMA)).willReturn(STIGMA_DATA);
+        given(stigmaService.findStigmaData(STIGMA)).willReturn(STIGMA_DATA);
         given(stigmaValidator.isValid(STIGMA_DATA)).willReturn(true);
 
         // when
@@ -137,7 +137,7 @@ class StigmaActionEvaluatorTest {
     void should_get_action_on_login_failure_and_not_active_stigma() {
         // given
         given(stigmaExtractor.extractStigma(STIGMA_TOKEN)).willReturn(STIGMA);
-        given(stigmaTokenService.findStigmaData(STIGMA)).willReturn(STIGMA_DATA);
+        given(stigmaService.findStigmaData(STIGMA)).willReturn(STIGMA_DATA);
         given(stigmaValidator.isValid(STIGMA_DATA)).willReturn(false);
 
         // when

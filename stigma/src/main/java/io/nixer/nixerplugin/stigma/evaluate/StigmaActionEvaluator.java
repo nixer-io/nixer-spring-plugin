@@ -23,18 +23,18 @@ public class StigmaActionEvaluator {
 
     private final StigmaExtractor stigmaExtractor;
 
-    private final StigmaTokenService stigmaTokenService;
+    private final StigmaService stigmaService;
 
     private final StigmaTokenFactory stigmaTokenFactory;
 
     private final StigmaValidator stigmaValidator;
 
     public StigmaActionEvaluator(final StigmaExtractor stigmaExtractor,
-                                 final StigmaTokenService stigmaTokenService,
+                                 final StigmaService stigmaService,
                                  final StigmaTokenFactory stigmaTokenFactory,
                                  final StigmaValidator stigmaValidator) {
         this.stigmaExtractor = stigmaExtractor;
-        this.stigmaTokenService = stigmaTokenService;
+        this.stigmaService = stigmaService;
         this.stigmaTokenFactory = stigmaTokenFactory;
         this.stigmaValidator = stigmaValidator;
     }
@@ -70,7 +70,7 @@ public class StigmaActionEvaluator {
 
         final StigmaAction stigmaAction;
         if (isStigmaValid(stigmaData)) {
-            stigmaTokenService.revokeStigma(stigmaData.getStigma());
+            stigmaService.revokeStigma(stigmaData.getStigma());
             stigmaAction = new StigmaAction(newStigmaToken(), TOKEN_GOOD_LOGIN_FAIL);
         } else {
             stigmaAction = new StigmaAction(newStigmaToken(), TOKEN_BAD_LOGIN_FAIL);
@@ -88,7 +88,7 @@ public class StigmaActionEvaluator {
             final Stigma stigma = extractStigma(stigmaToken);
 
             return stigma != null
-                    ? stigmaTokenService.findStigmaData(stigma)
+                    ? stigmaService.findStigmaData(stigma)
                     : null;
         } else {
             return null;
@@ -104,7 +104,7 @@ public class StigmaActionEvaluator {
     }
 
     private RawStigmaToken newStigmaToken() {
-        final StigmaData newStigma = stigmaTokenService.getNewStigma();
+        final StigmaData newStigma = stigmaService.getNewStigma();
 
         return stigmaTokenFactory.getToken(newStigma.getStigma());
     }

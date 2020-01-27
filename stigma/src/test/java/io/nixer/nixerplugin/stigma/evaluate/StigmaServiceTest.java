@@ -23,7 +23,7 @@ import static org.mockito.Mockito.verify;
  * @author gcwiak
  */
 @ExtendWith(MockitoExtension.class)
-class StigmaTokenServiceTest {
+class StigmaServiceTest {
 
     private static final Stigma STIGMA = new Stigma("stigma-value");
 
@@ -39,7 +39,7 @@ class StigmaTokenServiceTest {
     private StigmaValuesGenerator stigmaValuesGenerator;
 
     @InjectMocks
-    private StigmaTokenService stigmaTokenService;
+    private StigmaService stigmaService;
 
     @Test
     void should_find_stigma_data_for_valid_token() {
@@ -47,7 +47,7 @@ class StigmaTokenServiceTest {
         given(stigmaTokenStorage.findStigmaData(STIGMA)).willReturn(STIGMA_DATA);
 
         // when
-        final StigmaData stigmaData = stigmaTokenService.findStigmaData(STIGMA);
+        final StigmaData stigmaData = stigmaService.findStigmaData(STIGMA);
 
         // then
         assertThat(stigmaData).isEqualTo(STIGMA_DATA);
@@ -60,7 +60,7 @@ class StigmaTokenServiceTest {
         given(stigmaTokenStorage.findStigmaData(STIGMA)).willReturn(null);
 
         // when
-        final StigmaData stigmaData = stigmaTokenService.findStigmaData(STIGMA);
+        final StigmaData stigmaData = stigmaService.findStigmaData(STIGMA);
 
         // then
         assertThat(stigmaData).isNull();
@@ -70,7 +70,7 @@ class StigmaTokenServiceTest {
     @Test
     void should_revoke_stigma() {
         // when
-        stigmaTokenService.revokeStigma(STIGMA);
+        stigmaService.revokeStigma(STIGMA);
 
         // then
         verify(stigmaTokenStorage).updateStatus(STIGMA, StigmaStatus.REVOKED);
@@ -84,7 +84,7 @@ class StigmaTokenServiceTest {
         given(stigmaValuesGenerator.newStigma()).willReturn(stigmaData);
 
         // when
-        final StigmaData result = stigmaTokenService.getNewStigma();
+        final StigmaData result = stigmaService.getNewStigma();
 
         // then
         assertThat(result).isEqualTo(stigmaData);

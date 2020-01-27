@@ -18,9 +18,9 @@ import org.springframework.util.Assert;
  *
  * @author gcwiak
  */
-public class StigmaTokenService {
+public class StigmaService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(StigmaTokenService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(StigmaService.class);
 
     @Nonnull
     private final StigmaTokenStorage stigmaTokenStorage;
@@ -28,8 +28,8 @@ public class StigmaTokenService {
     @Nonnull
     private final StigmaValuesGenerator stigmaValuesGenerator;
 
-    public StigmaTokenService(@Nonnull final StigmaTokenStorage stigmaTokenStorage,
-                              @Nonnull final StigmaValuesGenerator stigmaValuesGenerator) {
+    public StigmaService(@Nonnull final StigmaTokenStorage stigmaTokenStorage,
+                         @Nonnull final StigmaValuesGenerator stigmaValuesGenerator) {
         this.stigmaTokenStorage = Preconditions.checkNotNull(stigmaTokenStorage, "stigmaTokenStorage");
         this.stigmaValuesGenerator = Preconditions.checkNotNull(stigmaValuesGenerator, "stigmaValuesGenerator");
     }
@@ -81,7 +81,7 @@ public class StigmaTokenService {
         try {
             stigmaTokenStorage.saveStigma(stigmaData);
         } catch (Exception e) {
-            LOGGER.error("Could not store stigma for stigma value: '{}'", stigmaData, e);
+            LOGGER.error("Could not store stigma: '{}'", stigmaData, e);
         }
     }
 }
