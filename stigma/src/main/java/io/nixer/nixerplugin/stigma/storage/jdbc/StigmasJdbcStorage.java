@@ -6,7 +6,7 @@ import javax.annotation.Nullable;
 import io.nixer.nixerplugin.stigma.domain.Stigma;
 import io.nixer.nixerplugin.stigma.domain.StigmaStatus;
 import io.nixer.nixerplugin.stigma.storage.StigmaData;
-import io.nixer.nixerplugin.stigma.storage.StigmaTokenStorage;
+import io.nixer.nixerplugin.stigma.storage.StigmaStorage;
 import org.springframework.util.Assert;
 
 /**
@@ -14,7 +14,7 @@ import org.springframework.util.Assert;
  *
  * @author Grzegorz Cwiak (gcwiak)
  */
-public class StigmasJdbcStorage implements StigmaTokenStorage {
+public class StigmasJdbcStorage implements StigmaStorage {
 
     private final StigmasJdbcDAO stigmasDAO;
 

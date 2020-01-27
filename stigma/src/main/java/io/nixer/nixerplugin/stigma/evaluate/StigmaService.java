@@ -7,7 +7,7 @@ import com.google.common.base.Preconditions;
 import io.nixer.nixerplugin.stigma.domain.Stigma;
 import io.nixer.nixerplugin.stigma.domain.StigmaStatus;
 import io.nixer.nixerplugin.stigma.storage.StigmaData;
-import io.nixer.nixerplugin.stigma.storage.StigmaTokenStorage;
+import io.nixer.nixerplugin.stigma.storage.StigmaStorage;
 import io.nixer.nixerplugin.stigma.token.StigmaValuesGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,14 +23,14 @@ public class StigmaService {
     private static final Logger LOGGER = LoggerFactory.getLogger(StigmaService.class);
 
     @Nonnull
-    private final StigmaTokenStorage stigmaTokenStorage;
+    private final StigmaStorage stigmaStorage;
 
     @Nonnull
     private final StigmaValuesGenerator stigmaValuesGenerator;
 
-    public StigmaService(@Nonnull final StigmaTokenStorage stigmaTokenStorage,
+    public StigmaService(@Nonnull final StigmaStorage stigmaStorage,
                          @Nonnull final StigmaValuesGenerator stigmaValuesGenerator) {
-        this.stigmaTokenStorage = Preconditions.checkNotNull(stigmaTokenStorage, "stigmaTokenStorage");
+        this.stigmaStorage = Preconditions.checkNotNull(stigmaStorage, "stigmaStorage");
         this.stigmaValuesGenerator = Preconditions.checkNotNull(stigmaValuesGenerator, "stigmaValuesGenerator");
     }
 
@@ -47,12 +47,12 @@ public class StigmaService {
 
     private StigmaData findStigmaDataInStorage(final Stigma stigma) {
 
-        final StigmaData stigmaValueData = stigmaTokenStorage.findStigmaData(stigma);
+        final StigmaData stigmaValueData = stigmaStorage.findStigmaData(stigma);
 
         if (stigmaValueData != null) {
-            stigmaTokenStorage.recordStigmaObservation(stigmaValueData);
+            stigmaStorage.recordStigmaObservation(stigmaValueData);
         } else {
-            stigmaTokenStorage.recordSpottingUnknownStigma(stigma);
+            stigmaStorage.recordSpottingUnknownStigma(stigma);
         }
 
         return stigmaValueData;
@@ -61,7 +61,7 @@ public class StigmaService {
     public void revokeStigma(@Nonnull final Stigma stigma) {
         Assert.notNull(stigma, "stigma must not be null");
         try {
-            stigmaTokenStorage.updateStatus(stigma, StigmaStatus.REVOKED);
+            stigmaStorage.updateStatus(stigma, StigmaStatus.REVOKED);
         } catch (Exception e) {
             LOGGER.error("Could not revoke stigma: '{}'", stigma, e);
         }
@@ -79,7 +79,7 @@ public class StigmaService {
 
     private void storeStigma(final StigmaData stigmaData) {
         try {
-            stigmaTokenStorage.saveStigma(stigmaData);
+            stigmaStorage.saveStigma(stigmaData);
         } catch (Exception e) {
             LOGGER.error("Could not store stigma: '{}'", stigmaData, e);
         }

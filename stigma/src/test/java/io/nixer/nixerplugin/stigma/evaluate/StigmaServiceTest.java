@@ -5,7 +5,7 @@ import java.time.Instant;
 import io.nixer.nixerplugin.stigma.domain.Stigma;
 import io.nixer.nixerplugin.stigma.domain.StigmaStatus;
 import io.nixer.nixerplugin.stigma.storage.StigmaData;
-import io.nixer.nixerplugin.stigma.storage.StigmaTokenStorage;
+import io.nixer.nixerplugin.stigma.storage.StigmaStorage;
 import io.nixer.nixerplugin.stigma.token.StigmaValuesGenerator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,7 +33,7 @@ class StigmaServiceTest {
             Instant.parse("2020-01-21T10:25:43.511Z"));
 
     @Mock
-    private StigmaTokenStorage stigmaTokenStorage;
+    private StigmaStorage stigmaStorage;
 
     @Mock
     private StigmaValuesGenerator stigmaValuesGenerator;
@@ -42,29 +42,29 @@ class StigmaServiceTest {
     private StigmaService stigmaService;
 
     @Test
-    void should_find_stigma_data_for_valid_token() {
+    void should_find_stigma_data() {
         // given
-        given(stigmaTokenStorage.findStigmaData(STIGMA)).willReturn(STIGMA_DATA);
+        given(stigmaStorage.findStigmaData(STIGMA)).willReturn(STIGMA_DATA);
 
         // when
         final StigmaData stigmaData = stigmaService.findStigmaData(STIGMA);
 
         // then
         assertThat(stigmaData).isEqualTo(STIGMA_DATA);
-        verify(stigmaTokenStorage).recordStigmaObservation(STIGMA_DATA);
+        verify(stigmaStorage).recordStigmaObservation(STIGMA_DATA);
     }
 
     @Test
     void should_return_empty_result_when_stigma_not_found_in_storage() {
         // given
-        given(stigmaTokenStorage.findStigmaData(STIGMA)).willReturn(null);
+        given(stigmaStorage.findStigmaData(STIGMA)).willReturn(null);
 
         // when
         final StigmaData stigmaData = stigmaService.findStigmaData(STIGMA);
 
         // then
         assertThat(stigmaData).isNull();
-        verify(stigmaTokenStorage).recordSpottingUnknownStigma(STIGMA);
+        verify(stigmaStorage).recordSpottingUnknownStigma(STIGMA);
     }
 
     @Test
@@ -73,11 +73,11 @@ class StigmaServiceTest {
         stigmaService.revokeStigma(STIGMA);
 
         // then
-        verify(stigmaTokenStorage).updateStatus(STIGMA, StigmaStatus.REVOKED);
+        verify(stigmaStorage).updateStatus(STIGMA, StigmaStatus.REVOKED);
     }
 
     @Test
-    void should_generate_new_stigma_token() {
+    void should_generate_new_stigma() {
         // given
         final Stigma stigma = new Stigma("new-stigma-value");
         final StigmaData stigmaData = new StigmaData(stigma, StigmaStatus.ACTIVE, Instant.parse("2020-01-22T11:26:44.512Z"));
@@ -88,6 +88,6 @@ class StigmaServiceTest {
 
         // then
         assertThat(result).isEqualTo(stigmaData);
-        verify(stigmaTokenStorage).saveStigma(stigmaData);
+        verify(stigmaStorage).saveStigma(stigmaData);
     }
 }
