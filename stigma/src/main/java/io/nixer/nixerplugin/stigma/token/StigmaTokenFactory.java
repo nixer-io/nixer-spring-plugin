@@ -23,13 +23,13 @@ import org.springframework.util.Assert;
  *
  * @author gcwiak
  */
-public class EncryptedStigmaTokenProvider {
+public class StigmaTokenFactory {
 
     private final Log logger = LogFactory.getLog(getClass());
 
     private final EncrypterFactory encrypterFactory;
 
-    public EncryptedStigmaTokenProvider(final EncrypterFactory encrypterFactory) {
+    public StigmaTokenFactory(final EncrypterFactory encrypterFactory) {
         this.encrypterFactory = encrypterFactory;
     }
 

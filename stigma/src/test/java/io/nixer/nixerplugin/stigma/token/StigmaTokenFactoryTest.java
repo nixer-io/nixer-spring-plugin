@@ -4,7 +4,6 @@ import java.io.File;
 import java.text.ParseException;
 import java.util.Map;
 
-import com.google.common.collect.Iterables;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWEObject;
 import com.nimbusds.jose.crypto.DirectDecrypter;
@@ -25,13 +24,13 @@ import static org.assertj.core.api.Assertions.entry;
  *
  * @author gcwiak
  */
-class EncryptedStigmaTokenProviderTest {
+class StigmaTokenFactoryTest {
 
     private static final Stigma STIGMA = new Stigma("123456789000");
 
     private OctetSequenceKey jwk;
 
-    private EncryptedStigmaTokenProvider stigmaTokenProvider;
+    private StigmaTokenFactory stigmaTokenFactory;
 
     @BeforeEach
     void setUp() throws Exception {
@@ -40,13 +39,13 @@ class EncryptedStigmaTokenProviderTest {
 
         jwk = (OctetSequenceKey) jwkSet.getKeys().get(0);
 
-        stigmaTokenProvider = new EncryptedStigmaTokenProvider(new DirectEncrypterFactory(jwk));
+        stigmaTokenFactory = new StigmaTokenFactory(new DirectEncrypterFactory(jwk));
     }
 
     @Test
     void should_create_encrypted_token() throws JOSEException, ParseException {
         // when
-        final JWT token = stigmaTokenProvider.getToken(STIGMA);
+        final JWT token = stigmaTokenFactory.getToken(STIGMA);
 
         // then
         assertThat(token).isNotNull().isInstanceOf(EncryptedJWT.class);

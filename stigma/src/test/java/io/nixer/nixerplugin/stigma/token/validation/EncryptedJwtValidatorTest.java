@@ -22,7 +22,7 @@ import com.nimbusds.jwt.PlainJWT;
 import io.nixer.nixerplugin.stigma.crypto.DirectDecrypterFactory;
 import io.nixer.nixerplugin.stigma.crypto.DirectEncrypterFactory;
 import io.nixer.nixerplugin.stigma.domain.Stigma;
-import io.nixer.nixerplugin.stigma.token.EncryptedStigmaTokenProvider;
+import io.nixer.nixerplugin.stigma.token.StigmaTokenFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -80,7 +80,7 @@ class EncryptedJwtValidatorTest {
     @Test
     void should_fail_validation_on_incorrect_encryption_method() {
         // given
-        final EncryptedStigmaTokenProvider encryptedTokenProvider = new EncryptedStigmaTokenProvider(
+        final StigmaTokenFactory stigmaTokenFactory = new StigmaTokenFactory(
                 new DirectEncrypterFactory(jwk) {
                     @Nonnull
                     @Override
@@ -90,7 +90,7 @@ class EncryptedJwtValidatorTest {
                 }
         );
 
-        final JWT stigmaToken = encryptedTokenProvider.getToken(STIGMA);
+        final JWT stigmaToken = stigmaTokenFactory.getToken(STIGMA);
 
         // when
         final ValidationResult result = validator.validate(stigmaToken);
@@ -156,8 +156,8 @@ class EncryptedJwtValidatorTest {
     }
 
     private JWT givenEncryptedToken(final OctetSequenceKey encryptionKey) {
-        final EncryptedStigmaTokenProvider encryptedTokenProvider = new EncryptedStigmaTokenProvider(new DirectEncrypterFactory(encryptionKey));
+        final StigmaTokenFactory stigmaTokenFactory = new StigmaTokenFactory(new DirectEncrypterFactory(encryptionKey));
 
-        return encryptedTokenProvider.getToken(STIGMA);
+        return stigmaTokenFactory.getToken(STIGMA);
     }
 }

@@ -8,7 +8,7 @@ import io.nixer.nixerplugin.stigma.domain.Stigma;
 import io.nixer.nixerplugin.stigma.domain.StigmaStatus;
 import io.nixer.nixerplugin.stigma.storage.StigmaData;
 import io.nixer.nixerplugin.stigma.storage.StigmaTokenStorage;
-import io.nixer.nixerplugin.stigma.token.EncryptedStigmaTokenProvider;
+import io.nixer.nixerplugin.stigma.token.StigmaTokenFactory;
 import io.nixer.nixerplugin.stigma.token.StigmaValuesGenerator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,7 +37,7 @@ class StigmaTokenServiceTest {
             Instant.parse("2020-01-21T10:25:43.511Z"));
 
     @Mock
-    private EncryptedStigmaTokenProvider stigmaTokenProvider;
+    private StigmaTokenFactory stigmaTokenFactory;
 
     @Mock
     private StigmaTokenStorage stigmaTokenStorage;
@@ -94,7 +94,7 @@ class StigmaTokenServiceTest {
         final String serializedToken = "serialized-token";
         given(token.serialize()).willReturn(serializedToken);
 
-        given(stigmaTokenProvider.getToken(stigma)).willReturn(token);
+        given(stigmaTokenFactory.getToken(stigma)).willReturn(token);
 
         // when
         final RawStigmaToken newStigmaToken = stigmaTokenService.newStigmaToken();
