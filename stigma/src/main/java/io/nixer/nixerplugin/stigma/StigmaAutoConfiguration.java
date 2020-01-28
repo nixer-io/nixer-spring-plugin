@@ -21,7 +21,7 @@ import io.nixer.nixerplugin.stigma.storage.jdbc.JdbcDAOConfigurer;
 import io.nixer.nixerplugin.stigma.storage.jdbc.StigmasJdbcDAO;
 import io.nixer.nixerplugin.stigma.storage.jdbc.StigmasJdbcStorage;
 import io.nixer.nixerplugin.stigma.token.StigmaGenerator;
-import io.nixer.nixerplugin.stigma.token.StigmaTokenFactory;
+import io.nixer.nixerplugin.stigma.token.create.StigmaTokenFactory;
 import io.nixer.nixerplugin.stigma.token.reading.StigmaExtractor;
 import io.nixer.nixerplugin.stigma.token.reading.TokenDecrypter;
 import io.nixer.nixerplugin.stigma.token.reading.TokenParser;

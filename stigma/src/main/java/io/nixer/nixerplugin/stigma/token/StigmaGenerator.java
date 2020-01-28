@@ -8,6 +8,7 @@ import io.nixer.nixerplugin.stigma.domain.RawStigmaToken;
 import io.nixer.nixerplugin.stigma.domain.Stigma;
 import io.nixer.nixerplugin.stigma.domain.StigmaStatus;
 import io.nixer.nixerplugin.stigma.storage.StigmaData;
+import io.nixer.nixerplugin.stigma.token.create.StigmaTokenFactory;
 
 /**
  * Generates values of Stigma to be used as content of Stigma Tokens.

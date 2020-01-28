@@ -6,7 +6,7 @@ import io.nixer.nixerplugin.stigma.domain.RawStigmaToken;
 import io.nixer.nixerplugin.stigma.domain.Stigma;
 import io.nixer.nixerplugin.stigma.storage.StigmaData;
 import io.nixer.nixerplugin.stigma.token.reading.StigmaExtractor;
-import io.nixer.nixerplugin.stigma.token.StigmaTokenFactory;
+import io.nixer.nixerplugin.stigma.token.create.StigmaTokenFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

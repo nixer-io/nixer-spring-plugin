@@ -1,4 +1,4 @@
-package io.nixer.nixerplugin.stigma.token;
+package io.nixer.nixerplugin.stigma.token.create;
 
 import javax.annotation.Nonnull;
 
@@ -10,6 +10,7 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import io.nixer.nixerplugin.stigma.crypto.EncrypterFactory;
 import io.nixer.nixerplugin.stigma.domain.RawStigmaToken;
 import io.nixer.nixerplugin.stigma.domain.Stigma;
+import io.nixer.nixerplugin.stigma.token.StigmaTokenConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.util.Assert;

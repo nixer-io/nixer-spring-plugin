@@ -23,7 +23,7 @@ import com.nimbusds.jwt.PlainJWT;
 import io.nixer.nixerplugin.stigma.crypto.DirectDecrypterFactory;
 import io.nixer.nixerplugin.stigma.crypto.DirectEncrypterFactory;
 import io.nixer.nixerplugin.stigma.domain.Stigma;
-import io.nixer.nixerplugin.stigma.token.StigmaTokenFactory;
+import io.nixer.nixerplugin.stigma.token.create.StigmaTokenFactory;
 import io.nixer.nixerplugin.stigma.token.reading.DecryptedToken.DecryptionStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

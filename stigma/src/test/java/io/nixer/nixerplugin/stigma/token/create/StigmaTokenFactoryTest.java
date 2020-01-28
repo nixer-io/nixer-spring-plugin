@@ -1,4 +1,4 @@
-package io.nixer.nixerplugin.stigma.token;
+package io.nixer.nixerplugin.stigma.token.create;
 
 import java.io.File;
 import java.text.ParseException;
@@ -15,6 +15,7 @@ import com.nimbusds.jwt.JWTParser;
 import io.nixer.nixerplugin.stigma.crypto.DirectEncrypterFactory;
 import io.nixer.nixerplugin.stigma.domain.RawStigmaToken;
 import io.nixer.nixerplugin.stigma.domain.Stigma;
+import io.nixer.nixerplugin.stigma.token.StigmaTokenConstants;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
