@@ -7,8 +7,8 @@ import io.nixer.nixerplugin.core.login.LoginActivityHandler;
 import io.nixer.nixerplugin.core.login.LoginContext;
 import io.nixer.nixerplugin.core.login.LoginResult;
 import io.nixer.nixerplugin.stigma.domain.RawStigmaToken;
-import io.nixer.nixerplugin.stigma.evaluate.StigmaAction;
-import io.nixer.nixerplugin.stigma.evaluate.StigmaActionEvaluator;
+import io.nixer.nixerplugin.stigma.evaluate.StigmaDecision;
+import io.nixer.nixerplugin.stigma.evaluate.StigmaDecisionMaker;
 
 /**
  * Entry point for StigmaToken-based credential stuffing protection mechanism.
@@ -23,16 +23,16 @@ public class StigmaLoginActivityHandler implements LoginActivityHandler {
     private final HttpServletResponse response;
 
     private final StigmaCookieService stigmaCookieService;
-    private final StigmaActionEvaluator stigmaActionEvaluator;
+    private final StigmaDecisionMaker stigmaDecisionMaker;
 
     public StigmaLoginActivityHandler(final HttpServletRequest request,
                                       final HttpServletResponse response,
                                       final StigmaCookieService stigmaCookieService,
-                                      final StigmaActionEvaluator stigmaActionEvaluator) {
+                                      final StigmaDecisionMaker stigmaDecisionMaker) {
         this.request = request;
         this.response = response;
         this.stigmaCookieService = stigmaCookieService;
-        this.stigmaActionEvaluator = stigmaActionEvaluator;
+        this.stigmaDecisionMaker = stigmaDecisionMaker;
     }
 
     @Override
@@ -40,12 +40,12 @@ public class StigmaLoginActivityHandler implements LoginActivityHandler {
 
         final RawStigmaToken receivedStigmaToken = stigmaCookieService.readStigmaToken(request);
 
-        final StigmaAction action = loginResult.isSuccess()
-                ? stigmaActionEvaluator.onLoginSuccess(receivedStigmaToken)
-                : stigmaActionEvaluator.onLoginFail(receivedStigmaToken);
+        final StigmaDecision decision = loginResult.isSuccess()
+                ? stigmaDecisionMaker.onLoginSuccess(receivedStigmaToken)
+                : stigmaDecisionMaker.onLoginFail(receivedStigmaToken);
 
-        if (action.isTokenRefreshRequired()) {
-            stigmaCookieService.writeStigmaToken(response, action.getStigmaToken());
-        }
+        decision.apply(
+                stigmaToken -> stigmaCookieService.writeStigmaToken(response, stigmaToken)
+        );
     }
 }
