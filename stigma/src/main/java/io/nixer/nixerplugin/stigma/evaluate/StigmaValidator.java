@@ -6,7 +6,7 @@ import javax.annotation.Nullable;
 
 import io.nixer.nixerplugin.core.util.NowSource;
 import io.nixer.nixerplugin.stigma.domain.StigmaStatus;
-import io.nixer.nixerplugin.stigma.storage.StigmaDetails;
+import io.nixer.nixerplugin.stigma.domain.StigmaDetails;
 
 /**
  * Created on 21/01/2020.

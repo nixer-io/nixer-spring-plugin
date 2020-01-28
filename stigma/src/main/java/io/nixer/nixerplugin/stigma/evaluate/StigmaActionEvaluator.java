@@ -5,7 +5,7 @@ import javax.annotation.Nullable;
 
 import io.nixer.nixerplugin.stigma.domain.RawStigmaToken;
 import io.nixer.nixerplugin.stigma.domain.Stigma;
-import io.nixer.nixerplugin.stigma.storage.StigmaDetails;
+import io.nixer.nixerplugin.stigma.domain.StigmaDetails;
 import io.nixer.nixerplugin.stigma.token.read.StigmaExtractor;
 import io.nixer.nixerplugin.stigma.token.create.StigmaTokenFactory;
 

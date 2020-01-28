@@ -1,4 +1,4 @@
-package io.nixer.nixerplugin.stigma.storage;
+package io.nixer.nixerplugin.stigma.domain;
 
 import java.time.Instant;
 import java.util.Objects;
@@ -7,8 +7,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 
 import com.google.common.base.Preconditions;
-import io.nixer.nixerplugin.stigma.domain.Stigma;
-import io.nixer.nixerplugin.stigma.domain.StigmaStatus;
 
 /**
  * Created on 2019-06-05.

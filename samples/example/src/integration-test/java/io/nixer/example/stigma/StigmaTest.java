@@ -4,7 +4,7 @@ import java.util.List;
 import javax.servlet.http.Cookie;
 
 import io.nixer.nixerplugin.stigma.domain.StigmaStatus;
-import io.nixer.nixerplugin.stigma.storage.StigmaDetails;
+import io.nixer.nixerplugin.stigma.domain.StigmaDetails;
 import io.nixer.nixerplugin.stigma.storage.jdbc.StigmasJdbcDAO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

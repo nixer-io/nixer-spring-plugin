@@ -7,7 +7,7 @@ import io.nixer.nixerplugin.core.util.NowSource;
 import io.nixer.nixerplugin.stigma.domain.RawStigmaToken;
 import io.nixer.nixerplugin.stigma.domain.Stigma;
 import io.nixer.nixerplugin.stigma.domain.StigmaStatus;
-import io.nixer.nixerplugin.stigma.storage.StigmaDetails;
+import io.nixer.nixerplugin.stigma.domain.StigmaDetails;
 import io.nixer.nixerplugin.stigma.token.create.StigmaTokenFactory;
 
 /**

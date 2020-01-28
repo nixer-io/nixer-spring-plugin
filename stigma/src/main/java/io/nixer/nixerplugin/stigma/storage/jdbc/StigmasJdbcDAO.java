@@ -4,7 +4,7 @@ import java.util.List;
 
 import io.nixer.nixerplugin.stigma.domain.Stigma;
 import io.nixer.nixerplugin.stigma.domain.StigmaStatus;
-import io.nixer.nixerplugin.stigma.storage.StigmaDetails;
+import io.nixer.nixerplugin.stigma.domain.StigmaDetails;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 

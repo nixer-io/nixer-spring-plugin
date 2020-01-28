@@ -8,7 +8,7 @@ import java.time.ZoneOffset;
 import io.nixer.nixerplugin.core.util.NowSource;
 import io.nixer.nixerplugin.stigma.domain.Stigma;
 import io.nixer.nixerplugin.stigma.domain.StigmaStatus;
-import io.nixer.nixerplugin.stigma.storage.StigmaDetails;
+import io.nixer.nixerplugin.stigma.domain.StigmaDetails;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

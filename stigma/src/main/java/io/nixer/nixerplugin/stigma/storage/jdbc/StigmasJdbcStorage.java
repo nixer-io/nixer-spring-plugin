@@ -5,7 +5,7 @@ import javax.annotation.Nullable;
 
 import io.nixer.nixerplugin.stigma.domain.Stigma;
 import io.nixer.nixerplugin.stigma.domain.StigmaStatus;
-import io.nixer.nixerplugin.stigma.storage.StigmaDetails;
+import io.nixer.nixerplugin.stigma.domain.StigmaDetails;
 import io.nixer.nixerplugin.stigma.storage.StigmaStorage;
 import org.springframework.util.Assert;
 
