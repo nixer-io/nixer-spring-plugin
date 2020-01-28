@@ -5,7 +5,7 @@ import javax.annotation.Nonnull;
 
 import com.nimbusds.jwt.JWTClaimsSet;
 import io.nixer.nixerplugin.stigma.domain.Stigma;
-import io.nixer.nixerplugin.stigma.token.StigmaTokenConstants;
+import io.nixer.nixerplugin.stigma.StigmaConstants;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
@@ -47,14 +47,14 @@ public class TokenParser {
 
     private ParsedToken parsePayload(final JWTClaimsSet claims) {
 
-        final Object stigmaValue = claims.getClaim(StigmaTokenConstants.STIGMA_VALUE_FIELD_NAME);
+        final Object stigmaValue = claims.getClaim(StigmaConstants.STIGMA_VALUE_FIELD_NAME);
         if (stigmaValue == null || StringUtils.isEmpty(stigmaValue.toString())) {
             return ParsedToken.invalid(MISSING_STIGMA, format("Missing stigma. Claims were: [%s]", claims));
         }
 
         final Stigma stigma = new Stigma(stigmaValue.toString());
 
-        if (!StigmaTokenConstants.SUBJECT.equals(claims.getSubject())) {
+        if (!StigmaConstants.SUBJECT.equals(claims.getSubject())) {
             return ParsedToken.invalid(INVALID_PAYLOAD, format("Invalid subject. Claims were: [%s]", claims));
         }
 

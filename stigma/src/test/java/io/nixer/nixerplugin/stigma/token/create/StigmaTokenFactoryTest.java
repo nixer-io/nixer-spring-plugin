@@ -15,7 +15,7 @@ import com.nimbusds.jwt.JWTParser;
 import io.nixer.nixerplugin.stigma.crypto.DirectEncrypterFactory;
 import io.nixer.nixerplugin.stigma.domain.RawStigmaToken;
 import io.nixer.nixerplugin.stigma.domain.Stigma;
-import io.nixer.nixerplugin.stigma.token.StigmaTokenConstants;
+import io.nixer.nixerplugin.stigma.StigmaConstants;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -63,8 +63,8 @@ class StigmaTokenFactoryTest {
 
         final Map<String, Object> claims = token.getJWTClaimsSet().getClaims();
         assertThat(claims).contains(
-                entry("sub", StigmaTokenConstants.SUBJECT),
-                entry(StigmaTokenConstants.STIGMA_VALUE_FIELD_NAME, STIGMA.getValue())
+                entry("sub", StigmaConstants.SUBJECT),
+                entry(StigmaConstants.STIGMA_VALUE_FIELD_NAME, STIGMA.getValue())
         );
     }
 }

@@ -10,7 +10,7 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import io.nixer.nixerplugin.stigma.crypto.EncrypterFactory;
 import io.nixer.nixerplugin.stigma.domain.RawStigmaToken;
 import io.nixer.nixerplugin.stigma.domain.Stigma;
-import io.nixer.nixerplugin.stigma.token.StigmaTokenConstants;
+import io.nixer.nixerplugin.stigma.StigmaConstants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.util.Assert;
@@ -71,8 +71,8 @@ public class StigmaTokenFactory {
 
     private JWTClaimsSet buildClaims(final Stigma stigma) {
         return new JWTClaimsSet.Builder()
-                .subject(StigmaTokenConstants.SUBJECT)
-                .claim(StigmaTokenConstants.STIGMA_VALUE_FIELD_NAME, stigma.getValue())
+                .subject(StigmaConstants.SUBJECT)
+                .claim(StigmaConstants.STIGMA_VALUE_FIELD_NAME, stigma.getValue())
                 .build();
     }
 }

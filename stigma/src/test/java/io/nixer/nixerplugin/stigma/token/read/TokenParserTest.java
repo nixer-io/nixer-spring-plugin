@@ -8,8 +8,8 @@ import io.nixer.nixerplugin.stigma.domain.Stigma;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import static io.nixer.nixerplugin.stigma.token.StigmaTokenConstants.STIGMA_VALUE_FIELD_NAME;
-import static io.nixer.nixerplugin.stigma.token.StigmaTokenConstants.SUBJECT;
+import static io.nixer.nixerplugin.stigma.StigmaConstants.STIGMA_VALUE_FIELD_NAME;
+import static io.nixer.nixerplugin.stigma.StigmaConstants.SUBJECT;
 import static io.nixer.nixerplugin.stigma.token.read.ParsedToken.ParsingStatus;
 import static io.nixer.nixerplugin.stigma.token.read.ParsedToken.valid;
 import static org.assertj.core.api.Assertions.assertThat;
