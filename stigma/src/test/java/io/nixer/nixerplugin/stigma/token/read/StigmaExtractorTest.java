@@ -1,4 +1,4 @@
-package io.nixer.nixerplugin.stigma.token.reading;
+package io.nixer.nixerplugin.stigma.token.read;
 
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.PlainJWT;

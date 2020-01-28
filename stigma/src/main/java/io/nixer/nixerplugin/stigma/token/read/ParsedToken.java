@@ -1,4 +1,4 @@
-package io.nixer.nixerplugin.stigma.token.reading;
+package io.nixer.nixerplugin.stigma.token.read;
 
 import java.util.Objects;
 import java.util.StringJoiner;
@@ -8,7 +8,7 @@ import javax.annotation.Nullable;
 import io.nixer.nixerplugin.stigma.domain.Stigma;
 import org.springframework.util.Assert;
 
-import static io.nixer.nixerplugin.stigma.token.reading.ParsedToken.ParsingStatus.VALID;
+import static io.nixer.nixerplugin.stigma.token.read.ParsedToken.ParsingStatus.VALID;
 
 /**
  * Created on 27/01/2020.

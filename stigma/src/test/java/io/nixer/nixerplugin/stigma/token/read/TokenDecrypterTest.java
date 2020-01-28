@@ -1,4 +1,4 @@
-package io.nixer.nixerplugin.stigma.token.reading;
+package io.nixer.nixerplugin.stigma.token.read;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,7 +24,7 @@ import io.nixer.nixerplugin.stigma.crypto.DirectDecrypterFactory;
 import io.nixer.nixerplugin.stigma.crypto.DirectEncrypterFactory;
 import io.nixer.nixerplugin.stigma.domain.Stigma;
 import io.nixer.nixerplugin.stigma.token.create.StigmaTokenFactory;
-import io.nixer.nixerplugin.stigma.token.reading.DecryptedToken.DecryptionStatus;
+import io.nixer.nixerplugin.stigma.token.read.DecryptedToken.DecryptionStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

@@ -1,4 +1,4 @@
-package io.nixer.nixerplugin.stigma.token.reading;
+package io.nixer.nixerplugin.stigma.token.read;
 
 import java.text.ParseException;
 import java.util.Objects;
@@ -11,7 +11,7 @@ import com.nimbusds.jwt.EncryptedJWT;
 import com.nimbusds.jwt.JWTClaimsSet;
 import org.springframework.util.Assert;
 
-import static io.nixer.nixerplugin.stigma.token.reading.DecryptedToken.DecryptionStatus.VALID;
+import static io.nixer.nixerplugin.stigma.token.read.DecryptedToken.DecryptionStatus.VALID;
 
 /**
  * Created on 27/01/2020.

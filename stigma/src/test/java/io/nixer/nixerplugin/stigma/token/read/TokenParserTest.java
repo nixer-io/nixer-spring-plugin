@@ -1,4 +1,4 @@
-package io.nixer.nixerplugin.stigma.token.reading;
+package io.nixer.nixerplugin.stigma.token.read;
 
 import java.text.ParseException;
 import java.util.function.Consumer;
@@ -10,8 +10,8 @@ import org.mockito.Mockito;
 
 import static io.nixer.nixerplugin.stigma.token.StigmaTokenConstants.STIGMA_VALUE_FIELD_NAME;
 import static io.nixer.nixerplugin.stigma.token.StigmaTokenConstants.SUBJECT;
-import static io.nixer.nixerplugin.stigma.token.reading.ParsedToken.ParsingStatus;
-import static io.nixer.nixerplugin.stigma.token.reading.ParsedToken.valid;
+import static io.nixer.nixerplugin.stigma.token.read.ParsedToken.ParsingStatus;
+import static io.nixer.nixerplugin.stigma.token.read.ParsedToken.valid;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 
