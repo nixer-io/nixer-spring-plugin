@@ -1,4 +1,4 @@
-package io.nixer.nixerplugin.stigma.token;
+package io.nixer.nixerplugin.stigma.generate;
 
 import java.security.SecureRandom;
 import javax.annotation.Nonnull;

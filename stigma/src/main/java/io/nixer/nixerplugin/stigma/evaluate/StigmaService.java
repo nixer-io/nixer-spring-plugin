@@ -8,7 +8,7 @@ import io.nixer.nixerplugin.stigma.domain.Stigma;
 import io.nixer.nixerplugin.stigma.domain.StigmaStatus;
 import io.nixer.nixerplugin.stigma.storage.StigmaData;
 import io.nixer.nixerplugin.stigma.storage.StigmaStorage;
-import io.nixer.nixerplugin.stigma.token.StigmaGenerator;
+import io.nixer.nixerplugin.stigma.generate.StigmaGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;

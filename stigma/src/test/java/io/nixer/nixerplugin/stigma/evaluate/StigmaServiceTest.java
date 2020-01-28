@@ -6,7 +6,7 @@ import io.nixer.nixerplugin.stigma.domain.Stigma;
 import io.nixer.nixerplugin.stigma.domain.StigmaStatus;
 import io.nixer.nixerplugin.stigma.storage.StigmaData;
 import io.nixer.nixerplugin.stigma.storage.StigmaStorage;
-import io.nixer.nixerplugin.stigma.token.StigmaGenerator;
+import io.nixer.nixerplugin.stigma.generate.StigmaGenerator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
