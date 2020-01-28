@@ -1,4 +1,4 @@
-package io.nixer.nixerplugin.stigma.evaluate;
+package io.nixer.nixerplugin.stigma.decision;
 
 /**
  * Represents a login attempt and it's result in combination with status of Stigma Token used during this attempt.

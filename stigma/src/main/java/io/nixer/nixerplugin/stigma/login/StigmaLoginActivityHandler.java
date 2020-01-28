@@ -7,8 +7,8 @@ import io.nixer.nixerplugin.core.login.LoginActivityHandler;
 import io.nixer.nixerplugin.core.login.LoginContext;
 import io.nixer.nixerplugin.core.login.LoginResult;
 import io.nixer.nixerplugin.stigma.domain.RawStigmaToken;
-import io.nixer.nixerplugin.stigma.evaluate.StigmaDecision;
-import io.nixer.nixerplugin.stigma.evaluate.StigmaDecisionMaker;
+import io.nixer.nixerplugin.stigma.decision.StigmaDecision;
+import io.nixer.nixerplugin.stigma.decision.StigmaDecisionMaker;
 
 /**
  * Entry point for StigmaToken-based credential stuffing protection mechanism.

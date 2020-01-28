@@ -1,4 +1,4 @@
-package io.nixer.nixerplugin.stigma.evaluate;
+package io.nixer.nixerplugin.stigma.decision;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -9,10 +9,10 @@ import io.nixer.nixerplugin.stigma.domain.StigmaDetails;
 import io.nixer.nixerplugin.stigma.token.create.StigmaTokenFactory;
 import io.nixer.nixerplugin.stigma.token.read.StigmaExtractor;
 
-import static io.nixer.nixerplugin.stigma.evaluate.StigmaEvent.TOKEN_BAD_LOGIN_FAIL;
-import static io.nixer.nixerplugin.stigma.evaluate.StigmaEvent.TOKEN_BAD_LOGIN_SUCCESS;
-import static io.nixer.nixerplugin.stigma.evaluate.StigmaEvent.TOKEN_GOOD_LOGIN_FAIL;
-import static io.nixer.nixerplugin.stigma.evaluate.StigmaEvent.TOKEN_GOOD_LOGIN_SUCCESS;
+import static io.nixer.nixerplugin.stigma.decision.StigmaEvent.TOKEN_BAD_LOGIN_FAIL;
+import static io.nixer.nixerplugin.stigma.decision.StigmaEvent.TOKEN_BAD_LOGIN_SUCCESS;
+import static io.nixer.nixerplugin.stigma.decision.StigmaEvent.TOKEN_GOOD_LOGIN_FAIL;
+import static io.nixer.nixerplugin.stigma.decision.StigmaEvent.TOKEN_GOOD_LOGIN_SUCCESS;
 
 /**
  * Created on 2019-04-29.

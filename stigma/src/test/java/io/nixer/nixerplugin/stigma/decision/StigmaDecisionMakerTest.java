@@ -1,4 +1,4 @@
-package io.nixer.nixerplugin.stigma.evaluate;
+package io.nixer.nixerplugin.stigma.decision;
 
 import java.time.Instant;
 
@@ -15,10 +15,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static io.nixer.nixerplugin.stigma.domain.StigmaStatus.ACTIVE;
-import static io.nixer.nixerplugin.stigma.evaluate.StigmaEvent.TOKEN_BAD_LOGIN_FAIL;
-import static io.nixer.nixerplugin.stigma.evaluate.StigmaEvent.TOKEN_BAD_LOGIN_SUCCESS;
-import static io.nixer.nixerplugin.stigma.evaluate.StigmaEvent.TOKEN_GOOD_LOGIN_FAIL;
-import static io.nixer.nixerplugin.stigma.evaluate.StigmaEvent.TOKEN_GOOD_LOGIN_SUCCESS;
+import static io.nixer.nixerplugin.stigma.decision.StigmaEvent.TOKEN_BAD_LOGIN_FAIL;
+import static io.nixer.nixerplugin.stigma.decision.StigmaEvent.TOKEN_BAD_LOGIN_SUCCESS;
+import static io.nixer.nixerplugin.stigma.decision.StigmaEvent.TOKEN_GOOD_LOGIN_FAIL;
+import static io.nixer.nixerplugin.stigma.decision.StigmaEvent.TOKEN_GOOD_LOGIN_SUCCESS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.lenient;
