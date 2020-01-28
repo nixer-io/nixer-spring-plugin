@@ -4,7 +4,7 @@ import java.time.Duration;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-import static io.nixer.nixerplugin.stigma.token.StigmaTokenConstants.DEFAULT_STIGMA_LIFETIME;
+import static io.nixer.nixerplugin.stigma.StigmaConstants.DEFAULT_STIGMA_LIFETIME;
 
 @ConfigurationProperties(prefix = "nixer.stigma")
 public class StigmaProperties {

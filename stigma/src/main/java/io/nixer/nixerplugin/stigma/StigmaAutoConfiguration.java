@@ -12,27 +12,23 @@ import io.nixer.nixerplugin.stigma.crypto.DirectDecrypterFactory;
 import io.nixer.nixerplugin.stigma.crypto.DirectEncrypterFactory;
 import io.nixer.nixerplugin.stigma.crypto.KeysLoader;
 import io.nixer.nixerplugin.stigma.evaluate.StigmaActionEvaluator;
-import io.nixer.nixerplugin.stigma.evaluate.StigmaTokenService;
+import io.nixer.nixerplugin.stigma.evaluate.StigmaService;
 import io.nixer.nixerplugin.stigma.evaluate.StigmaValidator;
 import io.nixer.nixerplugin.stigma.login.StigmaCookieService;
 import io.nixer.nixerplugin.stigma.login.StigmaLoginActivityHandler;
-import io.nixer.nixerplugin.stigma.storage.StigmaTokenStorage;
+import io.nixer.nixerplugin.stigma.storage.StigmaStorage;
 import io.nixer.nixerplugin.stigma.storage.jdbc.JdbcDAOConfigurer;
 import io.nixer.nixerplugin.stigma.storage.jdbc.StigmasJdbcDAO;
 import io.nixer.nixerplugin.stigma.storage.jdbc.StigmasJdbcStorage;
-import io.nixer.nixerplugin.stigma.token.EncryptedStigmaTokenProvider;
-import io.nixer.nixerplugin.stigma.token.PlainStigmaTokenProvider;
-import io.nixer.nixerplugin.stigma.token.StigmaExtractor;
-import io.nixer.nixerplugin.stigma.token.StigmaTokenProvider;
-import io.nixer.nixerplugin.stigma.token.StigmaValuesGenerator;
-import io.nixer.nixerplugin.stigma.token.validation.EncryptedJwtValidator;
-import io.nixer.nixerplugin.stigma.token.validation.StigmaTokenPayloadValidator;
-import io.nixer.nixerplugin.stigma.token.validation.StigmaTokenValidator;
+import io.nixer.nixerplugin.stigma.generate.StigmaGenerator;
+import io.nixer.nixerplugin.stigma.token.create.StigmaTokenFactory;
+import io.nixer.nixerplugin.stigma.token.read.StigmaExtractor;
+import io.nixer.nixerplugin.stigma.token.read.TokenDecrypter;
+import io.nixer.nixerplugin.stigma.token.read.TokenParser;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.util.ResourceUtils;
 
 @Configuration
@@ -58,12 +54,6 @@ public class StigmaAutoConfiguration {
     }
 
     @Bean
-    public StigmaTokenValidator buildStigmaTokenValidator(final EncryptedJwtValidator encryptedJwtValidator) {
-
-        return new StigmaTokenValidator(encryptedJwtValidator);
-    }
-
-    @Bean
     public KeysLoader buildKeysLoader(final StigmaProperties config) throws FileNotFoundException {
 
         final File encryptionFile = ResourceUtils.getFile(config.getEncryptionKeyFile());
@@ -73,33 +63,19 @@ public class StigmaAutoConfiguration {
     }
 
     @Bean
-    public EncryptedJwtValidator buildEncryptedJwtValidator(final KeysLoader keysLoader,
-                                                            final StigmaTokenPayloadValidator stigmaTokenPayloadValidator) {
-        return new EncryptedJwtValidator(
-                DirectDecrypterFactory.withKeysFrom(keysLoader),
-                stigmaTokenPayloadValidator
-        );
+    public TokenDecrypter tokenDecrypter(final KeysLoader keysLoader) {
+        return new TokenDecrypter(DirectDecrypterFactory.withKeysFrom(keysLoader));
     }
 
     @Bean
-    public StigmaTokenPayloadValidator stigmaTokenPayloadValidator() {
-        return new StigmaTokenPayloadValidator();
-    }
-
-    @Primary
-    @Bean
-    public EncryptedStigmaTokenProvider encryptedStigmaTokenProvider(KeysLoader keysLoader,
-                                                                     PlainStigmaTokenProvider plainStigmaTokenProvider) {
-
-        return new EncryptedStigmaTokenProvider(
-                plainStigmaTokenProvider,
-                DirectEncrypterFactory.withKeysFrom(keysLoader)
-        );
+    public TokenParser tokenParser() {
+        return new TokenParser();
     }
 
     @Bean
-    public PlainStigmaTokenProvider plainStigmaTokenProvider() {
-        return new PlainStigmaTokenProvider();
+    public StigmaTokenFactory stigmaTokenFactory(KeysLoader keysLoader) {
+
+        return new StigmaTokenFactory(DirectEncrypterFactory.withKeysFrom(keysLoader));
     }
 
     @Bean
@@ -113,22 +89,22 @@ public class StigmaAutoConfiguration {
 
     @Bean
     public StigmaActionEvaluator stigmaActionEvaluator(StigmaExtractor stigmaExtractor,
-                                                       StigmaTokenService stigmaTokenService,
+                                                       StigmaService stigmaService,
+                                                       StigmaTokenFactory stigmaTokenFactory,
                                                        StigmaValidator stigmaValidator) {
-        return new StigmaActionEvaluator(stigmaExtractor, stigmaTokenService, stigmaValidator);
+        return new StigmaActionEvaluator(stigmaExtractor, stigmaService, stigmaTokenFactory, stigmaValidator);
     }
 
     @Bean
-    public StigmaExtractor stigmaExtractor(StigmaTokenValidator stigmaTokenValidator) {
-        return new StigmaExtractor(stigmaTokenValidator);
+    public StigmaExtractor stigmaExtractor(TokenDecrypter tokenDecrypter, TokenParser tokenParser) {
+        return new StigmaExtractor(tokenDecrypter, tokenParser);
     }
 
     @Bean
-    public StigmaTokenService stigmaTokenService(StigmaTokenProvider stigmaTokenProvider,
-                                                 StigmaTokenStorage stigmaTokenStorage,
-                                                 StigmaValuesGenerator stigmaValuesGenerator) {
+    public StigmaService stigmaService(StigmaStorage stigmaStorage,
+                                       StigmaGenerator stigmaGenerator) {
 
-        return new StigmaTokenService(stigmaTokenProvider, stigmaTokenStorage, stigmaValuesGenerator);
+        return new StigmaService(stigmaStorage, stigmaGenerator);
     }
 
     @Bean
@@ -137,12 +113,12 @@ public class StigmaAutoConfiguration {
     }
 
     @Bean
-    public StigmaValuesGenerator stigmaValuesGenerator(NowSource nowSource) {
-        return new StigmaValuesGenerator(nowSource);
+    public StigmaGenerator stigmaGenerator(NowSource nowSource) {
+        return new StigmaGenerator(nowSource);
     }
 
     @Bean
-    public StigmaTokenStorage stigmaTokenStorage(StigmasJdbcDAO stigmasJdbcDAO) {
+    public StigmaStorage stigmaStorage(StigmasJdbcDAO stigmasJdbcDAO) {
         return new StigmasJdbcStorage(stigmasJdbcDAO);
     }
 }

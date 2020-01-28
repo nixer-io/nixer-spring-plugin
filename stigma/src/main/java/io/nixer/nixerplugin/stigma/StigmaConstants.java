@@ -1,4 +1,4 @@
-package io.nixer.nixerplugin.stigma.token;
+package io.nixer.nixerplugin.stigma;
 
 import java.time.Duration;
 
@@ -7,13 +7,13 @@ import java.time.Duration;
  *
  * @author gcwiak
  */
-public abstract class StigmaTokenConstants {
+public abstract class StigmaConstants {
 
     public static final String SUBJECT = "stigma-token";
     public static final String STIGMA_VALUE_FIELD_NAME = "stigma-value";
 
     public static final Duration DEFAULT_STIGMA_LIFETIME = Duration.ofDays(365);
 
-    private StigmaTokenConstants() {
+    private StigmaConstants() {
     }
 }
