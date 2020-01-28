@@ -5,7 +5,7 @@ import java.time.Instant;
 import io.nixer.nixerplugin.stigma.domain.RawStigmaToken;
 import io.nixer.nixerplugin.stigma.domain.Stigma;
 import io.nixer.nixerplugin.stigma.storage.StigmaData;
-import io.nixer.nixerplugin.stigma.token.StigmaExtractor;
+import io.nixer.nixerplugin.stigma.token.validation.StigmaExtractor;
 import io.nixer.nixerplugin.stigma.token.StigmaTokenFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
