@@ -4,7 +4,7 @@ import javax.annotation.Nonnull;
 
 import com.google.common.base.Objects;
 import io.nixer.nixerplugin.stigma.token.StigmaTokenFactory;
-import io.nixer.nixerplugin.stigma.token.validation.StigmaExtractor;
+import io.nixer.nixerplugin.stigma.token.reading.StigmaExtractor;
 import org.springframework.util.Assert;
 
 /**

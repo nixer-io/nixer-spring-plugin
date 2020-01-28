@@ -1,4 +1,4 @@
-package io.nixer.nixerplugin.stigma.token.validation;
+package io.nixer.nixerplugin.stigma.token.reading;
 
 import java.text.ParseException;
 import javax.annotation.Nonnull;

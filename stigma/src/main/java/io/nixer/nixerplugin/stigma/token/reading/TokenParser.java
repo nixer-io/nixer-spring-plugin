@@ -1,4 +1,4 @@
-package io.nixer.nixerplugin.stigma.token.validation;
+package io.nixer.nixerplugin.stigma.token.reading;
 
 import java.text.ParseException;
 import javax.annotation.Nonnull;
@@ -9,9 +9,9 @@ import io.nixer.nixerplugin.stigma.token.StigmaTokenConstants;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
-import static io.nixer.nixerplugin.stigma.token.validation.ParsedToken.ParsingStatus.INVALID_PAYLOAD;
-import static io.nixer.nixerplugin.stigma.token.validation.ParsedToken.ParsingStatus.MISSING_STIGMA;
-import static io.nixer.nixerplugin.stigma.token.validation.ParsedToken.ParsingStatus.PAYLOAD_PARSING_ERROR;
+import static io.nixer.nixerplugin.stigma.token.reading.ParsedToken.ParsingStatus.INVALID_PAYLOAD;
+import static io.nixer.nixerplugin.stigma.token.reading.ParsedToken.ParsingStatus.MISSING_STIGMA;
+import static io.nixer.nixerplugin.stigma.token.reading.ParsedToken.ParsingStatus.PAYLOAD_PARSING_ERROR;
 import static java.lang.String.format;
 
 /**

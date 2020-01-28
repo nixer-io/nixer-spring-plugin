@@ -1,4 +1,4 @@
-package io.nixer.nixerplugin.stigma.token.validation;
+package io.nixer.nixerplugin.stigma.token.reading;
 
 import javax.annotation.Nonnull;
 
@@ -9,10 +9,10 @@ import com.nimbusds.jwt.JWT;
 import io.nixer.nixerplugin.stigma.crypto.DecrypterFactory;
 import org.springframework.util.Assert;
 
-import static io.nixer.nixerplugin.stigma.token.validation.DecryptedToken.DecryptionStatus.DECRYPTION_ERROR;
-import static io.nixer.nixerplugin.stigma.token.validation.DecryptedToken.DecryptionStatus.NOT_ENCRYPTED;
-import static io.nixer.nixerplugin.stigma.token.validation.DecryptedToken.DecryptionStatus.WRONG_ALG;
-import static io.nixer.nixerplugin.stigma.token.validation.DecryptedToken.DecryptionStatus.WRONG_ENC;
+import static io.nixer.nixerplugin.stigma.token.reading.DecryptedToken.DecryptionStatus.DECRYPTION_ERROR;
+import static io.nixer.nixerplugin.stigma.token.reading.DecryptedToken.DecryptionStatus.NOT_ENCRYPTED;
+import static io.nixer.nixerplugin.stigma.token.reading.DecryptedToken.DecryptionStatus.WRONG_ALG;
+import static io.nixer.nixerplugin.stigma.token.reading.DecryptedToken.DecryptionStatus.WRONG_ENC;
 import static java.lang.String.format;
 
 /**
