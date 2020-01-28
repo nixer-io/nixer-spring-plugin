@@ -11,11 +11,26 @@ public class StigmaProperties {
 
     private static final String DEFAULT_STIGMA_COOKIE_NAME = "stgtk";
 
+    /**
+     * Name of HTTP cookie to be used for storing Stigma Token.
+     */
     private String cookieName = DEFAULT_STIGMA_COOKIE_NAME;
 
+    /**
+     * Amount of time after Stigma is considered expired.
+     */
     private Duration stigmaLifetime = DEFAULT_STIGMA_LIFETIME;
 
+    /**
+     * Location of file resource with decryption keys to be used for reading Stigma Tokens.
+     * Can be either a "classpath:" pseudo URL, a "file:" URL, or a plain file path.
+     */
     private String decryptionKeyFile;
+
+    /**
+     * Location of file resource with encryption key to be used for creating Stigma Tokens.
+     * Can be either a "classpath:" pseudo URL, a "file:" URL, or a plain file path.
+     */
     private String encryptionKeyFile;
 
     public String getCookieName() {
