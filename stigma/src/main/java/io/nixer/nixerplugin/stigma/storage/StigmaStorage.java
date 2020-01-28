@@ -13,18 +13,18 @@ import io.nixer.nixerplugin.stigma.domain.StigmaStatus;
  */
 public interface StigmaStorage {
 
-    void saveStigma(@Nonnull final StigmaData stigmaData);
+    void save(@Nonnull final StigmaDetails stigmaDetails);
 
     @Nullable
-    StigmaData findStigmaData(@Nonnull final Stigma stigma);
+    StigmaDetails findStigmaDetails(@Nonnull final Stigma stigma);
 
-    void updateStatus(@Nonnull final Stigma stigma, final StigmaStatus status);
+    void updateStatus(@Nonnull final Stigma stigma, final StigmaStatus newStatus);
 
     // TODO historical
     default void recordSpottingUnknownStigma(@Nonnull final Stigma stigma) {
     }
 
     // TODO historical
-    default void recordStigmaObservation(@Nonnull final StigmaData stigmaData) {
+    default void recordStigmaObservation(@Nonnull final StigmaDetails stigmaDetails) {
     }
 }

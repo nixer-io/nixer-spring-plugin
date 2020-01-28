@@ -16,7 +16,7 @@ import io.nixer.nixerplugin.stigma.domain.StigmaStatus;
  * @author gcwiak
  */
 @Immutable
-public class StigmaData {
+public class StigmaDetails {
 
     @Nonnull
     private final Stigma stigma;
@@ -27,9 +27,9 @@ public class StigmaData {
     @Nonnull
     private final Instant creationDate;
 
-    public StigmaData(@Nonnull final Stigma stigma,
-                      @Nonnull final StigmaStatus status,
-                      @Nonnull final Instant creationDate) {
+    public StigmaDetails(@Nonnull final Stigma stigma,
+                         @Nonnull final StigmaStatus status,
+                         @Nonnull final Instant creationDate) {
         this.stigma = Preconditions.checkNotNull(stigma, "stigma");
         this.status = Preconditions.checkNotNull(status, "status");
         this.creationDate = Preconditions.checkNotNull(creationDate, "creationDate");
@@ -54,7 +54,7 @@ public class StigmaData {
     public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        final StigmaData that = (StigmaData) o;
+        final StigmaDetails that = (StigmaDetails) o;
         return stigma.equals(that.stigma) &&
                 status == that.status &&
                 creationDate.equals(that.creationDate);
@@ -67,7 +67,7 @@ public class StigmaData {
 
     @Override
     public String toString() {
-        return new StringJoiner(", ", StigmaData.class.getSimpleName() + "[", "]")
+        return new StringJoiner(", ", StigmaDetails.class.getSimpleName() + "[", "]")
                 .add("stigma=" + stigma)
                 .add("status=" + status)
                 .add("creationDate=" + creationDate)

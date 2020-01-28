@@ -5,7 +5,7 @@ import javax.annotation.Nullable;
 
 import io.nixer.nixerplugin.stigma.domain.Stigma;
 import io.nixer.nixerplugin.stigma.domain.StigmaStatus;
-import io.nixer.nixerplugin.stigma.storage.StigmaData;
+import io.nixer.nixerplugin.stigma.storage.StigmaDetails;
 import io.nixer.nixerplugin.stigma.storage.StigmaStorage;
 import org.springframework.util.Assert;
 
@@ -23,15 +23,15 @@ public class StigmasJdbcStorage implements StigmaStorage {
     }
 
     @Override
-    public void saveStigma(@Nonnull final StigmaData stigmaData) {
-        final int created = stigmasDAO.create(stigmaData);
+    public void save(@Nonnull final StigmaDetails stigmaDetails) {
+        final int created = stigmasDAO.create(stigmaDetails);
         Assert.state(created == 1, () -> "Expected to create exactly one entry but was: " + created);
     }
 
     @Nullable
     @Override
-    public StigmaData findStigmaData(@Nonnull final Stigma stigma) {
-        return stigmasDAO.findStigmaData(stigma);
+    public StigmaDetails findStigmaDetails(@Nonnull final Stigma stigma) {
+        return stigmasDAO.findStigmaDetails(stigma);
     }
 
     @Override

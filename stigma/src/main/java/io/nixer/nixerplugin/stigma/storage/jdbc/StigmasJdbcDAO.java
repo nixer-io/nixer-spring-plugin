@@ -4,30 +4,30 @@ import java.util.List;
 
 import io.nixer.nixerplugin.stigma.domain.Stigma;
 import io.nixer.nixerplugin.stigma.domain.StigmaStatus;
-import io.nixer.nixerplugin.stigma.storage.StigmaData;
+import io.nixer.nixerplugin.stigma.storage.StigmaDetails;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 
 public class StigmasJdbcDAO extends JdbcDaoSupport {
 
-    private static final RowMapper<StigmaData> STIGMA_DATA_MAPPER = (rs, rowNum) -> new StigmaData(
+    private static final RowMapper<StigmaDetails> STIGMA_DETAILS_MAPPER = (rs, rowNum) -> new StigmaDetails(
             new Stigma(rs.getString("stigma_value")),
             StigmaStatus.valueOf(rs.getString("status")),
             rs.getTimestamp("creation_date").toInstant()
     );
 
-    public int create(final StigmaData stigmaData) {
+    public int create(final StigmaDetails stigmaDetails) {
         return getJdbcTemplate().update(
                 "INSERT INTO stigmas (stigma_value, status, creation_date) VALUES (?, ?, ?)",
-                stigmaData.getStigma().getValue(), stigmaData.getStatus().name(), stigmaData.getCreationDate()
+                stigmaDetails.getStigma().getValue(), stigmaDetails.getStatus().name(), stigmaDetails.getCreationDate()
         );
     }
 
-    public StigmaData findStigmaData(final Stigma stigma) {
+    public StigmaDetails findStigmaDetails(final Stigma stigma) {
         return getJdbcTemplate().queryForObject(
                 "SELECT * FROM stigmas WHERE stigma_value = ?",
                 new Object[]{stigma.getValue()},
-                STIGMA_DATA_MAPPER
+                STIGMA_DETAILS_MAPPER
         );
     }
 
@@ -38,7 +38,7 @@ public class StigmasJdbcDAO extends JdbcDaoSupport {
         );
     }
 
-    public List<StigmaData> getAll() {
-        return getJdbcTemplate().query("SELECT * FROM stigmas", STIGMA_DATA_MAPPER);
+    public List<StigmaDetails> getAll() {
+        return getJdbcTemplate().query("SELECT * FROM stigmas", STIGMA_DETAILS_MAPPER);
     }
 }

@@ -5,7 +5,7 @@ import javax.annotation.Nullable;
 
 import io.nixer.nixerplugin.stigma.domain.RawStigmaToken;
 import io.nixer.nixerplugin.stigma.domain.Stigma;
-import io.nixer.nixerplugin.stigma.storage.StigmaData;
+import io.nixer.nixerplugin.stigma.storage.StigmaDetails;
 import io.nixer.nixerplugin.stigma.token.read.StigmaExtractor;
 import io.nixer.nixerplugin.stigma.token.create.StigmaTokenFactory;
 
@@ -47,9 +47,9 @@ public class StigmaActionEvaluator {
     @Nonnull
     public StigmaAction onLoginSuccess(@Nullable final RawStigmaToken originalToken) {
 
-        final StigmaData stigmaData = findStigmaData(originalToken);
+        final StigmaDetails stigmaDetails = findStigmaDetails(originalToken);
 
-        final StigmaAction stigmaAction = isStigmaValid(stigmaData)
+        final StigmaAction stigmaAction = isStigmaValid(stigmaDetails)
                 ? new StigmaAction(originalToken, TOKEN_GOOD_LOGIN_SUCCESS)
                 : new StigmaAction(newStigmaToken(), TOKEN_BAD_LOGIN_SUCCESS);
 
@@ -66,11 +66,11 @@ public class StigmaActionEvaluator {
     @Nonnull
     public StigmaAction onLoginFail(@Nullable final RawStigmaToken originalToken) {
 
-        final StigmaData stigmaData = findStigmaData(originalToken);
+        final StigmaDetails stigmaDetails = findStigmaDetails(originalToken);
 
         final StigmaAction stigmaAction;
-        if (isStigmaValid(stigmaData)) {
-            stigmaService.revokeStigma(stigmaData.getStigma());
+        if (isStigmaValid(stigmaDetails)) {
+            stigmaService.revokeStigma(stigmaDetails.getStigma());
             stigmaAction = new StigmaAction(newStigmaToken(), TOKEN_GOOD_LOGIN_FAIL);
         } else {
             stigmaAction = new StigmaAction(newStigmaToken(), TOKEN_BAD_LOGIN_FAIL);
@@ -82,13 +82,13 @@ public class StigmaActionEvaluator {
     }
 
     @Nullable
-    private StigmaData findStigmaData(@Nullable final RawStigmaToken stigmaToken) {
+    private StigmaDetails findStigmaDetails(@Nullable final RawStigmaToken stigmaToken) {
 
         if (stigmaToken != null) {
             final Stigma stigma = extractStigma(stigmaToken);
 
             return stigma != null
-                    ? stigmaService.findStigmaData(stigma)
+                    ? stigmaService.findStigmaDetails(stigma)
                     : null;
         } else {
             return null;
@@ -99,12 +99,12 @@ public class StigmaActionEvaluator {
         return stigmaExtractor.extractStigma(originalToken);
     }
 
-    private boolean isStigmaValid(final StigmaData stigmaData) {
-        return stigmaValidator.isValid(stigmaData);
+    private boolean isStigmaValid(final StigmaDetails stigmaDetails) {
+        return stigmaValidator.isValid(stigmaDetails);
     }
 
     private RawStigmaToken newStigmaToken() {
-        final StigmaData newStigma = stigmaService.getNewStigma();
+        final StigmaDetails newStigma = stigmaService.getNewStigma();
 
         return stigmaTokenFactory.getToken(newStigma.getStigma());
     }
