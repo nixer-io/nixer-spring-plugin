@@ -7,7 +7,7 @@ import io.nixer.nixerplugin.core.util.NowSource;
 import io.nixer.nixerplugin.stigma.domain.RawStigmaToken;
 import io.nixer.nixerplugin.stigma.domain.Stigma;
 import io.nixer.nixerplugin.stigma.domain.StigmaStatus;
-import io.nixer.nixerplugin.stigma.storage.StigmaData;
+import io.nixer.nixerplugin.stigma.domain.StigmaDetails;
 import io.nixer.nixerplugin.stigma.token.create.StigmaTokenFactory;
 
 /**
@@ -38,10 +38,10 @@ public class StigmaGenerator {
      * Creates a fresh Stigma to be used in Stigma Token.
      */
     @Nonnull
-    public StigmaData newStigma() {
+    public StigmaDetails newStigma() {
         final String stigmaValue = String.valueOf(random.nextLong());
 
-        return new StigmaData(
+        return new StigmaDetails(
                 new Stigma(stigmaValue),
                 StigmaStatus.ACTIVE,
                 nowSource.now()

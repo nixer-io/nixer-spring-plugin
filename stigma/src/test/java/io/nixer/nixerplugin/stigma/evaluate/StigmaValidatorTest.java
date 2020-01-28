@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 import io.nixer.nixerplugin.core.util.NowSource;
 import io.nixer.nixerplugin.stigma.domain.Stigma;
 import io.nixer.nixerplugin.stigma.domain.StigmaStatus;
-import io.nixer.nixerplugin.stigma.storage.StigmaData;
+import io.nixer.nixerplugin.stigma.domain.StigmaDetails;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -47,11 +47,11 @@ class StigmaValidatorTest {
     @Test
     void should_pass_validation() {
         // given
-        final StigmaData stigmaData =
-                new StigmaData(new Stigma("stigma-value"), StigmaStatus.ACTIVE, NOW.minus(STIGMA_LIFETIME));
+        final StigmaDetails stigmaDetails =
+                new StigmaDetails(new Stigma("stigma-value"), StigmaStatus.ACTIVE, NOW.minus(STIGMA_LIFETIME));
 
         // when
-        final boolean result = stigmaValidator.isValid(stigmaData);
+        final boolean result = stigmaValidator.isValid(stigmaDetails);
 
         // then
         assertThat(result).isTrue();
@@ -59,7 +59,7 @@ class StigmaValidatorTest {
 
     @ParameterizedTest
     @MethodSource("invalidStigmaExamples")
-    void should_fail_validation(final StigmaData invalidStigma) {
+    void should_fail_validation(final StigmaDetails invalidStigma) {
         // when
         final boolean result = stigmaValidator.isValid(invalidStigma);
 
@@ -67,10 +67,10 @@ class StigmaValidatorTest {
         assertThat(result).isFalse();
     }
 
-    static Stream<StigmaData> invalidStigmaExamples() {
+    static Stream<StigmaDetails> invalidStigmaExamples() {
         return Stream.of(
-                new StigmaData(new Stigma("stigma-value"), StigmaStatus.REVOKED, NOW.minus(STIGMA_LIFETIME)), // revoked
-                new StigmaData(new Stigma("stigma-value"), StigmaStatus.ACTIVE, NOW.minus(STIGMA_LIFETIME).minus(1, SECONDS)), // expired
+                new StigmaDetails(new Stigma("stigma-value"), StigmaStatus.REVOKED, NOW.minus(STIGMA_LIFETIME)), // revoked
+                new StigmaDetails(new Stigma("stigma-value"), StigmaStatus.ACTIVE, NOW.minus(STIGMA_LIFETIME).minus(1, SECONDS)), // expired
                 null
         );
     }

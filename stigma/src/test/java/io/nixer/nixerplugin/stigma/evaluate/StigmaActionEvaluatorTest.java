@@ -4,7 +4,7 @@ import java.time.Instant;
 
 import io.nixer.nixerplugin.stigma.domain.RawStigmaToken;
 import io.nixer.nixerplugin.stigma.domain.Stigma;
-import io.nixer.nixerplugin.stigma.storage.StigmaData;
+import io.nixer.nixerplugin.stigma.domain.StigmaDetails;
 import io.nixer.nixerplugin.stigma.token.read.StigmaExtractor;
 import io.nixer.nixerplugin.stigma.token.create.StigmaTokenFactory;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,11 +34,11 @@ class StigmaActionEvaluatorTest {
     // TODO verify metrics when implemented
 
     private static final Stigma STIGMA = new Stigma("stigma-value");
-    private static final StigmaData STIGMA_DATA = new StigmaData(STIGMA, ACTIVE, Instant.parse("2020-01-21T10:25:43.511Z"));
+    private static final StigmaDetails STIGMA_DETAILS = new StigmaDetails(STIGMA, ACTIVE, Instant.parse("2020-01-21T10:25:43.511Z"));
     private static final RawStigmaToken STIGMA_TOKEN = new RawStigmaToken("valid-token");
 
     private static final Stigma REFRESHED_STIGMA = new Stigma("refreshed-stigma-value");
-    private static final StigmaData REFRESHED_STIGMA_DATA = new StigmaData(REFRESHED_STIGMA, ACTIVE, Instant.parse("2020-01-22T11:26:45.512Z"));
+    private static final StigmaDetails REFRESHED_STIGMA_DETAILS = new StigmaDetails(REFRESHED_STIGMA, ACTIVE, Instant.parse("2020-01-22T11:26:45.512Z"));
     private static final RawStigmaToken REFRESHED_STIGMA_TOKEN = new RawStigmaToken("refreshed-token");
 
     @Mock
@@ -58,7 +58,7 @@ class StigmaActionEvaluatorTest {
 
     @BeforeEach
     void setUp() {
-        lenient().when(stigmaService.getNewStigma()).thenReturn(REFRESHED_STIGMA_DATA);
+        lenient().when(stigmaService.getNewStigma()).thenReturn(REFRESHED_STIGMA_DETAILS);
         lenient().when(stigmaTokenFactory.getToken(REFRESHED_STIGMA)).thenReturn(REFRESHED_STIGMA_TOKEN);
     }
 
@@ -66,8 +66,8 @@ class StigmaActionEvaluatorTest {
     void should_get_action_on_login_success_and_valid_stigma() {
         // given
         given(stigmaExtractor.extractStigma(STIGMA_TOKEN)).willReturn(STIGMA);
-        given(stigmaService.findStigmaData(STIGMA)).willReturn(STIGMA_DATA);
-        given(stigmaValidator.isValid(STIGMA_DATA)).willReturn(true);
+        given(stigmaService.findStigmaDetails(STIGMA)).willReturn(STIGMA_DETAILS);
+        given(stigmaValidator.isValid(STIGMA_DETAILS)).willReturn(true);
 
         // when
         final StigmaAction action = actionEvaluator.onLoginSuccess(STIGMA_TOKEN);
@@ -94,8 +94,8 @@ class StigmaActionEvaluatorTest {
     void should_get_action_on_login_success_and_not_active_stigma() {
         // given
         given(stigmaExtractor.extractStigma(STIGMA_TOKEN)).willReturn(STIGMA);
-        given(stigmaService.findStigmaData(STIGMA)).willReturn(STIGMA_DATA);
-        given(stigmaValidator.isValid(STIGMA_DATA)).willReturn(false);
+        given(stigmaService.findStigmaDetails(STIGMA)).willReturn(STIGMA_DETAILS);
+        given(stigmaValidator.isValid(STIGMA_DETAILS)).willReturn(false);
 
         // when
         final StigmaAction action = actionEvaluator.onLoginSuccess(STIGMA_TOKEN);
@@ -109,8 +109,8 @@ class StigmaActionEvaluatorTest {
     void should_get_action_on_login_failure_and_valid_token() {
         // given
         given(stigmaExtractor.extractStigma(STIGMA_TOKEN)).willReturn(STIGMA);
-        given(stigmaService.findStigmaData(STIGMA)).willReturn(STIGMA_DATA);
-        given(stigmaValidator.isValid(STIGMA_DATA)).willReturn(true);
+        given(stigmaService.findStigmaDetails(STIGMA)).willReturn(STIGMA_DETAILS);
+        given(stigmaValidator.isValid(STIGMA_DETAILS)).willReturn(true);
 
         // when
         final StigmaAction action = actionEvaluator.onLoginFail(STIGMA_TOKEN);
@@ -137,8 +137,8 @@ class StigmaActionEvaluatorTest {
     void should_get_action_on_login_failure_and_not_active_stigma() {
         // given
         given(stigmaExtractor.extractStigma(STIGMA_TOKEN)).willReturn(STIGMA);
-        given(stigmaService.findStigmaData(STIGMA)).willReturn(STIGMA_DATA);
-        given(stigmaValidator.isValid(STIGMA_DATA)).willReturn(false);
+        given(stigmaService.findStigmaDetails(STIGMA)).willReturn(STIGMA_DETAILS);
+        given(stigmaValidator.isValid(STIGMA_DETAILS)).willReturn(false);
 
         // when
         final StigmaAction action = actionEvaluator.onLoginFail(STIGMA_TOKEN);

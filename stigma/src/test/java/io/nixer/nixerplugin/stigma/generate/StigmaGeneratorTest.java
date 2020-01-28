@@ -8,7 +8,7 @@ import java.time.ZoneOffset;
 import io.nixer.nixerplugin.core.util.NowSource;
 import io.nixer.nixerplugin.stigma.domain.Stigma;
 import io.nixer.nixerplugin.stigma.domain.StigmaStatus;
-import io.nixer.nixerplugin.stigma.storage.StigmaData;
+import io.nixer.nixerplugin.stigma.domain.StigmaDetails;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -45,11 +45,11 @@ class StigmaGeneratorTest {
         given(nowSource.now()).willReturn(NOW);
 
         // when
-        final StigmaData result = stigmaGenerator.newStigma();
+        final StigmaDetails result = stigmaGenerator.newStigma();
 
         // then
         assertThat(result).isEqualTo(
-                new StigmaData(new Stigma(String.valueOf(STIGMA_VALUE)), StigmaStatus.ACTIVE, NOW)
+                new StigmaDetails(new Stigma(String.valueOf(STIGMA_VALUE)), StigmaStatus.ACTIVE, NOW)
         );
     }
 }

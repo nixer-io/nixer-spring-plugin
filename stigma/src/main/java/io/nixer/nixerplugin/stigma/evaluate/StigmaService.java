@@ -6,7 +6,7 @@ import javax.annotation.Nullable;
 import com.google.common.base.Preconditions;
 import io.nixer.nixerplugin.stigma.domain.Stigma;
 import io.nixer.nixerplugin.stigma.domain.StigmaStatus;
-import io.nixer.nixerplugin.stigma.storage.StigmaData;
+import io.nixer.nixerplugin.stigma.domain.StigmaDetails;
 import io.nixer.nixerplugin.stigma.storage.StigmaStorage;
 import io.nixer.nixerplugin.stigma.generate.StigmaGenerator;
 import org.slf4j.Logger;
@@ -35,27 +35,27 @@ public class StigmaService {
     }
 
     @Nullable
-    public StigmaData findStigmaData(@Nonnull final Stigma stigma) {
+    public StigmaDetails findStigmaDetails(@Nonnull final Stigma stigma) {
         Assert.notNull(stigma, "stigma must not be null");
         try {
-            return findStigmaDataInStorage(stigma);
+            return findStigmaDetailsInStorage(stigma);
         } catch (Exception e) {
-            LOGGER.error("Could not obtain stigma data for stigma: '{}'", stigma, e);
+            LOGGER.error("Could not obtain stigma details for stigma: '{}'", stigma, e);
             return null;
         }
     }
 
-    private StigmaData findStigmaDataInStorage(final Stigma stigma) {
+    private StigmaDetails findStigmaDetailsInStorage(final Stigma stigma) {
 
-        final StigmaData stigmaValueData = stigmaStorage.findStigmaData(stigma);
+        final StigmaDetails stigmaDetails = stigmaStorage.findStigmaDetails(stigma);
 
-        if (stigmaValueData != null) {
-            stigmaStorage.recordStigmaObservation(stigmaValueData);
+        if (stigmaDetails != null) {
+            stigmaStorage.recordStigmaObservation(stigmaDetails);
         } else {
             stigmaStorage.recordSpottingUnknownStigma(stigma);
         }
 
-        return stigmaValueData;
+        return stigmaDetails;
     }
 
     public void revokeStigma(@Nonnull final Stigma stigma) {
@@ -68,20 +68,20 @@ public class StigmaService {
     }
 
     @Nonnull
-    public StigmaData getNewStigma() {
+    public StigmaDetails getNewStigma() {
 
-        final StigmaData newStigma = stigmaGenerator.newStigma();
+        final StigmaDetails newStigma = stigmaGenerator.newStigma();
 
-        storeStigma(newStigma);
+        store(newStigma);
 
         return newStigma;
     }
 
-    private void storeStigma(final StigmaData stigmaData) {
+    private void store(final StigmaDetails stigmaDetails) {
         try {
-            stigmaStorage.saveStigma(stigmaData);
+            stigmaStorage.save(stigmaDetails);
         } catch (Exception e) {
-            LOGGER.error("Could not store stigma: '{}'", stigmaData, e);
+            LOGGER.error("Could not store stigma: '{}'", stigmaDetails, e);
         }
     }
 }

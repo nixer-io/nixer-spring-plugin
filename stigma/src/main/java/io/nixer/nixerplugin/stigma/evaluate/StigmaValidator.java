@@ -6,7 +6,7 @@ import javax.annotation.Nullable;
 
 import io.nixer.nixerplugin.core.util.NowSource;
 import io.nixer.nixerplugin.stigma.domain.StigmaStatus;
-import io.nixer.nixerplugin.stigma.storage.StigmaData;
+import io.nixer.nixerplugin.stigma.domain.StigmaDetails;
 
 /**
  * Created on 21/01/2020.
@@ -24,25 +24,25 @@ public class StigmaValidator {
         this.stigmaLifetime = stigmaLifetime;
     }
 
-    public boolean isValid(@Nullable final StigmaData stigmaData) {
+    public boolean isValid(@Nullable final StigmaDetails stigmaDetails) {
         final Instant now = nowSource.now();
 
-        if (stigmaData == null) {
+        if (stigmaDetails == null) {
             return false;
         }
 
-        if (stigmaData.getStatus() != StigmaStatus.ACTIVE) {
+        if (stigmaDetails.getStatus() != StigmaStatus.ACTIVE) {
             return false;
         }
 
-        if (isExpired(stigmaData, now)) {
+        if (isExpired(stigmaDetails, now)) {
             return false;
         }
 
         return true;
     }
 
-    private boolean isExpired(final StigmaData stigmaData, final Instant now) {
-        return now.isAfter(stigmaData.getCreationDate().plus(stigmaLifetime));
+    private boolean isExpired(final StigmaDetails stigmaDetails, final Instant now) {
+        return now.isAfter(stigmaDetails.getCreationDate().plus(stigmaLifetime));
     }
 }
