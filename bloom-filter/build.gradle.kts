@@ -5,9 +5,6 @@ plugins {
 val jacksonVersion: String = "2.7.8"
 
 dependencies {
-    // TODO externalize versions
-    // TODO consider making dependencies of this subproject managed by Spring Boot BOM
-    //  as it dependency of other subproject which is already BOM-managed anyway
 
     val guavaVersion: String by rootProject.extra
     implementation("com.google.guava", "guava", guavaVersion)
