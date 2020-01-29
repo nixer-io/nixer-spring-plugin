@@ -1,12 +1,12 @@
-package io.nixer.nixerplugin.stigma.evaluate;
+package io.nixer.nixerplugin.stigma.decision;
 
 import java.time.Instant;
 
 import io.nixer.nixerplugin.stigma.domain.RawStigmaToken;
 import io.nixer.nixerplugin.stigma.domain.Stigma;
 import io.nixer.nixerplugin.stigma.domain.StigmaDetails;
-import io.nixer.nixerplugin.stigma.token.read.StigmaExtractor;
 import io.nixer.nixerplugin.stigma.token.create.StigmaTokenFactory;
+import io.nixer.nixerplugin.stigma.token.read.StigmaExtractor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,11 +14,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static io.nixer.nixerplugin.stigma.decision.StigmaEvent.TOKEN_BAD_LOGIN_FAIL;
+import static io.nixer.nixerplugin.stigma.decision.StigmaEvent.TOKEN_BAD_LOGIN_SUCCESS;
+import static io.nixer.nixerplugin.stigma.decision.StigmaEvent.TOKEN_GOOD_LOGIN_FAIL;
+import static io.nixer.nixerplugin.stigma.decision.StigmaEvent.TOKEN_GOOD_LOGIN_SUCCESS;
 import static io.nixer.nixerplugin.stigma.domain.StigmaStatus.ACTIVE;
-import static io.nixer.nixerplugin.stigma.evaluate.StigmaActionType.TOKEN_BAD_LOGIN_FAIL;
-import static io.nixer.nixerplugin.stigma.evaluate.StigmaActionType.TOKEN_BAD_LOGIN_SUCCESS;
-import static io.nixer.nixerplugin.stigma.evaluate.StigmaActionType.TOKEN_GOOD_LOGIN_FAIL;
-import static io.nixer.nixerplugin.stigma.evaluate.StigmaActionType.TOKEN_GOOD_LOGIN_SUCCESS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.lenient;
@@ -29,7 +29,7 @@ import static org.mockito.Mockito.lenient;
  * @author gcwiak
  */
 @ExtendWith(MockitoExtension.class)
-class StigmaActionEvaluatorTest {
+class StigmaDecisionMakerTest {
 
     // TODO verify metrics when implemented
 
@@ -54,7 +54,7 @@ class StigmaActionEvaluatorTest {
     private StigmaTokenFactory stigmaTokenFactory;
 
     @InjectMocks
-    private StigmaActionEvaluator actionEvaluator;
+    private StigmaDecisionMaker decisionMaker;
 
     @BeforeEach
     void setUp() {
@@ -63,88 +63,88 @@ class StigmaActionEvaluatorTest {
     }
 
     @Test
-    void should_get_action_on_login_success_and_valid_stigma() {
+    void should_make_decision_on_login_success_and_valid_stigma() {
         // given
         given(stigmaExtractor.extractStigma(STIGMA_TOKEN)).willReturn(STIGMA);
         given(stigmaService.findStigmaDetails(STIGMA)).willReturn(STIGMA_DETAILS);
         given(stigmaValidator.isValid(STIGMA_DETAILS)).willReturn(true);
 
         // when
-        final StigmaAction action = actionEvaluator.onLoginSuccess(STIGMA_TOKEN);
+        final StigmaRefreshDecision result = decisionMaker.onLoginSuccess(STIGMA_TOKEN);
 
         // then
-        assertThat(action).isEqualTo(new StigmaAction(STIGMA_TOKEN, TOKEN_GOOD_LOGIN_SUCCESS));
+        assertThat(result).isEqualTo(new StigmaRefreshDecision(STIGMA_TOKEN, TOKEN_GOOD_LOGIN_SUCCESS));
         //        verify(stigmaMetricsService).rememberStigmaActionType(TOKEN_GOOD_LOGIN_SUCCESS);
     }
 
     @Test
-    void should_get_action_on_login_success_and_invalid_token() {
+    void should_make_decision_on_login_success_and_invalid_token() {
         // given
         given(stigmaExtractor.extractStigma(STIGMA_TOKEN)).willReturn(null);
 
         // when
-        final StigmaAction action = actionEvaluator.onLoginSuccess(STIGMA_TOKEN);
+        final StigmaRefreshDecision result = decisionMaker.onLoginSuccess(STIGMA_TOKEN);
 
         // then
-        assertThat(action).isEqualTo(new StigmaAction(REFRESHED_STIGMA_TOKEN, TOKEN_BAD_LOGIN_SUCCESS));
+        assertThat(result).isEqualTo(new StigmaRefreshDecision(REFRESHED_STIGMA_TOKEN, TOKEN_BAD_LOGIN_SUCCESS));
         //        verify(stigmaMetricsService).rememberStigmaActionType(TOKEN_BAD_LOGIN_SUCCESS);
     }
 
     @Test
-    void should_get_action_on_login_success_and_not_active_stigma() {
+    void should_make_decision_on_login_success_and_not_active_stigma() {
         // given
         given(stigmaExtractor.extractStigma(STIGMA_TOKEN)).willReturn(STIGMA);
         given(stigmaService.findStigmaDetails(STIGMA)).willReturn(STIGMA_DETAILS);
         given(stigmaValidator.isValid(STIGMA_DETAILS)).willReturn(false);
 
         // when
-        final StigmaAction action = actionEvaluator.onLoginSuccess(STIGMA_TOKEN);
+        final StigmaRefreshDecision result = decisionMaker.onLoginSuccess(STIGMA_TOKEN);
 
         // then
-        assertThat(action).isEqualTo(new StigmaAction(REFRESHED_STIGMA_TOKEN, TOKEN_BAD_LOGIN_SUCCESS));
+        assertThat(result).isEqualTo(new StigmaRefreshDecision(REFRESHED_STIGMA_TOKEN, TOKEN_BAD_LOGIN_SUCCESS));
         //        verify(stigmaMetricsService).rememberStigmaActionType(TOKEN_BAD_LOGIN_SUCCESS);
     }
 
     @Test
-    void should_get_action_on_login_failure_and_valid_token() {
+    void should_make_decision_on_login_failure_and_valid_token() {
         // given
         given(stigmaExtractor.extractStigma(STIGMA_TOKEN)).willReturn(STIGMA);
         given(stigmaService.findStigmaDetails(STIGMA)).willReturn(STIGMA_DETAILS);
         given(stigmaValidator.isValid(STIGMA_DETAILS)).willReturn(true);
 
         // when
-        final StigmaAction action = actionEvaluator.onLoginFail(STIGMA_TOKEN);
+        final StigmaRefreshDecision result = decisionMaker.onLoginFail(STIGMA_TOKEN);
 
         // then
-        assertThat(action).isEqualTo(new StigmaAction(REFRESHED_STIGMA_TOKEN, TOKEN_GOOD_LOGIN_FAIL));
+        assertThat(result).isEqualTo(new StigmaRefreshDecision(REFRESHED_STIGMA_TOKEN, TOKEN_GOOD_LOGIN_FAIL));
         //        verify(stigmaMetricsService).rememberStigmaActionType(TOKEN_GOOD_LOGIN_FAIL);
     }
 
     @Test
-    void should_get_action_on_login_failure_and_invalid_token() {
+    void should_make_decision_on_login_failure_and_invalid_token() {
         // given
         given(stigmaExtractor.extractStigma(STIGMA_TOKEN)).willReturn(null);
 
         // when
-        final StigmaAction action = actionEvaluator.onLoginFail(STIGMA_TOKEN);
+        final StigmaRefreshDecision result = decisionMaker.onLoginFail(STIGMA_TOKEN);
 
         // then
-        assertThat(action).isEqualTo(new StigmaAction(REFRESHED_STIGMA_TOKEN, TOKEN_BAD_LOGIN_FAIL));
+        assertThat(result).isEqualTo(new StigmaRefreshDecision(REFRESHED_STIGMA_TOKEN, TOKEN_BAD_LOGIN_FAIL));
         //        verify(stigmaMetricsService).rememberStigmaActionType(TOKEN_BAD_LOGIN_FAIL);
     }
 
     @Test
-    void should_get_action_on_login_failure_and_not_active_stigma() {
+    void should_make_decision_on_login_failure_and_not_active_stigma() {
         // given
         given(stigmaExtractor.extractStigma(STIGMA_TOKEN)).willReturn(STIGMA);
         given(stigmaService.findStigmaDetails(STIGMA)).willReturn(STIGMA_DETAILS);
         given(stigmaValidator.isValid(STIGMA_DETAILS)).willReturn(false);
 
         // when
-        final StigmaAction action = actionEvaluator.onLoginFail(STIGMA_TOKEN);
+        final StigmaRefreshDecision result = decisionMaker.onLoginFail(STIGMA_TOKEN);
 
         // then
-        assertThat(action).isEqualTo(new StigmaAction(REFRESHED_STIGMA_TOKEN, TOKEN_BAD_LOGIN_FAIL));
+        assertThat(result).isEqualTo(new StigmaRefreshDecision(REFRESHED_STIGMA_TOKEN, TOKEN_BAD_LOGIN_FAIL));
         //        verify(stigmaMetricsService).rememberStigmaActionType(TOKEN_BAD_LOGIN_FAIL);
     }
 }

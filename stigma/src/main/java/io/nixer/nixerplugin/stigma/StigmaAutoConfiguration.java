@@ -11,9 +11,9 @@ import io.nixer.nixerplugin.core.util.NowSource;
 import io.nixer.nixerplugin.stigma.crypto.DirectDecrypterFactory;
 import io.nixer.nixerplugin.stigma.crypto.DirectEncrypterFactory;
 import io.nixer.nixerplugin.stigma.crypto.KeysLoader;
-import io.nixer.nixerplugin.stigma.evaluate.StigmaActionEvaluator;
-import io.nixer.nixerplugin.stigma.evaluate.StigmaService;
-import io.nixer.nixerplugin.stigma.evaluate.StigmaValidator;
+import io.nixer.nixerplugin.stigma.decision.StigmaDecisionMaker;
+import io.nixer.nixerplugin.stigma.decision.StigmaService;
+import io.nixer.nixerplugin.stigma.decision.StigmaValidator;
 import io.nixer.nixerplugin.stigma.login.StigmaCookieService;
 import io.nixer.nixerplugin.stigma.login.StigmaLoginActivityHandler;
 import io.nixer.nixerplugin.stigma.storage.StigmaStorage;
@@ -82,17 +82,17 @@ public class StigmaAutoConfiguration {
     public StigmaLoginActivityHandler stigmaLoginActivityHandler(HttpServletRequest request,
                                                                  HttpServletResponse response,
                                                                  StigmaCookieService stigmaCookieService,
-                                                                 StigmaActionEvaluator stigmaActionEvaluator) {
+                                                                 StigmaDecisionMaker stigmaDecisionMaker) {
 
-        return new StigmaLoginActivityHandler(request, response, stigmaCookieService, stigmaActionEvaluator);
+        return new StigmaLoginActivityHandler(request, response, stigmaCookieService, stigmaDecisionMaker);
     }
 
     @Bean
-    public StigmaActionEvaluator stigmaActionEvaluator(StigmaExtractor stigmaExtractor,
-                                                       StigmaService stigmaService,
-                                                       StigmaTokenFactory stigmaTokenFactory,
-                                                       StigmaValidator stigmaValidator) {
-        return new StigmaActionEvaluator(stigmaExtractor, stigmaService, stigmaTokenFactory, stigmaValidator);
+    public StigmaDecisionMaker stigmaDecisionMaker(StigmaExtractor stigmaExtractor,
+                                                   StigmaService stigmaService,
+                                                   StigmaTokenFactory stigmaTokenFactory,
+                                                   StigmaValidator stigmaValidator) {
+        return new StigmaDecisionMaker(stigmaExtractor, stigmaService, stigmaTokenFactory, stigmaValidator);
     }
 
     @Bean

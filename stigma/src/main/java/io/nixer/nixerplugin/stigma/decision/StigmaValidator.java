@@ -1,4 +1,4 @@
-package io.nixer.nixerplugin.stigma.evaluate;
+package io.nixer.nixerplugin.stigma.decision;
 
 import java.time.Duration;
 import java.time.Instant;

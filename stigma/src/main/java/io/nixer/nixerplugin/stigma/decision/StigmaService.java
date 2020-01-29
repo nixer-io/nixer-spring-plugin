@@ -1,4 +1,4 @@
-package io.nixer.nixerplugin.stigma.evaluate;
+package io.nixer.nixerplugin.stigma.decision;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
