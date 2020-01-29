@@ -1,7 +1,6 @@
 <html xmlns:th="https://www.thymeleaf.org">
 <head>
     <title>Please Login</title>
-    <!--    TODO conditional load of captcha depending whether in CS mode and captcha enabled-->
     <script th:if="${@captchaChecker.shouldDisplayCaptcha()}" src='https://www.google.com/recaptcha/api.js' async defer>
 
     </script>
@@ -28,7 +27,6 @@
             <label class="sr-only" for="password">Password</label>
             <input type="password" id="password" name="password" class="form-control" placeholder="Password" required/>
         </p>
-        <!--            TODO conditional rendering of captcha depending whether in CS mode and captcha enabled-->
         <div th:if="${@captchaChecker.shouldDisplayCaptcha()}" class="g-recaptcha"
              th:attr="data-sitekey=${@captchaKeyProvider.getSiteKey()}"></div>
 
