@@ -31,8 +31,6 @@ import static org.mockito.Mockito.lenient;
 @ExtendWith(MockitoExtension.class)
 class StigmaDecisionMakerTest {
 
-    // TODO verify metrics when implemented
-
     private static final Stigma STIGMA = new Stigma("stigma-value");
     private static final StigmaDetails STIGMA_DETAILS = new StigmaDetails(STIGMA, ACTIVE, Instant.parse("2020-01-21T10:25:43.511Z"));
     private static final RawStigmaToken STIGMA_TOKEN = new RawStigmaToken("valid-token");
@@ -74,7 +72,6 @@ class StigmaDecisionMakerTest {
 
         // then
         assertThat(result).isEqualTo(new StigmaRefreshDecision(STIGMA_TOKEN, TOKEN_GOOD_LOGIN_SUCCESS));
-        //        verify(stigmaMetricsService).rememberStigmaActionType(TOKEN_GOOD_LOGIN_SUCCESS);
     }
 
     @Test
@@ -87,7 +84,6 @@ class StigmaDecisionMakerTest {
 
         // then
         assertThat(result).isEqualTo(new StigmaRefreshDecision(REFRESHED_STIGMA_TOKEN, TOKEN_BAD_LOGIN_SUCCESS));
-        //        verify(stigmaMetricsService).rememberStigmaActionType(TOKEN_BAD_LOGIN_SUCCESS);
     }
 
     @Test
@@ -102,7 +98,6 @@ class StigmaDecisionMakerTest {
 
         // then
         assertThat(result).isEqualTo(new StigmaRefreshDecision(REFRESHED_STIGMA_TOKEN, TOKEN_BAD_LOGIN_SUCCESS));
-        //        verify(stigmaMetricsService).rememberStigmaActionType(TOKEN_BAD_LOGIN_SUCCESS);
     }
 
     @Test
@@ -117,7 +112,6 @@ class StigmaDecisionMakerTest {
 
         // then
         assertThat(result).isEqualTo(new StigmaRefreshDecision(REFRESHED_STIGMA_TOKEN, TOKEN_GOOD_LOGIN_FAIL));
-        //        verify(stigmaMetricsService).rememberStigmaActionType(TOKEN_GOOD_LOGIN_FAIL);
     }
 
     @Test
@@ -130,7 +124,6 @@ class StigmaDecisionMakerTest {
 
         // then
         assertThat(result).isEqualTo(new StigmaRefreshDecision(REFRESHED_STIGMA_TOKEN, TOKEN_BAD_LOGIN_FAIL));
-        //        verify(stigmaMetricsService).rememberStigmaActionType(TOKEN_BAD_LOGIN_FAIL);
     }
 
     @Test
@@ -145,6 +138,5 @@ class StigmaDecisionMakerTest {
 
         // then
         assertThat(result).isEqualTo(new StigmaRefreshDecision(REFRESHED_STIGMA_TOKEN, TOKEN_BAD_LOGIN_FAIL));
-        //        verify(stigmaMetricsService).rememberStigmaActionType(TOKEN_BAD_LOGIN_FAIL);
     }
 }

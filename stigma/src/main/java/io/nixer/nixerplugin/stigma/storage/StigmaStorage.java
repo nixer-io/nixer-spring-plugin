@@ -21,11 +21,9 @@ public interface StigmaStorage {
 
     void updateStatus(@Nonnull final Stigma stigma, final StigmaStatus newStatus);
 
-    // TODO historical
     default void recordSpottingUnknownStigma(@Nonnull final Stigma stigma) {
     }
 
-    // TODO historical
     default void recordStigmaObservation(@Nonnull final StigmaDetails stigmaDetails) {
     }
 }

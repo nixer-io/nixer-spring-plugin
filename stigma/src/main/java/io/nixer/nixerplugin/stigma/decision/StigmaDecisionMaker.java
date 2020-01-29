@@ -110,6 +110,6 @@ public class StigmaDecisionMaker {
     }
 
     private void writeToMetrics(final StigmaRefreshDecision decision) {
-        // TODO implement
+        // Not implemented yet.
     }
 }

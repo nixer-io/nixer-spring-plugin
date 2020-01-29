@@ -60,7 +60,6 @@ public class DirectDecrypterFactory extends DecrypterFactory {
         }
 
         if (keys.size() > 1) {
-            // TODO handle multiple keys
             logger.warn("More than one key found for header " + header);
         }
 
