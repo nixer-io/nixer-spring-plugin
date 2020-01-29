@@ -63,7 +63,6 @@ public class BehaviorProviderBuilder {
             return this;
         }
 
-        // todo find better name for act
         public RuleBuilder then(final Behaviors behavior) {
             Assert.notNull(behavior, "Behavior must not be null");
 
