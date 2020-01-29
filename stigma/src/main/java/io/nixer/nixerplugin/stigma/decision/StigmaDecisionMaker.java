@@ -42,16 +42,16 @@ public class StigmaDecisionMaker {
     /**
      * To be called after successful login attempt.
      * Consumes the currently used raw stigma token (might be null or empty)
-     * and returns {@link StigmaDecision} to be used for further actions.
+     * and returns {@link StigmaRefreshDecision} to be used for further actions.
      */
     @Nonnull
-    public StigmaDecision onLoginSuccess(@Nullable final RawStigmaToken originalToken) {
+    public StigmaRefreshDecision onLoginSuccess(@Nullable final RawStigmaToken originalToken) {
 
         final StigmaDetails stigmaDetails = findStigmaDetails(originalToken);
 
-        final StigmaDecision decision = isStigmaValid(stigmaDetails)
-                ? new StigmaDecision(originalToken, TOKEN_GOOD_LOGIN_SUCCESS)
-                : new StigmaDecision(newStigmaToken(), TOKEN_BAD_LOGIN_SUCCESS);
+        final StigmaRefreshDecision decision = isStigmaValid(stigmaDetails)
+                ? new StigmaRefreshDecision(originalToken, TOKEN_GOOD_LOGIN_SUCCESS)
+                : new StigmaRefreshDecision(newStigmaToken(), TOKEN_BAD_LOGIN_SUCCESS);
 
         writeToMetrics(decision);
 
@@ -61,19 +61,19 @@ public class StigmaDecisionMaker {
     /**
      * To be called after failed login attempt.
      * Consumes the currently used raw stigma token (might be null or empty)
-     * and returns {@link StigmaDecision} to be used for further actions.
+     * and returns {@link StigmaRefreshDecision} to be used for further actions.
      */
     @Nonnull
-    public StigmaDecision onLoginFail(@Nullable final RawStigmaToken originalToken) {
+    public StigmaRefreshDecision onLoginFail(@Nullable final RawStigmaToken originalToken) {
 
         final StigmaDetails stigmaDetails = findStigmaDetails(originalToken);
 
-        final StigmaDecision decision;
+        final StigmaRefreshDecision decision;
         if (isStigmaValid(stigmaDetails)) {
             stigmaService.revokeStigma(stigmaDetails.getStigma());
-            decision = new StigmaDecision(newStigmaToken(), TOKEN_GOOD_LOGIN_FAIL);
+            decision = new StigmaRefreshDecision(newStigmaToken(), TOKEN_GOOD_LOGIN_FAIL);
         } else {
-            decision = new StigmaDecision(newStigmaToken(), TOKEN_BAD_LOGIN_FAIL);
+            decision = new StigmaRefreshDecision(newStigmaToken(), TOKEN_BAD_LOGIN_FAIL);
         }
 
         writeToMetrics(decision);
@@ -109,7 +109,7 @@ public class StigmaDecisionMaker {
         return stigmaTokenFactory.getToken(newStigma.getStigma());
     }
 
-    private void writeToMetrics(final StigmaDecision decision) {
+    private void writeToMetrics(final StigmaRefreshDecision decision) {
         // TODO implement
     }
 }

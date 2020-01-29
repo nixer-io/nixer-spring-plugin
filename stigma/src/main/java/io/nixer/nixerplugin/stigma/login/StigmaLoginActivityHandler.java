@@ -6,9 +6,9 @@ import javax.servlet.http.HttpServletResponse;
 import io.nixer.nixerplugin.core.login.LoginActivityHandler;
 import io.nixer.nixerplugin.core.login.LoginContext;
 import io.nixer.nixerplugin.core.login.LoginResult;
-import io.nixer.nixerplugin.stigma.domain.RawStigmaToken;
-import io.nixer.nixerplugin.stigma.decision.StigmaDecision;
 import io.nixer.nixerplugin.stigma.decision.StigmaDecisionMaker;
+import io.nixer.nixerplugin.stigma.decision.StigmaRefreshDecision;
+import io.nixer.nixerplugin.stigma.domain.RawStigmaToken;
 
 /**
  * Entry point for StigmaToken-based credential stuffing protection mechanism.
@@ -40,12 +40,12 @@ public class StigmaLoginActivityHandler implements LoginActivityHandler {
 
         final RawStigmaToken receivedStigmaToken = stigmaCookieService.readStigmaToken(request);
 
-        final StigmaDecision decision = loginResult.isSuccess()
+        final StigmaRefreshDecision decision = loginResult.isSuccess()
                 ? stigmaDecisionMaker.onLoginSuccess(receivedStigmaToken)
                 : stigmaDecisionMaker.onLoginFail(receivedStigmaToken);
 
-        decision.apply(
-                stigmaToken -> stigmaCookieService.writeStigmaToken(response, stigmaToken)
-        );
+        if (decision.requiresStigmaRefresh()) {
+            stigmaCookieService.writeStigmaToken(response, decision.getTokenForRefresh());
+        }
     }
 }

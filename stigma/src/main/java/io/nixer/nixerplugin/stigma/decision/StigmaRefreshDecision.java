@@ -1,17 +1,15 @@
 package io.nixer.nixerplugin.stigma.decision;
 
 import java.util.StringJoiner;
-import java.util.function.Consumer;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 
 import com.google.common.base.Preconditions;
 import io.nixer.nixerplugin.stigma.domain.RawStigmaToken;
-import org.springframework.util.Assert;
 
 /**
- * Represents decision whether a Stigma is required to be refreshed or not.
- * If the refresh is required, by means of the {@link #event}, the carried {@link #tokenForRefresh} is going to be used.
+ * Represents decision whether a Stigma should be refreshed or not.
+ * If the refresh is required, by means of the {@link #event}, the carried {@link #tokenForRefresh} is to be used.
  * <br>
  * The {@link #tokenForRefresh} is considered <b>always valid and ready to be used for refreshing</b>, despite the decision.
  * It might be a brand new token or a valid, already being used, one.
@@ -22,7 +20,7 @@ import org.springframework.util.Assert;
  * @author gcwiak
  */
 @Immutable
-public class StigmaDecision {
+public class StigmaRefreshDecision {
 
     @Nonnull
     private final RawStigmaToken tokenForRefresh;
@@ -30,21 +28,18 @@ public class StigmaDecision {
     @Nonnull
     private final StigmaEvent event;
 
-    public StigmaDecision(@Nonnull final RawStigmaToken tokenForRefresh, @Nonnull final StigmaEvent event) {
+    public StigmaRefreshDecision(@Nonnull final RawStigmaToken tokenForRefresh, @Nonnull final StigmaEvent event) {
         this.tokenForRefresh = Preconditions.checkNotNull(tokenForRefresh, "tokenForRefresh");
         this.event = Preconditions.checkNotNull(event, "event");
     }
 
-    /**
-     * Applies decision by executing the given action if token refresh is required or ignoring it otherwise.
-     *
-     * @param refreshAction to be executed, never null.
-     */
-    public void apply(@Nonnull final Consumer<RawStigmaToken> refreshAction) {
-        Assert.notNull(refreshAction, "refreshAction must not be null");
-        if (event.requiresStigmaRefresh) {
-            refreshAction.accept(tokenForRefresh);
-        }
+    public boolean requiresStigmaRefresh() {
+        return event.requiresStigmaRefresh;
+    }
+
+    @Nonnull
+    public RawStigmaToken getTokenForRefresh() {
+        return tokenForRefresh;
     }
 
     @Override
@@ -52,7 +47,7 @@ public class StigmaDecision {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        final StigmaDecision that = (StigmaDecision) o;
+        final StigmaRefreshDecision that = (StigmaRefreshDecision) o;
 
         if (!tokenForRefresh.equals(that.tokenForRefresh)) return false;
         return event == that.event;
@@ -68,7 +63,7 @@ public class StigmaDecision {
 
     @Override
     public String toString() {
-        return new StringJoiner(", ", StigmaDecision.class.getSimpleName() + "[", "]")
+        return new StringJoiner(", ", StigmaRefreshDecision.class.getSimpleName() + "[", "]")
                 .add("tokenForRefresh='" + tokenForRefresh + "'")
                 .add("event=" + event)
                 .toString();
