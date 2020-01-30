@@ -5,7 +5,6 @@ import java.time.Duration;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import io.nixer.nixerplugin.core.detection.events.UsernameFailedLoginOverThresholdEvent;
-import io.nixer.nixerplugin.core.detection.events.UsernameFailedLoginOverThresholdEvent;
 import org.springframework.context.ApplicationListener;
 
 /**
@@ -26,7 +25,6 @@ public class UsernameOverLoginThresholdRegistry implements ApplicationListener<U
 
     @Override
     public void onApplicationEvent(final UsernameFailedLoginOverThresholdEvent event) {
-        // TODO block for time
         usernameOverThreshold.put(event.getUsername(), event.getUsername());
     }
 

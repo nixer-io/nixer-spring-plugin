@@ -2,8 +2,6 @@ package io.nixer.nixerplugin.core.domain.ip.tree;
 
 import io.nixer.nixerplugin.core.domain.ip.net.IpAddress;
 import io.nixer.nixerplugin.core.domain.ip.net.IpPrefix;
-import io.nixer.nixerplugin.core.domain.ip.net.IpAddress;
-import io.nixer.nixerplugin.core.domain.ip.net.IpPrefix;
 import org.springframework.util.Assert;
 
 public class UnibitIpTrie<T extends IpAddress> implements IpTree<T> {
@@ -16,7 +14,6 @@ public class UnibitIpTrie<T extends IpAddress> implements IpTree<T> {
         private boolean leaf;
     }
 
-    // TODO consider detecting prefixes duplicates/over-lapping
     public void put(IpPrefix<T> prefix) {
         Assert.notNull(prefix, "Prefix must not be null");
 

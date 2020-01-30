@@ -2,8 +2,6 @@ package io.nixer.nixerplugin.core.detection.events.elastic;
 
 import io.nixer.nixerplugin.core.detection.events.AnomalyEvent;
 import io.nixer.nixerplugin.core.detection.events.JsonSerializer;
-import io.nixer.nixerplugin.core.detection.events.AnomalyEvent;
-import io.nixer.nixerplugin.core.detection.events.JsonSerializer;
 import io.searchbox.client.JestClient;
 import io.searchbox.client.JestResultHandler;
 import io.searchbox.core.DocumentResult;
@@ -48,8 +46,6 @@ public class ElasticIndexer implements ApplicationListener<AnomalyEvent> {
         final JsonSerializer jsonSerializer = new JsonSerializer();
 
         event.accept(jsonSerializer);
-
-        //TODO set id consider event hash
 
         return new Index.Builder(jsonSerializer.toString())
                 .index(this.index)

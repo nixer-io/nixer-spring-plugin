@@ -18,7 +18,6 @@ abstract class ThresholdAnomalyRule implements AnomalyRule {
         return value > threshold.get();
     }
 
-    //todo add actuator endpoint to read/update it
     public void setThreshold(final int threshold) {
         Assert.isTrue(threshold > 1, "Threshold must be greater than 1");
         this.threshold.set(threshold);

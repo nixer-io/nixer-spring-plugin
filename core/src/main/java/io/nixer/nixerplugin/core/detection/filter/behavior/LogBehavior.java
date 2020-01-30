@@ -7,7 +7,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import io.nixer.nixerplugin.core.detection.filter.RequestMetadataWrapper;
-import io.nixer.nixerplugin.core.detection.filter.RequestMetadataWrapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.http.server.ServletServerHttpRequest;
@@ -32,8 +31,6 @@ public class LogBehavior implements Behavior {
     private boolean includeUserInfo = false;
     private boolean includeQueryString = false;
     private boolean includeMetadata = false;
-
-    //todo consider whether http tracking would be replacement or addition to it
 
     @Override
     public void act(final HttpServletRequest request, final HttpServletResponse response) {
