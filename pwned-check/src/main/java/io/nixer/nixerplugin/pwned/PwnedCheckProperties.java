@@ -1,6 +1,8 @@
 package io.nixer.nixerplugin.pwned;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.security.config.annotation.web.configurers.FormLoginConfigurer;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
  * Created on 24/09/2019.
@@ -18,10 +20,13 @@ public class PwnedCheckProperties {
 
     /**
      * The HTTP parameter to look for the password when performing the check.
+     * <br>
+     * <b>Must follow the value of</b> {@link UsernamePasswordAuthenticationFilter#passwordParameter}
+     * which is might be changed by {@link FormLoginConfigurer}.
+     * <br>
+     * Defaults to the Spring Security default value.
      */
-    // FIXME this duplicates the parameter set in Spring's FormLoginConfigurer.
-    // Think how it can be reused.
-    private String passwordParameter = "password";
+    private String passwordParameter = UsernamePasswordAuthenticationFilter.SPRING_SECURITY_FORM_PASSWORD_KEY;
 
     /**
      * Location of leaked credentials data file
