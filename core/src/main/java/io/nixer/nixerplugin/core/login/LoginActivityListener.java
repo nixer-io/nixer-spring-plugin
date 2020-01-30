@@ -2,7 +2,10 @@ package io.nixer.nixerplugin.core.login;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Logger;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationListener;
 import org.springframework.security.authentication.event.AbstractAuthenticationEvent;
 import org.springframework.util.Assert;
@@ -11,6 +14,8 @@ import org.springframework.util.Assert;
  * Listens for Spring {@link AbstractAuthenticationEvent} and delegates processing to, possibly multiple, {@link LoginActivityHandler}s.
  */
 public class LoginActivityListener implements ApplicationListener<AbstractAuthenticationEvent> {
+
+    private final Log logger = LogFactory.getLog(getClass());
 
     private final LoginContextFactory loginContextFactory;
 
@@ -27,11 +32,14 @@ public class LoginActivityListener implements ApplicationListener<AbstractAuthen
 
     @Override
     public void onApplicationEvent(final AbstractAuthenticationEvent event) {
-        final LoginResult loginResult = loginContextFactory.getLoginResult(event);
-        if (loginResult != null) {
-            final LoginContext context = loginContextFactory.create(event);
 
-            loginActivityHandlers.forEach(it -> it.handle(loginResult, context));
+        try {
+            final LoginContext context = loginContextFactory.create(event);
+            loginActivityHandlers.forEach(it -> it.handle(context));
+        } catch (UnknownAuthenticationEvent unknownAuthenticationEvent) {
+            logger.warn(unknownAuthenticationEvent.getMessage());
         }
+
+
     }
 }

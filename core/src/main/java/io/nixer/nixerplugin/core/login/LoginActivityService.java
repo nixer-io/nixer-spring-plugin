@@ -5,8 +5,7 @@ import java.util.List;
 import io.nixer.nixerplugin.core.detection.rules.AnomalyRulesRunner;
 import org.springframework.util.Assert;
 
-// TODO find better name for this component
-public class LoginActivityService implements LoginActivityHandler{
+public class LoginActivityService implements LoginActivityHandler {
 
     private final List<LoginActivityRepository> repositories;
 
@@ -21,9 +20,9 @@ public class LoginActivityService implements LoginActivityHandler{
     }
 
     @Override
-    public void handle(final LoginResult loginResult, final LoginContext context) {
+    public void handle(final LoginContext context) {
         for (LoginActivityRepository repository : repositories) {
-            repository.save(loginResult, context);
+            repository.save(context.getLoginResult(), context);
         }
 
         anomalyRulesRunner.onLogin(context);

@@ -36,11 +36,11 @@ public class StigmaLoginActivityHandler implements LoginActivityHandler {
     }
 
     @Override
-    public void handle(final LoginResult loginResult, final LoginContext ignored) {
+    public void handle(final LoginContext context) {
 
         final RawStigmaToken receivedStigmaToken = stigmaCookieService.readStigmaToken(request);
 
-        final StigmaAction action = loginResult.isSuccess()
+        final StigmaAction action = context.getLoginResult().isSuccess()
                 ? stigmaActionEvaluator.onLoginSuccess(receivedStigmaToken)
                 : stigmaActionEvaluator.onLoginFail(receivedStigmaToken);
 

@@ -25,12 +25,19 @@ public class LoginContextFactory {
         this.loginFailureTypeRegistry = loginFailureTypeRegistry;
     }
 
-    LoginContext create(final AbstractAuthenticationEvent event) {
-        final String userAgent = request.getHeader(HttpHeaders.USER_AGENT);
-        final String ip = request.getRemoteAddr();
+    LoginContext create(final AbstractAuthenticationEvent event) throws UnknownAuthenticationEvent {
+        final LoginResult loginResult = getLoginResult(event);
         final String username = extractUsername(event);
 
+        if (loginResult == null || username == null) {
+            throw new UnknownAuthenticationEvent("Unable to determine login result or username for event: " + event);
+        }
+
+        final String userAgent = request.getHeader(HttpHeaders.USER_AGENT);
+        final String ip = request.getRemoteAddr();
+
         final LoginContext context = new LoginContext();
+        context.setLoginResult(loginResult);
         context.setUsername(username);
         context.setIpAddress(ip);
         context.setUserAgent(userAgent);
@@ -57,7 +64,7 @@ public class LoginContextFactory {
         return null;
     }
 
-    LoginResult getLoginResult(AbstractAuthenticationEvent event) {
+    private LoginResult getLoginResult(AbstractAuthenticationEvent event) {
         if (event instanceof AuthenticationSuccessEvent) {
             return LoginResult.success();
         } else if (event instanceof AbstractAuthenticationFailureEvent) {
