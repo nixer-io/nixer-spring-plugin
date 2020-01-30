@@ -3,8 +3,8 @@ package io.nixer.example.stigma;
 import java.util.List;
 import javax.servlet.http.Cookie;
 
-import io.nixer.nixerplugin.stigma.domain.StigmaStatus;
 import io.nixer.nixerplugin.stigma.domain.StigmaDetails;
+import io.nixer.nixerplugin.stigma.domain.StigmaStatus;
 import io.nixer.nixerplugin.stigma.storage.jdbc.StigmasJdbcDAO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,11 +33,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @AutoConfigureTestDatabase
-@EnableAutoConfiguration(exclude = InfluxMetricsExportAutoConfiguration.class) // TODO find better way for excluding influx, e.g. profiles
+@EnableAutoConfiguration(exclude = InfluxMetricsExportAutoConfiguration.class)
 @Transactional
 class StigmaTest {
-
-    // TODO verify Stigma metrics
 
     @Autowired
     private MockMvc mockMvc;
