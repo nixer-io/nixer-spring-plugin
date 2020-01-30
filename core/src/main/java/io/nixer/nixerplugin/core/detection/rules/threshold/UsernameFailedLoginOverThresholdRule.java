@@ -1,17 +1,15 @@
 package io.nixer.nixerplugin.core.detection.rules.threshold;
 
-import io.nixer.nixerplugin.core.detection.rules.EventEmitter;
 import io.nixer.nixerplugin.core.detection.events.IpFailedLoginOverThresholdEvent;
 import io.nixer.nixerplugin.core.detection.events.UsernameFailedLoginOverThresholdEvent;
-import io.nixer.nixerplugin.core.login.LoginContext;
-import io.nixer.nixerplugin.core.login.inmemory.LoginMetric;
 import io.nixer.nixerplugin.core.detection.rules.EventEmitter;
 import io.nixer.nixerplugin.core.login.LoginContext;
 import io.nixer.nixerplugin.core.login.inmemory.LoginMetric;
 import org.springframework.util.Assert;
 
 /**
- * Rule that checks if number of consecutive login failures for username exceeds threshold and emits {@link IpFailedLoginOverThresholdEvent} event if it does.
+ * Rule that checks if number of consecutive login failures for username exceeds threshold and emits {@link IpFailedLoginOverThresholdEvent} event
+ * if it does.
  */
 public class UsernameFailedLoginOverThresholdRule extends ThresholdAnomalyRule {
 
@@ -28,7 +26,7 @@ public class UsernameFailedLoginOverThresholdRule extends ThresholdAnomalyRule {
     @Override
     public void execute(final LoginContext loginContext, final EventEmitter eventEmitter) {
         final String username = loginContext.getUsername();
-        final int failedLogin = failedLoginMetric.value(username); //todo login Metric api not symmetrical.
+        final int failedLogin = failedLoginMetric.value(username);
 
         if (isOverThreshold(failedLogin)) {
             eventEmitter.accept(new UsernameFailedLoginOverThresholdEvent(username));

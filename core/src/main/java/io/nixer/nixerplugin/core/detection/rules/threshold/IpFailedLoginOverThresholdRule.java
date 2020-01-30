@@ -27,7 +27,7 @@ public class IpFailedLoginOverThresholdRule extends ThresholdAnomalyRule {
     @Override
     public void execute(final LoginContext loginContext, final EventEmitter eventEmitter) {
         final String ipAddress = loginContext.getIpAddress();
-        final int failedLogin = loginMetric.value(ipAddress); //todo login Metric api not symmetrical.
+        final int failedLogin = loginMetric.value(ipAddress);
 
         if (isOverThreshold(failedLogin)) {
             eventEmitter.accept(new IpFailedLoginOverThresholdEvent(ipAddress));

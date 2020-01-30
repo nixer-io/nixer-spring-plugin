@@ -1,17 +1,14 @@
 package io.nixer.nixerplugin.core.detection.rules.threshold;
 
-import io.nixer.nixerplugin.core.detection.rules.EventEmitter;
-import io.nixer.nixerplugin.core.detection.events.IpFailedLoginOverThresholdEvent;
 import io.nixer.nixerplugin.core.detection.events.UserAgentFailedLoginOverThresholdEvent;
-import io.nixer.nixerplugin.core.login.LoginContext;
-import io.nixer.nixerplugin.core.login.inmemory.LoginMetric;
 import io.nixer.nixerplugin.core.detection.rules.EventEmitter;
 import io.nixer.nixerplugin.core.login.LoginContext;
 import io.nixer.nixerplugin.core.login.inmemory.LoginMetric;
 import org.springframework.util.Assert;
 
 /**
- * Rule that checks if number of login failures for useragent exceeds threshold and emits {@link UserAgentFailedLoginOverThresholdEvent} event if it does.
+ * Rule that checks if number of login failures for useragent exceeds threshold and emits {@link UserAgentFailedLoginOverThresholdEvent} event if
+ * it does.
  */
 public class UserAgentFailedLoginOverThresholdRule extends ThresholdAnomalyRule {
 
@@ -28,7 +25,7 @@ public class UserAgentFailedLoginOverThresholdRule extends ThresholdAnomalyRule 
     @Override
     public void execute(final LoginContext loginContext, final EventEmitter eventEmitter) {
         final String userAgent = loginContext.getUserAgentToken();
-        final int failedLogin = failedLoginMetric.value(userAgent); //todo login Metric api not symmetrical.
+        final int failedLogin = failedLoginMetric.value(userAgent);
 
         if (isOverThreshold(failedLogin)) {
             eventEmitter.accept(new UserAgentFailedLoginOverThresholdEvent(userAgent));
