@@ -3,7 +3,7 @@ package io.nixer.nixerplugin.core.login;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
-import io.nixer.nixerplugin.core.detection.rules.AnomalyRulesRunner;
+import io.nixer.nixerplugin.core.detection.rules.RulesRunner;
 import io.nixer.nixerplugin.core.login.metrics.LoginMetricsReporter;
 import io.nixer.nixerplugin.core.metrics.MetricsFactory;
 import org.springframework.context.annotation.Bean;
@@ -28,8 +28,8 @@ public class LoginConfiguration {
 
     @Bean
     public LoginActivityService loginActivityService(List<LoginActivityRepository> loginActivityRepositories,
-                                                     AnomalyRulesRunner anomalyRulesRunner) {
-        return new LoginActivityService(loginActivityRepositories, anomalyRulesRunner);
+                                                     RulesRunner rulesRunner) {
+        return new LoginActivityService(loginActivityRepositories, rulesRunner);
     }
 
     @Bean

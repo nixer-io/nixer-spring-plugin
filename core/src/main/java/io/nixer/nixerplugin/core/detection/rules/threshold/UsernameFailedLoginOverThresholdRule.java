@@ -11,7 +11,7 @@ import org.springframework.util.Assert;
  * Rule that checks if number of consecutive login failures for username exceeds threshold and emits {@link IpFailedLoginOverThresholdEvent} event
  * if it does.
  */
-public class UsernameFailedLoginOverThresholdRule extends ThresholdAnomalyRule {
+public class UsernameFailedLoginOverThresholdRule extends ThresholdLoginRule {
 
     private static final int THRESHOLD_VALUE = 5;
 

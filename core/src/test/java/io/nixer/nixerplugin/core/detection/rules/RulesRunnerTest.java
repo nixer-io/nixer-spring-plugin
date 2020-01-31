@@ -8,21 +8,17 @@ import io.nixer.nixerplugin.core.detection.events.ApplicationEventPublisherStub;
 import io.nixer.nixerplugin.core.detection.events.IpFailedLoginOverThresholdEvent;
 import io.nixer.nixerplugin.core.detection.events.UserAgentFailedLoginOverThresholdEvent;
 import io.nixer.nixerplugin.core.login.LoginContext;
-import io.nixer.nixerplugin.core.detection.events.AnomalyEvent;
-import io.nixer.nixerplugin.core.detection.events.IpFailedLoginOverThresholdEvent;
-import io.nixer.nixerplugin.core.detection.events.UserAgentFailedLoginOverThresholdEvent;
-import io.nixer.nixerplugin.core.login.LoginContext;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class AnomalyRulesRunnerTest {
+class RulesRunnerTest {
 
     private final ApplicationEventPublisherStub publisherStub = new ApplicationEventPublisherStub();
 
     @Test
     void shouldExecuteRulesAndPublishResultingEvents() {
-        List<AnomalyRule> rules = new ArrayList<>();
+        List<LoginRule> rules = new ArrayList<>();
         final UserAgentFailedLoginOverThresholdEvent userAgentEvent = new UserAgentFailedLoginOverThresholdEvent("user-agent");
         rules.add(fixedEventRule(userAgentEvent));
 
@@ -31,7 +27,7 @@ class AnomalyRulesRunnerTest {
 
         rules.add(nopRule());
 
-        final AnomalyRulesRunner rulesRunner = new AnomalyRulesRunner(publisherStub, rules);
+        final RulesRunner rulesRunner = new RulesRunner(publisherStub, rules);
 
         rulesRunner.onLogin(new LoginContext());
 
@@ -40,13 +36,13 @@ class AnomalyRulesRunnerTest {
                 .hasAtLeastOneElementOfType(IpFailedLoginOverThresholdEvent.class);
     }
 
-    private AnomalyRule nopRule() {
+    private LoginRule nopRule() {
         return (loginContext, eventEmitter) -> {
 
         };
     }
 
-    private AnomalyRule fixedEventRule(final AnomalyEvent event) {
+    private LoginRule fixedEventRule(final AnomalyEvent event) {
         return (loginContext, eventEmitter) -> eventEmitter.accept(event);
     }
 

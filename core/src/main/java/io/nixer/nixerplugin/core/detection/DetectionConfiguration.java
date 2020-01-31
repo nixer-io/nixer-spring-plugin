@@ -10,8 +10,8 @@ import io.nixer.nixerplugin.core.detection.filter.login.UsernameFailedLoginOverT
 import io.nixer.nixerplugin.core.detection.registry.IpOverLoginThresholdRegistry;
 import io.nixer.nixerplugin.core.detection.registry.UserAgentOverLoginThresholdRegistry;
 import io.nixer.nixerplugin.core.detection.registry.UsernameOverLoginThresholdRegistry;
-import io.nixer.nixerplugin.core.detection.rules.AnomalyRule;
-import io.nixer.nixerplugin.core.detection.rules.AnomalyRulesRunner;
+import io.nixer.nixerplugin.core.detection.rules.LoginRule;
+import io.nixer.nixerplugin.core.detection.rules.RulesRunner;
 import io.nixer.nixerplugin.core.detection.rules.LoginAnomalyRuleFactory;
 import io.nixer.nixerplugin.core.login.inmemory.CounterRegistry;
 import io.nixer.nixerplugin.core.login.inmemory.InMemoryLoginActivityRepository;
@@ -46,9 +46,9 @@ public class DetectionConfiguration {
     }
 
     @Bean
-    public AnomalyRulesRunner rulesEngine(ApplicationEventPublisher eventPublisher, List<AnomalyRule> anomalyRules) {
+    public RulesRunner rulesEngine(ApplicationEventPublisher eventPublisher, List<LoginRule> loginRules) {
 
-        return new AnomalyRulesRunner(eventPublisher, anomalyRules);
+        return new RulesRunner(eventPublisher, loginRules);
     }
 
     /*
@@ -70,7 +70,7 @@ public class DetectionConfiguration {
         }
 
         @Bean
-        public AnomalyRule ipFailedLoginThresholdRule() {
+        public LoginRule ipFailedLoginThresholdRule() {
             final WindowThresholdRuleProperties properties = ipThresholdRulesProperties();
 
             return detection.ruleFactory()
@@ -102,7 +102,7 @@ public class DetectionConfiguration {
         }
 
         @Bean
-        public AnomalyRule usernameFailedLoginThresholdRule() {
+        public LoginRule usernameFailedLoginThresholdRule() {
             final WindowThresholdRuleProperties properties = usernameThresholdRulesProperties();
 
             return detection.ruleFactory()
@@ -134,7 +134,7 @@ public class DetectionConfiguration {
         }
 
         @Bean
-        public AnomalyRule userAgentFailedLoginThresholdRule() {
+        public LoginRule userAgentFailedLoginThresholdRule() {
             final WindowThresholdRuleProperties properties = userAgentThresholdRulesProperties();
 
             return detection.ruleFactory()
