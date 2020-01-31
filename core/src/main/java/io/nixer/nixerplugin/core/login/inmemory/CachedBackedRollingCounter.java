@@ -78,8 +78,6 @@ public class CachedBackedRollingCounter implements RollingCounter {
 
     private class Timestamps {
 
-        //todo use int instead of long
-        //todo consider using fastutil IntList
         private final LinkedList<Long> timestamps = new LinkedList<>();
 
         synchronized void add(long timestamp) {
