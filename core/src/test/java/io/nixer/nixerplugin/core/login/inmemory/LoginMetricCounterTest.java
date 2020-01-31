@@ -3,18 +3,13 @@ package io.nixer.nixerplugin.core.login.inmemory;
 import java.time.Duration;
 
 import io.nixer.nixerplugin.core.login.LoginContext;
-import io.nixer.nixerplugin.core.login.LoginResult;
-import io.nixer.nixerplugin.core.login.LoginContext;
 import io.nixer.nixerplugin.core.login.LoginFailureType;
 import io.nixer.nixerplugin.core.login.LoginResult;
 import org.junit.jupiter.api.Test;
 
-import static io.nixer.nixerplugin.core.login.LoginFailureType.BAD_PASSWORD;
-import static io.nixer.nixerplugin.core.login.inmemory.FeatureKey.Features.IP;
-import static io.nixer.nixerplugin.core.login.inmemory.LoginCounterBuilder.counter;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class LoginMetricCounterTest {
+class LoginCounterTest {
 
     private static final String IP_1 = "127.0.0.1";
     private static final String IP_2 = "127.0.0.2";

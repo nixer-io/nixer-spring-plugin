@@ -2,16 +2,12 @@ package io.nixer.nixerplugin.core.login.inmemory;
 
 import io.nixer.nixerplugin.core.login.LoginContext;
 import io.nixer.nixerplugin.core.login.LoginResult;
-import io.nixer.nixerplugin.core.login.LoginMetricCounter;
-import io.nixer.nixerplugin.core.login.LoginContext;
-import io.nixer.nixerplugin.core.login.LoginMetricCounter;
-import io.nixer.nixerplugin.core.login.LoginResult;
 import org.springframework.util.Assert;
 
 /**
  * This counter tracks counts for login.
  */
-public class LoginCounter implements LoginMetric, LoginMetricCounter {
+public class LoginCounter implements LoginMetric {
 
     private final RollingCounter counter;
     private final FeatureKey featureKey;
@@ -38,7 +34,6 @@ public class LoginCounter implements LoginMetric, LoginMetricCounter {
         return key != null ? counter.count(key) : 0;
     }
 
-    @Override
     public void onLogin(final LoginResult result, final LoginContext context) {
         final String key = this.featureKey.key(context);
         if (key != null) {
