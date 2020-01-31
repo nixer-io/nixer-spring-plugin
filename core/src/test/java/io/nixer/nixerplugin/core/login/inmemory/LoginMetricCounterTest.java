@@ -19,7 +19,7 @@ class LoginCounterTest {
     private final LoginCounter counter = LoginCounterBuilder.counter(FeatureKey.Features.IP)
             .window(Duration.ofMinutes(1))
             .clock(clock)
-            .build();
+            .buildCachedRollingCounter();
 
     @Test
     void should_increment_counter() {

@@ -11,10 +11,10 @@ import org.springframework.util.Assert;
  */
 public class LoginCounterBuilder {
 
-    FeatureKey featureKey;
-    Clock clock = Clock.systemDefaultZone();
-    Duration windowSize = WindowSize.WINDOW_5M;
-    CountingStrategy countingStrategy = CountingStrategies.CONSECUTIVE_FAILS;
+    private FeatureKey featureKey;
+    private Clock clock = Clock.systemDefaultZone();
+    private Duration windowSize = WindowSize.WINDOW_5M;
+    private CountingStrategy countingStrategy = CountingStrategies.CONSECUTIVE_FAILS;
 
     private LoginCounterBuilder() {
     }
@@ -47,7 +47,9 @@ public class LoginCounterBuilder {
     }
 
 
-    public LoginCounter build() {
-        return new LoginCounter(this);
+    public LoginCounter buildCachedRollingCounter() {
+        CachedBackedRollingCounter counter = new CachedBackedRollingCounter(windowSize);
+        counter.setClock(clock);
+        return new LoginCounter(counter, featureKey, countingStrategy);
     }
 }

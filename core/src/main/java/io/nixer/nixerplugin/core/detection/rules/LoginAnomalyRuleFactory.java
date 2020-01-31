@@ -25,7 +25,7 @@ public class LoginAnomalyRuleFactory {
         final LoginCounter counter = LoginCounterBuilder.counter(FeatureKey.Features.USERNAME)
                 .window(window)
                 .count(CountingStrategies.CONSECUTIVE_FAILS)
-                .build();
+                .buildCachedRollingCounter();
         counterRegistry.registerCounter(counter);
 
 
@@ -40,7 +40,7 @@ public class LoginAnomalyRuleFactory {
         final LoginCounter counter = LoginCounterBuilder.counter(FeatureKey.Features.USER_AGENT_TOKEN)
                 .window(window)
                 .count(CountingStrategies.TOTAL_FAILS)
-                .build();
+                .buildCachedRollingCounter();
         counterRegistry.registerCounter(counter);
 
         final UserAgentFailedLoginOverThresholdRule rule = new UserAgentFailedLoginOverThresholdRule(counter);
@@ -54,7 +54,7 @@ public class LoginAnomalyRuleFactory {
         final LoginCounter counter = LoginCounterBuilder.counter(FeatureKey.Features.IP)
                 .window(window)
                 .count(CountingStrategies.CONSECUTIVE_FAILS)
-                .build();
+                .buildCachedRollingCounter();
         counterRegistry.registerCounter(counter);
 
         final IpFailedLoginOverThresholdRule rule = new IpFailedLoginOverThresholdRule(counter);

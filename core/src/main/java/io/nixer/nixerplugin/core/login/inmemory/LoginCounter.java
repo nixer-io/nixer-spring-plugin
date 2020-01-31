@@ -13,20 +13,16 @@ public class LoginCounter implements LoginMetric {
     private final FeatureKey featureKey;
     private final CountingStrategy countingStrategy;
 
-    //todo extract filter that will eg. filter particular types of failures
-    LoginCounter(final LoginCounterBuilder builder) {
-        Assert.notNull(builder, "Builder must not be null");
+    LoginCounter(final RollingCounter counter,
+                 final FeatureKey featureKey,
+                 final CountingStrategy countingStrategy) {
+        Assert.notNull(counter, "FeatureKey must not be null");
+        Assert.notNull(featureKey, "FeatureKey must not be null");
+        Assert.notNull(countingStrategy, "CountingStrategy must not be null");
 
-        Assert.notNull(builder.windowSize, "WindowSize must not be null");
-        CachedBackedRollingCounter counter = new CachedBackedRollingCounter(builder.windowSize);
-        counter.setClock(builder.clock);
         this.counter = counter;
-
-        Assert.notNull(builder.featureKey, "FeatureKey must not be null");
-        this.featureKey = builder.featureKey;
-
-        Assert.notNull(builder.countingStrategy, "CountingStrategy must not be null");
-        this.countingStrategy = builder.countingStrategy;
+        this.featureKey = featureKey;
+        this.countingStrategy = countingStrategy;
     }
 
     @Override
