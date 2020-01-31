@@ -26,7 +26,7 @@ import org.springframework.context.annotation.Import;
 })
 public class FilterConfiguration {
 
-    private final Log logger = LogFactory.getLog(getClass());
+    private static final Log logger = LogFactory.getLog(FilterConfiguration.class);
 
     @Bean
     public BehaviorExecutionFilter executionFilter(FilterProperties filterProperties, BehaviorProvider behaviorProvider) {

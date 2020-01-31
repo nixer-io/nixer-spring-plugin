@@ -5,12 +5,12 @@ import javax.annotation.Nullable;
 
 import com.google.common.base.Preconditions;
 import io.nixer.nixerplugin.stigma.domain.Stigma;
-import io.nixer.nixerplugin.stigma.domain.StigmaStatus;
 import io.nixer.nixerplugin.stigma.domain.StigmaDetails;
-import io.nixer.nixerplugin.stigma.storage.StigmaStorage;
+import io.nixer.nixerplugin.stigma.domain.StigmaStatus;
 import io.nixer.nixerplugin.stigma.generate.StigmaGenerator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import io.nixer.nixerplugin.stigma.storage.StigmaStorage;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.util.Assert;
 
 /**
@@ -20,7 +20,7 @@ import org.springframework.util.Assert;
  */
 public class StigmaService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(StigmaService.class);
+    private static final Log logger = LogFactory.getLog(StigmaService.class);
 
     @Nonnull
     private final StigmaStorage stigmaStorage;
@@ -40,7 +40,7 @@ public class StigmaService {
         try {
             return findStigmaDetailsInStorage(stigma);
         } catch (Exception e) {
-            LOGGER.error("Could not obtain stigma details for stigma: '{}'", stigma, e);
+            logger.error("Could not obtain stigma details for stigma: " + stigma, e);
             return null;
         }
     }
@@ -63,7 +63,7 @@ public class StigmaService {
         try {
             stigmaStorage.updateStatus(stigma, StigmaStatus.REVOKED);
         } catch (Exception e) {
-            LOGGER.error("Could not revoke stigma: '{}'", stigma, e);
+            logger.error("Could not revoke stigma: " + stigma, e);
         }
     }
 
@@ -81,7 +81,7 @@ public class StigmaService {
         try {
             stigmaStorage.save(stigmaDetails);
         } catch (Exception e) {
-            LOGGER.error("Could not store stigma: '{}'", stigmaDetails, e);
+            logger.error("Could not store stigma: " + stigmaDetails, e);
         }
     }
 }

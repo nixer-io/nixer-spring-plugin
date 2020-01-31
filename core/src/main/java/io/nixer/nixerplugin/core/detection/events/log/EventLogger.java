@@ -1,7 +1,6 @@
 package io.nixer.nixerplugin.core.detection.events.log;
 
 import io.nixer.nixerplugin.core.detection.events.AnomalyEvent;
-import io.nixer.nixerplugin.core.detection.events.AnomalyEvent;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationListener;
@@ -11,7 +10,7 @@ import org.springframework.context.ApplicationListener;
  */
 public class EventLogger implements ApplicationListener<AnomalyEvent> {
 
-    private final Log logger = LogFactory.getLog(getClass());
+    private static final Log logger = LogFactory.getLog(EventLogger.class);
 
     @Override
     public void onApplicationEvent(final AnomalyEvent event) {

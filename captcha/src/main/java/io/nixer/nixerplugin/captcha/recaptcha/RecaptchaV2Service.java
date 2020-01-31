@@ -7,7 +7,6 @@ import io.nixer.nixerplugin.captcha.error.CaptchaClientException;
 import io.nixer.nixerplugin.captcha.error.CaptchaErrors;
 import io.nixer.nixerplugin.captcha.error.CaptchaServiceException;
 import io.nixer.nixerplugin.captcha.metrics.CaptchaMetricsReporter;
-import io.nixer.nixerplugin.captcha.metrics.CaptchaMetricsReporter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.util.Assert;
@@ -20,7 +19,7 @@ import org.springframework.util.StringUtils;
  */
 public class RecaptchaV2Service implements CaptchaService {
 
-    private final Log logger = LogFactory.getLog(getClass());
+    private static final Log logger = LogFactory.getLog(RecaptchaV2Service.class);
 
     private static Pattern RESPONSE_PATTERN = Pattern.compile("[A-Za-z0-9_-]+");
 

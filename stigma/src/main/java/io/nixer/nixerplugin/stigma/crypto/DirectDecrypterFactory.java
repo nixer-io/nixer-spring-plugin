@@ -28,7 +28,7 @@ import org.springframework.util.Assert;
 @SuppressWarnings({"unchecked", "rawtypes"}) // we don't use SecurityContext parameter for key selector or source
 public class DirectDecrypterFactory extends DecrypterFactory {
 
-    private final Log logger = LogFactory.getLog(getClass());
+    private static final Log logger = LogFactory.getLog(DirectDecrypterFactory.class);
 
     private static final JWEAlgorithm ALGORITHM = JWEAlgorithm.DIR;
     private static final EncryptionMethod ENCRYPTION_METHOD = EncryptionMethod.A128CBC_HS256;
@@ -60,7 +60,7 @@ public class DirectDecrypterFactory extends DecrypterFactory {
         }
 
         if (keys.size() > 1) {
-            logger.warn("More than one key found for header " + header);
+            logger.warn("More than one key found for header: " + header);
         }
 
         final Key key = keys.get(0);

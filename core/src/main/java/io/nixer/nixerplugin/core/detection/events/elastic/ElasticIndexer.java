@@ -2,8 +2,6 @@ package io.nixer.nixerplugin.core.detection.events.elastic;
 
 import io.nixer.nixerplugin.core.detection.events.AnomalyEvent;
 import io.nixer.nixerplugin.core.detection.events.JsonSerializer;
-import io.nixer.nixerplugin.core.detection.events.AnomalyEvent;
-import io.nixer.nixerplugin.core.detection.events.JsonSerializer;
 import io.searchbox.client.JestClient;
 import io.searchbox.client.JestResultHandler;
 import io.searchbox.core.DocumentResult;
@@ -14,7 +12,7 @@ import org.springframework.context.ApplicationListener;
 
 public class ElasticIndexer implements ApplicationListener<AnomalyEvent> {
 
-    private final Log logger = LogFactory.getLog(getClass());
+    private static final Log logger = LogFactory.getLog(ElasticIndexer.class);
 
     private JestClient jestClient;
 
