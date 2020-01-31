@@ -8,10 +8,6 @@ import io.nixer.nixerplugin.core.detection.filter.ip.IpMetadata;
  */
 public class LoginContext {
 
-    //TODO we need to keep info if username was valid.
-    // 1. to be used for metrics eg. unique usernames/ip
-    // 1. to be used for security. Tracking metrics / username could leak to DOS.
-    //      Attacker controls that field and could generate random names.
     private String username;
 
     private String ipAddress;
