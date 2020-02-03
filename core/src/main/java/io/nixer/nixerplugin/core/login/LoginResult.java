@@ -13,6 +13,21 @@ public class LoginResult {
     private final Status status;
     private final LoginFailureType reason;
 
+    public enum Status {
+        SUCCESS("LOGIN_SUCCESS"),
+        FAILURE("LOGIN_FAILURE");
+
+        private final String name;
+
+        Status(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return this.name;
+        }
+    }
+
     private LoginResult(final Status status, final LoginFailureType reason) {
         Assert.notNull(status, "Status must not be null");
         this.status = status;
@@ -40,11 +55,6 @@ public class LoginResult {
 
     public LoginFailureType getFailureType() {
         return reason;
-    }
-
-    public enum Status {
-        SUCCESS,
-        FAILURE
     }
 
     public LoginResult onSuccess(Consumer<LoginResult> consumer) {

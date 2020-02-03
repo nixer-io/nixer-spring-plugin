@@ -19,6 +19,12 @@ public enum CountingStrategies implements CountingStrategy {
         public CounterFunction counter(final RollingCounter counter, final LoginResult result) {
             return result.isSuccess() ? NOP : counter::increment;
         }
+    },
+    ALL {
+        @Override
+        public CounterFunction counter(final RollingCounter counter, final LoginResult result) {
+            return counter::increment;
+        }
     };
 
     public static final CounterFunction NOP = (it) -> {

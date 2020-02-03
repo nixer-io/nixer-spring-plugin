@@ -2,6 +2,7 @@ package io.nixer.nixerplugin.core.detection.rules;
 
 import java.time.Duration;
 
+import io.nixer.nixerplugin.core.detection.rules.ratio.FailedLoginRatioRule;
 import io.nixer.nixerplugin.core.detection.rules.threshold.IpFailedLoginOverThresholdRule;
 import io.nixer.nixerplugin.core.detection.rules.threshold.UserAgentFailedLoginOverThresholdRule;
 import io.nixer.nixerplugin.core.detection.rules.threshold.UsernameFailedLoginOverThresholdRule;
@@ -19,6 +20,19 @@ public class LoginAnomalyRuleFactory {
     public LoginAnomalyRuleFactory(final CounterRegistry counterRegistry) {
         Assert.notNull(counterRegistry, "CounterRegistry must not be null");
         this.counterRegistry = counterRegistry;
+    }
+
+    public FailedLoginRatioRule createFailedLoginRatioRule(final Duration window,
+                                                           final double activationLevel,
+                                                           final double deactivationLevel,
+                                                           final int minimumSampleSize) {
+        final LoginCounter counter = LoginCounterBuilder.counter(FeatureKey.Features.LOGIN_STATUS)
+                .window(window)
+                .count(CountingStrategies.ALL)
+                .buildCachedRollingCounter();
+        counterRegistry.registerCounter(counter);
+
+        return new FailedLoginRatioRule(counter, activationLevel, deactivationLevel, minimumSampleSize);
     }
 
     public UsernameFailedLoginOverThresholdRule createUsernameRule(final Duration window, final Integer threshold) {
