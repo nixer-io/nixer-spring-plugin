@@ -23,8 +23,8 @@ public class LoginAnomalyRuleFactory {
     }
 
     public FailedLoginRatioRule createFailedLoginRatioRule(final Duration window,
-                                                           final Double activationLevel,
-                                                           final Double deactivationLevel,
+                                                           final Integer activationLevel,
+                                                           final Integer deactivationLevel,
                                                            final Integer minimumSampleSize) {
         final LoginCounter counter = LoginCounterBuilder.counter(FeatureKey.Features.LOGIN_STATUS)
                 .window(window)

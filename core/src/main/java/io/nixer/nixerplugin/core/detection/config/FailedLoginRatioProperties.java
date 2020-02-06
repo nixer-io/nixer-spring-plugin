@@ -13,9 +13,9 @@ public class FailedLoginRatioProperties {
 
     private boolean enabled;
 
-    private double activationLevel = 0.4;
+    private int activationLevel = 85;
 
-    private double deactivationLevel = 0.3;
+    private int deactivationLevel = 75;
 
     private int minimumSampleSize = 10;
 
@@ -30,19 +30,19 @@ public class FailedLoginRatioProperties {
         this.enabled = enabled;
     }
 
-    public double getActivationLevel() {
+    public int getActivationLevel() {
         return activationLevel;
     }
 
-    public void setActivationLevel(final double activationLevel) {
+    public void setActivationLevel(final int activationLevel) {
         this.activationLevel = activationLevel;
     }
 
-    public double getDeactivationLevel() {
+    public int getDeactivationLevel() {
         return deactivationLevel;
     }
 
-    public void setDeactivationLevel(final double deactivationLevel) {
+    public void setDeactivationLevel(final int deactivationLevel) {
         this.deactivationLevel = deactivationLevel;
     }
 
