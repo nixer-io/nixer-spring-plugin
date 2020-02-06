@@ -5,10 +5,13 @@ import javax.servlet.http.HttpServletRequest;
 import io.nixer.nixerplugin.core.detection.filter.MetadataFilter;
 import io.nixer.nixerplugin.core.detection.filter.RequestMetadata;
 import io.nixer.nixerplugin.core.detection.registry.CredentialStuffingRegistry;
-import io.nixer.nixerplugin.core.detection.filter.MetadataFilter;
-import io.nixer.nixerplugin.core.detection.filter.RequestMetadata;
 import org.springframework.util.Assert;
 
+/**
+ * In stand-alone plugin, credential stuffing is determined by simple failed-to-successful login ratio.
+ *
+ * In default stand-alone distribution, this filter is not active.
+ */
 public class GlobalCredentialStuffingFilter extends MetadataFilter {
 
     private final CredentialStuffingRegistry credentialStuffingRegistry;

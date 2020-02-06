@@ -8,9 +8,9 @@ import io.nixer.nixerplugin.core.detection.rules.threshold.UserAgentFailedLoginO
 import io.nixer.nixerplugin.core.detection.rules.threshold.UsernameFailedLoginOverThresholdRule;
 import io.nixer.nixerplugin.core.login.inmemory.CounterRegistry;
 import io.nixer.nixerplugin.core.login.inmemory.CountingStrategies;
+import io.nixer.nixerplugin.core.login.inmemory.FeatureKey;
 import io.nixer.nixerplugin.core.login.inmemory.LoginCounter;
 import io.nixer.nixerplugin.core.login.inmemory.LoginCounterBuilder;
-import io.nixer.nixerplugin.core.login.inmemory.FeatureKey;
 import org.springframework.util.Assert;
 
 public class LoginAnomalyRuleFactory {
@@ -23,9 +23,9 @@ public class LoginAnomalyRuleFactory {
     }
 
     public FailedLoginRatioRule createFailedLoginRatioRule(final Duration window,
-                                                           final double activationLevel,
-                                                           final double deactivationLevel,
-                                                           final int minimumSampleSize) {
+                                                           final Double activationLevel,
+                                                           final Double deactivationLevel,
+                                                           final Integer minimumSampleSize) {
         final LoginCounter counter = LoginCounterBuilder.counter(FeatureKey.Features.LOGIN_STATUS)
                 .window(window)
                 .count(CountingStrategies.ALL)

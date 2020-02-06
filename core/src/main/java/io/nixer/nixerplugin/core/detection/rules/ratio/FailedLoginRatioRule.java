@@ -19,10 +19,12 @@ public class FailedLoginRatioRule implements LoginRule {
     private final AtomicDouble deactivationLevel;
     private final AtomicInteger minimumSampleSize;
 
-    public FailedLoginRatioRule(final LoginMetric loginMetric, double activationLevel, double deactivationLevel, int minimumSampleSize) {
+    public FailedLoginRatioRule(final LoginMetric loginMetric, Double activationLevel, Double deactivationLevel, Integer minimumSampleSize) {
         Assert.notNull(loginMetric, "LoginMetric must not be null");
         this.loginMetric = loginMetric;
 
+        Assert.notNull(activationLevel, "activationLevel must not be null");
+        Assert.notNull(activationLevel, "deactivationLevel must not be null");
         if (activationLevel <= deactivationLevel) {
             throw new IllegalStateException(String.format("Activation level (%f) must be equal or bigger than deactivation level (%f)",
                     activationLevel,
@@ -31,6 +33,7 @@ public class FailedLoginRatioRule implements LoginRule {
         this.activationLevel = new AtomicDouble(activationLevel);
         this.deactivationLevel = new AtomicDouble(deactivationLevel);
 
+        Assert.notNull(minimumSampleSize, "minimumSampleSize must not be null");
         this.minimumSampleSize = new AtomicInteger(minimumSampleSize);
     }
 

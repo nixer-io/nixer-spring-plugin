@@ -6,12 +6,12 @@ import com.google.common.collect.Range;
 import com.google.common.collect.RangeSet;
 import com.google.common.collect.TreeRangeSet;
 import io.nixer.nixerplugin.core.detection.events.GlobalCredentialStuffingEvent;
-import io.nixer.nixerplugin.core.detection.events.GlobalCredentialStuffingEvent;
+import io.nixer.nixerplugin.core.detection.rules.ratio.FailedLoginRatioRule;
 import org.springframework.context.ApplicationListener;
 
 /**
  * Provides information about global credential stuffing attacks detected.
- *
+ * In stand-alone plugin that is defined by failed-to-successful login ratio, see {@link FailedLoginRatioRule}.
  */
 public class CredentialStuffingRegistry implements ApplicationListener<GlobalCredentialStuffingEvent> {
 

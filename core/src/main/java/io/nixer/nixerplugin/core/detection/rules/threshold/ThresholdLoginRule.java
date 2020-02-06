@@ -5,7 +5,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import io.nixer.nixerplugin.core.detection.rules.LoginRule;
 import org.springframework.util.Assert;
 
-abstract class ThresholdLoginRule implements LoginRule {
+public abstract class ThresholdLoginRule implements LoginRule {
 
     private final AtomicInteger threshold;
 

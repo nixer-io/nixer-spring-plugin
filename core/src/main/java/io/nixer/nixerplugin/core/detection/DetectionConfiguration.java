@@ -3,18 +3,22 @@ package io.nixer.nixerplugin.core.detection;
 import java.util.List;
 
 import io.nixer.nixerplugin.core.detection.config.AnomalyRulesProperties;
+import io.nixer.nixerplugin.core.detection.config.FailedLoginRatioProperties;
 import io.nixer.nixerplugin.core.detection.config.WindowThresholdRuleProperties;
+import io.nixer.nixerplugin.core.detection.filter.login.FailedLoginRatioFilter;
 import io.nixer.nixerplugin.core.detection.filter.login.IpFailedLoginOverThresholdFilter;
 import io.nixer.nixerplugin.core.detection.filter.login.UserAgentFailedLoginOverThresholdFilter;
 import io.nixer.nixerplugin.core.detection.filter.login.UsernameFailedLoginOverThresholdFilter;
+import io.nixer.nixerplugin.core.detection.registry.FailedLoginRatioRegistry;
 import io.nixer.nixerplugin.core.detection.registry.IpOverLoginThresholdRegistry;
 import io.nixer.nixerplugin.core.detection.registry.UserAgentOverLoginThresholdRegistry;
 import io.nixer.nixerplugin.core.detection.registry.UsernameOverLoginThresholdRegistry;
+import io.nixer.nixerplugin.core.detection.rules.LoginAnomalyRuleFactory;
 import io.nixer.nixerplugin.core.detection.rules.LoginRule;
 import io.nixer.nixerplugin.core.detection.rules.RulesRunner;
-import io.nixer.nixerplugin.core.detection.rules.LoginAnomalyRuleFactory;
 import io.nixer.nixerplugin.core.login.inmemory.CounterRegistry;
 import io.nixer.nixerplugin.core.login.inmemory.InMemoryLoginActivityRepository;
+import io.nixer.nixerplugin.core.util.NowSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -30,7 +34,8 @@ import org.springframework.context.annotation.Import;
 @Import({
         DetectionConfiguration.IpThresholdRule.class,
         DetectionConfiguration.UsernameThresholdRule.class,
-        DetectionConfiguration.UserAgentThresholdRule.class
+        DetectionConfiguration.UserAgentThresholdRule.class,
+        DetectionConfiguration.FailedLoginRatioRule.class
 })
 public class DetectionConfiguration {
 
@@ -51,11 +56,6 @@ public class DetectionConfiguration {
         return new RulesRunner(eventPublisher, loginRules);
     }
 
-    /*
-    Ideally we would set bean name prefix for beans inside nested configuration classes.
-
-    Apparently spring doesn't support that.
-    */
     @Configuration
     @ConditionalOnProperty(prefix = "nixer.rules.failed-login-threshold.ip", name = "enabled", havingValue = "true")
     static class IpThresholdRule {
@@ -149,6 +149,44 @@ public class DetectionConfiguration {
         @Bean
         public UserAgentOverLoginThresholdRegistry userAgentRegistry() {
             return new UserAgentOverLoginThresholdRegistry();
+        }
+    }
+
+    @Configuration
+    @ConditionalOnProperty(prefix = "nixer.rules.failed-login-ratio-level", name = "enabled", havingValue = "true")
+    static class FailedLoginRatioRule {
+
+        @Autowired
+        DetectionConfiguration detection;
+
+        @Autowired
+        NowSource nowSource;
+
+        @Bean
+        @ConfigurationProperties(prefix = "nixer.rules.failed-login-ratio-level")
+        public FailedLoginRatioProperties failedLoginRatioProperties() {
+            return new FailedLoginRatioProperties();
+        }
+
+        @Bean
+        public LoginRule failedLoginRatioRule() {
+            final FailedLoginRatioProperties properties = failedLoginRatioProperties();
+
+            return detection.ruleFactory().createFailedLoginRatioRule(
+                    properties.getWindow(),
+                    properties.getActivationLevel(),
+                    properties.getDeactivationLevel(),
+                    properties.getMinimumSampleSize());
+        }
+
+        @Bean
+        public FailedLoginRatioFilter failedLoginRatioFilter() {
+            return new FailedLoginRatioFilter(failedLoginRatioRegistry());
+        }
+
+        @Bean
+        public FailedLoginRatioRegistry failedLoginRatioRegistry() {
+            return new FailedLoginRatioRegistry(nowSource);
         }
     }
 
