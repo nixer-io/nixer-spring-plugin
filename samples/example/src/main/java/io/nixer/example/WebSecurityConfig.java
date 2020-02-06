@@ -96,7 +96,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Bean
     public FilterConfiguration.BehaviorProviderConfigurer behaviorConfigurer() {
-        // todo make it possible to create rule from properties
         return builder -> builder
                     .rule("blacklistedIp")  // we want to hide fact that request was blocked. So pretending regular login error.
                     .when(Conditions::isBlacklistedIp)
@@ -112,6 +111,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .buildRule()
                     .rule("credentialStuffingActive")
                     .when(Conditions::isGlobalCredentialStuffing)
+                    .then(CAPTCHA)
+                .buildRule()
+                    .rule("failedLoginRatioActive")
+                    .when(Conditions::isFailedLoginRatioActive)
                     .then(CAPTCHA)
                 .buildRule();
     }
