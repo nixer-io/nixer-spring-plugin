@@ -15,7 +15,7 @@ public class FailedLoginRatioActivationEvent extends FailedLoginRatioEvent {
 
     @Override
     public void accept(final EventVisitor visitor) {
-
+        visitor.accept(this);
     }
 
     @Override
