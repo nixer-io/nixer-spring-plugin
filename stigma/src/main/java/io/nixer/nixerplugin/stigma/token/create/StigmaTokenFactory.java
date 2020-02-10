@@ -62,8 +62,9 @@ public class StigmaTokenFactory {
         try {
             jwe.encrypt(encrypterFactory.encrypter());
         } catch (JOSEException e) {
-            logger.error("Unable to encrypt token, keyID=" + encrypterFactory.getKeyId(), e);
-            throw new RuntimeException(e);
+            final String message = "Unable to encrypt token, header was: " + header;
+            logger.error(message, e);
+            throw new IllegalStateException(message, e);
         }
 
         return jwe;

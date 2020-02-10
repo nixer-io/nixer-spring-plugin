@@ -9,6 +9,8 @@ import io.nixer.nixerplugin.core.login.LoginResult;
 import io.nixer.nixerplugin.stigma.decision.StigmaDecisionMaker;
 import io.nixer.nixerplugin.stigma.decision.StigmaRefreshDecision;
 import io.nixer.nixerplugin.stigma.domain.RawStigmaToken;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Entry point for StigmaToken-based credential stuffing protection mechanism.
@@ -18,6 +20,8 @@ import io.nixer.nixerplugin.stigma.domain.RawStigmaToken;
  * @author Grzegorz Cwiak (gcwiak)
  */
 public class StigmaLoginActivityHandler implements LoginActivityHandler {
+
+    private static final Log logger = LogFactory.getLog(StigmaLoginActivityHandler.class);
 
     private final HttpServletRequest request;
     private final HttpServletResponse response;
@@ -39,6 +43,10 @@ public class StigmaLoginActivityHandler implements LoginActivityHandler {
     public void handle(final LoginResult loginResult, final LoginContext ignored) {
 
         final RawStigmaToken receivedStigmaToken = stigmaCookieService.readStigmaToken(request);
+
+        if (logger.isTraceEnabled()) {
+            logger.trace(String.format("Handling login attempt with result='%s' and token='%s'", loginResult, receivedStigmaToken));
+        }
 
         final StigmaRefreshDecision decision = loginResult.isSuccess()
                 ? stigmaDecisionMaker.onLoginSuccess(receivedStigmaToken)

@@ -60,6 +60,10 @@ public class StigmaExtractor {
             return null;
         }
 
+        if (logger.isTraceEnabled()) {
+            logger.trace("Extracting stigma from token: " + parsedToken);
+        }
+
         return parsedToken.getStigma();
     }
 }

@@ -60,7 +60,9 @@ public class DirectDecrypterFactory extends DecrypterFactory {
         }
 
         if (keys.size() > 1) {
-            logger.warn("More than one key found for header: " + header);
+            if (logger.isWarnEnabled()) {
+                logger.warn(String.format("Found '%s' keys for header '%s' while expecting exactly one.", keys.size(), header));
+            }
         }
 
         final Key key = keys.get(0);
