@@ -13,14 +13,14 @@ public class FailedLoginRatioProperties {
 
     private boolean enabled;
 
-    private int activationLevel = 85;
+    private int activationLevel = 80;
 
-    private int deactivationLevel = 75;
+    private int deactivationLevel = 70;
 
-    private int minimumSampleSize = 10;
+    private int minimumSampleSize = 20;
 
     @DurationUnit(ChronoUnit.MINUTES)
-    private Duration window = WindowSize.WINDOW_5M;
+    private Duration window = WindowSize.WINDOW_10M;
 
     public boolean isEnabled() {
         return enabled;
