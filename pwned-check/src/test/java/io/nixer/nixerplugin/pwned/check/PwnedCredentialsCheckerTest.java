@@ -4,7 +4,6 @@ import com.google.common.base.Strings;
 import io.nixer.bloom.check.BloomFilterCheck;
 import io.nixer.nixerplugin.core.metrics.MetricsCounter;
 import io.nixer.nixerplugin.pwned.metrics.PwnedPasswordMetricsReporter;
-import io.nixer.nixerplugin.pwned.metrics.PwnedPasswordMetricsReporter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,7 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 /**
  * Created on 11/10/2019.
@@ -37,7 +36,6 @@ class PwnedCredentialsCheckerTest {
         pwnedCredentialsChecker = new PwnedCredentialsChecker(
                 pwnedFilter,
                 MAX_PASSWORD_LENGTH,
-                // TODO consider replacing PwnedPasswordMetricsReporter with a mock and verifying it's invoked
                 new MetricsReporterStub()
         );
     }
@@ -75,7 +73,7 @@ class PwnedCredentialsCheckerTest {
 
         // then
         assertThat(result).isFalse();
-        verifyZeroInteractions(pwnedFilter);
+        verifyNoInteractions(pwnedFilter);
     }
 
     @Test
@@ -88,17 +86,15 @@ class PwnedCredentialsCheckerTest {
 
         // then
         assertThat(result).isFalse();
-        verifyZeroInteractions(pwnedFilter);
+        verifyNoInteractions(pwnedFilter);
     }
 
-
     private static class MetricsReporterStub extends PwnedPasswordMetricsReporter {
-        private static final MetricsCounter COUNTER_STUB = () -> {
-
+        private static final MetricsCounter NOP_COUNTER = () -> {
         };
 
         MetricsReporterStub() {
-            super(COUNTER_STUB, COUNTER_STUB);
+            super(NOP_COUNTER, NOP_COUNTER);
         }
     }
 }

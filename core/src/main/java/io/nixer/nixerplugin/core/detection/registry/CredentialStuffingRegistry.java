@@ -7,6 +7,7 @@ import com.google.common.collect.RangeSet;
 import com.google.common.collect.TreeRangeSet;
 import io.nixer.nixerplugin.core.detection.events.GlobalCredentialStuffingEvent;
 import io.nixer.nixerplugin.core.detection.rules.ratio.FailedLoginRatioRule;
+import io.nixer.nixerplugin.core.util.NowSource;
 import org.springframework.context.ApplicationListener;
 
 /**
@@ -15,16 +16,23 @@ import org.springframework.context.ApplicationListener;
  */
 public class CredentialStuffingRegistry implements ApplicationListener<GlobalCredentialStuffingEvent> {
 
-    private final Duration credentialStuffingDuration = Duration.ofMinutes(15);
+    private final Duration credentialStuffingDuration;
+
+    private final NowSource nowSource;
 
     private final RangeSet<Long> credentialStuffingWindows = TreeRangeSet.create();
+
+    public CredentialStuffingRegistry(final Duration credentialStuffingDuration, final NowSource nowSource) {
+        this.credentialStuffingDuration = credentialStuffingDuration;
+        this.nowSource = nowSource;
+    }
 
     public boolean hasHappenDuringCredentialStuffing(long timestamp) {
         return credentialStuffingWindows.contains(timestamp);
     }
 
     public boolean isCredentialStuffingActive() {
-        return hasHappenDuringCredentialStuffing(System.currentTimeMillis());
+        return hasHappenDuringCredentialStuffing(nowSource.currentTimeMillis());
     }
 
     @Override

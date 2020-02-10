@@ -28,7 +28,6 @@ public class RecaptchaRestClient implements RecaptchaClient {
     }
 
     public RecaptchaVerifyResponse call(final String captcha) {
-        // TODO report service metrics (timeout/response time)
         try {
             final URI url = captchaUri(captcha);
             return restTemplate.getForObject(url, RecaptchaVerifyResponse.class);

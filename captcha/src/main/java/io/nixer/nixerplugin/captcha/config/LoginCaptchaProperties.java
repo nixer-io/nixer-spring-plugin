@@ -1,7 +1,6 @@
 package io.nixer.nixerplugin.captcha.config;
 
 import io.nixer.nixerplugin.captcha.security.CaptchaCondition;
-import io.nixer.nixerplugin.captcha.security.CaptchaCondition;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -10,7 +9,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "nixer.login.captcha")
 public class LoginCaptchaProperties {
 
-    //TODO refactor
     public static final String DEFAULT_CAPTCHA_PARAM = "g-recaptcha-response";
 
     /**
