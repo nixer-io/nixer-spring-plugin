@@ -2,8 +2,6 @@ package io.nixer.nixerplugin.core.login.inmemory;
 
 import io.nixer.nixerplugin.core.login.LoginFailureType;
 import io.nixer.nixerplugin.core.login.LoginResult;
-import io.nixer.nixerplugin.core.login.LoginFailureType;
-import io.nixer.nixerplugin.core.login.LoginResult;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -61,6 +59,23 @@ class CountingStrategiesTest {
 
             factory.counter(rollingCounter, success).accept(KEY);
             verify(rollingCounter).remove(KEY);
+            verifyNoMoreInteractions(rollingCounter);
+        }
+    }
+
+    @Nested
+    class AllStrategyTest {
+
+        @Test
+        void shouldCountAll() {
+            final CountingStrategies factory = CountingStrategies.ALL;
+
+            factory.counter(rollingCounter, failed).accept(KEY);
+            verify(rollingCounter).increment(KEY);
+            verifyNoMoreInteractions(rollingCounter);
+
+            factory.counter(rollingCounter, success).accept(KEY);
+            verify(rollingCounter, times(2)).increment(KEY);
             verifyNoMoreInteractions(rollingCounter);
         }
     }
