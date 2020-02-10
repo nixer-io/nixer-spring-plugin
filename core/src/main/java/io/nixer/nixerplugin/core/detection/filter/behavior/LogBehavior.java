@@ -26,7 +26,7 @@ import static io.nixer.nixerplugin.core.detection.filter.behavior.Behaviors.LOG;
  */
 public class LogBehavior implements Behavior {
 
-    private final Log logger = LogFactory.getLog(getClass());
+    private static final Log logger = LogFactory.getLog(LogBehavior.class);
 
     private boolean includeHeaders = false;
     private boolean includeUserInfo = false;

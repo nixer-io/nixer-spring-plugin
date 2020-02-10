@@ -75,7 +75,9 @@ public class BehaviorExecutionFilter extends OncePerRequestFilter {
     private boolean execute(final HttpServletRequest request, final HttpServletResponse response, final List<Behavior> behaviors) throws IOException {
         boolean gotCommittingBehavior = false;
         for (Behavior behavior : behaviors) {
-            logger.info((dryRun ? "[dry-run]" : "") + "Executing behavior: " + behavior.name());
+            if (logger.isInfoEnabled()) {
+                logger.info((dryRun ? "[dry-run]" : "") + "Executing behavior: " + (behavior != null ? behavior.name() : "null"));
+            }
             if (!dryRun) {
                 behavior.act(request, response);
                 gotCommittingBehavior |= behavior.isCommitting();

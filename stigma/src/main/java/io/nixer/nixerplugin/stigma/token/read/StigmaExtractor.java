@@ -19,7 +19,7 @@ import org.springframework.util.Assert;
  */
 public class StigmaExtractor {
 
-    private final Log logger = LogFactory.getLog(getClass());
+    private static final Log logger = LogFactory.getLog(StigmaExtractor.class);
 
     private final TokenDecrypter tokenDecrypter;
 
