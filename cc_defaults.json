@@ -1,0 +1,28 @@
+{
+  "types": {
+    "feat": {
+      "description": "A new feature"
+    },
+    "fix": {
+      "description": "Fix to a bug or correction in an existing feature"
+    },
+    "refactor": {
+      "description": "Non-functional changes to the existing features"
+    },
+    "docs": {
+      "description": "Documentation update"
+    },
+    "tests": {
+      "description": "Updates related with tests only"
+    },
+    "build": {
+      "description": "Updates related with build process"
+    },
+    "ci": {
+      "description": "Updates for CI purposes"
+    },
+    "chore": {
+      "description": "Housekeeping updates, not affecting any functionality"
+    }
+  }
+}
