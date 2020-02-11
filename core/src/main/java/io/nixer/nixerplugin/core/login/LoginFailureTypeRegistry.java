@@ -13,13 +13,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.util.Assert;
 
-import static io.nixer.nixerplugin.core.login.LoginFailureType.BAD_PASSWORD;
-import static io.nixer.nixerplugin.core.login.LoginFailureType.DISABLED;
-import static io.nixer.nixerplugin.core.login.LoginFailureType.EXPIRED;
-import static io.nixer.nixerplugin.core.login.LoginFailureType.LOCKED;
-import static io.nixer.nixerplugin.core.login.LoginFailureType.OTHER;
-import static io.nixer.nixerplugin.core.login.LoginFailureType.UNKNOWN_USER;
-
 /**
  * Keeps registry of {@link AuthenticationException} to {@link LoginFailureType} mappings
  */
@@ -50,11 +43,14 @@ public class LoginFailureTypeRegistry {
 
         {
             addMapping(BadCredentialsException.class, LoginFailureType.BAD_PASSWORD);
-            addMapping(UsernameNotFoundException.class, LoginFailureType.UNKNOWN_USER); // TODO hidden as BadCredentialsException, requires hideUserNotFoundExceptions
+
+            // By default Spring wraps UsernameNotFoundException with BadCredentialsException.
+            // In order to change it the hideUserNotFoundExceptions flag needs to be used.
+            addMapping(UsernameNotFoundException.class, LoginFailureType.UNKNOWN_USER);
+
             addMapping(LockedException.class, LoginFailureType.LOCKED);
             addMapping(AccountExpiredException.class, LoginFailureType.EXPIRED);
             addMapping(DisabledException.class, LoginFailureType.DISABLED);
-            // TODO separated exception for credentials and account expired/disabled/locked
         }
 
         private Builder() {

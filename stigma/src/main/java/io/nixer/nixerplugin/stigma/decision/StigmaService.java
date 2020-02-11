@@ -50,8 +50,19 @@ public class StigmaService {
         final StigmaDetails stigmaDetails = stigmaStorage.findStigmaDetails(stigma);
 
         if (stigmaDetails != null) {
+
+            if (logger.isTraceEnabled()) {
+                logger.trace("Found stigma details: " + stigmaDetails);
+            }
+
             stigmaStorage.recordStigmaObservation(stigmaDetails);
+
         } else {
+
+            if (logger.isWarnEnabled()) {
+                logger.warn(String.format("Details for stigma '%s' not found in storage.", stigma));
+            }
+
             stigmaStorage.recordSpottingUnknownStigma(stigma);
         }
 

@@ -1,7 +1,7 @@
 package io.nixer.nixerplugin.core.detection.rules.threshold;
 
-import io.nixer.nixerplugin.core.detection.rules.EventEmitter;
 import io.nixer.nixerplugin.core.detection.events.IpFailedLoginOverThresholdEvent;
+import io.nixer.nixerplugin.core.detection.rules.EventEmitter;
 import io.nixer.nixerplugin.core.login.LoginContext;
 import io.nixer.nixerplugin.core.login.inmemory.LoginMetric;
 import org.springframework.util.Assert;

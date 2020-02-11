@@ -20,8 +20,6 @@ import org.springframework.util.Assert;
 @ThreadSafe
 public class CachedBackedRollingCounter implements RollingCounter {
 
-    //todo consider
-    // O(n) for sum operation and space.
     private final LoadingCache<String, Timestamps> counts;
 
     private Clock clock = Clock.systemDefaultZone();
@@ -30,7 +28,6 @@ public class CachedBackedRollingCounter implements RollingCounter {
 
     public CachedBackedRollingCounter(final Duration windowInMillis) {
         Assert.notNull(windowInMillis, "Window must not be null");
-        // todo check if window length makes sense
         this.windowInMillis = windowInMillis.toMillis();
         this.counts = CacheBuilder.newBuilder()
                 .expireAfterAccess(windowInMillis.plusMinutes(1))
@@ -81,8 +78,6 @@ public class CachedBackedRollingCounter implements RollingCounter {
 
     private class Timestamps {
 
-        //todo use int instead of long
-        //todo consider using fastutil IntList
         private final LinkedList<Long> timestamps = new LinkedList<>();
 
         synchronized void add(long timestamp) {
@@ -104,8 +99,6 @@ public class CachedBackedRollingCounter implements RollingCounter {
         }
 
         private void removeExpired(final long expireOlderThan) {
-            //todo it might be efficient to use binary search to find element of expiring element.
-            // But it would require direct access list eg. arraylist
             while (true) {
                 Long time = timestamps.getFirst();
                 if (time == null) {

@@ -14,8 +14,6 @@ public class EventLogger implements ApplicationListener<AnomalyEvent> {
 
     @Override
     public void onApplicationEvent(final AnomalyEvent event) {
-        // TODO consider logging event as JSON
-        // TODO control logging level with config
         if (logger.isInfoEnabled()) {
             logger.info(event);
         }

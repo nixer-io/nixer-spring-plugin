@@ -22,7 +22,6 @@ public class UsernameFailedLoginOverThresholdFilter extends MetadataFilter {
 
     private String usernameParameter = SPRING_SECURITY_FORM_USERNAME_KEY;
 
-    // TODO externalize
     private RequestMatcher requestMatcher = new AntPathRequestMatcher("/login", "POST");
 
     public UsernameFailedLoginOverThresholdFilter(UsernameOverLoginThresholdRegistry usernameOverLoginThresholdRegistry) {

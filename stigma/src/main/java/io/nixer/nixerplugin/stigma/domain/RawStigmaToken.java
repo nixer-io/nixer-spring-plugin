@@ -1,5 +1,6 @@
 package io.nixer.nixerplugin.stigma.domain;
 
+import java.util.StringJoiner;
 import javax.annotation.Nonnull;
 
 import com.google.common.base.Objects;
@@ -54,5 +55,12 @@ public class RawStigmaToken {
     @Override
     public int hashCode() {
         return Objects.hashCode(value);
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", RawStigmaToken.class.getSimpleName() + "[", "]")
+                .add("value='" + value + "'")
+                .toString();
     }
 }

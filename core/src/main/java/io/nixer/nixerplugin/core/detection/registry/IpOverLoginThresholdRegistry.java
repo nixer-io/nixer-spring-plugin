@@ -5,7 +5,6 @@ import java.time.Duration;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import io.nixer.nixerplugin.core.detection.events.IpFailedLoginOverThresholdEvent;
-import io.nixer.nixerplugin.core.detection.events.IpFailedLoginOverThresholdEvent;
 import org.springframework.context.ApplicationListener;
 
 /**
@@ -25,7 +24,6 @@ public class IpOverLoginThresholdRegistry implements ApplicationListener<IpFaile
 
     @Override
     public void onApplicationEvent(final IpFailedLoginOverThresholdEvent event) {
-        // TODO block for time
         ipOverThreshold.put(event.getIp(), event.getIp());
     }
 

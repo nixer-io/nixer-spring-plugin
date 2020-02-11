@@ -8,6 +8,8 @@ import io.nixer.nixerplugin.stigma.domain.Stigma;
 import io.nixer.nixerplugin.stigma.domain.StigmaDetails;
 import io.nixer.nixerplugin.stigma.token.create.StigmaTokenFactory;
 import io.nixer.nixerplugin.stigma.token.read.StigmaExtractor;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import static io.nixer.nixerplugin.stigma.decision.StigmaEvent.TOKEN_BAD_LOGIN_FAIL;
 import static io.nixer.nixerplugin.stigma.decision.StigmaEvent.TOKEN_BAD_LOGIN_SUCCESS;
@@ -20,6 +22,8 @@ import static io.nixer.nixerplugin.stigma.decision.StigmaEvent.TOKEN_GOOD_LOGIN_
  * @author gcwiak
  */
 public class StigmaDecisionMaker {
+
+    private static final Log logger = LogFactory.getLog(StigmaDecisionMaker.class);
 
     private final StigmaExtractor stigmaExtractor;
 
@@ -53,6 +57,10 @@ public class StigmaDecisionMaker {
                 ? new StigmaRefreshDecision(originalToken, TOKEN_GOOD_LOGIN_SUCCESS)
                 : new StigmaRefreshDecision(newStigmaToken(), TOKEN_BAD_LOGIN_SUCCESS);
 
+        if (logger.isDebugEnabled()) {
+            logger.debug("Decision after successful login: " + decision);
+        }
+
         writeToMetrics(decision);
 
         return decision;
@@ -74,6 +82,10 @@ public class StigmaDecisionMaker {
             decision = new StigmaRefreshDecision(newStigmaToken(), TOKEN_GOOD_LOGIN_FAIL);
         } else {
             decision = new StigmaRefreshDecision(newStigmaToken(), TOKEN_BAD_LOGIN_FAIL);
+        }
+
+        if (logger.isDebugEnabled()) {
+            logger.debug("Decision after failed login: " + decision);
         }
 
         writeToMetrics(decision);

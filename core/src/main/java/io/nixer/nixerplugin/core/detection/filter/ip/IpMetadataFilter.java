@@ -22,8 +22,6 @@ public class IpMetadataFilter extends MetadataFilter {
         this.ipLookup = ipLookup;
     }
 
-    //TODO should be apply only for login request or should it be generic and applied with request matcher.
-
     @Override
     protected void apply(final HttpServletRequest request) {
         final String ip = request.getRemoteAddr();

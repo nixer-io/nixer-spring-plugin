@@ -75,7 +75,6 @@ public class FileBasedBloomFilter {
         try {
             MAPPER.writeValue(filename.toFile(), filter.getParameters());
         } catch (IOException e) {
-            // TODO: better exception class
             throw new IllegalStateException("Failed to save metadata for " + filename, e);
         }
 
@@ -99,7 +98,6 @@ public class FileBasedBloomFilter {
         try {
             parameters = MAPPER.readValue(filename.toFile(), BloomFilterParameters.class);
         } catch (IOException e) {
-            // TODO: better exception class
             throw new IllegalStateException("Failed to read metadata from " + filename, e);
         }
 
