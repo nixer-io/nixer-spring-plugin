@@ -7,6 +7,5 @@ package io.nixer.nixerplugin.core.login;
  */
 public interface LoginActivityHandler {
 
-    // TODO consider merging the arguments into a single one
     void handle(LoginResult loginResult, LoginContext context);
 }

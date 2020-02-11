@@ -5,8 +5,7 @@ import java.util.List;
 import io.nixer.nixerplugin.core.detection.rules.AnomalyRulesRunner;
 import org.springframework.util.Assert;
 
-// TODO find better name for this component
-public class LoginActivityService implements LoginActivityHandler{
+public class LoginActivityService implements LoginActivityHandler {
 
     private final List<LoginActivityRepository> repositories;
 

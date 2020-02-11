@@ -1,9 +1,6 @@
 package io.nixer.nixerplugin.core.login.inmemory;
 
 import io.nixer.nixerplugin.core.login.LoginContext;
-import io.nixer.nixerplugin.core.login.LoginResult;
-import io.nixer.nixerplugin.core.login.LoginMetricCounter;
-import io.nixer.nixerplugin.core.login.LoginContext;
 import io.nixer.nixerplugin.core.login.LoginMetricCounter;
 import io.nixer.nixerplugin.core.login.LoginResult;
 import org.springframework.util.Assert;
@@ -17,7 +14,6 @@ public class LoginCounter implements LoginMetric, LoginMetricCounter {
     private final FeatureKey featureKey;
     private final CountingStrategy countingStrategy;
 
-    //todo extract filter that will eg. filter particular types of failures
     LoginCounter(final LoginCounterBuilder builder) {
         Assert.notNull(builder, "Builder must not be null");
 

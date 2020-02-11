@@ -44,7 +44,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         final LinkedHashMap<Class<? extends AuthenticationException>, AuthenticationFailureHandler> loginFailureHandlers = new LinkedHashMap<>();
-        loginFailureHandlers.put(LockedException.class, new SimpleUrlAuthenticationFailureHandler("/login?error=LOCKED")); // TODO pass info
+        loginFailureHandlers.put(LockedException.class, new SimpleUrlAuthenticationFailureHandler("/login?error=LOCKED"));
+
         httpSecurity
                 .anonymous().and()
                 .authorizeRequests()
@@ -96,7 +97,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Bean
     public FilterConfiguration.BehaviorProviderConfigurer behaviorConfigurer() {
-        // todo make it possible to create rule from properties
         return builder -> builder
                     .rule("blacklistedIp")  // we want to hide fact that request was blocked. So pretending regular login error.
                     .when(Conditions::isBlacklistedIp)

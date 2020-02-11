@@ -49,7 +49,6 @@ public class BitArrayFactories {
             validateAndPotentiallyCorrectFileLength(bitSize, openedFile);
             return new BitArrayMappedFile(openedFile.getChannel(), byteOrder);
         } catch (IOException e) {
-            // TODO: better exception class
             throw new IllegalStateException("Failed to open a bloom filter data because an I/O failure file=" + path, e);
         }
 

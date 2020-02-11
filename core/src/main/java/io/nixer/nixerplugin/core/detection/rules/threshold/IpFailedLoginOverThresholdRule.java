@@ -1,9 +1,6 @@
 package io.nixer.nixerplugin.core.detection.rules.threshold;
 
-import io.nixer.nixerplugin.core.detection.rules.EventEmitter;
 import io.nixer.nixerplugin.core.detection.events.IpFailedLoginOverThresholdEvent;
-import io.nixer.nixerplugin.core.login.LoginContext;
-import io.nixer.nixerplugin.core.login.inmemory.LoginMetric;
 import io.nixer.nixerplugin.core.detection.rules.EventEmitter;
 import io.nixer.nixerplugin.core.login.LoginContext;
 import io.nixer.nixerplugin.core.login.inmemory.LoginMetric;
@@ -27,7 +24,7 @@ public class IpFailedLoginOverThresholdRule extends ThresholdAnomalyRule {
     @Override
     public void execute(final LoginContext loginContext, final EventEmitter eventEmitter) {
         final String ipAddress = loginContext.getIpAddress();
-        final int failedLogin = loginMetric.value(ipAddress); //todo login Metric api not symmetrical.
+        final int failedLogin = loginMetric.value(ipAddress);
 
         if (isOverThreshold(failedLogin)) {
             eventEmitter.accept(new IpFailedLoginOverThresholdEvent(ipAddress));

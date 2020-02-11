@@ -28,7 +28,6 @@ public class BehaviorExecutionFilter extends OncePerRequestFilter {
 
     private boolean dryRun;
 
-    // TODO externalize
     private final RequestMatcher requestMatcher = new AntPathRequestMatcher("/login");
 
     public BehaviorExecutionFilter(final BehaviorProvider behaviorProvider) {

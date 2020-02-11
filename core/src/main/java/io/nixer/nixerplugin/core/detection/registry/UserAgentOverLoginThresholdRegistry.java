@@ -5,7 +5,6 @@ import java.time.Duration;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import io.nixer.nixerplugin.core.detection.events.UserAgentFailedLoginOverThresholdEvent;
-import io.nixer.nixerplugin.core.detection.events.UserAgentFailedLoginOverThresholdEvent;
 import org.springframework.context.ApplicationListener;
 
 /**
@@ -26,7 +25,6 @@ public class UserAgentOverLoginThresholdRegistry implements ApplicationListener<
 
     @Override
     public void onApplicationEvent(final UserAgentFailedLoginOverThresholdEvent event) {
-        // TODO block for time
         userAgentsOverThreshold.put(event.getUserAgent(), event.getUserAgent());
     }
 

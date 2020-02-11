@@ -47,8 +47,6 @@ public class ElasticIndexer implements ApplicationListener<AnomalyEvent> {
 
         event.accept(jsonSerializer);
 
-        //TODO set id consider event hash
-
         return new Index.Builder(jsonSerializer.toString())
                 .index(this.index)
                 .type(this.type)
