@@ -30,7 +30,7 @@ class KeysLoaderTest {
             "{\"kty\":\"oct\",\"kid\":\"test-key-2\",\"k\":\"Bsd2_f0XUx7mBscwqLvnwDk-cic-3UmMst65Ws1IUBc\",\"alg\":\"dir\"}";
 
     private static final String KEY_3 =
-            "{\"kty\":\"oct\",\"kid\":\"test-key-2\",\"k\":\"h5x9QYWzzQtQTZXjd22S-ZCMoL29OgdsRoNiLqsMSB0\",\"alg\":\"dir\"}";
+            "{\"kty\":\"oct\",\"kid\":\"test-key-3\",\"k\":\"h5x9QYWzzQtQTZXjd22S-ZCMoL29OgdsRoNiLqsMSB0\",\"alg\":\"dir\"}";
 
     @TempDir
     Path temporaryFolder;
@@ -55,7 +55,7 @@ class KeysLoaderTest {
     }
 
     @Test
-    void should_report_error_when_decryption_keys_do_not_include_the_encryption_key() throws IOException {
+    void should_throw_exception_when_decryption_keys_do_not_include_the_encryption_key() throws IOException {
         // given
         final File encryptionFile = temporaryFolder.resolve("st-enc-jwk.json").toFile();
         final File decryptionFile = temporaryFolder.resolve("st-dec-jwk.json").toFile();
@@ -68,6 +68,54 @@ class KeysLoaderTest {
 
         // then
         assertThat(throwable).hasMessage("Decryption keys must include the encryption key.");
+    }
+
+    @Test
+    void should_throw_exception_when_encryption_key_does_not_have_key_id() throws IOException {
+        // given
+        final File encryptionFile = temporaryFolder.resolve("st-enc-jwk.json").toFile();
+        final File decryptionFile = temporaryFolder.resolve("st-dec-jwk.json").toFile();
+
+        givenKeysInFile(encryptionFile, "{\"kty\":\"oct\",\"k\":\"2zUFSf5c0m_E1MjSSiS5iwZ9lzQY-9sqQXHnU1KqW8w\",\"alg\":\"dir\"}");
+        givenKeysInFile(decryptionFile, "{\"kty\":\"oct\",\"k\":\"2zUFSf5c0m_E1MjSSiS5iwZ9lzQY-9sqQXHnU1KqW8w\",\"alg\":\"dir\"}", KEY_2);
+
+        // when
+        final Throwable throwable = catchThrowable(() -> KeysLoader.load(encryptionFile, decryptionFile));
+
+        // then
+        assertThat(throwable).hasMessage("Encryption key must include key ID (kid).");
+    }
+
+    @Test
+    void should_throw_exception_when_decryption_keys_do_not_have_key_id() throws IOException {
+        // given
+        final File encryptionFile = temporaryFolder.resolve("st-enc-jwk.json").toFile();
+        final File decryptionFile = temporaryFolder.resolve("st-dec-jwk.json").toFile();
+
+        givenKeysInFile(encryptionFile, KEY_1);
+        givenKeysInFile(decryptionFile, KEY_1, "{\"kty\":\"oct\",\"k\":\"Bsd2_f0XUx7mBscwqLvnwDk-cic-3UmMst65Ws1IUBc\",\"alg\":\"dir\"}");
+
+        // when
+        final Throwable throwable = catchThrowable(() -> KeysLoader.load(encryptionFile, decryptionFile));
+
+        // then
+        assertThat(throwable).hasMessage("All decryption keys must include key ID (kid).");
+    }
+
+    @Test
+    void should_throw_exception_when_decryption_keys_have_duplicated_key_ids() throws IOException {
+        // given
+        final File encryptionFile = temporaryFolder.resolve("st-enc-jwk.json").toFile();
+        final File decryptionFile = temporaryFolder.resolve("st-dec-jwk.json").toFile();
+
+        givenKeysInFile(encryptionFile, KEY_1);
+        givenKeysInFile(decryptionFile, KEY_1, "{\"kty\":\"oct\",\"kid\":\"test-key-1\",\"k\":\"Bsd2_f0XUx7mBscwqLvnwDk-cic-3UmMst65Ws1IUBc\",\"alg\":\"dir\"}");
+
+        // when
+        final Throwable throwable = catchThrowable(() -> KeysLoader.load(encryptionFile, decryptionFile));
+
+        // then
+        assertThat(throwable).hasMessage("Decryption keys must have unique key IDs.");
     }
 
     private static void givenKeysInFile(final File targetFile, final String... keys) throws IOException {
