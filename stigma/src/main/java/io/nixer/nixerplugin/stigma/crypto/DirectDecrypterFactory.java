@@ -51,7 +51,8 @@ public class DirectDecrypterFactory extends DecrypterFactory {
 
     @Override
     public JWEDecrypter decrypter(final JWEHeader header) {
-        Assert.notNull(header, "JWEHeader must not be null");
+        Assert.notNull(header, "JWE header must not be null");
+        Assert.hasText(header.getKeyID(), "JWE header must contain key ID (kid)");
 
         final List<Key> keys = selectKeys(header);
 

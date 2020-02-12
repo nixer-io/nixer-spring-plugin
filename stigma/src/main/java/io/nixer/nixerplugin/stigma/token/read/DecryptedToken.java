@@ -28,6 +28,7 @@ class DecryptedToken {
         NOT_ENCRYPTED,
         WRONG_ALG,
         WRONG_ENC,
+        MISSING_KEY_ID,
         DECRYPTION_ERROR;
 
         final boolean isValid;

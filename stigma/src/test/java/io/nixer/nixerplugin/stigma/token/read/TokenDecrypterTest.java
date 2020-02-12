@@ -69,6 +69,28 @@ class TokenDecrypterTest {
     }
 
     @Test
+    void should_fail_decrypting_on_missing_key_id() throws ParseException {
+        // given
+        final StigmaTokenFactory stigmaTokenFactory = new StigmaTokenFactory(
+                new DirectEncrypterFactory(jwk) {
+                    @Override
+                    public String getKeyId() {
+                        return null;
+                    }
+                }
+        );
+
+        final JWT stigmaToken = JWTParser.parse(stigmaTokenFactory.getToken(STIGMA).getValue());
+
+        // when
+        final DecryptedToken result = tokenDecrypter.decrypt(stigmaToken);
+
+        // then
+        assertThat(result.isValid()).isFalse();
+        assertThat(result.getStatus()).isEqualTo(DecryptionStatus.MISSING_KEY_ID);
+    }
+
+    @Test
     void should_fail_decrypting_on_incorrect_encryption_method() throws ParseException {
         // given
         final StigmaTokenFactory stigmaTokenFactory = new StigmaTokenFactory(

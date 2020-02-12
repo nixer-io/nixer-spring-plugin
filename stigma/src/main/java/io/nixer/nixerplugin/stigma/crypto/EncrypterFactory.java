@@ -39,7 +39,7 @@ public abstract class EncrypterFactory {
         return encryptionMethod;
     }
 
-    public final String getKeyId() {
+    public String getKeyId() {
         return keyId;
     }
 

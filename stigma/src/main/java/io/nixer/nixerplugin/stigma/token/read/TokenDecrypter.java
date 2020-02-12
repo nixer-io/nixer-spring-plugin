@@ -8,8 +8,10 @@ import com.nimbusds.jwt.EncryptedJWT;
 import com.nimbusds.jwt.JWT;
 import io.nixer.nixerplugin.stigma.crypto.DecrypterFactory;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 
 import static io.nixer.nixerplugin.stigma.token.read.DecryptedToken.DecryptionStatus.DECRYPTION_ERROR;
+import static io.nixer.nixerplugin.stigma.token.read.DecryptedToken.DecryptionStatus.MISSING_KEY_ID;
 import static io.nixer.nixerplugin.stigma.token.read.DecryptedToken.DecryptionStatus.NOT_ENCRYPTED;
 import static io.nixer.nixerplugin.stigma.token.read.DecryptedToken.DecryptionStatus.WRONG_ALG;
 import static io.nixer.nixerplugin.stigma.token.read.DecryptedToken.DecryptionStatus.WRONG_ENC;
@@ -64,6 +66,10 @@ public class TokenDecrypter {
                     format("Invalid encryption method. Expected [%s] but got [%s]",
                             decrypterFactory.getEncryptionMethod(), header.getEncryptionMethod())
             );
+        }
+
+        if (!StringUtils.hasText(header.getKeyID())) {
+            return DecryptedToken.invalid(MISSING_KEY_ID, "Missing key ID (kid).");
         }
 
         try {
