@@ -1,21 +1,21 @@
 package io.nixer.nixerplugin.stigma.token.create;
 
-import java.io.File;
 import java.text.ParseException;
 import java.util.Map;
 
 import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.JWEObject;
 import com.nimbusds.jose.crypto.DirectDecrypter;
-import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.OctetSequenceKey;
+import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jwt.EncryptedJWT;
 import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTParser;
+import io.nixer.nixerplugin.stigma.StigmaConstants;
 import io.nixer.nixerplugin.stigma.crypto.DirectEncrypterFactory;
 import io.nixer.nixerplugin.stigma.domain.RawStigmaToken;
 import io.nixer.nixerplugin.stigma.domain.Stigma;
-import io.nixer.nixerplugin.stigma.StigmaConstants;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -36,11 +36,11 @@ class StigmaTokenFactoryTest {
     private StigmaTokenFactory stigmaTokenFactory;
 
     @BeforeEach
-    void setUp() throws Exception {
-        JWKSet jwkSet = JWKSet.load(new File("src/test/resources/stigma-jwk.json"));
-        assertThat(jwkSet.getKeys()).hasSize(1);
-
-        jwk = (OctetSequenceKey) jwkSet.getKeys().get(0);
+    void setUp() {
+        jwk = new OctetSequenceKey.Builder(new Base64URL("2zUFSf5c0m_E1MjSSiS5iwZ9lzQY-9sqQXHnU1KqW8w"))
+                .algorithm(JWEAlgorithm.DIR)
+                .keyID("key-id-1")
+                .build();
 
         stigmaTokenFactory = new StigmaTokenFactory(new DirectEncrypterFactory(jwk));
     }

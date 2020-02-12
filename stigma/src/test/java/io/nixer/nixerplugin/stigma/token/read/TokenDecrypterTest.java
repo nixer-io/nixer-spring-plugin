@@ -1,14 +1,11 @@
 package io.nixer.nixerplugin.stigma.token.read;
 
-import java.io.File;
-import java.io.IOException;
 import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
 import javax.annotation.Nonnull;
 
-import com.google.common.collect.Iterables;
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWEAlgorithm;
@@ -16,6 +13,7 @@ import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.OctetSequenceKey;
 import com.nimbusds.jose.jwk.gen.OctetSequenceKeyGenerator;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
+import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.JWTParser;
@@ -47,11 +45,13 @@ class TokenDecrypterTest {
     private TokenDecrypter tokenDecrypter;
 
     @BeforeEach
-    void setUp() throws IOException, ParseException {
-        JWKSet jwkSet = JWKSet.load(new File("src/test/resources/stigma-jwk.json"));
-        jwk = (OctetSequenceKey) Iterables.getOnlyElement(jwkSet.getKeys());
+    void setUp() {
+        jwk = new OctetSequenceKey.Builder(new Base64URL("2zUFSf5c0m_E1MjSSiS5iwZ9lzQY-9sqQXHnU1KqW8w"))
+                .algorithm(JWEAlgorithm.DIR)
+                .keyID("key-id-1")
+                .build();
 
-        tokenDecrypter = new TokenDecrypter(new DirectDecrypterFactory(new ImmutableJWKSet(jwkSet)));
+        tokenDecrypter = new TokenDecrypter(new DirectDecrypterFactory(new ImmutableJWKSet(new JWKSet(jwk))));
     }
 
     @Test
@@ -114,13 +114,10 @@ class TokenDecrypterTest {
     }
 
     @Test
-    void should_fail_decrypting_on_incorrect_encryption_algorithm() throws IOException, ParseException {
+    void should_fail_decrypting_on_incorrect_encryption_algorithm() throws ParseException {
         // given
-        JWKSet jwkSet = JWKSet.load(new File("src/test/resources/stigma-jwk.json"));
-        jwk = (OctetSequenceKey) Iterables.getOnlyElement(jwkSet.getKeys());
-
-        this.tokenDecrypter = new TokenDecrypter(
-                new DirectDecrypterFactory(new ImmutableJWKSet(jwkSet)) {
+        tokenDecrypter = new TokenDecrypter(
+                new DirectDecrypterFactory(new ImmutableJWKSet(new JWKSet(jwk))) {
                     @Nonnull
                     @Override
                     public JWEAlgorithm getAlgorithm() {
@@ -129,7 +126,7 @@ class TokenDecrypterTest {
                 }
         );
 
-        final JWT stigmaToken = givenEncryptedToken(this.jwk);
+        final JWT stigmaToken = givenEncryptedToken(jwk);
 
         // when
         final DecryptedToken result = tokenDecrypter.decrypt(stigmaToken);
