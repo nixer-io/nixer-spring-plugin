@@ -28,15 +28,15 @@ public class KeysLoader {
     private final ImmutableJWKSet decryptionKeySet;
 
     private KeysLoader(final JWK encryptionKey, final ImmutableJWKSet decryptionKeySet) {
-        Assert.notNull(encryptionKey, "JWK must not be null");
+        Assert.notNull(encryptionKey, "encryptionKey must not be null");
+        Assert.notNull(decryptionKeySet, "decryptionKeySet must not be null");
         this.encryptionKey = encryptionKey;
-        Assert.notNull(decryptionKeySet, "ImmutableJWKSet must not be null");
         this.decryptionKeySet = decryptionKeySet;
     }
 
     public static KeysLoader load(final File encryptionKeyFile, final File decryptionKeyFile) {
-        Assert.notNull(encryptionKeyFile, "File not be null");
-        Assert.notNull(decryptionKeyFile, "File not be null");
+        Assert.notNull(encryptionKeyFile, "encryptionKeyFile must not be null");
+        Assert.notNull(decryptionKeyFile, "decryptionKeyFile must not be null");
 
         final JWK encryptionKey = loadEncryptionKey(encryptionKeyFile);
         final ImmutableJWKSet decryptionKeySet = loadDecryptionKeys(decryptionKeyFile);
