@@ -10,36 +10,64 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationListener;
 
 public class FailedLoginRatioRegistry implements ApplicationListener<FailedLoginRatioEvent> {
-    private final Log logger = LogFactory.getLog(getClass());
+    private static final Log logger = LogFactory.getLog(FailedLoginRatioRegistry.class);
 
     private final NowSource nowSource;
-    private final Duration deactivationPeriodOnIdle = Duration.ofMinutes(20);
-    private Instant failedLoginRatioActivation = Instant.MIN;
-    private boolean active;
+    private final Duration deactivationPeriodOnIdle;
+    private FailedLoginRatioState state;
 
 
-    public FailedLoginRatioRegistry(final NowSource nowSource) {
+    public FailedLoginRatioRegistry(final Duration deactivationPeriodOnIdle, final NowSource nowSource) {
+        this.deactivationPeriodOnIdle = deactivationPeriodOnIdle;
         this.nowSource = nowSource;
+
+        this.state = new FailedLoginRatioState(false, Instant.MIN);
     }
 
     public boolean isFailedLoginRatioActivated() {
+        final FailedLoginRatioState ref = state;
+        final Instant activationTime = ref.getActivationTime();
+        final boolean active = ref.isActive();
+
         if (!active) {
             return false;
         } else {
-            return failedLoginRatioActivation.plus(deactivationPeriodOnIdle).isAfter(nowSource.now());
+            return activationTime.plus(deactivationPeriodOnIdle).isAfter(nowSource.now());
         }
     }
 
     @Override
     public void onApplicationEvent(final FailedLoginRatioEvent event) {
-        logger.debug("FAILED_LOGIN_RATIO event was caught with ratio: " + event.getSource());
+        if (logger.isDebugEnabled()) {
+            logger.debug("FAILED_LOGIN_RATIO event was caught with ratio: " + event.getSource());
+        }
 
         if (FailedLoginRatioEvent.FAILED_LOGIN_RATIO_ACTIVATION.equals(event.type())) {
-            failedLoginRatioActivation = nowSource.now();
-            active = true;
-        } else if(FailedLoginRatioEvent.FAILED_LOGIN_RATIO_DEACTIVATION.equals(event.type())) {
-            active = false;
+            this.state = new FailedLoginRatioState(true, nowSource.now());
+        } else if (FailedLoginRatioEvent.FAILED_LOGIN_RATIO_DEACTIVATION.equals(event.type())) {
+            this.state = new FailedLoginRatioState(false, nowSource.now());
+        } else {
+            throw new IllegalArgumentException("FAILED_LOGIN_RATIO event was caught with unknown type: " + event.type());
         }
 
     }
+
+    private static class FailedLoginRatioState {
+        private final boolean active;
+        private final Instant activationTime;
+
+        FailedLoginRatioState(final boolean active, final Instant activationTime) {
+            this.active = active;
+            this.activationTime = activationTime;
+        }
+
+        boolean isActive() {
+            return active;
+        }
+
+        Instant getActivationTime() {
+            return activationTime;
+        }
+    }
+
 }

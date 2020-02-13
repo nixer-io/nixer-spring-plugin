@@ -2,7 +2,6 @@ package io.nixer.nixerplugin.core.login;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.Logger;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -15,7 +14,7 @@ import org.springframework.util.Assert;
  */
 public class LoginActivityListener implements ApplicationListener<AbstractAuthenticationEvent> {
 
-    private final Log logger = LogFactory.getLog(getClass());
+    private static final Log logger = LogFactory.getLog(LoginActivityListener.class);
 
     private final LoginContextFactory loginContextFactory;
 
@@ -36,8 +35,8 @@ public class LoginActivityListener implements ApplicationListener<AbstractAuthen
         try {
             final LoginContext context = loginContextFactory.create(event);
             loginActivityHandlers.forEach(it -> it.handle(context));
-        } catch (UnknownAuthenticationEvent unknownAuthenticationEvent) {
-            logger.warn(unknownAuthenticationEvent.getMessage());
+        } catch (UnknownAuthenticationEventException exception) {
+            logger.warn("Failed to handle authentication event", exception);
         }
 
 

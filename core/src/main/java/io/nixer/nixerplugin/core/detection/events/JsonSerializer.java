@@ -42,7 +42,7 @@ public class JsonSerializer implements EventVisitor {
 
     @Override
     public void accept(final FailedLoginRatioEvent event) {
-        apply(event, () -> writeStringField("failedLoginRatio", event.getRatio()));
+        apply(event, () -> writeStringField("failedLoginRatio", String.valueOf(event.getRatio())));
     }
 
     private void writeStringField(String name, String value) {

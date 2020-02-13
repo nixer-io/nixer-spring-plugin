@@ -9,6 +9,7 @@ import org.springframework.util.Assert;
 
 /**
  * In stand-alone plugin, credential stuffing is determined by simple failed-to-successful login ratio.
+ * See {@link FailedLoginRatioFilter}.
  *
  * In default stand-alone distribution, this filter is not active.
  */

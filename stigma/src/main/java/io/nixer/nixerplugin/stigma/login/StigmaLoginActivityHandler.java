@@ -5,7 +5,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import io.nixer.nixerplugin.core.login.LoginActivityHandler;
 import io.nixer.nixerplugin.core.login.LoginContext;
-import io.nixer.nixerplugin.core.login.LoginResult;
 import io.nixer.nixerplugin.stigma.decision.StigmaDecisionMaker;
 import io.nixer.nixerplugin.stigma.decision.StigmaRefreshDecision;
 import io.nixer.nixerplugin.stigma.domain.RawStigmaToken;
@@ -43,6 +42,9 @@ public class StigmaLoginActivityHandler implements LoginActivityHandler {
     @Override
     public void handle(final LoginContext context) {
         Assert.notNull(context, "LoginContext can not be null");
+        if (context.getLoginResult() == null) {
+            throw new IllegalStateException("LoginResult obtained from LoginContext is null");
+        }
 
         final RawStigmaToken receivedStigmaToken = stigmaCookieService.readStigmaToken(request);
 

@@ -16,9 +16,9 @@ public class LoginCounter implements LoginMetric {
     LoginCounter(final RollingCounter counter,
                  final FeatureKey featureKey,
                  final CountingStrategy countingStrategy) {
-        Assert.notNull(counter, "FeatureKey must not be null");
-        Assert.notNull(featureKey, "FeatureKey must not be null");
-        Assert.notNull(countingStrategy, "CountingStrategy must not be null");
+        Assert.notNull(counter, "counter must not be null");
+        Assert.notNull(featureKey, "featureKey must not be null");
+        Assert.notNull(countingStrategy, "countingStrategy must not be null");
 
         this.counter = counter;
         this.featureKey = featureKey;

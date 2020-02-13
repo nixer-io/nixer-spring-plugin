@@ -1,7 +1,6 @@
 package io.nixer.nixerplugin.core.login.inmemory;
 
 import io.nixer.nixerplugin.core.login.LoginContext;
-import io.nixer.nixerplugin.core.login.LoginContext;
 import io.nixer.nixerplugin.core.login.LoginResult;
 
 /**
@@ -36,6 +35,9 @@ public interface FeatureKey {
         LOGIN_STATUS {
             @Override
             public String key(final LoginContext loginContext) {
+                if (loginContext.getLoginResult() == null) {
+                    return null;
+                }
                 if (loginContext.getLoginResult().isSuccess()) {
                     return LoginResult.Status.SUCCESS.getName();
                 } else {

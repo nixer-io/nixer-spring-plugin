@@ -5,9 +5,9 @@ import org.springframework.security.authentication.event.AbstractAuthenticationE
 /**
  * Thrown when {@link AbstractAuthenticationEvent} is not parsed as expected.
  */
-public class UnknownAuthenticationEvent extends Exception {
+public class UnknownAuthenticationEventException extends Exception {
 
-    UnknownAuthenticationEvent(final String message) {
+    UnknownAuthenticationEventException(final String message) {
         super(message);
     }
 }

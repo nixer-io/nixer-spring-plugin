@@ -25,12 +25,12 @@ public class LoginContextFactory {
         this.loginFailureTypeRegistry = loginFailureTypeRegistry;
     }
 
-    LoginContext create(final AbstractAuthenticationEvent event) throws UnknownAuthenticationEvent {
+    LoginContext create(final AbstractAuthenticationEvent event) throws UnknownAuthenticationEventException {
         final LoginResult loginResult = getLoginResult(event);
         final String username = extractUsername(event);
 
         if (loginResult == null || username == null) {
-            throw new UnknownAuthenticationEvent("Unable to determine login result or username for event: " + event);
+            throw new UnknownAuthenticationEventException("Unable to determine login result or username for event: " + event);
         }
 
         final String userAgent = request.getHeader(HttpHeaders.USER_AGENT);

@@ -6,6 +6,7 @@ import java.time.Instant;
 import io.nixer.nixerplugin.core.detection.events.FailedLoginRatioActivationEvent;
 import io.nixer.nixerplugin.core.detection.events.FailedLoginRatioDeactivationEvent;
 import io.nixer.nixerplugin.core.util.NowSource;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -22,9 +23,17 @@ class FailedLoginRatioRegistryTest {
 
     private FailedLoginRatioRegistry registry;
 
+    private final Instant baseInstant = Instant.ofEpochSecond(600);
+
+    @BeforeEach
+    void setUp() {
+        registry = new FailedLoginRatioRegistry(Duration.ofMinutes(20), nowSource);
+    }
+
     @Test
     void onDeactivationEvent() {
-        registry = new FailedLoginRatioRegistry(new NowSource());
+        when(nowSource.now()).thenReturn(baseInstant);
+
         registry.onApplicationEvent(new FailedLoginRatioDeactivationEvent(50));
 
         assertThat(registry.isFailedLoginRatioActivated()).isFalse();
@@ -32,7 +41,8 @@ class FailedLoginRatioRegistryTest {
 
     @Test
     void onActivationEvent() {
-        registry = new FailedLoginRatioRegistry(new NowSource());
+        when(nowSource.now()).thenReturn(baseInstant);
+
         registry.onApplicationEvent(new FailedLoginRatioActivationEvent(70));
 
         assertThat(registry.isFailedLoginRatioActivated()).isTrue();
@@ -40,13 +50,14 @@ class FailedLoginRatioRegistryTest {
 
     @Test
     void activationTimeout() {
-        registry = new FailedLoginRatioRegistry(nowSource);
-        when(nowSource.now()).thenReturn(Instant.now());
+        when(nowSource.now()).thenReturn(baseInstant,
+                baseInstant.plus(Duration.ofMinutes(5)),
+                baseInstant.plus(Duration.ofMinutes(20)).plusSeconds(1));
 
         registry.onApplicationEvent(new FailedLoginRatioActivationEvent(70));
 
-        when(nowSource.now()).thenReturn(Instant.now().plus(Duration.ofMinutes(20)).plusSeconds(1));
-
+        // when 20 minutes passed, activation should timeout
+        assertThat(registry.isFailedLoginRatioActivated()).isTrue();
         assertThat(registry.isFailedLoginRatioActivated()).isFalse();
     }
 }

@@ -19,6 +19,7 @@ public class InMemoryLoginActivityRepository implements LoginActivityRepository,
         counters.forEach(counter -> counter.onLogin(result, context));
     }
 
+    @Override
     public void registerCounter(LoginCounter loginCounter) {
         counters.add(loginCounter);
     }

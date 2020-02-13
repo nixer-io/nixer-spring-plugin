@@ -72,8 +72,9 @@ class FailedLoginRatioRuleTest {
 
         rule.execute(loginContext, events::add);
 
-        assertThat(events).hasSize(1);
-        assertThat(events.get(0)).isInstanceOf(FailedLoginRatioDeactivationEvent.class);
+        assertThat(events)
+                .hasSize(1)
+                .hasOnlyElementsOfType(FailedLoginRatioDeactivationEvent.class);
     }
 
     @Test
@@ -89,7 +90,11 @@ class FailedLoginRatioRuleTest {
 
         rule.execute(loginContext, events::add);
 
-        assertThat(events).contains(new FailedLoginRatioActivationEvent(100));
+        assertThat(events)
+                .hasSize(1)
+                .hasOnlyElementsOfType(FailedLoginRatioActivationEvent.class);
+        double ratio = ((FailedLoginRatioActivationEvent) events.get(0)).getRatio();
+        assertEquals(1, ratio, 0.0001);
     }
 
     @Test
@@ -105,10 +110,11 @@ class FailedLoginRatioRuleTest {
 
         rule.execute(loginContext, events::add);
 
-        assertThat(events).hasSize(1);
-        assertThat(events.get(0)).isInstanceOf(FailedLoginRatioActivationEvent.class);
-        Double ratio = (Double) ((FailedLoginRatioActivationEvent) events.get(0)).getSource();
-        assertEquals(60, ratio, 0.0001);
+        assertThat(events)
+                .hasSize(1)
+                .hasOnlyElementsOfType(FailedLoginRatioActivationEvent.class);
+        double ratio = ((FailedLoginRatioActivationEvent) events.get(0)).getRatio();
+        assertEquals(0.6, ratio, 0.0001);
     }
 
     @Test
@@ -124,9 +130,10 @@ class FailedLoginRatioRuleTest {
 
         rule.execute(loginContext, events::add);
 
-        assertThat(events).hasSize(1);
-        assertThat(events.get(0)).isInstanceOf(FailedLoginRatioDeactivationEvent.class);
-        Double ratio = (Double) ((FailedLoginRatioDeactivationEvent) events.get(0)).getSource();
-        assertEquals(40, ratio, 0.0001);
+        assertThat(events)
+                .hasSize(1)
+                .hasOnlyElementsOfType(FailedLoginRatioDeactivationEvent.class);
+        double ratio = ((FailedLoginRatioDeactivationEvent) events.get(0)).getRatio();
+        assertEquals(0.4, ratio, 0.0001);
     }
 }
