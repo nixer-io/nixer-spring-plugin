@@ -2,15 +2,14 @@ package io.nixer.nixerplugin.core.detection.rules.threshold;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import io.nixer.nixerplugin.core.detection.rules.AnomalyRule;
-import io.nixer.nixerplugin.core.detection.rules.AnomalyRule;
+import io.nixer.nixerplugin.core.detection.rules.LoginRule;
 import org.springframework.util.Assert;
 
-abstract class ThresholdAnomalyRule implements AnomalyRule {
+abstract class ThresholdLoginRule implements LoginRule {
 
     private final AtomicInteger threshold;
 
-    ThresholdAnomalyRule(final int threshold) {
+    ThresholdLoginRule(final int threshold) {
         this.threshold = new AtomicInteger(threshold);
     }
 

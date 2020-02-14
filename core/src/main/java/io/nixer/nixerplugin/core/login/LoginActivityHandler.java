@@ -7,5 +7,5 @@ package io.nixer.nixerplugin.core.login;
  */
 public interface LoginActivityHandler {
 
-    void handle(LoginResult loginResult, LoginContext context);
+    void handle(LoginContext context);
 }

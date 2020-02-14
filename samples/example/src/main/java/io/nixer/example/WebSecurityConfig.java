@@ -113,6 +113,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .rule("credentialStuffingActive")
                     .when(Conditions::isGlobalCredentialStuffing)
                     .then(CAPTCHA)
+                .buildRule()
+                    .rule("failedLoginRatioActive")
+                    .when(Conditions::isFailedLoginRatioActive)
+                    .then(CAPTCHA)
                 .buildRule();
     }
 }

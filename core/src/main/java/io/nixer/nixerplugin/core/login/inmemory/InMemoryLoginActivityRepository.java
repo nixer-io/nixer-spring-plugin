@@ -5,11 +5,6 @@ import java.util.List;
 
 import io.nixer.nixerplugin.core.login.LoginActivityRepository;
 import io.nixer.nixerplugin.core.login.LoginContext;
-import io.nixer.nixerplugin.core.login.LoginMetricCounter;
-import io.nixer.nixerplugin.core.login.LoginResult;
-import io.nixer.nixerplugin.core.login.LoginActivityRepository;
-import io.nixer.nixerplugin.core.login.LoginContext;
-import io.nixer.nixerplugin.core.login.LoginMetricCounter;
 import io.nixer.nixerplugin.core.login.LoginResult;
 
 /**
@@ -17,7 +12,7 @@ import io.nixer.nixerplugin.core.login.LoginResult;
  */
 public class InMemoryLoginActivityRepository implements LoginActivityRepository, CounterRegistry {
 
-    private final List<LoginMetricCounter> counters = new ArrayList<>();
+    private final List<LoginCounter> counters = new ArrayList<>();
 
     @Override
     public void save(final LoginResult result, final LoginContext context) {
@@ -25,8 +20,8 @@ public class InMemoryLoginActivityRepository implements LoginActivityRepository,
     }
 
     @Override
-    public void registerCounter(LoginMetricCounter loginMetricCounter) {
-        counters.add(loginMetricCounter);
+    public void registerCounter(LoginCounter loginCounter) {
+        counters.add(loginCounter);
     }
 
 }

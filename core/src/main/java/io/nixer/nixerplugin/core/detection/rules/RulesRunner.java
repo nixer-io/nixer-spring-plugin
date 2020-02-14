@@ -4,30 +4,29 @@ import java.util.Collections;
 import java.util.List;
 
 import io.nixer.nixerplugin.core.login.LoginContext;
-import io.nixer.nixerplugin.core.login.LoginContext;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.util.Assert;
 
 /**
- * Executes login anomaly detection rules
+ * Rules runner keeps collection of rules and executes them on demand
  */
-public class AnomalyRulesRunner {
+public class RulesRunner {
 
-    private final List<AnomalyRule> anomalyRules;
+    private final List<LoginRule> loginRules;
 
     private final ApplicationEventPublisher eventPublisher;
 
-    public AnomalyRulesRunner(final ApplicationEventPublisher eventPublisher, final List<AnomalyRule> rules) {
+    public RulesRunner(final ApplicationEventPublisher eventPublisher, final List<LoginRule> rules) {
         Assert.notNull(eventPublisher, "ApplicationEventPublisher must not be null");
         this.eventPublisher = eventPublisher;
 
         Assert.notNull(rules, "rules must not be null");
-        this.anomalyRules = Collections.unmodifiableList(rules);
+        this.loginRules = Collections.unmodifiableList(rules);
     }
 
     public void onLogin(final LoginContext context) {
-        for (AnomalyRule anomalyRule : anomalyRules) {
-            anomalyRule.execute(context, eventPublisher::publishEvent);
+        for (LoginRule loginRule : loginRules) {
+            loginRule.execute(context, eventPublisher::publishEvent);
         }
     }
 }

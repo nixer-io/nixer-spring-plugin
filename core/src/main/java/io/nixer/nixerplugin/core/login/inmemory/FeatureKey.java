@@ -1,7 +1,9 @@
 package io.nixer.nixerplugin.core.login.inmemory;
 
+import javax.annotation.Nullable;
+
 import io.nixer.nixerplugin.core.login.LoginContext;
-import io.nixer.nixerplugin.core.login.LoginContext;
+import io.nixer.nixerplugin.core.login.LoginResult;
 
 /**
  * Extract feature values from {@link LoginContext}.
@@ -31,9 +33,23 @@ public interface FeatureKey {
             public String key(final LoginContext loginContext) {
                 return loginContext.getUserAgentToken();
             }
+        },
+        LOGIN_STATUS {
+            @Override
+            public String key(final LoginContext loginContext) {
+                if (loginContext.getLoginResult() == null) {
+                    return null;
+                }
+                if (loginContext.getLoginResult().isSuccess()) {
+                    return LoginResult.Status.SUCCESS.name();
+                } else {
+                    return LoginResult.Status.FAILURE.name();
+                }
+            }
         };
 
         @Override
+        @Nullable
         public abstract String key(LoginContext loginContext);
     }
 }

@@ -9,7 +9,7 @@ import org.springframework.util.Assert;
 /**
  * Rule that checks if number of consecutive login failures for ip exceeds threshold and emits {@link IpFailedLoginOverThresholdEvent} event if it does.
  */
-public class IpFailedLoginOverThresholdRule extends ThresholdAnomalyRule {
+public class IpFailedLoginOverThresholdRule extends ThresholdLoginRule {
 
     private static final int THRESHOLD_VALUE = 5;
 

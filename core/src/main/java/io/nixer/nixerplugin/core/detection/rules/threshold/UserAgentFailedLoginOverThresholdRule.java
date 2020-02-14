@@ -7,9 +7,10 @@ import io.nixer.nixerplugin.core.login.inmemory.LoginMetric;
 import org.springframework.util.Assert;
 
 /**
- * Rule that checks if number of login failures for useragent exceeds threshold and emits {@link UserAgentFailedLoginOverThresholdEvent} event if it does.
+ * Rule that checks if number of login failures for useragent exceeds threshold and emits {@link UserAgentFailedLoginOverThresholdEvent} event if
+ * it does.
  */
-public class UserAgentFailedLoginOverThresholdRule extends ThresholdAnomalyRule {
+public class UserAgentFailedLoginOverThresholdRule extends ThresholdLoginRule {
 
     private static final int THRESHOLD_VALUE = 10;
 

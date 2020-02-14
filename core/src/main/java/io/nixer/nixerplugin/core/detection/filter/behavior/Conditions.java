@@ -1,14 +1,7 @@
 package io.nixer.nixerplugin.core.detection.filter.behavior;
 
-import io.nixer.nixerplugin.core.detection.filter.ip.IpMetadata;
 import io.nixer.nixerplugin.core.detection.filter.RequestMetadata;
 import io.nixer.nixerplugin.core.detection.filter.ip.IpMetadata;
-
-import static io.nixer.nixerplugin.core.detection.filter.RequestMetadata.GLOBAL_CREDENTIAL_STUFFING;
-import static io.nixer.nixerplugin.core.detection.filter.RequestMetadata.IP_FAILED_LOGIN_OVER_THRESHOLD;
-import static io.nixer.nixerplugin.core.detection.filter.RequestMetadata.IP_METADATA;
-import static io.nixer.nixerplugin.core.detection.filter.RequestMetadata.USERNAME_FAILED_LOGIN_OVER_THRESHOLD;
-import static io.nixer.nixerplugin.core.detection.filter.RequestMetadata.USER_AGENT_FAILED_LOGIN_OVER_THRESHOLD;
 
 /**
  * Static methods for returning conditions based on facts
@@ -34,5 +27,9 @@ public class Conditions {
 
     public static boolean isUsernameLoginOverThreshold(Facts facts) {
         return Boolean.TRUE.equals(facts.getFact(RequestMetadata.USERNAME_FAILED_LOGIN_OVER_THRESHOLD));
+    }
+
+    public static boolean isFailedLoginRatioActive(Facts facts) {
+        return Boolean.TRUE.equals(facts.getFact(RequestMetadata.FAILED_LOGIN_RATIO_ACTIVE));
     }
 }

@@ -18,36 +18,38 @@ public class LoginContext {
 
     private IpMetadata ipMetadata;
 
+    private LoginResult loginResult;
+
     public String getUsername() {
         return username;
-    }
-
-    public String getIpAddress() {
-        return ipAddress;
-    }
-
-    public String getUserAgent() {
-        return userAgent;
     }
 
     public void setUsername(final String username) {
         this.username = username;
     }
 
+    public String getIpAddress() {
+        return ipAddress;
+    }
+
     public void setIpAddress(final String ipAddress) {
         this.ipAddress = ipAddress;
+    }
+
+    public String getUserAgent() {
+        return userAgent;
     }
 
     public void setUserAgent(final String userAgent) {
         this.userAgent = userAgent;
     }
 
-    public void setIpMetadata(final IpMetadata ipMetadata) {
-        this.ipMetadata = ipMetadata;
-    }
-
     public IpMetadata getIpMetadata() {
         return ipMetadata;
+    }
+
+    public void setIpMetadata(final IpMetadata ipMetadata) {
+        this.ipMetadata = ipMetadata;
     }
 
     public String getUserAgentToken() {
@@ -56,6 +58,14 @@ public class LoginContext {
 
     public void setUserAgentToken(final String userAgentToken) {
         this.userAgentToken = userAgentToken;
+    }
+
+    public LoginResult getLoginResult() {
+        return loginResult;
+    }
+
+    public void setLoginResult(final LoginResult loginResult) {
+        this.loginResult = loginResult;
     }
 
     @Override
@@ -67,11 +77,12 @@ public class LoginContext {
                 Objects.equal(userAgent, that.userAgent) &&
                 Objects.equal(ipMetadata, that.ipMetadata) &&
                 Objects.equal(userAgentToken, that.userAgentToken) &&
-                Objects.equal(username, that.username);
+                Objects.equal(username, that.username) &&
+                Objects.equal(loginResult, that.loginResult);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(ipAddress, userAgent, username, ipMetadata, userAgentToken);
+        return Objects.hashCode(ipAddress, userAgent, username, ipMetadata, userAgentToken, loginResult);
     }
 }

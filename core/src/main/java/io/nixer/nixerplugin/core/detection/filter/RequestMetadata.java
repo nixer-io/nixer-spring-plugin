@@ -12,4 +12,6 @@ public interface RequestMetadata {
     String USER_AGENT_FAILED_LOGIN_OVER_THRESHOLD = "nixer.useragent.failedLoginOverThreshold";
 
     String GLOBAL_CREDENTIAL_STUFFING = "nixer.cs.global";
+
+    String FAILED_LOGIN_RATIO_ACTIVE = "nixer.cs.failedLoginRatio";
 }

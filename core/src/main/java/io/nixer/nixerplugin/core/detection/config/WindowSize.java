@@ -15,11 +15,13 @@ public class WindowSize {
 
     public static final Duration WINDOW_1M = Duration.ofMinutes(1);
     public static final Duration WINDOW_5M = Duration.ofMinutes(5);
+    public static final Duration WINDOW_10M = Duration.ofMinutes(10);
     public static final Duration WINDOW_15M = Duration.ofMinutes(15);
 
     static {
         WINDOWS.add(WINDOW_1M);
         WINDOWS.add(WINDOW_5M);
+        WINDOWS.add(WINDOW_10M);
         WINDOWS.add(WINDOW_15M);
     }
 
