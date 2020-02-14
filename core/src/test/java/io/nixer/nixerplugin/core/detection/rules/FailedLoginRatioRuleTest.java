@@ -29,8 +29,8 @@ class FailedLoginRatioRuleTest {
 
     @Test
     void doNothingWhenBelowMinimumSampleSize() {
-        when(loginMetric.value(LoginResult.Status.SUCCESS.getName())).thenReturn(3);
-        when(loginMetric.value(LoginResult.Status.FAILURE.getName())).thenReturn(3);
+        when(loginMetric.value(LoginResult.Status.SUCCESS.name())).thenReturn(3);
+        when(loginMetric.value(LoginResult.Status.FAILURE.name())).thenReturn(3);
         int activationLevel = 50;
         int deactivationLevel = 50;
         int minimumSampleSize = 7;
@@ -45,8 +45,8 @@ class FailedLoginRatioRuleTest {
 
     @Test
     void doNothingWhenNoLoginEvents() {
-        when(loginMetric.value(LoginResult.Status.SUCCESS.getName())).thenReturn(0);
-        when(loginMetric.value(LoginResult.Status.FAILURE.getName())).thenReturn(0);
+        when(loginMetric.value(LoginResult.Status.SUCCESS.name())).thenReturn(0);
+        when(loginMetric.value(LoginResult.Status.FAILURE.name())).thenReturn(0);
         int activationLevel = 50;
         int deactivationLevel = 50;
         int minimumSampleSize = 0;
@@ -61,8 +61,8 @@ class FailedLoginRatioRuleTest {
 
     @Test
     void deactivateWhenZeroFailureEvents() {
-        when(loginMetric.value(LoginResult.Status.SUCCESS.getName())).thenReturn(6);
-        when(loginMetric.value(LoginResult.Status.FAILURE.getName())).thenReturn(0);
+        when(loginMetric.value(LoginResult.Status.SUCCESS.name())).thenReturn(6);
+        when(loginMetric.value(LoginResult.Status.FAILURE.name())).thenReturn(0);
         int activationLevel = 50;
         int deactivationLevel = 50;
         int minimumSampleSize = 6;
@@ -79,8 +79,8 @@ class FailedLoginRatioRuleTest {
 
     @Test
     void activateWhenZeroSuccessEvents() {
-        when(loginMetric.value(LoginResult.Status.SUCCESS.getName())).thenReturn(0);
-        when(loginMetric.value(LoginResult.Status.FAILURE.getName())).thenReturn(6);
+        when(loginMetric.value(LoginResult.Status.SUCCESS.name())).thenReturn(0);
+        when(loginMetric.value(LoginResult.Status.FAILURE.name())).thenReturn(6);
         int activationLevel = 50;
         int deactivationLevel = 50;
         int minimumSampleSize = 6;
@@ -99,8 +99,8 @@ class FailedLoginRatioRuleTest {
 
     @Test
     void activateWhenRatio() {
-        when(loginMetric.value(LoginResult.Status.SUCCESS.getName())).thenReturn(4);
-        when(loginMetric.value(LoginResult.Status.FAILURE.getName())).thenReturn(6);
+        when(loginMetric.value(LoginResult.Status.SUCCESS.name())).thenReturn(4);
+        when(loginMetric.value(LoginResult.Status.FAILURE.name())).thenReturn(6);
         int activationLevel = 60;
         int deactivationLevel = 41;
         int minimumSampleSize = 10;
@@ -119,8 +119,8 @@ class FailedLoginRatioRuleTest {
 
     @Test
     void deactivateWhenRatio() {
-        when(loginMetric.value(LoginResult.Status.SUCCESS.getName())).thenReturn(6);
-        when(loginMetric.value(LoginResult.Status.FAILURE.getName())).thenReturn(4);
+        when(loginMetric.value(LoginResult.Status.SUCCESS.name())).thenReturn(6);
+        when(loginMetric.value(LoginResult.Status.FAILURE.name())).thenReturn(4);
         int activationLevel = 60;
         int deactivationLevel = 41;
         int minimumSampleSize = 10;

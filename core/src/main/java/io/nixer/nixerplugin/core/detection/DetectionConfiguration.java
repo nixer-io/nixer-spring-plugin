@@ -1,6 +1,5 @@
 package io.nixer.nixerplugin.core.detection;
 
-import java.time.Duration;
 import java.util.List;
 
 import io.nixer.nixerplugin.core.detection.config.AnomalyRulesProperties;
@@ -187,7 +186,7 @@ public class DetectionConfiguration {
 
         @Bean
         public FailedLoginRatioRegistry failedLoginRatioRegistry() {
-            return new FailedLoginRatioRegistry(Duration.ofMinutes(20), nowSource);
+            return new FailedLoginRatioRegistry(nowSource);
         }
     }
 

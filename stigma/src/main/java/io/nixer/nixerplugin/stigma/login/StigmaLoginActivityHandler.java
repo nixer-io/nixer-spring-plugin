@@ -42,9 +42,7 @@ public class StigmaLoginActivityHandler implements LoginActivityHandler {
     @Override
     public void handle(final LoginContext context) {
         Assert.notNull(context, "LoginContext can not be null");
-        if (context.getLoginResult() == null) {
-            throw new IllegalStateException("LoginResult obtained from LoginContext is null");
-        }
+        Assert.state(context.getLoginResult() != null, "LoginResult from LoginContext can not be null");
 
         final RawStigmaToken receivedStigmaToken = stigmaCookieService.readStigmaToken(request);
 

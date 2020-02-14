@@ -30,7 +30,8 @@ public class LoginContextFactory {
         final String username = extractUsername(event);
 
         if (loginResult == null || username == null) {
-            throw new UnknownAuthenticationEventException("Unable to determine login result or username for event: " + event);
+            throw new UnknownAuthenticationEventException(String.format("Unable to determine login result [%s] or username [%s] for event %s",
+                    loginResult, username, event.getClass()));
         }
 
         final String userAgent = request.getHeader(HttpHeaders.USER_AGENT);

@@ -4,6 +4,9 @@ import java.util.Objects;
 
 /**
  * Needed in registry to capture both activation and deactivation events
+ *
+ * Keeps ratio as an event source. Ratio is a double ranged [0 - 1] representing ratio of number of failed login attempts to number of all login
+ * attempts.
  */
 public abstract class FailedLoginRatioEvent extends AnomalyEvent {
 
@@ -25,7 +28,7 @@ public abstract class FailedLoginRatioEvent extends AnomalyEvent {
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.getTimestamp(), this.getSource());
+        return Objects.hash(this.getTimestamp(), this.getRatio());
     }
 
     @Override

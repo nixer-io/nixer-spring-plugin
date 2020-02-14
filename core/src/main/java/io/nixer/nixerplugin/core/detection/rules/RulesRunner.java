@@ -8,7 +8,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.util.Assert;
 
 /**
- * Rules runner keeps collection of rules are executes them on demand
+ * Rules runner keeps collection of rules and executes them on demand
  */
 public class RulesRunner {
 

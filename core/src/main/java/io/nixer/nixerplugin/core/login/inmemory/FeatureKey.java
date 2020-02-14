@@ -1,5 +1,7 @@
 package io.nixer.nixerplugin.core.login.inmemory;
 
+import javax.annotation.Nullable;
+
 import io.nixer.nixerplugin.core.login.LoginContext;
 import io.nixer.nixerplugin.core.login.LoginResult;
 
@@ -39,14 +41,15 @@ public interface FeatureKey {
                     return null;
                 }
                 if (loginContext.getLoginResult().isSuccess()) {
-                    return LoginResult.Status.SUCCESS.getName();
+                    return LoginResult.Status.SUCCESS.name();
                 } else {
-                    return LoginResult.Status.FAILURE.getName();
+                    return LoginResult.Status.FAILURE.name();
                 }
             }
         };
 
         @Override
+        @Nullable
         public abstract String key(LoginContext loginContext);
     }
 }

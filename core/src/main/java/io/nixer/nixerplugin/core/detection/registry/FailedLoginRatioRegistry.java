@@ -12,13 +12,13 @@ import org.springframework.context.ApplicationListener;
 public class FailedLoginRatioRegistry implements ApplicationListener<FailedLoginRatioEvent> {
     private static final Log logger = LogFactory.getLog(FailedLoginRatioRegistry.class);
 
+    static final Duration DEACTIVATION_TIMEOUT_ON_IDLE = Duration.ofMinutes(20);
+
     private final NowSource nowSource;
-    private final Duration deactivationPeriodOnIdle;
     private FailedLoginRatioState state;
 
 
-    public FailedLoginRatioRegistry(final Duration deactivationPeriodOnIdle, final NowSource nowSource) {
-        this.deactivationPeriodOnIdle = deactivationPeriodOnIdle;
+    public FailedLoginRatioRegistry(final NowSource nowSource) {
         this.nowSource = nowSource;
 
         this.state = new FailedLoginRatioState(false, Instant.MIN);
@@ -32,14 +32,14 @@ public class FailedLoginRatioRegistry implements ApplicationListener<FailedLogin
         if (!active) {
             return false;
         } else {
-            return activationTime.plus(deactivationPeriodOnIdle).isAfter(nowSource.now());
+            return activationTime.plus(DEACTIVATION_TIMEOUT_ON_IDLE).isAfter(nowSource.now());
         }
     }
 
     @Override
     public void onApplicationEvent(final FailedLoginRatioEvent event) {
         if (logger.isDebugEnabled()) {
-            logger.debug("FAILED_LOGIN_RATIO event was caught with ratio: " + event.getSource());
+            logger.debug("FAILED_LOGIN_RATIO event was caught with ratio: " + event.getRatio());
         }
 
         if (FailedLoginRatioEvent.FAILED_LOGIN_RATIO_ACTIVATION.equals(event.type())) {

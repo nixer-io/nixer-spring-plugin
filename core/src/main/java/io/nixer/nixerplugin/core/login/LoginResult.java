@@ -14,18 +14,8 @@ public class LoginResult {
     private final LoginFailureType reason;
 
     public enum Status {
-        SUCCESS("LOGIN_SUCCESS"),
-        FAILURE("LOGIN_FAILURE");
-
-        private final String name;
-
-        Status(String name) {
-            this.name = name;
-        }
-
-        public String getName() {
-            return this.name;
-        }
+        SUCCESS,
+        FAILURE
     }
 
     private LoginResult(final Status status, final LoginFailureType reason) {

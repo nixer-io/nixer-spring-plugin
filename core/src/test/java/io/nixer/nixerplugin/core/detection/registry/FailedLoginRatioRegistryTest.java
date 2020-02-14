@@ -18,21 +18,22 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class FailedLoginRatioRegistryTest {
 
+    private static final Instant NOW = Instant.ofEpochSecond(600);
+
     @Mock
     private NowSource nowSource;
 
     private FailedLoginRatioRegistry registry;
 
-    private final Instant baseInstant = Instant.ofEpochSecond(600);
 
     @BeforeEach
     void setUp() {
-        registry = new FailedLoginRatioRegistry(Duration.ofMinutes(20), nowSource);
+        registry = new FailedLoginRatioRegistry(nowSource);
     }
 
     @Test
     void onDeactivationEvent() {
-        when(nowSource.now()).thenReturn(baseInstant);
+        when(nowSource.now()).thenReturn(NOW);
 
         registry.onApplicationEvent(new FailedLoginRatioDeactivationEvent(50));
 
@@ -41,7 +42,7 @@ class FailedLoginRatioRegistryTest {
 
     @Test
     void onActivationEvent() {
-        when(nowSource.now()).thenReturn(baseInstant);
+        when(nowSource.now()).thenReturn(NOW);
 
         registry.onApplicationEvent(new FailedLoginRatioActivationEvent(70));
 
@@ -50,14 +51,17 @@ class FailedLoginRatioRegistryTest {
 
     @Test
     void activationTimeout() {
-        when(nowSource.now()).thenReturn(baseInstant,
-                baseInstant.plus(Duration.ofMinutes(5)),
-                baseInstant.plus(Duration.ofMinutes(20)).plusSeconds(1));
-
+        when(nowSource.now()).thenReturn(NOW);
         registry.onApplicationEvent(new FailedLoginRatioActivationEvent(70));
 
-        // when 20 minutes passed, activation should timeout
+        // for ACTIVATION_TIMEOUT period from event registration, activation state is expected
+        when(nowSource.now()).thenReturn(NOW.plus(Duration.ofMinutes(5)));
         assertThat(registry.isFailedLoginRatioActivated()).isTrue();
+
+        // when ACTIVATION_TIMEOUT passes, deactivation state is expected
+        when(nowSource.now()).thenReturn(NOW.plus(FailedLoginRatioRegistry.DEACTIVATION_TIMEOUT_ON_IDLE).plusSeconds(1));
         assertThat(registry.isFailedLoginRatioActivated()).isFalse();
+
+
     }
 }

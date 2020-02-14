@@ -20,6 +20,12 @@ public class FailedLoginRatioRule implements LoginRule {
     private final int deactivationLevel;
     private final int minimumSampleSize;
 
+    /**
+     *
+     * @param activationLevel [0 - 100] integer represents percentage of failed-to-all login requests needed for activation
+     * @param deactivationLevel [0 - 100] integer represents percentage of failed-to-all login requests needed for deactivation
+     * @param minimumSampleSize minimum number of login requests needed for rule to act
+     */
     public FailedLoginRatioRule(final LoginMetric loginMetric, int activationLevel, int deactivationLevel, int minimumSampleSize) {
         Assert.notNull(loginMetric, "LoginMetric must not be null");
         this.loginMetric = loginMetric;
@@ -41,8 +47,8 @@ public class FailedLoginRatioRule implements LoginRule {
 
     @Override
     public void execute(final LoginContext context, final EventEmitter eventEmitter) {
-        final int successCount = loginMetric.value(LoginResult.Status.SUCCESS.getName());
-        final int failureCount = loginMetric.value(LoginResult.Status.FAILURE.getName());
+        final int successCount = loginMetric.value(LoginResult.Status.SUCCESS.name());
+        final int failureCount = loginMetric.value(LoginResult.Status.FAILURE.name());
 
         if (successCount + failureCount < minimumSampleSize || (successCount == 0 && failureCount == 0)) {
             return;
@@ -61,6 +67,7 @@ public class FailedLoginRatioRule implements LoginRule {
             logger.debug("Calculated failed login ratio: " + ratio);
         }
 
+        // ratio is 0-1 double, activationLevel is a percentage
         if (ratio * 100 >= activationLevel) {
             eventEmitter.accept(new FailedLoginRatioActivationEvent(ratio));
         }
