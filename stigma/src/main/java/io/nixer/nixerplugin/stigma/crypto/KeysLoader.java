@@ -3,6 +3,7 @@ package io.nixer.nixerplugin.stigma.crypto;
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.List;
 
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
@@ -26,23 +27,36 @@ public class KeysLoader {
 
     private final ImmutableJWKSet decryptionKeySet;
 
-    public KeysLoader(final JWK encryptionKey, final ImmutableJWKSet decryptionKeySet) {
-        Assert.notNull(encryptionKey, "JWK must not be null");
+    private KeysLoader(final JWK encryptionKey, final ImmutableJWKSet decryptionKeySet) {
+        Assert.notNull(encryptionKey, "encryptionKey must not be null");
+        Assert.notNull(decryptionKeySet, "decryptionKeySet must not be null");
         this.encryptionKey = encryptionKey;
-        Assert.notNull(decryptionKeySet, "ImmutableJWKSet must not be null");
         this.decryptionKeySet = decryptionKeySet;
     }
 
     public static KeysLoader load(final File encryptionKeyFile, final File decryptionKeyFile) {
-        Assert.notNull(encryptionKeyFile, "File not be null");
-        Assert.notNull(decryptionKeyFile, "File not be null");
+        Assert.notNull(encryptionKeyFile, "encryptionKeyFile must not be null");
+        Assert.notNull(decryptionKeyFile, "decryptionKeyFile must not be null");
 
         final JWK encryptionKey = loadEncryptionKey(encryptionKeyFile);
         final ImmutableJWKSet decryptionKeySet = loadDecryptionKeys(decryptionKeyFile);
 
-        Assert.state(decryptionKeySet.getJWKSet().getKeys().contains(encryptionKey), "Decryption keys must include the encryption key.");
+        validateKeys(encryptionKey, decryptionKeySet);
 
         return new KeysLoader(encryptionKey, decryptionKeySet);
+    }
+
+    private static void validateKeys(final JWK encryptionKey, final ImmutableJWKSet decryptionKeySet) {
+        Assert.hasText(encryptionKey.getKeyID(), "Encryption key must include key ID (kid).");
+
+        final List<JWK> decryptionKeys = decryptionKeySet.getJWKSet().getKeys();
+
+        decryptionKeys.forEach(decryptionKey -> Assert.hasText(decryptionKey.getKeyID(), "All decryption keys must include key ID (kid)."));
+
+        final long uniqueKeyIdsCount = decryptionKeys.stream().map(JWK::getKeyID).distinct().count();
+        Assert.state(decryptionKeys.size() == uniqueKeyIdsCount, "Decryption keys must have unique key IDs.");
+
+        Assert.state(decryptionKeys.contains(encryptionKey), "Decryption keys must include the encryption key.");
     }
 
     private static JWK loadEncryptionKey(final File encryptionKeyFile) {

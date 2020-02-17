@@ -1,0 +1,16 @@
+{
+  "keys": [
+    {
+      "kty": "oct",
+      "kid": "6Np2c4QJWhuJH5LFjaoxzFOcyJt8ucATpdBUwt2z2TI",
+      "k": "_dgJ5uSuu__PlSw42HbzbI01Pk7TpB4YndaM8-iOaTc",
+      "alg": "dir"
+    },
+    {
+      "kty": "oct",
+      "kid": "DM3HrquBLDtX8QTGIP9ub4dBC_Rurr8LLiyh8YXvn8U",
+      "k": "JBLS_i7E04_fiwesMxytS-6a49cVEXelTRF2vV2Z8oM",
+      "alg": "dir"
+    }
+  ]
+}
