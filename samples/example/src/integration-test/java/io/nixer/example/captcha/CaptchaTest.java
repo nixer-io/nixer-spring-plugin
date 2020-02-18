@@ -38,11 +38,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-/**
- * Created on 18/02/2020.
- *
- * @author Grzegorz Cwiak (gcwiak)
- */
 @SpringBootTest
 @AutoConfigureMockMvc
 @Import(CaptchaTest.TestConfig.class)
@@ -89,26 +84,6 @@ public class CaptchaTest {
     }
 
     @Test
-    void captchaEndpointToReturnCurrentCondition() throws Exception {
-        this.mockMvc.perform(get("/actuator/captcha"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.condition", is("NEVER")));
-    }
-
-    @Test
-    void captchaEndpointToUpdateCondition() throws Exception {
-        final String newCondition = "{ \"condition\": \"ALWAYS\"}";
-        this.mockMvc.perform(post("/actuator/captcha")
-                .content(newCondition)
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().is2xxSuccessful());
-
-        this.mockMvc.perform(get("/actuator/captcha"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.condition", is("ALWAYS")));
-    }
-
-    @Test
     void shouldLoginSuccessfullyWithGoodCaptcha() throws Exception {
         //enable captcha
         this.captchaChecker.setCaptchaCondition(CaptchaCondition.ALWAYS);
@@ -133,7 +108,6 @@ public class CaptchaTest {
         this.mockMvc.perform(formLogin().user("user").password("guess").captcha(BAD_CAPTCHA).build())
                 .andExpect(unauthenticated());
     }
-
 
     @Test
     void protectEndpointWithCaptcha() throws Exception {
@@ -206,6 +180,26 @@ public class CaptchaTest {
                 .with(remoteAddress(attackerDeviceIp)))
                 .andExpect(status().isOk())
                 .andExpect(captchaChallenge());
+    }
+
+    @Test
+    void captchaEndpointToReturnCurrentCondition() throws Exception {
+        this.mockMvc.perform(get("/actuator/captcha"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.condition", is("NEVER")));
+    }
+
+    @Test
+    void captchaEndpointToUpdateCondition() throws Exception {
+        final String newCondition = "{ \"condition\": \"ALWAYS\"}";
+        this.mockMvc.perform(post("/actuator/captcha")
+                .content(newCondition)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful());
+
+        this.mockMvc.perform(get("/actuator/captcha"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.condition", is("ALWAYS")));
     }
 
     private RequestPostProcessor remoteAddress(String ip) { // TODO duplicate

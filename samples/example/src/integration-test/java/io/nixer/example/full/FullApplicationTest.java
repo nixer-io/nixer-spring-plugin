@@ -74,9 +74,6 @@ public class FullApplicationTest {
 
     @Test
     void shouldSetFlagThatUserAgentOverThreshold() throws Exception {
-        // enable session controlled mode
-//        this.captchaChecker.setCaptchaCondition(CaptchaCondition.SESSION_CONTROLLED); FIXME ???
-
         // @formatter:on
         for (int i = 0; i < ruleProperties.getFailedLoginThreshold().get(useragent).getThreshold() + 1; i++) {
             this.mockMvc.perform(formLogin().user("user").password("guess").build()
