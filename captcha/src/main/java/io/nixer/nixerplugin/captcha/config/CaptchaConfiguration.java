@@ -4,20 +4,10 @@ import io.nixer.nixerplugin.captcha.CaptchaBehavior;
 import io.nixer.nixerplugin.captcha.CaptchaService;
 import io.nixer.nixerplugin.captcha.CaptchaServiceFactory;
 import io.nixer.nixerplugin.captcha.endpoint.CaptchaEndpoint;
-import io.nixer.nixerplugin.captcha.recaptcha.RecaptchaConfiguration;
-import io.nixer.nixerplugin.captcha.security.BadCaptchaException;
-import io.nixer.nixerplugin.captcha.security.CaptchaChecker;
-import io.nixer.nixerplugin.captcha.validation.CaptchaValidator;
-import io.nixer.nixerplugin.core.NixerAutoConfiguration;
-import io.nixer.nixerplugin.core.login.LoginFailureType;
-import io.nixer.nixerplugin.core.login.LoginFailureTypeRegistry;
-import io.nixer.nixerplugin.captcha.CaptchaBehavior;
-import io.nixer.nixerplugin.captcha.CaptchaService;
-import io.nixer.nixerplugin.captcha.CaptchaServiceFactory;
-import io.nixer.nixerplugin.captcha.endpoint.CaptchaEndpoint;
 import io.nixer.nixerplugin.captcha.metrics.CaptchaMetricsReporter;
 import io.nixer.nixerplugin.captcha.recaptcha.RecaptchaConfiguration;
 import io.nixer.nixerplugin.captcha.security.BadCaptchaException;
+import io.nixer.nixerplugin.captcha.security.CaptchaAuthenticationProvider;
 import io.nixer.nixerplugin.captcha.security.CaptchaChecker;
 import io.nixer.nixerplugin.captcha.validation.CaptchaValidator;
 import io.nixer.nixerplugin.core.NixerAutoConfiguration;
@@ -29,17 +19,19 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
-import static io.nixer.nixerplugin.captcha.metrics.CaptchaMetricsReporter.LOGIN_ACTION;
-
 /**
  * {@link org.springframework.boot.autoconfigure.EnableAutoConfiguration Auto-configuration} for Captcha.
- *
  */
 @Configuration
 @EnableConfigurationProperties(value = {LoginCaptchaProperties.class})
 @Import({RecaptchaConfiguration.class})
 @AutoConfigureOrder(NixerAutoConfiguration.ORDER + 1)
 public class CaptchaConfiguration implements LoginFailureTypeRegistry.Contributor {
+
+    @Bean
+    public CaptchaAuthenticationProvider captchaAuthenticationProvider() {
+        return new CaptchaAuthenticationProvider();
+    }
 
     @Bean
     public CaptchaEndpoint captchaEndpoint(CaptchaChecker captchaChecker) {

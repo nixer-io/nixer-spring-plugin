@@ -3,7 +3,7 @@ package io.nixer.example;
 import java.util.LinkedHashMap;
 import javax.sql.DataSource;
 
-import io.nixer.nixerplugin.captcha.config.CaptchaConfigurer;
+import io.nixer.nixerplugin.captcha.security.CaptchaAuthenticationProvider;
 import io.nixer.nixerplugin.captcha.security.CaptchaChecker;
 import io.nixer.nixerplugin.core.detection.filter.FilterConfiguration;
 import io.nixer.nixerplugin.core.detection.filter.behavior.Conditions;
@@ -41,6 +41,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private DataSource dataSource;
 
+    @Autowired
+    private CaptchaAuthenticationProvider captchaAuthenticationProvider;
+
+
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         final LinkedHashMap<Class<? extends AuthenticationException>, AuthenticationFailureHandler> loginFailureHandlers = new LinkedHashMap<>();
@@ -71,16 +75,35 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //        auth.userDetailsService(null)
 //                .addObjectPostProcessor(new CaptchaConfigurer(captchaChecker));
 //
-        auth.jdbcAuthentication()
+
+        //JDBC Authentication with additional authentication provider.
+        // Captcha checked before credentials - captcha information will be propagated in Nixer plugin.
+        // Captcha will be checked always when displayed, and will take precedence before credentials check.
+        auth
+                .authenticationProvider(captchaAuthenticationProvider)
+                .jdbcAuthentication()
                 .dataSource(dataSource)
                 .withDefaultSchema()
-                .withUser("user").password(encoder.encode("user")).roles("USER").and()
-                .withObjectPostProcessor(new CaptchaConfigurer(captchaChecker)); // configure captcha
+                .withUser("user").password(encoder.encode("user")).roles("USER");
 
-//        auth.inMemoryAuthentication()
+//        //JDBC Authentication with post-processor mechanism.
+//        //Credentials take precedence before captcha.
+          //Invalid captcha will not be reported when captcha is empty and credentials are correct (though the authentication will fail as expected).
+//        auth
+//                .jdbcAuthentication()
+//                .dataSource(dataSource)
+//                .withDefaultSchema()
+//                .withUser("user").password(encoder.encode("user")).roles("USER")
+//                .and()
+//                .withObjectPostProcessor(new CaptchaConfigurer(captchaChecker)); // configure captcha
+
+
+//         //In-memory Authentication with post-processor mechanism.
+//         auth.inMemoryAuthentication()
 //                .passwordEncoder(encoder)
 //                .withUser("user").password(encoder.encode("user")).roles("USER")
 //                .withObjectPostProcessor(new CaptchaConfigurer(captchaChecker));
+
     }
 
     /**

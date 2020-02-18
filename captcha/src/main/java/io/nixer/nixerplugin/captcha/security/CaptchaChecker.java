@@ -4,6 +4,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import javax.servlet.http.HttpServletRequest;
 
 import io.nixer.nixerplugin.captcha.CaptchaService;
+import io.nixer.nixerplugin.captcha.config.CaptchaConfigurer;
 import io.nixer.nixerplugin.captcha.error.CaptchaException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,8 @@ import org.springframework.security.core.userdetails.UserDetailsChecker;
 import org.springframework.util.Assert;
 
 /**
- * Integrates captcha verification capability in spring-security authentication process.
+ * This class offers methods for captcha verification for both:
+ * post-processor ({@link CaptchaChecker}) and authentication provider ({@link CaptchaAuthenticationProvider}) integration methods.
  */
 public class CaptchaChecker implements UserDetailsChecker, InitializingBean {
 
@@ -37,16 +39,29 @@ public class CaptchaChecker implements UserDetailsChecker, InitializingBean {
         Assert.notNull(request, "HttpServletRequest must not be null");
     }
 
+    /**
+     * This method will be called when Captcha verification is integrated as a post processor.
+     * This is not the default option.
+     * See {@link CaptchaConfigurer}.
+     */
     @Override
     public void check(final UserDetails toCheck) {
+        try {
+            checkCaptcha();
+        } catch (CaptchaException e) {
+            throw new BadCaptchaException("Invalid captcha", e);
+        }
+    }
+
+    /**
+     * This method is explicitly called in captcha authentication provider.
+     * See {@link CaptchaAuthenticationProvider}
+     */
+    public void checkCaptcha() {
         if (shouldVerifyCaptcha()) {
             final String captchaValue = getCaptchaParameter();
 
-            try {
-                captchaService.verifyResponse(captchaValue);
-            } catch (CaptchaException e) {
-                throw new BadCaptchaException("Invalid captcha", e);
-            }
+            captchaService.verifyResponse(captchaValue);
         }
     }
 
