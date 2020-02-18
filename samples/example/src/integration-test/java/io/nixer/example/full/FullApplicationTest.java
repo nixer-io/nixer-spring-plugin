@@ -73,24 +73,6 @@ public class FullApplicationTest {
     }
 
     @Test
-    void shouldSetFlagThatUserAgentOverThreshold() throws Exception {
-        // @formatter:on
-        for (int i = 0; i < ruleProperties.getFailedLoginThreshold().get(useragent).getThreshold() + 1; i++) {
-            this.mockMvc.perform(formLogin().user("user").password("guess").build()
-                    .header(USER_AGENT, FAKE_USER_AGENT)
-                    .with(remoteAddress(randomIp())))
-                    .andExpect(unauthenticated())
-                    .andExpect(request().attribute(USER_AGENT_FAILED_LOGIN_OVER_THRESHOLD, false));
-        }
-        // @formatter:off
-
-        this.mockMvc.perform(formLogin().user("user").password("guess").build()
-                .header(USER_AGENT, FAKE_USER_AGENT))
-                .andExpect(unauthenticated())
-                .andExpect(request().attribute(USER_AGENT_FAILED_LOGIN_OVER_THRESHOLD, true));
-    }
-
-    @Test
     void loginUserAccessProtected() throws Exception {
         // @formatter:off
         final SmartRequestBuilder loginRequest = formLogin().user("user").password("user").build();
@@ -126,12 +108,22 @@ public class FullApplicationTest {
         assertThat(failLoginCounter.count()).isEqualTo(failedLoginCount + 1);
     }
 
-    private Counter successLoginCounter() {
-        return LoginCounters.LOGIN_SUCCESS.register(meterRegistry);
-    }
+    @Test
+    void shouldSetFlagThatUserAgentOverThreshold() throws Exception {
+        // @formatter:on
+        for (int i = 0; i < ruleProperties.getFailedLoginThreshold().get(useragent).getThreshold() + 1; i++) {
+            this.mockMvc.perform(formLogin().user("user").password("guess").build()
+                    .header(USER_AGENT, FAKE_USER_AGENT)
+                    .with(remoteAddress(randomIp())))
+                    .andExpect(unauthenticated())
+                    .andExpect(request().attribute(USER_AGENT_FAILED_LOGIN_OVER_THRESHOLD, false));
+        }
+        // @formatter:off
 
-    private Counter badPasswordLoginFailCounter() {
-        return LoginCounters.LOGIN_FAILED_BAD_PASSWORD.register(meterRegistry);
+        this.mockMvc.perform(formLogin().user("user").password("guess").build()
+                .header(USER_AGENT, FAKE_USER_AGENT))
+                .andExpect(unauthenticated())
+                .andExpect(request().attribute(USER_AGENT_FAILED_LOGIN_OVER_THRESHOLD, true));
     }
 
     @Test
@@ -174,6 +166,14 @@ public class FullApplicationTest {
         this.mockMvc.perform(get("/actuator/behaviors"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.rules", MapContentMatchers.hasEntry("credentialStuffingActive", Behaviors.LOG.name())));
+    }
+
+    private Counter successLoginCounter() {
+        return LoginCounters.LOGIN_SUCCESS.register(meterRegistry);
+    }
+
+    private Counter badPasswordLoginFailCounter() {
+        return LoginCounters.LOGIN_FAILED_BAD_PASSWORD.register(meterRegistry);
     }
 
     private RequestPostProcessor remoteAddress(String ip) {

@@ -2,6 +2,7 @@ package io.nixer.example.pwned;
 
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.autoconfigure.metrics.export.influx.InfluxMetricsExportAutoConfiguration;
@@ -20,6 +21,7 @@ import static io.nixer.nixerplugin.pwned.metrics.PwnedCheckCounters.PWNED_RESULT
 import static io.nixer.nixerplugin.pwned.metrics.PwnedCheckCounters.RESULT_TAG;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.nullValue;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.logout;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.request;
 
 /**
@@ -39,6 +41,11 @@ public class PwnedTest {
 
     @Autowired
     private MeterRegistry meterRegistry;
+
+    @AfterEach
+    void tearDown() throws Exception {
+        mockMvc.perform(logout());
+    }
 
     @Test
     void shouldDetectPwnedPassword() throws Exception {

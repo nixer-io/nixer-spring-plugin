@@ -5,6 +5,7 @@ import io.nixer.nixerplugin.captcha.security.CaptchaChecker;
 import io.nixer.nixerplugin.captcha.security.CaptchaCondition;
 import io.nixer.nixerplugin.core.detection.config.AnomalyRulesProperties;
 import io.nixer.nixerplugin.core.detection.events.IpFailedLoginOverThresholdEvent;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,7 @@ import static io.nixer.nixerplugin.core.detection.config.AnomalyRulesProperties.
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.logout;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.unauthenticated;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -81,6 +83,11 @@ public class CaptchaTest {
 
         recaptchaClientStub.recordValidCaptcha(GOOD_CAPTCHA);
         recaptchaClientStub.recordInvalidCaptcha(BAD_CAPTCHA);
+    }
+
+    @AfterEach
+    void tearDown() throws Exception {
+        mockMvc.perform(logout());
     }
 
     @Test
