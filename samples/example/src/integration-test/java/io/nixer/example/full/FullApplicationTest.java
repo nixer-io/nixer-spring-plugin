@@ -39,16 +39,11 @@ import static io.nixer.example.LoginRequestBuilder.formLogin;
 import static io.nixer.nixerplugin.core.detection.config.AnomalyRulesProperties.Name.ip;
 import static io.nixer.nixerplugin.core.detection.config.AnomalyRulesProperties.Name.useragent;
 import static io.nixer.nixerplugin.core.detection.filter.RequestMetadata.USER_AGENT_FAILED_LOGIN_OVER_THRESHOLD;
-import static io.nixer.nixerplugin.pwned.metrics.PwnedCheckCounters.METRIC_NAME;
-import static io.nixer.nixerplugin.pwned.metrics.PwnedCheckCounters.NOT_PWNED_RESULT;
-import static io.nixer.nixerplugin.pwned.metrics.PwnedCheckCounters.PWNED_RESULT;
-import static io.nixer.nixerplugin.pwned.metrics.PwnedCheckCounters.RESULT_TAG;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.nullValue;
 import static org.springframework.http.HttpHeaders.USER_AGENT;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.logout;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated;
@@ -229,58 +224,7 @@ public class FullApplicationTest {
                 .andExpect(unauthenticated());
     }
 
-    @Test
-    void shouldDetectPwnedPassword() throws Exception {
 
-        loginWithNotPwnedPassword()
-                .andExpect(request().attribute("nixer.pwned.password", nullValue()));
-
-        loginWithPwnedPassword()
-                .andExpect(request().attribute("nixer.pwned.password", true));
-    }
-
-    @Test
-    void shouldWritePwnedPasswordMetrics() throws  Exception {
-        // given
-        final Counter pwnedPasswordCounter = givenPwnedCounter();
-        final Counter notPwnedPasswordCounter = givenNotPwnedCounter();
-
-        double initialPwnedCount = pwnedPasswordCounter.count();
-        double initialNotPwnedCount = notPwnedPasswordCounter.count();
-
-        // when
-        loginWithNotPwnedPassword();
-
-        // then
-        assertThat(pwnedPasswordCounter.count()).isEqualTo(initialPwnedCount);
-        assertThat(notPwnedPasswordCounter.count()).isEqualTo(initialNotPwnedCount + 1);
-
-        // when
-        loginWithPwnedPassword();
-
-        // then
-        assertThat(pwnedPasswordCounter.count()).isEqualTo(initialPwnedCount + 1);
-        assertThat(notPwnedPasswordCounter.count()).isEqualTo(initialNotPwnedCount + 1);
-    }
-
-    private Counter givenPwnedCounter() {
-        return meterRegistry.get(METRIC_NAME)
-                .tag(RESULT_TAG, PWNED_RESULT).counter();
-    }
-
-    private Counter givenNotPwnedCounter() {
-        return meterRegistry.get(METRIC_NAME)
-                .tag(RESULT_TAG, NOT_PWNED_RESULT).counter();
-    }
-
-    private ResultActions loginWithNotPwnedPassword() throws Exception {
-        return this.mockMvc.perform(formLogin().user("user").password("not-pwned-password").build());
-    }
-
-    private ResultActions loginWithPwnedPassword() throws Exception {
-        // using password from pwned-database
-        return this.mockMvc.perform(formLogin().user("user").password("foobar1").build());
-    }
 
     @Test
     void protectEndpointWithCaptcha() throws  Exception {
