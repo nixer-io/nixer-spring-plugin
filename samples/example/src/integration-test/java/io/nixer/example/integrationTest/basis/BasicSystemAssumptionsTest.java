@@ -16,7 +16,6 @@ import org.springframework.integration.test.matcher.MapContentMatchers;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.SmartRequestBuilder;
 
 import static io.nixer.example.integrationTest.LoginRequestBuilder.formLogin;
@@ -34,7 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @EnableAutoConfiguration(exclude = InfluxMetricsExportAutoConfiguration.class)
-public class BasicSystemAssumptionsTest {
+class BasicSystemAssumptionsTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -114,14 +113,14 @@ public class BasicSystemAssumptionsTest {
         return LoginCounters.LOGIN_FAILED_BAD_PASSWORD.register(meterRegistry);
     }
 
-    private ResultActions loginSuccessfully() throws Exception {
-        return this.mockMvc
+    private void loginSuccessfully() throws Exception {
+        this.mockMvc
                 .perform(formLogin().user("user").password("user").build())
                 .andExpect(authenticated());
     }
 
-    private ResultActions loginFailure() throws Exception {
-        return this.mockMvc
+    private void loginFailure() throws Exception {
+        this.mockMvc
                 .perform(formLogin().user("user").password("bad-password").build())
                 .andExpect(unauthenticated());
     }

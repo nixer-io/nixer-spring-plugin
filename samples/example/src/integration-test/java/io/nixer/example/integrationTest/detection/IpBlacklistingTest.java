@@ -16,7 +16,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @EnableAutoConfiguration(exclude = InfluxMetricsExportAutoConfiguration.class)
-public class IpBlacklistingTest {
+class IpBlacklistingTest {
 
     private static final String BLACKLISTED_IP_V6 = "5555:5555:5555:5555:5555:5555:5555:5555";
     private static final String BLACKLISTED_IP_V4 = "5.5.5.5";
@@ -40,7 +40,7 @@ public class IpBlacklistingTest {
                 .andExpect(isBlocked());
     }
 
-    private RequestPostProcessor remoteAddress(String ip) { // TODO duplicate
+    private RequestPostProcessor remoteAddress(String ip) {
         return request -> {
             request.setRemoteAddr(ip);
             return request;

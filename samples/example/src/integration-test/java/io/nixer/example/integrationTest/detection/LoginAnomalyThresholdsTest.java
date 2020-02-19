@@ -23,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @EnableAutoConfiguration(exclude = InfluxMetricsExportAutoConfiguration.class)
-public class LoginAnomalyThresholdsTest {
+class LoginAnomalyThresholdsTest {
 
     private static final String FAKE_USER_AGENT = "user-agent";
 
@@ -49,7 +49,7 @@ public class LoginAnomalyThresholdsTest {
                 .andExpect(request().attribute(USER_AGENT_FAILED_LOGIN_OVER_THRESHOLD, true));
     }
 
-    private RequestPostProcessor remoteAddress(String ip) { // TODO duplicate
+    private RequestPostProcessor remoteAddress(String ip) {
         return request -> {
             request.setRemoteAddr(ip);
             return request;

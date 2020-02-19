@@ -34,7 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureTestDatabase
 @EnableAutoConfiguration(exclude = InfluxMetricsExportAutoConfiguration.class)
 @Transactional
-public class PwnedTest {
+class PwnedTest {
 
     @Autowired
     private MockMvc mockMvc;

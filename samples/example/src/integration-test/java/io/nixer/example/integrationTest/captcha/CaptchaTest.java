@@ -46,7 +46,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureTestDatabase
 @EnableAutoConfiguration(exclude = InfluxMetricsExportAutoConfiguration.class)
 @Transactional
-public class CaptchaTest {
+class CaptchaTest {
 
     private static final String LOGIN_PAGE = "/login";
     private static final String CAPTCHA_PARAM = "g-recaptcha-response";
@@ -135,11 +135,9 @@ public class CaptchaTest {
         //enable captcha
         this.captchaChecker.setCaptchaCondition(CaptchaCondition.ALWAYS);
 
-        // @formatter:off
         this.mockMvc.perform(get(LOGIN_PAGE))
                 .andExpect(status().isOk())
                 .andExpect(captchaChallenge());
-        // @formatter:on
     }
 
     @Test
@@ -149,14 +147,14 @@ public class CaptchaTest {
 
         final String attackerDeviceIp = "6.6.6.6";
         final MockHttpSession session = new MockHttpSession();
-        // @formatter:on
+
         for (int i = 0; i < ruleProperties.getFailedLoginThreshold().get(ip).getThreshold() + 1; i++) {
             this.mockMvc.perform(formLogin().user("user").password("guess").build()
                     .session(session)
                     .with(remoteAddress(attackerDeviceIp)))
                     .andExpect(unauthenticated());
         }
-        // @formatter:off
+
         this.mockMvc.perform(get(LOGIN_PAGE).session(session)
                 .with(remoteAddress(attackerDeviceIp)))
                 .andExpect(status().isOk())
@@ -209,7 +207,7 @@ public class CaptchaTest {
                 .andExpect(jsonPath("$.condition", is("ALWAYS")));
     }
 
-    private RequestPostProcessor remoteAddress(String ip) { // TODO duplicate
+    private RequestPostProcessor remoteAddress(String ip) {
         return request -> {
             request.setRemoteAddr(ip);
             return request;
