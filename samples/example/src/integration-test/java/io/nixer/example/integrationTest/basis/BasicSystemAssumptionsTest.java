@@ -34,7 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @EnableAutoConfiguration(exclude = InfluxMetricsExportAutoConfiguration.class)
-public class SystemFoundationTest {
+public class BasicSystemAssumptionsTest {
 
     @Autowired
     private MockMvc mockMvc;
