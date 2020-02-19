@@ -5,15 +5,11 @@ import javax.servlet.http.HttpServletRequest;
 import io.nixer.nixerplugin.captcha.endpoint.CaptchaEndpoint;
 import io.nixer.nixerplugin.captcha.recaptcha.RecaptchaClient;
 import io.nixer.nixerplugin.captcha.recaptcha.RecaptchaV2ServiceFactory;
+import io.nixer.nixerplugin.captcha.security.CaptchaAuthenticationProvider;
 import io.nixer.nixerplugin.captcha.security.CaptchaChecker;
 import io.nixer.nixerplugin.captcha.validation.CaptchaValidator;
 import io.nixer.nixerplugin.core.login.LoginFailureTypeRegistry;
 import io.nixer.nixerplugin.core.metrics.MetricsFactory;
-import io.nixer.nixerplugin.captcha.endpoint.CaptchaEndpoint;
-import io.nixer.nixerplugin.captcha.recaptcha.RecaptchaClient;
-import io.nixer.nixerplugin.captcha.recaptcha.RecaptchaV2ServiceFactory;
-import io.nixer.nixerplugin.captcha.security.CaptchaChecker;
-import io.nixer.nixerplugin.captcha.validation.CaptchaValidator;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.annotation.Bean;
@@ -59,6 +55,7 @@ class CaptchaConfigurationTest {
                 )
                 .run(context -> {
                     assertThat(context)
+                            .hasSingleBean(CaptchaAuthenticationProvider.class)
                             .hasSingleBean(CaptchaChecker.class)
                             .hasSingleBean(CaptchaValidator.class)
                             .hasSingleBean(CaptchaEndpoint.class)
