@@ -1,4 +1,4 @@
-package io.nixer.example.detection;
+package io.nixer.example.integrationTest.detection;
 
 import java.util.Random;
 
@@ -13,7 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 
-import static io.nixer.example.LoginRequestBuilder.formLogin;
+import static io.nixer.example.integrationTest.LoginRequestBuilder.formLogin;
 import static io.nixer.nixerplugin.core.detection.config.AnomalyRulesProperties.Name.useragent;
 import static io.nixer.nixerplugin.core.detection.filter.RequestMetadata.USER_AGENT_FAILED_LOGIN_OVER_THRESHOLD;
 import static org.springframework.http.HttpHeaders.USER_AGENT;

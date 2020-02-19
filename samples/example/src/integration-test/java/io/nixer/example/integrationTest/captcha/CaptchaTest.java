@@ -1,4 +1,4 @@
-package io.nixer.example.captcha;
+package io.nixer.example.integrationTest.captcha;
 
 import io.nixer.nixerplugin.captcha.recaptcha.RecaptchaClientStub;
 import io.nixer.nixerplugin.captcha.security.CaptchaChecker;
@@ -26,7 +26,7 @@ import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.transaction.annotation.Transactional;
 
-import static io.nixer.example.LoginRequestBuilder.formLogin;
+import static io.nixer.example.integrationTest.LoginRequestBuilder.formLogin;
 import static io.nixer.nixerplugin.core.detection.config.AnomalyRulesProperties.Name.ip;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.containsString;

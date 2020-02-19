@@ -1,4 +1,4 @@
-package io.nixer.example.pwned;
+package io.nixer.example.integrationTest.pwned;
 
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
@@ -14,7 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
-import static io.nixer.example.LoginRequestBuilder.formLogin;
+import static io.nixer.example.integrationTest.LoginRequestBuilder.formLogin;
 import static io.nixer.nixerplugin.pwned.metrics.PwnedCheckCounters.METRIC_NAME;
 import static io.nixer.nixerplugin.pwned.metrics.PwnedCheckCounters.NOT_PWNED_RESULT;
 import static io.nixer.nixerplugin.pwned.metrics.PwnedCheckCounters.PWNED_RESULT;

@@ -1,4 +1,4 @@
-package io.nixer.example.stigma;
+package io.nixer.example.integrationTest.stigma;
 
 import java.util.List;
 import javax.servlet.http.Cookie;
@@ -20,7 +20,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
-import static io.nixer.example.LoginRequestBuilder.formLogin;
+import static io.nixer.example.integrationTest.LoginRequestBuilder.formLogin;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.logout;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated;

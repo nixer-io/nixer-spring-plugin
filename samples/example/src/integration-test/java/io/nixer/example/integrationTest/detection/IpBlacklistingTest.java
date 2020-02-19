@@ -1,4 +1,4 @@
-package io.nixer.example.detection;
+package io.nixer.example.integrationTest.detection;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +10,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 
-import static io.nixer.example.LoginRequestBuilder.formLogin;
+import static io.nixer.example.integrationTest.LoginRequestBuilder.formLogin;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 
 @SpringBootTest
