@@ -1,4 +1,4 @@
-package io.nixer.example.full;
+package io.nixer.example.basis;
 
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
@@ -34,7 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @EnableAutoConfiguration(exclude = InfluxMetricsExportAutoConfiguration.class)
-public class FullApplicationTest {
+public class SystemFoundationTest {
 
     @Autowired
     private MockMvc mockMvc;
