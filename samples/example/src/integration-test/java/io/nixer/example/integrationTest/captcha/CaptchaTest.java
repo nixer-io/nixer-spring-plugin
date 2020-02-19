@@ -24,7 +24,6 @@ import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
-import org.springframework.transaction.annotation.Transactional;
 
 import static io.nixer.example.integrationTest.LoginRequestBuilder.formLogin;
 import static io.nixer.nixerplugin.core.detection.config.AnomalyRulesProperties.Name.ip;
@@ -42,10 +41,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@Import(CaptchaTest.TestConfig.class)
 @AutoConfigureTestDatabase
+@Import(CaptchaTest.TestConfig.class)
 @EnableAutoConfiguration(exclude = InfluxMetricsExportAutoConfiguration.class)
-@Transactional
 class CaptchaTest {
 
     private static final String LOGIN_PAGE = "/login";

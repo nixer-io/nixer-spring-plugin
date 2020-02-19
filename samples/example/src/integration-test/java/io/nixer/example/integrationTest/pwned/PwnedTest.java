@@ -12,7 +12,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.transaction.annotation.Transactional;
 
 import static io.nixer.example.integrationTest.LoginRequestBuilder.formLogin;
 import static io.nixer.nixerplugin.pwned.metrics.PwnedCheckCounters.METRIC_NAME;
@@ -33,7 +32,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @AutoConfigureTestDatabase
 @EnableAutoConfiguration(exclude = InfluxMetricsExportAutoConfiguration.class)
-@Transactional
 class PwnedTest {
 
     @Autowired
