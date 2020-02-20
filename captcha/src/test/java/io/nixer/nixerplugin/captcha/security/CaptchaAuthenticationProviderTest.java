@@ -31,33 +31,33 @@ class CaptchaAuthenticationProviderTest {
     @Mock
     private ApplicationEventPublisher eventPublisher;
 
-    private AbstractAuthenticationToken authentication;
+    private AbstractAuthenticationToken authenticationToken;
 
-    private CaptchaAuthenticationProvider captchaAuthentication;
+    private CaptchaAuthenticationProvider captchaAuthenticationProvider;
 
     @BeforeEach
     void setUp() {
-        captchaAuthentication = new CaptchaAuthenticationProvider(captchaChecker, eventPublisher);
+        captchaAuthenticationProvider = new CaptchaAuthenticationProvider(captchaChecker, eventPublisher);
     }
 
     @Test
     void captchaInvalid() {
-        authentication = new UsernamePasswordAuthenticationToken(
+        authenticationToken = new UsernamePasswordAuthenticationToken(
                 new Object(),
                 new Object(),
                 Collections.singletonList((GrantedAuthority) () -> "test"));
         doThrow(new CaptchaClientException("")).when(captchaChecker).checkCaptcha();
 
 
-        assertThrows(CaptchaAuthenticationStatusException.class, () -> captchaAuthentication.authenticate(authentication));
-        assertThat(authentication.isAuthenticated()).isFalse();
+        assertThrows(CaptchaAuthenticationStatusException.class, () -> captchaAuthenticationProvider.authenticate(authenticationToken));
+        assertThat(authenticationToken.isAuthenticated()).isFalse();
         verify(eventPublisher).publishEvent(any(FailedCaptchaAuthenticationEvent.class));
     }
 
 
     @Test
     void noCaptchaOrCaptchaCorrect() {
-        final Authentication result = captchaAuthentication.authenticate(authentication);
+        final Authentication result = captchaAuthenticationProvider.authenticate(authenticationToken);
 
         assertNull(result);
     }

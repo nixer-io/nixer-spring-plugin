@@ -36,15 +36,15 @@ public class CaptchaAuthenticationProvider implements AuthenticationProvider {
     public Authentication authenticate(final Authentication authentication) throws AuthenticationException {
         try {
             captchaChecker.checkCaptcha();
-        } catch (CaptchaException e) {
+        } catch (CaptchaException captchaException) {
             authentication.setAuthenticated(false);
 
             final FailedCaptchaAuthenticationEvent event = new FailedCaptchaAuthenticationEvent(
                     authentication,
-                    new BadCaptchaException("invalid captcha", e));
+                    new BadCaptchaException("invalid captcha", captchaException));
             eventPublisher.publishEvent(event);
 
-            throw new CaptchaAuthenticationStatusException("invalid captcha");
+            throw new CaptchaAuthenticationStatusException("invalid captcha", captchaException);
         }
         return null;
     }
