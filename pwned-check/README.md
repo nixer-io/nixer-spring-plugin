@@ -3,13 +3,11 @@
 Module that provides functionality of checking if the credentials being used for login attempt have been compromised in a data breach.
 
 ---
-#### Privacy note:
-
-The check is done completely locally, no data is sent outside your application. It is performed on hashes of credentials, 
-not original values, so the risk of a password leak is not increased by this feature.
-
+**The check is done completely locally, no data is sent outside your application.**
 
 ---
+
+It is performed on hashes of credentials, not original values, so the risk of a password leak is not increased by using this feature.
 
 # How does it work
 
@@ -26,7 +24,8 @@ For this purpose we provide convenient command line utility,
 [bloom-tool](https://github.com/nixer-io/nixer-spring-plugin/tree/master/bloom-tool), which allows generating, manipulating 
 and testing Bloom filters.
 
-As a data source you can use pwned passwords lists available at [haveibeenpwned.com](https://haveibeenpwned.com/Passwords) or similar websites.
+As a data source you can use pwned passwords lists available at [haveibeenpwned.com](https://haveibeenpwned.com/Passwords) 
+or similar websites, or can be obtained from any credentials breach data you have access to. 
  
 For information about transforming the data into Bloom filter please refer to 
 [bloom-tool documentation](https://github.com/nixer-io/nixer-spring-plugin/tree/master/bloom-tool).
