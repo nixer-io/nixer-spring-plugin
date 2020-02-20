@@ -1,13 +1,17 @@
-# Pwned credentials check
+# Suspicious credentials check
 
-Module that provides functionality of checking if the credentials being used for login attempt have been compromised in a data breach.
+This module provides functionality of checking if the credentials being used for login attempt have been compromised in a data breach, 
+in other words '_pwned_', hence the module's name.
+
+The credentials typed by the user are transformed into hashes and checked against presence in a local database containing hashes of 
+credentials that have been leaked in a known data breach. 
 
 ---
 **The check is done completely locally, no data is sent outside your application.**
 
----
+**Since it is performed on hashes of credentials, not original values, the risk of a password leak is not increased by using this feature.**
 
-It is performed on hashes of credentials, not original values, so the risk of a password leak is not increased by using this feature.
+---
 
 # How does it work
 
