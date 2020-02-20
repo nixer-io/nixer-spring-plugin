@@ -15,6 +15,7 @@ import io.nixer.nixerplugin.core.login.LoginFailureType;
 import io.nixer.nixerplugin.core.login.LoginFailureTypeRegistry;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -29,8 +30,8 @@ import org.springframework.context.annotation.Import;
 public class CaptchaConfiguration implements LoginFailureTypeRegistry.Contributor {
 
     @Bean
-    public CaptchaAuthenticationProvider captchaAuthenticationProvider() {
-        return new CaptchaAuthenticationProvider();
+    public CaptchaAuthenticationProvider captchaAuthenticationProvider(CaptchaChecker captchaChecker, ApplicationEventPublisher publisher) {
+        return new CaptchaAuthenticationProvider(captchaChecker, publisher);
     }
 
     @Bean

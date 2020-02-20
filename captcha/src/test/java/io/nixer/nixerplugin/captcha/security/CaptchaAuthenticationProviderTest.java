@@ -37,9 +37,7 @@ class CaptchaAuthenticationProviderTest {
 
     @BeforeEach
     void setUp() {
-        captchaAuthentication = new CaptchaAuthenticationProvider();
-        captchaAuthentication.setCaptchaChecker(captchaChecker);
-        captchaAuthentication.setEventPublisher(eventPublisher);
+        captchaAuthentication = new CaptchaAuthenticationProvider(captchaChecker, eventPublisher);
     }
 
     @Test
