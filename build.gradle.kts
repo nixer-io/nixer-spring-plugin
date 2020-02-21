@@ -44,7 +44,16 @@ configure(subprojects.filter { it.name.startsWith("nixer-plugin") }) {
 
 val guavaVersion by extra("28.0-jre")
 
-subprojects {
+configure(subprojects.filter {
+    it.name in listOf(
+            "bloom-filter",
+            "bloom-tool",
+            "nixer-plugin-core",
+            "nixer-plugin-captcha",
+            "nixer-plugin-pwned-check",
+            "nixer-plugin-stigma"
+    )
+}) {
 
     afterEvaluate {
         project.apply(plugin = "maven-publish")
