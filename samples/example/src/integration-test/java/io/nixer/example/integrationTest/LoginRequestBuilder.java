@@ -1,4 +1,4 @@
-package io.nixer.example;
+package io.nixer.example.integrationTest;
 
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;

@@ -1,4 +1,4 @@
-package io.nixer.example.stigma;
+package io.nixer.example.integrationTest.stigma;
 
 import java.util.List;
 import javax.servlet.http.Cookie;
@@ -6,6 +6,7 @@ import javax.servlet.http.Cookie;
 import io.nixer.nixerplugin.stigma.domain.StigmaDetails;
 import io.nixer.nixerplugin.stigma.domain.StigmaStatus;
 import io.nixer.nixerplugin.stigma.storage.jdbc.StigmasJdbcDAO;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +20,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
-import static io.nixer.example.LoginRequestBuilder.formLogin;
+import static io.nixer.example.integrationTest.LoginRequestBuilder.formLogin;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.logout;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.unauthenticated;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.cookie;
@@ -49,6 +51,11 @@ class StigmaTest {
     @BeforeEach
     void setUp() {
         assertThat(stigmaDAO.getAll()).isEmpty();
+    }
+
+    @AfterEach
+    void tearDown() throws Exception {
+        mockMvc.perform(logout());
     }
 
     @Test
