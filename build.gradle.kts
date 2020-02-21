@@ -9,7 +9,7 @@ defaultTasks("build")
 
 allprojects {
     group = "io.nixer"
-    version = "0.1.0.1-SNAPSHOT"
+    version = "0.1.1.0"
 
     repositories {
         mavenCentral()
