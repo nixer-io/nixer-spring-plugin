@@ -1,6 +1,7 @@
 package io.nixer.nixerplugin.captcha.security;
 
 import io.nixer.nixerplugin.captcha.CaptchaService;
+import io.nixer.nixerplugin.captcha.error.CaptchaException;
 import io.nixer.nixerplugin.captcha.error.CaptchaServiceException;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
@@ -44,6 +45,7 @@ class CaptchaCheckerTest {
                 .when(captchaService).verifyResponse("captcha");
 
         assertThrows(BadCaptchaException.class, () -> captchaChecker.check(ANY));
+        assertThrows(CaptchaException.class, () -> captchaChecker.checkCaptcha());
     }
 
     @Test
