@@ -11,9 +11,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Get tag name
-        id: get_tag
-        run: echo ::set-output name=NAME::${GITHUB_REF/refs\/tags\//}
+      - name: Get tag name and version # Transforms 'refs/tags/v1.0' into 'v1.0' as name and '1.0' version.
+        id: get_tag_info
+        run: |
+          echo ::set-output name=NAME::${GITHUB_REF/refs\/tags\//}
+          echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\/v/}
 
       - name: Checkout code # This already switches to the tag invoking the workflow.
         uses: actions/checkout@v2
@@ -32,9 +34,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ steps.get_tag.outputs.NAME }}
-          release_name: ${{ steps.get_tag.outputs.NAME }}
-          body: Nixer Spring Plugin - release ${{ steps.get_tag.outputs.NAME }}
+          tag_name: ${{ steps.get_tag_info.outputs.NAME }}
+          release_name: ${{ steps.get_tag_info.outputs.NAME }}
+          body: Nixer Spring Plugin - release ${{ steps.get_tag_info.outputs.NAME }}
           draft: true
           prerelease: false
 
@@ -44,8 +46,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./bloom-tool/build/distributions/bloom-tool-${{ steps.get_tag.outputs.NAME }}.zip
-          asset_name: bloom-tool-${{ steps.get_tag.outputs.NAME }}.zip
+          asset_path: ./bloom-tool/build/distributions/bloom-tool-${{ steps.get_tag_info.outputs.VERSION }}.zip
+          asset_name: bloom-tool-${{ steps.get_tag_info.outputs.VERSION }}.zip
           asset_content_type: application/zip
 
       - name: Upload ip_cloud_ranges asset
