@@ -1,6 +1,7 @@
 import io.spring.gradle.dependencymanagement.dsl.DependencyManagementExtension
 
 plugins {
+    distribution
     java
     id("io.spring.dependency-management") version "1.0.8.RELEASE" apply false
 }
@@ -150,6 +151,17 @@ configure(subprojects.filter {
         configure<JavaPluginConvention> {
             sourceCompatibility = JavaVersion.VERSION_1_8
             targetCompatibility = JavaVersion.VERSION_1_8
+        }
+    }
+}
+
+distributions {
+    create("cloudIpRanges") {
+        // Create package to be attached as GitHub release asset.
+        distributionBaseName.set("ip_cloud_ranges") // The release.yml workflow depends on this name.
+        version = "" // suppressed for now as the script version (showed by --version option) is not aligned yet
+        contents {
+            from("scripts/ip_cloud_ranges")
         }
     }
 }
