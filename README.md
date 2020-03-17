@@ -25,5 +25,5 @@ Additional libraries are in GitHub's [release assets](https://github.com/nixer-i
 
 ## License
 
-Nixer Spring Plugin is an open source project licensed under version 2.0 of the 
-[Apache License](https://www.apache.org/licenses/LICENSE-2.0).
+Nixer Spring Plugin developed by Crossword Cybersecurity is an open source project licensed under the 
+[Apache License version 2.0](https://www.apache.org/licenses/LICENSE-2.0).
