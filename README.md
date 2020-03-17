@@ -6,14 +6,14 @@ For overview and tutorials visit [our documentation website](https://nixer-io.gi
 
 ## Distribution
 
-The plugin is distributed through [Maven Central](https://search.maven.org/search?q=g:io.nixer).
+The plugin is distributed through [Maven Central](https://mvnrepository.com/artifact/io.nixer).
 
-```kotlin
+```groovy
 dependencies {
-    implementation("io.nixer:nixer-plugin-core:0.1.1.0")
-    implementation("io.nixer:nixer-plugin-captcha:0.1.1.0")
-    implementation("io.nixer:nixer-plugin-pwned-check:0.1.1.0")
-    implementation("io.nixer:nixer-plugin-stigma:0.1.1.0")
+    implementation "io.nixer:nixer-plugin-core:0.1.1.0"
+    implementation "io.nixer:nixer-plugin-captcha:0.1.1.0"
+    implementation "io.nixer:nixer-plugin-pwned-check:0.1.1.0"
+    implementation "io.nixer:nixer-plugin-stigma:0.1.1.0"
 }
 ```
 

@@ -4,11 +4,11 @@ Provides base functionality of Nixer Spring Plugin.
 
 ## Installation
 
-Core Nixer plugin is distributed through [Maven Central](https://search.maven.org/search?q=g:io.nixer).
+Core Nixer plugin is distributed through [Maven Central](https://mvnrepository.com/artifact/io.nixer).
 
-```kotlin
+```groovy
 dependencies {
-    implementation("io.nixer:nixer-plugin-core:0.1.1.0")
+    implementation "io.nixer:nixer-plugin-core:0.1.1.0"
 }
 ```
 

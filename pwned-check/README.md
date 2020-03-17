@@ -4,14 +4,14 @@ Provides functionality of checking if the credentials being used for the login a
 
 ## Installation
 
-Pwned Check Nixer plugin is distributed through [Maven Central](https://search.maven.org/search?q=io.nixer).
+Pwned Check Nixer plugin is distributed through [Maven Central](https://mvnrepository.com/artifact/io.nixer).
 
 It requires dependency to Core Nixer plugin as well.
 
-```kotlin
+```groovy
 dependencies {
-    implementation("io.nixer:nixer-plugin-core:0.1.1.0")
-    implementation("io.nixer:nixer-plugin-pwned-check:0.1.1.0")
+    implementation "io.nixer:nixer-plugin-core:0.1.1.0"
+    implementation "io.nixer:nixer-plugin-pwned-check:0.1.1.0"
 }
 ```
 
