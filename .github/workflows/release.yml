@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Get tag name and version # Transforms 'refs/tags/v1.0' into 'v1.0' as name and '1.0' version.
+      - name: Get tag name and version # Transforms 'refs/tags/v1.0' into 'v1.0' as name and '1.0' as version.
         id: get_tag_info
         run: |
           echo ::set-output name=NAME::${GITHUB_REF/refs\/tags\//}
