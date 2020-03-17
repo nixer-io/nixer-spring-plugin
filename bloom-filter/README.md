@@ -17,3 +17,4 @@ dependencies {
 
 The full documentation is available 
 [on the docs website](https://nixer-io.github.io/additional-features/#file-based-bloom-filter-for-java).
+We also provide a convenience [CLI tool](https://nixer-io.github.io/additional-features/#bloom-cli-tool) for manipulating the filters. 
