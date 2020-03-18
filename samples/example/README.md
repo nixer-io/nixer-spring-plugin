@@ -5,7 +5,7 @@ Example Spring Boot web application demonstrating how to use Nixer Spring Plugin
 The application also serves as a reference implementation used in our integration tests,
 which guarantees it is up to date with the latest version of the plugin.
 
-This is a classic _Todo app_ so it consists of only authentication logic and a basic fronted.
+This is a simple demo application, it consists of only authentication logic and a basic fronted.
 
 ## Running
 
