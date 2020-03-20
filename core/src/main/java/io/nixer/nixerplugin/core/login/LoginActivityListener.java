@@ -36,7 +36,7 @@ public class LoginActivityListener implements ApplicationListener<AbstractAuthen
             final LoginContext context = loginContextFactory.create(event);
             loginActivityHandlers.forEach(it -> it.handle(context));
         } catch (UnknownAuthenticationEventException exception) {
-            logger.warn("Failed to handle authentication event", exception);
+            logger.trace("Ignored, unknown authentication event", exception);
         }
 
 
