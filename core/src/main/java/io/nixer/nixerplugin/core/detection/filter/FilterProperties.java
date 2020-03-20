@@ -5,6 +5,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "nixer.filters")
 public class FilterProperties {
 
+    /**
+     * Whether Nixer servlet filters should execute behaviors in dry-run mode.
+     */
     private boolean dryRun;
 
     public boolean isDryRun() {
