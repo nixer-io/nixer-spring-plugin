@@ -48,7 +48,6 @@ val guavaVersion by extra("28.0-jre")
 configure(subprojects.filter {
     it.name in listOf(
             "bloom-filter",
-            "bloom-tool",
             "nixer-plugin-core",
             "nixer-plugin-captcha",
             "nixer-plugin-pwned-check",
