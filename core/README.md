@@ -8,7 +8,7 @@ Core Nixer plugin is distributed through [Maven Central](https://mvnrepository.c
 
 ```groovy
 dependencies {
-    implementation "io.nixer:nixer-plugin-core:0.1.1.0"
+    implementation "io.nixer:nixer-plugin-core:0.1.1.1"
 }
 ```
 
