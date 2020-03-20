@@ -5,8 +5,20 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "nixer.events.elastic")
 public class ElasticIndexProperties {
 
+    /**
+     * Whether anomaly events should be logged to Elasticsearch.
+     * Requires Elastic Search running.
+     */
     private boolean enabled = false;
+
+    /**
+     * Elasticsearch index.
+     */
     private String index;
+
+    /**
+     * Elasticsearch type.
+     */
     private String type = "_doc";
 
     public boolean isEnabled() {
