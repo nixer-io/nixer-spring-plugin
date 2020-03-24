@@ -21,9 +21,12 @@ public class FailedLoginRatioProperties {
      * more of the login requests will be a failed ones.
      *
      * Activation level unit are percentages. Metric failed-login-ratio is calculated as follows:
-     * <pre>
+     * <br/>
+     * <code>
      *     failed-login-ratio = (100 * number or failed logins) / (number of all logins)
-     * </pre>
+     * </code>
+     * <br/>
+     * <br/>
      *
      * Activation and deactivation levels create hysteresis to better cope with credential stuffing and also to prevent too frequent
      * activation/deactivation events.
