@@ -71,11 +71,13 @@ prepareSourceCode() {
 }
 
 checkTag() {
-  CURRENT_TAG=$(git describe --tags)
+  CURRENT_TAG=$(git describe --exact-match)
 
   if [[ "$CURRENT_TAG" != "$ENV_TAG_NAME" ]]; then
     echo ""
     echo "==> ERROR: The checked out tag '${CURRENT_TAG}' does not match the tag to be published: '${ENV_TAG_NAME}'"
+    echo "==>        Make sure the specified tag is the latest annotated tag pointing the commit you want to publish."
+    echo "==>        Lightweight tags are not supported."
     echo ""
 
     echo "--> Details:"
