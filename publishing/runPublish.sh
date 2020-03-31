@@ -5,7 +5,7 @@ set -o pipefail
 set -o nounset
 
 # Paths to be mounted inside the Docker container
-CONTAINER_GRADLE_PROPS_DIR=/nixer/gradle
+CONTAINER_GRADLE_PROPS_FILE=/nixer/gradle/gradle.properties
 CONTAINER_SIGNING_SECRET_KEY_FILE=/nixer/signing/private.key
 
 main() {
@@ -32,10 +32,10 @@ main() {
   echo "======================================================================================================================="
 
   docker container run \
-    --volume "${GRADLE_PROPS_DIR}/gradle.properties":"${CONTAINER_GRADLE_PROPS_DIR}/gradle.properties" \
+    --volume "${GRADLE_PROPS_FILE}":"${CONTAINER_GRADLE_PROPS_FILE}" \
     --volume "${SIGNING_SECRET_KEY_FILE}":"${CONTAINER_SIGNING_SECRET_KEY_FILE}" \
     --env ENV_TAG_NAME="${TAG_NAME}" \
-    --env ENV_GRADLE_PROPS_DIR="${CONTAINER_GRADLE_PROPS_DIR}" \
+    --env ENV_GRADLE_PROPS_FILE="${CONTAINER_GRADLE_PROPS_FILE}" \
     --env ENV_SIGNING_SECRET_KEY_FILE="${CONTAINER_SIGNING_SECRET_KEY_FILE}" \
     --env ENV_DEBUG="${DEBUG:-}" \
     --name "${PUBLISHER_CONTAINER_NAME}" \
@@ -67,8 +67,8 @@ scanCommandLine() {
             --tag-name=*)
                 TAG_NAME="${arg#*=}"
                 ;;
-            --gradle-props-dir=*)
-                GRADLE_PROPS_DIR="${arg#*=}"
+            --gradle-props-file=*)
+                GRADLE_PROPS_FILE="${arg#*=}"
                 ;;
             --signing-secret-key-file=*)
                 SIGNING_SECRET_KEY_FILE="${arg#*=}"
@@ -96,8 +96,8 @@ checkParameters() {
         exit 1
     fi
 
-    if [[ -z ${GRADLE_PROPS_DIR:-} ]]; then
-        echo "ERROR: Missing mandatory parameter: --gradle-props-dir"
+    if [[ -z ${GRADLE_PROPS_FILE:-} ]]; then
+        echo "ERROR: Missing mandatory parameter: --gradle-props-file"
         help
         exit 1
     fi
@@ -108,8 +108,8 @@ checkParameters() {
         exit 1
     fi
 
-    if [[ ! -f "${GRADLE_PROPS_DIR}/gradle.properties" ]]; then
-        echo "ERROR: '${GRADLE_PROPS_DIR}/gradle.properties' file does not exist."
+    if [[ ! -f "${GRADLE_PROPS_FILE}" ]]; then
+        echo "ERROR: Gradle properties file '${GRADLE_PROPS_FILE}' does not exist."
         help
         exit 1
     fi
@@ -134,7 +134,7 @@ Usage:
 
     Mandatory parameters:
     --tag-name=[TAG_NAME]                                 - name of the git tag to be published
-    --gradle-props-dir=[GRADLE_PROPS_DIR]                 - path to the directory with 'gradle.properties' file to be used
+    --gradle-props-file=[GRADLE_PROPS_FILE]               - path to the 'gradle.properties' file to be used
     --signing-secret-key-file=[SIGNING_SECRET_KEY_FILE]   - path to the key file used for signing the published artefacts
 
     Optional parameters:

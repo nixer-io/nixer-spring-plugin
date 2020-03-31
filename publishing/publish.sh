@@ -41,8 +41,8 @@ checkScriptDependencies() {
 }
 
 checkParameters() {
-    if [[ ! -f "${ENV_GRADLE_PROPS_DIR}/gradle.properties" ]]; then
-        echo "PUBLISHING ERROR: '${ENV_GRADLE_PROPS_DIR}/gradle.properties' file does not exist."
+    if [[ ! -f "${ENV_GRADLE_PROPS_FILE}" ]]; then
+        echo "PUBLISHING ERROR: Gradle properties file '${ENV_GRADLE_PROPS_FILE}' does not exist."
         help
         exit 1
     fi
@@ -100,6 +100,7 @@ checkTag() {
 
 executeGradlePublish() {
 
+  GRADLE_PROPS_DIRECTORY=$(dirname "$ENV_GRADLE_PROPS_FILE")
   DEBUG_MODE=$([ "$ENV_DEBUG" == "true" ] && echo "--debug -S" || echo "")
 
   # The 'org.gradle.internal.publish.checksums.insecure' flag disables generating sha256 and sha512 checksums
@@ -108,7 +109,7 @@ executeGradlePublish() {
   ./gradlew \
     --no-daemon \
     -Dorg.gradle.internal.publish.checksums.insecure=true \
-    -Dgradle.user.home="$ENV_GRADLE_PROPS_DIR" \
+    -Dgradle.user.home="$GRADLE_PROPS_DIRECTORY" \
     -Psigning.secretKeyRingFile="$ENV_SIGNING_SECRET_KEY_FILE" \
     $DEBUG_MODE \
     clean \
@@ -129,7 +130,7 @@ Usage:
 
     Mandatory environment variables:
     ENV_TAG_NAME                  - name of the git tag to be published
-    ENV_GRADLE_PROPS_DIR          - path to the directory with 'gradle.properties' file to be used
+    ENV_GRADLE_PROPS_FILE         - path to the 'gradle.properties' file to be used
     ENV_SIGNING_SECRET_KEY_FILE   - path to the key file used for signing the published artefacts
 
     Optional environment variables:
