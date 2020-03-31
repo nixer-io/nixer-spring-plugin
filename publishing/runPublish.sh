@@ -134,7 +134,8 @@ Usage:
 
     Mandatory parameters:
     --tag-name=[TAG_NAME]                                 - name of the git tag to be published
-    --gradle-props-file=[GRADLE_PROPS_FILE]               - path to the 'gradle.properties' file to be used
+    --gradle-props-file=[GRADLE_PROPS_FILE]               - path to the 'gradle.properties' file to be used,
+                                                            this file should contain Maven Repository and signing credentials
     --signing-secret-key-file=[SIGNING_SECRET_KEY_FILE]   - path to the key file used for signing the published artefacts
 
     Optional parameters:

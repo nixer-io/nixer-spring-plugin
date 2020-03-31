@@ -130,7 +130,8 @@ Usage:
 
     Mandatory environment variables:
     ENV_TAG_NAME                  - name of the git tag to be published
-    ENV_GRADLE_PROPS_FILE         - path to the 'gradle.properties' file to be used
+    ENV_GRADLE_PROPS_FILE         - path to the 'gradle.properties' file to be used,
+                                    this file should contain Maven Repository and signing credentials
     ENV_SIGNING_SECRET_KEY_FILE   - path to the key file used for signing the published artefacts
 
     Optional environment variables:
