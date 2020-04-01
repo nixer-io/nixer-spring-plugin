@@ -17,10 +17,10 @@ public class PwnedCheckProperties {
 
     /**
      * The HTTP parameter to look for the password when performing the check.
-     * <br/>
-     * <b>Must follow the value of</b> <code>org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter#passwordParameter</code>
-     * which is might be changed by <code>org.springframework.security.config.annotation.web.configurers.FormLoginConfigurer</code>.
-     * <br/>
+     *
+     * Must follow the value of org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter#passwordParameter
+     * which is might be changed by org.springframework.security.config.annotation.web.configurers.FormLoginConfigurer.
+     *
      * Defaults to the Spring Security default value.
      */
     private String passwordParameter = "password";
