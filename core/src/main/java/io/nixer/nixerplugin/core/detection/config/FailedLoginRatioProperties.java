@@ -17,32 +17,12 @@ public class FailedLoginRatioProperties {
     private boolean enabled;
 
     /**
-     * Defines value of failed-login-ratio metric on which an activation event will be generated. By default, the rule will be activated when 80% or
-     * more of the login requests will be a failed ones.
-     *
-     * Activation level unit are percentages. Metric failed-login-ratio is calculated as follows:
-     * <br/>
-     * <code>
-     *     failed-login-ratio = (100 * number or failed logins) / (number of all logins)
-     * </code>
-     * <br/>
-     * <br/>
-     *
-     * Activation and deactivation levels create hysteresis to better cope with credential stuffing and also to prevent too frequent
-     * activation/deactivation events.
+     * Percentage value of failed-login-ratio metric above which an activation event will be generated.
      */
     private int activationLevel = 80;
 
     /**
-     * Property deactivationLevel defines value of failed-login-ratio below which deactivation event will be generated disabling protection mechanism.
-     *
-     * Deactivation level unit are percentages. Metric failed-login-ratio is calculated as follows:
-     * <pre>
-     *     failed-login-ratio = (100 * number or failed logins) / (number of all logins)
-     * </pre>
-     *
-     * Activation and deactivation levels create hysteresis to better cope with credential stuffing and also to prevent too frequent
-     * activation/deactivation events.
+     * Percentage value of failed-login-ratio metric below which a deactivation event will be generated.
      */
     private int deactivationLevel = 70;
 
