@@ -3,7 +3,7 @@ import org.springframework.boot.gradle.tasks.run.BootRun
 
 plugins {
     id("java")
-    id("org.springframework.boot") version "2.0.5.RELEASE"
+    id("org.springframework.boot") version "2.2.6.RELEASE"
 }
 
 apply(from = "../../config/it-config.gradle.kts")

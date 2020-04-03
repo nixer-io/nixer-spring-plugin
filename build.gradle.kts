@@ -24,7 +24,7 @@ configure(subprojects.filter { it.name.startsWith("nixer-plugin") }) {
     }
     configure<DependencyManagementExtension> {
         imports {
-            mavenBom("org.springframework.boot:spring-boot-dependencies:2.2.1.RELEASE")
+            mavenBom("org.springframework.boot:spring-boot-dependencies:2.2.6.RELEASE")
         }
     }
 
