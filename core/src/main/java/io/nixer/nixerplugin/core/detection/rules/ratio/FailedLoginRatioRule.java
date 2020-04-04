@@ -13,23 +13,6 @@ import org.springframework.util.Assert;
 
 /**
  * Emits activation or deactivation failed-login-ratio events basing on the value of the failed-login-ratio metric.
- * <br/>
- * The metric is calculated as follows:
- * <pre>
- *     failed-login-ratio = (100 * number or failed logins) / (number of all logins)
- * </pre>
- *
- * The behavior is defined by the following thresholds:
- *
- * <p>
- *     {@link #activationLevel} - value of failed-login-ratio metric above which an activation event will be generated.
- * </p>
- * <p>
- *     {@link #deactivationLevel} - percentage value of failed-login-ratio metric below which a deactivation event will be generated.
- * </p>
- *
- * Activation and deactivation levels create hysteresis to better cope with credential stuffing and also to prevent too frequent
- * activation/deactivation events.
  */
 public class FailedLoginRatioRule implements LoginRule {
 
