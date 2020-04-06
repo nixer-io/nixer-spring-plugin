@@ -1,7 +1,5 @@
 package io.nixer.example.integrationTest.detection;
 
-import java.util.Random;
-
 import com.google.common.base.Joiner;
 import io.nixer.nixerplugin.core.detection.config.AnomalyRulesProperties;
 import org.junit.jupiter.api.Test;
@@ -37,10 +35,12 @@ class LoginAnomalyThresholdsTest {
 
     @Test
     void shouldSetFlagThatUserAgentOverThreshold() throws Exception {
-        for (int i = 0; i < ruleProperties.getFailedLoginThreshold().get(useragent).getThreshold() + 1; i++) {
+        final Integer failedLoginsPerUserAgentThreshold = ruleProperties.getFailedLoginThreshold().get(useragent).getThreshold();
+
+        for (int i = 0; i < failedLoginsPerUserAgentThreshold + 1; i++) {
             this.mockMvc.perform(formLogin().user("user").password("guess").build()
                     .header(USER_AGENT, FAKE_USER_AGENT)
-                    .with(remoteAddress(randomIp())))
+                    .with(remoteAddress(sampleIp(i))))
                     .andExpect(unauthenticated())
                     .andExpect(request().attribute(USER_AGENT_FAILED_LOGIN_OVER_THRESHOLD, false));
         }
@@ -51,21 +51,19 @@ class LoginAnomalyThresholdsTest {
                 .andExpect(request().attribute(USER_AGENT_FAILED_LOGIN_OVER_THRESHOLD, true));
     }
 
-    private RequestPostProcessor remoteAddress(String ip) {
+    private static RequestPostProcessor remoteAddress(String ip) {
         return request -> {
             request.setRemoteAddr(ip);
             return request;
         };
     }
 
-    private String randomIp() {
-        final Random random = new Random();
-
+    private static String sampleIp(int i) {
         return Joiner.on('.').join(
-                random.nextInt(256),
-                random.nextInt(256),
-                random.nextInt(256),
-                random.nextInt(256)
+                (i + 1) % 256,
+                (i + 2) % 256,
+                (i + 3) % 256,
+                (i + 4) % 256
         );
     }
 }
