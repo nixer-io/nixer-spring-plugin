@@ -1,5 +1,7 @@
 package io.nixer.example.integrationTest.detection;
 
+import java.util.Random;
+
 import com.google.common.base.Joiner;
 import io.nixer.nixerplugin.core.detection.config.AnomalyRulesProperties;
 import org.junit.jupiter.api.Test;
@@ -41,20 +43,19 @@ class LoginAnomalyThresholdsTest {
 
     @Test
     void should_mark_number_of_failed_logins_for_single_user_agent_is_over_threshold() throws Exception {
+        final Random random = new Random(1);
         final Integer threshold = ruleProperties.getFailedLoginThreshold().get(useragent).getThreshold();
         final String givenUserAgent = "given-user-agent";
 
         // Saturate the failed login counter for the given user agent.
         for (int i = 0; i <= threshold; i++) {
-            givenFailedLoginAttempt(dummyUsername(i), givenUserAgent, dummyIp(i))
+            doFailedLoginAttempt(dummyUsername(random), givenUserAgent, dummyIp(random))
                     .andExpect(request().attribute(USER_AGENT_FAILED_LOGIN_OVER_THRESHOLD, false))
                     .andExpect(request().attribute(IP_FAILED_LOGIN_OVER_THRESHOLD, false))
                     .andExpect(request().attribute(USERNAME_FAILED_LOGIN_OVER_THRESHOLD, nullValue()));
         }
 
-        givenFailedLoginAttempt(
-                dummyUsername(threshold + 1), givenUserAgent, dummyIp(threshold + 1)
-        )
+        doFailedLoginAttempt(dummyUsername(random), givenUserAgent, dummyIp(random))
                 .andExpect(request().attribute(USER_AGENT_FAILED_LOGIN_OVER_THRESHOLD, true))
                 .andExpect(request().attribute(IP_FAILED_LOGIN_OVER_THRESHOLD, false))
                 .andExpect(request().attribute(USERNAME_FAILED_LOGIN_OVER_THRESHOLD, nullValue()));
@@ -62,20 +63,19 @@ class LoginAnomalyThresholdsTest {
 
     @Test
     void should_mark_number_of_failed_logins_for_single_username_is_over_threshold() throws Exception {
+        final Random random = new Random(2);
         final Integer threshold = ruleProperties.getFailedLoginThreshold().get(username).getThreshold();
         final String givenUsername = "given-username";
 
         // Saturate the failed login counter for the given username.
         for (int i = 0; i <= threshold; i++) {
-            givenFailedLoginAttempt(givenUsername, dummyUserAgent(i), dummyIp(i + 100))
+            doFailedLoginAttempt(givenUsername, dummyUserAgent(random), dummyIp(random))
                     .andExpect(request().attribute(USER_AGENT_FAILED_LOGIN_OVER_THRESHOLD, false))
                     .andExpect(request().attribute(IP_FAILED_LOGIN_OVER_THRESHOLD, false))
                     .andExpect(request().attribute(USERNAME_FAILED_LOGIN_OVER_THRESHOLD, nullValue()));
         }
 
-        givenFailedLoginAttempt(
-                givenUsername, dummyUserAgent(threshold + 1), dummyIp(threshold + 1 + 100)
-        )
+        doFailedLoginAttempt(givenUsername, dummyUserAgent(random), dummyIp(random))
                 .andExpect(request().attribute(USER_AGENT_FAILED_LOGIN_OVER_THRESHOLD, false))
                 .andExpect(request().attribute(IP_FAILED_LOGIN_OVER_THRESHOLD, false))
                 .andExpect(request().attribute(USERNAME_FAILED_LOGIN_OVER_THRESHOLD, true));
@@ -83,26 +83,25 @@ class LoginAnomalyThresholdsTest {
 
     @Test
     void should_mark_number_of_failed_logins_for_single_ip_address_is_over_threshold() throws Exception {
+        final Random random = new Random(3);
         final Integer threshold = ruleProperties.getFailedLoginThreshold().get(ip).getThreshold();
         final String givenIpAddress = "10.9.8.7";
 
         // Saturate the failed login counter for the given IP address.
         for (int i = 0; i <= threshold; i++) {
-            givenFailedLoginAttempt(dummyUsername(i) + "_ip", dummyUserAgent(i) + "_ip", givenIpAddress)
+            doFailedLoginAttempt(dummyUsername(random), dummyUserAgent(random), givenIpAddress)
                     .andExpect(request().attribute(USER_AGENT_FAILED_LOGIN_OVER_THRESHOLD, false))
                     .andExpect(request().attribute(IP_FAILED_LOGIN_OVER_THRESHOLD, false))
                     .andExpect(request().attribute(USERNAME_FAILED_LOGIN_OVER_THRESHOLD, nullValue()));
         }
 
-        givenFailedLoginAttempt(
-                dummyUsername(threshold + 1) + "_ip", dummyUserAgent(threshold + 1) + "_ip", givenIpAddress
-        )
+        doFailedLoginAttempt(dummyUsername(random), dummyUserAgent(random), givenIpAddress)
                 .andExpect(request().attribute(USER_AGENT_FAILED_LOGIN_OVER_THRESHOLD, false))
                 .andExpect(request().attribute(IP_FAILED_LOGIN_OVER_THRESHOLD, true))
                 .andExpect(request().attribute(USERNAME_FAILED_LOGIN_OVER_THRESHOLD, nullValue()));
     }
 
-    private ResultActions givenFailedLoginAttempt(final String username, final String userAgent, final String ip) throws Exception {
+    private ResultActions doFailedLoginAttempt(final String username, final String userAgent, final String ip) throws Exception {
         return this.mockMvc
                 .perform(
                         formLogin()
@@ -120,20 +119,20 @@ class LoginAnomalyThresholdsTest {
         };
     }
 
-    private static String dummyIp(int i) {
+    private static String dummyIp(final Random random) {
         return Joiner.on('.').join(
-                (i + 1) % 256,
-                (i + 2) % 256,
-                (i + 3) % 256,
-                (i + 4) % 256
+                random.nextInt(256),
+                random.nextInt(256),
+                random.nextInt(256),
+                random.nextInt(256)
         );
     }
 
-    private static String dummyUsername(final int i) {
-        return "dummy-username_" + i;
+    private static String dummyUsername(final Random random) {
+        return "username_" + random.nextLong();
     }
 
-    private static String dummyUserAgent(final int i) {
-        return "dummy-user-agent_" + i;
+    private static String dummyUserAgent(final Random random) {
+        return "user-agent_" + random.nextLong();
     }
 }
