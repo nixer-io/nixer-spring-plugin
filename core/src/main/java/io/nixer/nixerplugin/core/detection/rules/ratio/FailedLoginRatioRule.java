@@ -11,6 +11,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.util.Assert;
 
+/**
+ * Emits activation or deactivation failed-login-ratio events basing on the value of the failed-login-ratio metric.
+ */
 public class FailedLoginRatioRule implements LoginRule {
 
     private static final Log logger = LogFactory.getLog(FailedLoginRatioRule.class);
