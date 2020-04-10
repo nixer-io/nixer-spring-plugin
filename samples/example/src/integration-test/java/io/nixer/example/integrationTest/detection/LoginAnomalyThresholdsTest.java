@@ -48,10 +48,9 @@ class LoginAnomalyThresholdsTest {
 
         // Saturate the failed login counter for the given user agent.
         for (int i = 0; i <= threshold; i++) {
-            doFailedLoginAttempt(dummyUsername(random), givenUserAgent, dummyIp(random))
-                    .andExpect(request().attribute(USER_AGENT_FAILED_LOGIN_OVER_THRESHOLD, false))
-                    .andExpect(request().attribute(IP_FAILED_LOGIN_OVER_THRESHOLD, false))
-                    .andExpect(request().attribute(USERNAME_FAILED_LOGIN_OVER_THRESHOLD, false));
+            expectNoThresholdsExceeded(
+                    doFailedLoginAttempt(dummyUsername(random), givenUserAgent, dummyIp(random))
+            );
         }
 
         doFailedLoginAttempt(dummyUsername(random), givenUserAgent, dummyIp(random))
@@ -68,10 +67,9 @@ class LoginAnomalyThresholdsTest {
 
         // Saturate the failed login counter for the given username.
         for (int i = 0; i <= threshold; i++) {
-            doFailedLoginAttempt(givenUsername, dummyUserAgent(random), dummyIp(random))
-                    .andExpect(request().attribute(USER_AGENT_FAILED_LOGIN_OVER_THRESHOLD, false))
-                    .andExpect(request().attribute(IP_FAILED_LOGIN_OVER_THRESHOLD, false))
-                    .andExpect(request().attribute(USERNAME_FAILED_LOGIN_OVER_THRESHOLD, false));
+            expectNoThresholdsExceeded(
+                    doFailedLoginAttempt(givenUsername, dummyUserAgent(random), dummyIp(random))
+            );
         }
 
         doFailedLoginAttempt(givenUsername, dummyUserAgent(random), dummyIp(random))
@@ -88,15 +86,21 @@ class LoginAnomalyThresholdsTest {
 
         // Saturate the failed login counter for the given IP address.
         for (int i = 0; i <= threshold; i++) {
-            doFailedLoginAttempt(dummyUsername(random), dummyUserAgent(random), givenIpAddress)
-                    .andExpect(request().attribute(USER_AGENT_FAILED_LOGIN_OVER_THRESHOLD, false))
-                    .andExpect(request().attribute(IP_FAILED_LOGIN_OVER_THRESHOLD, false))
-                    .andExpect(request().attribute(USERNAME_FAILED_LOGIN_OVER_THRESHOLD, false));
+            expectNoThresholdsExceeded(
+                    doFailedLoginAttempt(dummyUsername(random), dummyUserAgent(random), givenIpAddress)
+            );
         }
 
         doFailedLoginAttempt(dummyUsername(random), dummyUserAgent(random), givenIpAddress)
                 .andExpect(request().attribute(USER_AGENT_FAILED_LOGIN_OVER_THRESHOLD, false))
                 .andExpect(request().attribute(IP_FAILED_LOGIN_OVER_THRESHOLD, true))
+                .andExpect(request().attribute(USERNAME_FAILED_LOGIN_OVER_THRESHOLD, false));
+    }
+
+    private static void expectNoThresholdsExceeded(final ResultActions resultActions) throws Exception {
+        resultActions
+                .andExpect(request().attribute(USER_AGENT_FAILED_LOGIN_OVER_THRESHOLD, false))
+                .andExpect(request().attribute(IP_FAILED_LOGIN_OVER_THRESHOLD, false))
                 .andExpect(request().attribute(USERNAME_FAILED_LOGIN_OVER_THRESHOLD, false));
     }
 
