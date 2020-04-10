@@ -22,7 +22,6 @@ import static io.nixer.nixerplugin.core.detection.config.AnomalyRulesProperties.
 import static io.nixer.nixerplugin.core.detection.filter.RequestMetadata.IP_FAILED_LOGIN_OVER_THRESHOLD;
 import static io.nixer.nixerplugin.core.detection.filter.RequestMetadata.USERNAME_FAILED_LOGIN_OVER_THRESHOLD;
 import static io.nixer.nixerplugin.core.detection.filter.RequestMetadata.USER_AGENT_FAILED_LOGIN_OVER_THRESHOLD;
-import static org.hamcrest.Matchers.nullValue;
 import static org.springframework.http.HttpHeaders.USER_AGENT;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.unauthenticated;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.request;
@@ -52,13 +51,13 @@ class LoginAnomalyThresholdsTest {
             doFailedLoginAttempt(dummyUsername(random), givenUserAgent, dummyIp(random))
                     .andExpect(request().attribute(USER_AGENT_FAILED_LOGIN_OVER_THRESHOLD, false))
                     .andExpect(request().attribute(IP_FAILED_LOGIN_OVER_THRESHOLD, false))
-                    .andExpect(request().attribute(USERNAME_FAILED_LOGIN_OVER_THRESHOLD, nullValue()));
+                    .andExpect(request().attribute(USERNAME_FAILED_LOGIN_OVER_THRESHOLD, false));
         }
 
         doFailedLoginAttempt(dummyUsername(random), givenUserAgent, dummyIp(random))
                 .andExpect(request().attribute(USER_AGENT_FAILED_LOGIN_OVER_THRESHOLD, true))
                 .andExpect(request().attribute(IP_FAILED_LOGIN_OVER_THRESHOLD, false))
-                .andExpect(request().attribute(USERNAME_FAILED_LOGIN_OVER_THRESHOLD, nullValue()));
+                .andExpect(request().attribute(USERNAME_FAILED_LOGIN_OVER_THRESHOLD, false));
     }
 
     @Test
@@ -72,7 +71,7 @@ class LoginAnomalyThresholdsTest {
             doFailedLoginAttempt(givenUsername, dummyUserAgent(random), dummyIp(random))
                     .andExpect(request().attribute(USER_AGENT_FAILED_LOGIN_OVER_THRESHOLD, false))
                     .andExpect(request().attribute(IP_FAILED_LOGIN_OVER_THRESHOLD, false))
-                    .andExpect(request().attribute(USERNAME_FAILED_LOGIN_OVER_THRESHOLD, nullValue()));
+                    .andExpect(request().attribute(USERNAME_FAILED_LOGIN_OVER_THRESHOLD, false));
         }
 
         doFailedLoginAttempt(givenUsername, dummyUserAgent(random), dummyIp(random))
@@ -92,13 +91,13 @@ class LoginAnomalyThresholdsTest {
             doFailedLoginAttempt(dummyUsername(random), dummyUserAgent(random), givenIpAddress)
                     .andExpect(request().attribute(USER_AGENT_FAILED_LOGIN_OVER_THRESHOLD, false))
                     .andExpect(request().attribute(IP_FAILED_LOGIN_OVER_THRESHOLD, false))
-                    .andExpect(request().attribute(USERNAME_FAILED_LOGIN_OVER_THRESHOLD, nullValue()));
+                    .andExpect(request().attribute(USERNAME_FAILED_LOGIN_OVER_THRESHOLD, false));
         }
 
         doFailedLoginAttempt(dummyUsername(random), dummyUserAgent(random), givenIpAddress)
                 .andExpect(request().attribute(USER_AGENT_FAILED_LOGIN_OVER_THRESHOLD, false))
                 .andExpect(request().attribute(IP_FAILED_LOGIN_OVER_THRESHOLD, true))
-                .andExpect(request().attribute(USERNAME_FAILED_LOGIN_OVER_THRESHOLD, nullValue()));
+                .andExpect(request().attribute(USERNAME_FAILED_LOGIN_OVER_THRESHOLD, false));
     }
 
     private ResultActions doFailedLoginAttempt(final String username, final String userAgent, final String ip) throws Exception {

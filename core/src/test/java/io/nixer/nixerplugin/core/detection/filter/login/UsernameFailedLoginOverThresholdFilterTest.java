@@ -2,43 +2,41 @@ package io.nixer.nixerplugin.core.detection.filter.login;
 
 import io.nixer.nixerplugin.core.detection.filter.RequestMetadata;
 import io.nixer.nixerplugin.core.detection.registry.UsernameOverLoginThresholdRegistry;
-import io.nixer.nixerplugin.core.detection.filter.RequestMetadata;
-import io.nixer.nixerplugin.core.detection.registry.UsernameOverLoginThresholdRegistry;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockHttpServletRequest;
 
+import static java.lang.Boolean.TRUE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 class UsernameFailedLoginOverThresholdFilterTest {
 
+    @InjectMocks
     UsernameFailedLoginOverThresholdFilter filter;
 
     @Mock
     UsernameOverLoginThresholdRegistry usernameOverLoginThresholdRegistry;
 
-    @BeforeEach
-    public void setup() {
-        filter = new UsernameFailedLoginOverThresholdFilter(usernameOverLoginThresholdRegistry);
-    }
-
     @Test
     public void shouldMarkRequestBasedOnUsername() {
-        given(usernameOverLoginThresholdRegistry.contains("user")).willReturn(Boolean.TRUE);
+        // given
+        given(usernameOverLoginThresholdRegistry.contains("user")).willReturn(true);
 
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setServletPath("/login");
         request.setMethod("POST");
+        request.setServletPath("/login");
         request.setParameter("username", "user");
 
+        // when
         filter.apply(request);
 
-        assertThat(request.getAttribute(RequestMetadata.USERNAME_FAILED_LOGIN_OVER_THRESHOLD)).isEqualTo(Boolean.TRUE);
+        // then
+        assertThat(request.getAttribute(RequestMetadata.USERNAME_FAILED_LOGIN_OVER_THRESHOLD)).isEqualTo(TRUE);
     }
 
 }
