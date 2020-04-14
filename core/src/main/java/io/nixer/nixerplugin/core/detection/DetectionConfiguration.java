@@ -16,6 +16,7 @@ import io.nixer.nixerplugin.core.detection.registry.UsernameOverLoginThresholdRe
 import io.nixer.nixerplugin.core.detection.rules.LoginAnomalyRuleFactory;
 import io.nixer.nixerplugin.core.detection.rules.LoginRule;
 import io.nixer.nixerplugin.core.detection.rules.RulesRunner;
+import io.nixer.nixerplugin.core.domain.useragent.UserAgentTokenizer;
 import io.nixer.nixerplugin.core.login.inmemory.CounterRegistry;
 import io.nixer.nixerplugin.core.login.inmemory.InMemoryLoginActivityRepository;
 import io.nixer.nixerplugin.core.util.NowSource;
@@ -143,7 +144,12 @@ public class DetectionConfiguration {
 
         @Bean
         public UserAgentFailedLoginOverThresholdFilter userAgentFilter() {
-            return new UserAgentFailedLoginOverThresholdFilter(userAgentRegistry());
+            return new UserAgentFailedLoginOverThresholdFilter(userAgentTokenizer(), userAgentRegistry());
+        }
+
+        @Bean
+        public UserAgentTokenizer userAgentTokenizer() {
+            return UserAgentTokenizer.sha1Tokenizer();
         }
 
         @Bean
