@@ -5,8 +5,6 @@ import javax.servlet.http.HttpServletRequest;
 import io.nixer.nixerplugin.core.detection.filter.MetadataFilter;
 import io.nixer.nixerplugin.core.detection.filter.RequestMetadata;
 import io.nixer.nixerplugin.core.detection.registry.UsernameOverLoginThresholdRegistry;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.util.Assert;
 
 import static org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.SPRING_SECURITY_FORM_USERNAME_KEY;
@@ -20,8 +18,6 @@ public class UsernameFailedLoginOverThresholdFilter extends MetadataFilter {
 
     private String usernameParameter = SPRING_SECURITY_FORM_USERNAME_KEY;
 
-    private RequestMatcher requestMatcher = new AntPathRequestMatcher("/login", "POST");
-
     public UsernameFailedLoginOverThresholdFilter(UsernameOverLoginThresholdRegistry usernameOverLoginThresholdRegistry) {
         Assert.notNull(usernameOverLoginThresholdRegistry, "UsernameOverLoginThresholdRegistry must not be null");
         this.usernameOverLoginThresholdRegistry = usernameOverLoginThresholdRegistry;
@@ -29,16 +25,10 @@ public class UsernameFailedLoginOverThresholdFilter extends MetadataFilter {
 
     @Override
     protected void apply(final HttpServletRequest request) {
-        if (requestMatcher.matches(request)) {
-            final String username = request.getParameter(usernameParameter);
-            final boolean overThreshold = username != null && usernameOverLoginThresholdRegistry.contains(username);
+        final String username = request.getParameter(usernameParameter);
+        final boolean overThreshold = username != null && usernameOverLoginThresholdRegistry.contains(username);
 
-            request.setAttribute(RequestMetadata.USERNAME_FAILED_LOGIN_OVER_THRESHOLD, overThreshold);
-        }
-    }
-
-    public void setRequestMatcher(final RequestMatcher requestMatcher) {
-        this.requestMatcher = requestMatcher;
+        request.setAttribute(RequestMetadata.USERNAME_FAILED_LOGIN_OVER_THRESHOLD, overThreshold);
     }
 
     public void setUsernameParameter(final String usernameParameter) {
