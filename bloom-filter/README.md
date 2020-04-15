@@ -9,7 +9,7 @@ The Bloom-filter library is distributed through [Maven Central](https://mvnrepos
 
 ```groovy
 dependencies {
-    implementation "io.nixer:bloom-filter:0.1.1.2"
+    implementation "io.nixer:bloom-filter:0.1.1.3"
 }
 ```
 

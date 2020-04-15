@@ -10,8 +10,8 @@ It requires dependency to Core Nixer plugin as well.
 
 ```groovy
 dependencies {
-    implementation "io.nixer:nixer-plugin-core:0.1.1.2"
-    implementation "io.nixer:nixer-plugin-pwned-check:0.1.1.2"
+    implementation "io.nixer:nixer-plugin-core:0.1.1.3"
+    implementation "io.nixer:nixer-plugin-pwned-check:0.1.1.3"
 }
 ```
 
