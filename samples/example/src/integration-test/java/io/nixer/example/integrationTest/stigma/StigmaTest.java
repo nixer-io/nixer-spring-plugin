@@ -3,6 +3,7 @@ package io.nixer.example.integrationTest.stigma;
 import java.util.List;
 import javax.servlet.http.Cookie;
 
+import io.nixer.nixerplugin.stigma.domain.RawStigmaToken;
 import io.nixer.nixerplugin.stigma.domain.StigmaDetails;
 import io.nixer.nixerplugin.stigma.domain.StigmaStatus;
 import io.nixer.nixerplugin.stigma.storage.jdbc.StigmasJdbcDAO;
@@ -60,121 +61,110 @@ class StigmaTest {
 
     @Test
     void shouldAssignStigmaAfterSuccessfulLogin() throws Exception {
-        final String stigmaToken = loginSuccessfullyAndGetStigma();
+        final RawStigmaToken stigmaToken = loginSuccessfully();
 
         final List<StigmaDetails> stigmasAfterFirstLogin = stigmaDAO.getAll();
         assertThat(stigmasAfterFirstLogin).hasSize(1)
                 .extracting(StigmaDetails::getStatus).containsExactly(StigmaStatus.ACTIVE);
 
         // subsequent successful login with valid stigma does not require stigma refresh
-        loginSuccessfullyWithStigma(stigmaToken)
+        loginSuccessfully(stigmaToken)
                 .andExpect(cookie().doesNotExist(stigmaCookie));
+
         assertThat(stigmaDAO.getAll()).isEqualTo(stigmasAfterFirstLogin);
     }
 
     @Test
     void shouldRefreshValidStigmaAfterSubsequentLoginFailure() throws Exception {
-        final String stigmaToken = loginSuccessfullyAndGetStigma();
+        final RawStigmaToken stigmaToken = loginSuccessfully();
 
         final List<StigmaDetails> stigmasAfterFirstLogin = stigmaDAO.getAll();
         assertThat(stigmasAfterFirstLogin).hasSize(1)
                 .extracting(StigmaDetails::getStatus).containsExactly(StigmaStatus.ACTIVE);
 
         // subsequent successful login with valid stigma does not require stigma refresh
-        loginSuccessfullyWithStigma(stigmaToken)
+        loginSuccessfully(stigmaToken)
                 .andExpect(cookie().doesNotExist(stigmaCookie));
 
         assertThat(stigmaDAO.getAll()).isEqualTo(stigmasAfterFirstLogin);
 
-        final String refreshedStigmaToken = loginFailureWithStigma(stigmaToken)
-                .andExpect(cookie().exists(stigmaCookie))
-                .andReturn().getResponse().getCookie(stigmaCookie).getValue();
+        final RawStigmaToken refreshedStigmaToken = loginFailure(stigmaToken);
 
-        assertThat(refreshedStigmaToken)
-                .isNotBlank()
-                .isNotEqualTo(stigmaToken);
-
+        assertThat(refreshedStigmaToken).isNotEqualTo(stigmaToken);
         assertThat(stigmaDAO.getAll()).hasSize(2)
                 .extracting(StigmaDetails::getStatus).containsExactly(StigmaStatus.REVOKED, StigmaStatus.ACTIVE);
     }
 
     @Test
     void shouldRefreshStigmaAfterFailedLogin() throws Exception {
-        final String firstStigmaToken = loginFailure()
-                .andExpect(cookie().exists(stigmaCookie))
-                .andReturn().getResponse().getCookie(stigmaCookie).getValue();
+        final RawStigmaToken firstStigmaToken = loginFailure();
 
-        final String secondStigmaToken = loginFailureWithStigma(firstStigmaToken)
-                .andExpect(cookie().exists(stigmaCookie))
-                .andReturn().getResponse().getCookie(stigmaCookie).getValue();
+        final RawStigmaToken secondStigmaToken = loginFailure(firstStigmaToken);
 
-        assertThat(secondStigmaToken)
-                .isNotBlank()
-                .isNotEqualTo(firstStigmaToken);
-
+        assertThat(secondStigmaToken).isNotEqualTo(firstStigmaToken);
         assertThat(stigmaDAO.getAll()).hasSize(2)
                 .extracting(StigmaDetails::getStatus).containsExactly(StigmaStatus.REVOKED, StigmaStatus.ACTIVE);
     }
 
     @Test
     void shouldRefreshInvalidStigmaAfterSuccessfulLogin() throws Exception {
-        final String invalidStigmaToken = "invalid-stigma-token";
+        final RawStigmaToken invalidStigmaToken = new RawStigmaToken("invalid-stigma-token");
 
-        final String newStigmaToken = loginSuccessfullyWithStigma(invalidStigmaToken)
-                .andExpect(cookie().exists(stigmaCookie))
-                .andReturn().getResponse().getCookie(stigmaCookie).getValue();
+        final RawStigmaToken newStigmaToken = getStigmaToken(loginSuccessfully(invalidStigmaToken));
 
-        assertThat(newStigmaToken)
-                .isNotBlank()
-                .isNotEqualTo(invalidStigmaToken);
-
+        assertThat(newStigmaToken).isNotEqualTo(invalidStigmaToken);
         assertThat(stigmaDAO.getAll()).hasSize(1)
                 .extracting(StigmaDetails::getStatus).containsExactly(StigmaStatus.ACTIVE);
     }
 
     @Test
     void shouldRefreshInvalidStigmaAfterFailedLogin() throws Exception {
-        final String invalidStigmaToken = "invalid-stigma-token";
+        final RawStigmaToken invalidStigmaToken = new RawStigmaToken("invalid-stigma-token");
 
-        final String newStigmaToken = loginFailureWithStigma(invalidStigmaToken)
-                .andExpect(cookie().exists(stigmaCookie))
-                .andReturn().getResponse().getCookie(stigmaCookie).getValue();
+        final RawStigmaToken newStigmaToken = loginFailure(invalidStigmaToken);
 
-        assertThat(newStigmaToken)
-                .isNotBlank()
-                .isNotEqualTo(invalidStigmaToken);
-
+        assertThat(newStigmaToken).isNotEqualTo(invalidStigmaToken);
         assertThat(stigmaDAO.getAll()).hasSize(1)
                 .extracting(StigmaDetails::getStatus).containsExactly(StigmaStatus.ACTIVE);
     }
 
-    private String loginSuccessfullyAndGetStigma() throws Exception {
-        return loginSuccessfully()
+    private RawStigmaToken loginSuccessfully() throws Exception {
+        return getStigmaToken(
+                this.mockMvc
+                        .perform(formLogin().user("user").password("user").build())
+                        .andExpect(authenticated())
+        );
+    }
+
+    private ResultActions loginSuccessfully(RawStigmaToken stigmaToken) throws Exception {
+        return this.mockMvc
+                .perform(formLogin().user("user").password("user").build().cookie(new Cookie(stigmaCookie, stigmaToken.getValue())))
+                .andExpect(authenticated());
+    }
+
+    private RawStigmaToken loginFailure(final RawStigmaToken stigmaToken) throws Exception {
+        return getStigmaToken(
+                this.mockMvc
+                        .perform(formLogin().user("user").password("bad-password").build().cookie(new Cookie(stigmaCookie, stigmaToken.getValue())))
+                        .andExpect(unauthenticated())
+        );
+    }
+
+    private RawStigmaToken loginFailure() throws Exception {
+        return getStigmaToken(
+                this.mockMvc
+                        .perform(formLogin().user("user").password("bad-password").build())
+                        .andExpect(unauthenticated())
+        );
+    }
+
+    private RawStigmaToken getStigmaToken(final ResultActions resultActions) throws Exception {
+        final String stigmaCookieValue = resultActions
                 .andExpect(cookie().exists(stigmaCookie))
                 .andReturn().getResponse().getCookie(stigmaCookie).getValue();
-    }
 
-    private ResultActions loginSuccessfully() throws Exception {
-        return this.mockMvc
-                .perform(formLogin().user("user").password("user").build())
-                .andExpect(authenticated());
-    }
+        assertThat(stigmaCookieValue).isNotBlank();
 
-    private ResultActions loginFailure() throws Exception {
-        return this.mockMvc
-                .perform(formLogin().user("user").password("bad-password").build())
-                .andExpect(unauthenticated());
-    }
-
-    private ResultActions loginSuccessfullyWithStigma(String stigmaToken) throws Exception {
-        return this.mockMvc
-                .perform(formLogin().user("user").password("user").build().cookie(new Cookie(stigmaCookie, stigmaToken)))
-                .andExpect(authenticated());
-    }
-
-    private ResultActions loginFailureWithStigma(String stigmaToken) throws Exception {
-        return this.mockMvc
-                .perform(formLogin().user("user").password("bad-password").build().cookie(new Cookie(stigmaCookie, stigmaToken)))
-                .andExpect(unauthenticated());
+        return new RawStigmaToken(stigmaCookieValue);
     }
 }
