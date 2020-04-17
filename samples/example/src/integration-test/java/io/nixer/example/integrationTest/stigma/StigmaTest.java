@@ -60,7 +60,7 @@ class StigmaTest {
     }
 
     @Test
-    void shouldAssignStigmaAfterSuccessfulLogin() throws Exception {
+    void should_assign_stigma_after_successful_login() throws Exception {
         final RawStigmaToken stigmaToken = loginSuccessfully();
 
         final List<StigmaDetails> stigmasAfterFirstLogin = stigmaDAO.getAll();
@@ -75,7 +75,7 @@ class StigmaTest {
     }
 
     @Test
-    void shouldRefreshValidStigmaAfterSubsequentLoginFailure() throws Exception {
+    void should_refresh_valid_stigma_after_subsequent_login_failure() throws Exception {
         final RawStigmaToken stigmaToken = loginSuccessfully();
 
         final List<StigmaDetails> stigmasAfterFirstLogin = stigmaDAO.getAll();
@@ -96,7 +96,7 @@ class StigmaTest {
     }
 
     @Test
-    void shouldRefreshStigmaAfterFailedLogin() throws Exception {
+    void should_refresh_stigma_after_failed_login() throws Exception {
         final RawStigmaToken firstStigmaToken = loginFailure();
 
         final RawStigmaToken secondStigmaToken = loginFailure(firstStigmaToken);
@@ -107,7 +107,7 @@ class StigmaTest {
     }
 
     @Test
-    void shouldRefreshInvalidStigmaAfterSuccessfulLogin() throws Exception {
+    void should_refresh_invalid_stigma_after_successful_login() throws Exception {
         final RawStigmaToken invalidStigmaToken = new RawStigmaToken("invalid-stigma-token");
 
         final RawStigmaToken newStigmaToken = getStigmaToken(loginSuccessfully(invalidStigmaToken));
@@ -118,7 +118,7 @@ class StigmaTest {
     }
 
     @Test
-    void shouldRefreshInvalidStigmaAfterFailedLogin() throws Exception {
+    void should_refresh_invalid_stigma_after_failed_login() throws Exception {
         final RawStigmaToken invalidStigmaToken = new RawStigmaToken("invalid-stigma-token");
 
         final RawStigmaToken newStigmaToken = loginFailure(invalidStigmaToken);
