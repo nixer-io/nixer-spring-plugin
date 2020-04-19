@@ -5,7 +5,6 @@ import java.util.List;
 
 import io.nixer.nixerplugin.core.login.LoginActivityRepository;
 import io.nixer.nixerplugin.core.login.LoginContext;
-import io.nixer.nixerplugin.core.login.LoginResult;
 
 /**
  * Stores login results in memory.
@@ -15,8 +14,8 @@ public class InMemoryLoginActivityRepository implements LoginActivityRepository,
     private final List<LoginCounter> counters = new ArrayList<>();
 
     @Override
-    public void save(final LoginResult result, final LoginContext context) {
-        counters.forEach(counter -> counter.onLogin(result, context));
+    public void save(final LoginContext context) {
+        counters.forEach(counter -> counter.onLogin(context));
     }
 
     @Override
