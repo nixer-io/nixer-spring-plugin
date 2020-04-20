@@ -27,8 +27,8 @@ public class LoginConfiguration {
     }
 
     @Bean
-    public LoginActivityService loginActivityService(List<LoginActivityRepository> loginActivityRepositories) {
-        return new LoginActivityService(loginActivityRepositories);
+    public LoginActivityStorage loginActivityStorage(List<LoginActivityRepository> loginActivityRepositories) {
+        return new LoginActivityStorage(loginActivityRepositories);
     }
 
     @Bean

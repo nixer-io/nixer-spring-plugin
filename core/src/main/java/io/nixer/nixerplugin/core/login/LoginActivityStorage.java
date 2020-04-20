@@ -2,14 +2,11 @@ package io.nixer.nixerplugin.core.login;
 
 import java.util.List;
 
-import org.springframework.util.Assert;
-
-public class LoginActivityService implements LoginActivityHandler {
+public class LoginActivityStorage implements LoginActivityHandler {
 
     private final List<LoginActivityRepository> repositories;
 
-    public LoginActivityService(final List<LoginActivityRepository> repositories) {
-        Assert.notNull(repositories, "Repositories must not be null");
+    public LoginActivityStorage(final List<LoginActivityRepository> repositories) {
         this.repositories = repositories;
     }
 
