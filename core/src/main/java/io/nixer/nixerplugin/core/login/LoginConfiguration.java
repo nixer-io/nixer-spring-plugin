@@ -27,9 +27,8 @@ public class LoginConfiguration {
     }
 
     @Bean
-    public LoginActivityService loginActivityService(List<LoginActivityRepository> loginActivityRepositories,
-                                                     RulesRunner rulesRunner) {
-        return new LoginActivityService(loginActivityRepositories, rulesRunner);
+    public LoginActivityService loginActivityService(List<LoginActivityRepository> loginActivityRepositories) {
+        return new LoginActivityService(loginActivityRepositories);
     }
 
     @Bean
@@ -41,8 +40,9 @@ public class LoginConfiguration {
 
     @Bean
     public LoginActivityListener loginActivityListener(LoginContextFactory loginContextFactory,
-                                                       List<LoginActivityHandler> loginActivityHandlers) {
+                                                       List<LoginActivityHandler> loginActivityHandlers,
+                                                       RulesRunner rulesRunner) {
 
-        return new LoginActivityListener(loginContextFactory, loginActivityHandlers);
+        return new LoginActivityListener(loginContextFactory, loginActivityHandlers, rulesRunner);
     }
 }
