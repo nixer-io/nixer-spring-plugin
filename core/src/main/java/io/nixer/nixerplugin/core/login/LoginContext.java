@@ -16,6 +16,8 @@ public class LoginContext {
 
     private String userAgentToken;
 
+    private String fingerprint;
+
     private IpMetadata ipMetadata;
 
     private LoginResult loginResult;
