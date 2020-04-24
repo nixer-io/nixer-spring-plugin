@@ -3,11 +3,11 @@ package io.nixer.nixerplugin.core.login;
 import java.util.Collections;
 import java.util.List;
 
+import io.nixer.nixerplugin.core.detection.rules.RulesRunner;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationListener;
 import org.springframework.security.authentication.event.AbstractAuthenticationEvent;
-import org.springframework.util.Assert;
 
 /**
  * Listens for Spring {@link AbstractAuthenticationEvent} and delegates processing to, possibly multiple, {@link LoginActivityHandler}s.
@@ -20,13 +20,14 @@ public class LoginActivityListener implements ApplicationListener<AbstractAuthen
 
     private final List<LoginActivityHandler> loginActivityHandlers;
 
-    public LoginActivityListener(final LoginContextFactory loginContextFactory,
-                                 final List<LoginActivityHandler> loginActivityHandlers) {
-        Assert.notNull(loginContextFactory, "LoginContextFactory must not be null");
-        this.loginContextFactory = loginContextFactory;
+    private final RulesRunner rulesRunner;
 
-        Assert.notNull(loginActivityHandlers, "loginActivityHandlers must not be null");
+    public LoginActivityListener(final LoginContextFactory loginContextFactory,
+                                 final List<LoginActivityHandler> loginActivityHandlers,
+                                 final RulesRunner rulesRunner) {
+        this.loginContextFactory = loginContextFactory;
         this.loginActivityHandlers = Collections.unmodifiableList(loginActivityHandlers);
+        this.rulesRunner = rulesRunner;
     }
 
     @Override
@@ -34,7 +35,11 @@ public class LoginActivityListener implements ApplicationListener<AbstractAuthen
 
         try {
             final LoginContext context = loginContextFactory.create(event);
+
             loginActivityHandlers.forEach(it -> it.handle(context));
+
+            rulesRunner.onLogin(context);
+
         } catch (UnknownAuthenticationEventException exception) {
             logger.trace("Ignored, unknown authentication event", exception);
         }
