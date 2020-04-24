@@ -35,7 +35,7 @@ public class RawStigmaToken {
     private final String value;
 
     public RawStigmaToken(final String value) {
-        Assert.notNull(value, "value must not be null");
+        Assert.hasText(value, "value must not be blank");
         this.value = value;
     }
 
