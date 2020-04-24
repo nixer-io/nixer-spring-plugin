@@ -22,7 +22,7 @@ public class LoginActivityService implements LoginActivityHandler {
     @Override
     public void handle(final LoginContext context) {
         for (LoginActivityRepository repository : repositories) {
-            repository.save(context.getLoginResult(), context);
+            repository.save(context);
         }
 
         rulesRunner.onLogin(context);

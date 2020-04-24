@@ -23,7 +23,7 @@ class LoginCounterTest {
 
     @Test
     void should_increment_counter() {
-        counter.onLogin(LoginResult.failure(LoginFailureType.BAD_PASSWORD), ipContext(IP_1));
+        counter.onLogin(failedLoginContext(IP_1));
 
         final int count = counter.value(IP_1);
 
@@ -39,9 +39,9 @@ class LoginCounterTest {
 
     @Test
     void should_track_multiple_keys() {
-        counter.onLogin(LoginResult.failure(LoginFailureType.BAD_PASSWORD), ipContext(IP_1));
-        counter.onLogin(LoginResult.failure(LoginFailureType.BAD_PASSWORD), ipContext(IP_2));
-        counter.onLogin(LoginResult.failure(LoginFailureType.BAD_PASSWORD), ipContext(IP_2));
+        counter.onLogin(failedLoginContext(IP_1));
+        counter.onLogin(failedLoginContext(IP_2));
+        counter.onLogin(failedLoginContext(IP_2));
 
         assertEquals(1, counter.value(IP_1));
         assertEquals(2, counter.value(IP_2));
@@ -49,8 +49,8 @@ class LoginCounterTest {
 
     @Test
     void should_reset_counter_on_successful_login() {
-        counter.onLogin(LoginResult.failure(LoginFailureType.BAD_PASSWORD), ipContext(IP_1));
-        counter.onLogin(LoginResult.success(), ipContext(IP_1));
+        counter.onLogin(failedLoginContext(IP_1));
+        counter.onLogin(successfulLoginContext(IP_1));
 
         final int count = counter.value(IP_1);
 
@@ -59,7 +59,7 @@ class LoginCounterTest {
 
     @Test
     void should_discard_count_after_expiration() {
-        counter.onLogin(LoginResult.failure(LoginFailureType.BAD_PASSWORD), ipContext(IP_1));
+        counter.onLogin(failedLoginContext(IP_1));
 
         clock.tick(Duration.ofMinutes(5));
 
@@ -68,11 +68,17 @@ class LoginCounterTest {
         assertEquals(0, count);
     }
 
-
-    private LoginContext ipContext(final String ip) {
+    private static LoginContext failedLoginContext(final String ip) {
         final LoginContext loginContext = new LoginContext();
         loginContext.setIpAddress(ip);
+        loginContext.setLoginResult(LoginResult.failure(LoginFailureType.BAD_PASSWORD));
         return loginContext;
     }
 
+    private static LoginContext successfulLoginContext(final String ip) {
+        final LoginContext loginContext = new LoginContext();
+        loginContext.setIpAddress(ip);
+        loginContext.setLoginResult(LoginResult.success());
+        return loginContext;
+    }
 }

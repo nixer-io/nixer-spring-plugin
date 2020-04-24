@@ -5,5 +5,5 @@ package io.nixer.nixerplugin.core.login;
  */
 public interface LoginActivityRepository {
 
-    void save(final LoginResult result, final LoginContext context);
+    void save(final LoginContext context);
 }
