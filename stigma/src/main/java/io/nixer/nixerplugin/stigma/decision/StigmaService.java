@@ -4,11 +4,13 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.google.common.base.Preconditions;
+import io.nixer.nixerplugin.stigma.domain.RawStigmaToken;
 import io.nixer.nixerplugin.stigma.domain.Stigma;
 import io.nixer.nixerplugin.stigma.domain.StigmaDetails;
 import io.nixer.nixerplugin.stigma.domain.StigmaStatus;
 import io.nixer.nixerplugin.stigma.generate.StigmaGenerator;
 import io.nixer.nixerplugin.stigma.storage.StigmaStorage;
+import io.nixer.nixerplugin.stigma.token.read.StigmaExtractor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.util.Assert;
@@ -26,16 +28,39 @@ public class StigmaService {
     private final StigmaStorage stigmaStorage;
 
     @Nonnull
+    private final StigmaExtractor stigmaExtractor;
+
+    @Nonnull
     private final StigmaGenerator stigmaGenerator;
 
     public StigmaService(@Nonnull final StigmaStorage stigmaStorage,
+                         @Nonnull final StigmaExtractor stigmaExtractor,
                          @Nonnull final StigmaGenerator stigmaGenerator) {
-        this.stigmaStorage = Preconditions.checkNotNull(stigmaStorage, "stigmaStorage");
-        this.stigmaGenerator = Preconditions.checkNotNull(stigmaGenerator, "stigmaGenerator");
+        this.stigmaStorage = stigmaStorage;
+        this.stigmaExtractor = stigmaExtractor;
+        this.stigmaGenerator = stigmaGenerator;
     }
 
     @Nullable
-    public StigmaDetails findStigmaDetails(@Nonnull final Stigma stigma) {
+    public StigmaDetails findStigmaDetails(@Nullable final RawStigmaToken stigmaToken) {
+
+        if (stigmaToken != null) {
+            final Stigma stigma = extractStigma(stigmaToken);
+
+            return stigma != null
+                    ? findStigmaDetails(stigma)
+                    : null;
+        } else {
+            return null;
+        }
+    }
+
+    private Stigma extractStigma(final RawStigmaToken originalToken) {
+        return stigmaExtractor.extractStigma(originalToken);
+    }
+
+    @Nullable
+    private StigmaDetails findStigmaDetails(@Nonnull final Stigma stigma) {
         Assert.notNull(stigma, "stigma must not be null");
         try {
             return findStigmaDetailsInStorage(stigma);

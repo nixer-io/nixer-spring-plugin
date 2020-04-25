@@ -88,11 +88,10 @@ public class StigmaAutoConfiguration {
     }
 
     @Bean
-    public StigmaDecisionMaker stigmaDecisionMaker(StigmaExtractor stigmaExtractor,
-                                                   StigmaService stigmaService,
+    public StigmaDecisionMaker stigmaDecisionMaker(StigmaService stigmaService,
                                                    StigmaTokenFactory stigmaTokenFactory,
                                                    StigmaValidator stigmaValidator) {
-        return new StigmaDecisionMaker(stigmaExtractor, stigmaService, stigmaTokenFactory, stigmaValidator);
+        return new StigmaDecisionMaker(stigmaService, stigmaTokenFactory, stigmaValidator);
     }
 
     @Bean
@@ -102,9 +101,10 @@ public class StigmaAutoConfiguration {
 
     @Bean
     public StigmaService stigmaService(StigmaStorage stigmaStorage,
-                                       StigmaGenerator stigmaGenerator) {
+                                       StigmaGenerator stigmaGenerator,
+                                       StigmaExtractor stigmaExtractor) {
 
-        return new StigmaService(stigmaStorage, stigmaGenerator);
+        return new StigmaService(stigmaStorage, stigmaExtractor, stigmaGenerator);
     }
 
     @Bean

@@ -4,10 +4,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import io.nixer.nixerplugin.stigma.domain.RawStigmaToken;
-import io.nixer.nixerplugin.stigma.domain.Stigma;
 import io.nixer.nixerplugin.stigma.domain.StigmaDetails;
 import io.nixer.nixerplugin.stigma.token.create.StigmaTokenFactory;
-import io.nixer.nixerplugin.stigma.token.read.StigmaExtractor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -25,19 +23,15 @@ public class StigmaDecisionMaker {
 
     private static final Log logger = LogFactory.getLog(StigmaDecisionMaker.class);
 
-    private final StigmaExtractor stigmaExtractor;
-
     private final StigmaService stigmaService;
 
     private final StigmaTokenFactory stigmaTokenFactory;
 
     private final StigmaValidator stigmaValidator;
 
-    public StigmaDecisionMaker(final StigmaExtractor stigmaExtractor,
-                               final StigmaService stigmaService,
+    public StigmaDecisionMaker(final StigmaService stigmaService,
                                final StigmaTokenFactory stigmaTokenFactory,
                                final StigmaValidator stigmaValidator) {
-        this.stigmaExtractor = stigmaExtractor;
         this.stigmaService = stigmaService;
         this.stigmaTokenFactory = stigmaTokenFactory;
         this.stigmaValidator = stigmaValidator;
@@ -96,19 +90,7 @@ public class StigmaDecisionMaker {
     @Nullable
     private StigmaDetails findStigmaDetails(@Nullable final RawStigmaToken stigmaToken) {
 
-        if (stigmaToken != null) {
-            final Stigma stigma = extractStigma(stigmaToken);
-
-            return stigma != null
-                    ? stigmaService.findStigmaDetails(stigma)
-                    : null;
-        } else {
-            return null;
-        }
-    }
-
-    private Stigma extractStigma(final RawStigmaToken originalToken) {
-        return stigmaExtractor.extractStigma(originalToken);
+        return stigmaService.findStigmaDetails(stigmaToken);
     }
 
     private boolean isStigmaValid(final StigmaDetails stigmaDetails) {

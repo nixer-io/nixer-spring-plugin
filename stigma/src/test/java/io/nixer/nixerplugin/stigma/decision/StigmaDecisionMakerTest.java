@@ -6,7 +6,6 @@ import io.nixer.nixerplugin.stigma.domain.RawStigmaToken;
 import io.nixer.nixerplugin.stigma.domain.Stigma;
 import io.nixer.nixerplugin.stigma.domain.StigmaDetails;
 import io.nixer.nixerplugin.stigma.token.create.StigmaTokenFactory;
-import io.nixer.nixerplugin.stigma.token.read.StigmaExtractor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -40,9 +39,6 @@ class StigmaDecisionMakerTest {
     private static final RawStigmaToken REFRESHED_STIGMA_TOKEN = new RawStigmaToken("refreshed-token");
 
     @Mock
-    private StigmaExtractor stigmaExtractor;
-
-    @Mock
     private StigmaService stigmaService;
 
     @Mock
@@ -63,8 +59,7 @@ class StigmaDecisionMakerTest {
     @Test
     void should_make_decision_on_login_success_and_valid_stigma() {
         // given
-        given(stigmaExtractor.extractStigma(STIGMA_TOKEN)).willReturn(STIGMA);
-        given(stigmaService.findStigmaDetails(STIGMA)).willReturn(STIGMA_DETAILS);
+        given(stigmaService.findStigmaDetails(STIGMA_TOKEN)).willReturn(STIGMA_DETAILS);
         given(stigmaValidator.isValid(STIGMA_DETAILS)).willReturn(true);
 
         // when
@@ -77,7 +72,7 @@ class StigmaDecisionMakerTest {
     @Test
     void should_make_decision_on_login_success_and_invalid_token() {
         // given
-        given(stigmaExtractor.extractStigma(STIGMA_TOKEN)).willReturn(null);
+        given(stigmaService.findStigmaDetails(STIGMA_TOKEN)).willReturn(null);
 
         // when
         final StigmaRefreshDecision result = decisionMaker.onLoginSuccess(STIGMA_TOKEN);
@@ -89,8 +84,7 @@ class StigmaDecisionMakerTest {
     @Test
     void should_make_decision_on_login_success_and_not_active_stigma() {
         // given
-        given(stigmaExtractor.extractStigma(STIGMA_TOKEN)).willReturn(STIGMA);
-        given(stigmaService.findStigmaDetails(STIGMA)).willReturn(STIGMA_DETAILS);
+        given(stigmaService.findStigmaDetails(STIGMA_TOKEN)).willReturn(STIGMA_DETAILS);
         given(stigmaValidator.isValid(STIGMA_DETAILS)).willReturn(false);
 
         // when
@@ -103,8 +97,7 @@ class StigmaDecisionMakerTest {
     @Test
     void should_make_decision_on_login_failure_and_valid_token() {
         // given
-        given(stigmaExtractor.extractStigma(STIGMA_TOKEN)).willReturn(STIGMA);
-        given(stigmaService.findStigmaDetails(STIGMA)).willReturn(STIGMA_DETAILS);
+        given(stigmaService.findStigmaDetails(STIGMA_TOKEN)).willReturn(STIGMA_DETAILS);
         given(stigmaValidator.isValid(STIGMA_DETAILS)).willReturn(true);
 
         // when
@@ -117,7 +110,7 @@ class StigmaDecisionMakerTest {
     @Test
     void should_make_decision_on_login_failure_and_invalid_token() {
         // given
-        given(stigmaExtractor.extractStigma(STIGMA_TOKEN)).willReturn(null);
+        given(stigmaService.findStigmaDetails(STIGMA_TOKEN)).willReturn(null);
 
         // when
         final StigmaRefreshDecision result = decisionMaker.onLoginFail(STIGMA_TOKEN);
@@ -129,8 +122,7 @@ class StigmaDecisionMakerTest {
     @Test
     void should_make_decision_on_login_failure_and_not_active_stigma() {
         // given
-        given(stigmaExtractor.extractStigma(STIGMA_TOKEN)).willReturn(STIGMA);
-        given(stigmaService.findStigmaDetails(STIGMA)).willReturn(STIGMA_DETAILS);
+        given(stigmaService.findStigmaDetails(STIGMA_TOKEN)).willReturn(STIGMA_DETAILS);
         given(stigmaValidator.isValid(STIGMA_DETAILS)).willReturn(false);
 
         // when
