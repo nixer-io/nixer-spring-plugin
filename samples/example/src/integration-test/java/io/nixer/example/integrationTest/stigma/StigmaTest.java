@@ -3,6 +3,7 @@ package io.nixer.example.integrationTest.stigma;
 import java.util.List;
 import javax.servlet.http.Cookie;
 
+import io.nixer.nixerplugin.stigma.StigmaConstants;
 import io.nixer.nixerplugin.stigma.domain.RawStigmaToken;
 import io.nixer.nixerplugin.stigma.domain.StigmaDetails;
 import io.nixer.nixerplugin.stigma.domain.StigmaStatus;
@@ -27,6 +28,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.unauthenticated;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.cookie;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.request;
 
 /**
  * Created on 09/12/2019.
@@ -128,6 +130,15 @@ class StigmaTest {
                 .extracting(StigmaDetails::getStatus).containsExactly(StigmaStatus.ACTIVE);
     }
 
+    @Test
+    void should_detect_multiple_failed_logins_with_the_same_stigma() throws Exception {
+        final RawStigmaToken stigmaToken = loginFailure();
+        loginFailure(stigmaToken);
+
+        doLoginFailure(stigmaToken)
+                .andExpect(request().attribute(StigmaConstants.REVOKED_STIGMA_USAGE_ATTRIBUTE, true));
+    }
+
     private RawStigmaToken loginSuccessfully() throws Exception {
         return getStigmaToken(
                 this.mockMvc
@@ -148,6 +159,12 @@ class StigmaTest {
                         .perform(formLogin().user("user").password("bad-password").build().cookie(new Cookie(stigmaCookie, stigmaToken.getValue())))
                         .andExpect(unauthenticated())
         );
+    }
+
+    private ResultActions doLoginFailure(final RawStigmaToken stigmaToken) throws Exception {
+        return this.mockMvc
+                .perform(formLogin().user("user").password("bad-password").build().cookie(new Cookie(stigmaCookie, stigmaToken.getValue())))
+                .andExpect(unauthenticated());
     }
 
     private RawStigmaToken loginFailure() throws Exception {

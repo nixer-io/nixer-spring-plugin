@@ -10,4 +10,6 @@ dependencies {
 
     val guavaVersion: String by rootProject.extra
     implementation("com.google.guava", "guava", guavaVersion)
+
+    testImplementation("org.springframework", "spring-test")
 }

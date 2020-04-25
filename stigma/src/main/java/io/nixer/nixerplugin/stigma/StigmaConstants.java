@@ -16,6 +16,8 @@ public abstract class StigmaConstants {
 
     public static final Duration DEFAULT_STIGMA_LIFETIME = Duration.ofDays(365);
 
+    public static final String REVOKED_STIGMA_USAGE_ATTRIBUTE = "nixer.stigma.login.revokedStigmaReusage";
+
     private StigmaConstants() {
     }
 }
