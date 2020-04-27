@@ -39,7 +39,7 @@ public class StigmaDecisionMaker {
 
     /**
      * To be called after successful login attempt.
-     * Consumes the currently used raw stigma token (might be null or empty)
+     * Consumes the currently used stigma details (might be null)
      * and returns {@link StigmaRefreshDecision} to be used for further actions.
      */
     @Nonnull
@@ -60,7 +60,7 @@ public class StigmaDecisionMaker {
 
     /**
      * To be called after failed login attempt.
-     * Consumes the currently used raw stigma token (might be null or empty)
+     * Consumes the currently used stigma details (might be null)
      * and returns {@link StigmaRefreshDecision} to be used for further actions.
      */
     @Nonnull
