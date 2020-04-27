@@ -1,6 +1,7 @@
 package io.nixer.nixerplugin.stigma.detection;
 
 import java.time.Instant;
+import javax.servlet.http.HttpServletRequest;
 
 import io.nixer.nixerplugin.stigma.StigmaConstants;
 import io.nixer.nixerplugin.stigma.decision.StigmaService;
@@ -25,11 +26,16 @@ import static org.mockito.BDDMockito.given;
  * @author Grzegorz Cwiak
  */
 @ExtendWith(MockitoExtension.class)
-class RevokedStigmaDetectingFilterTest {
+class StigmaExtractingFilterTest {
 
     private static final RawStigmaToken STIGMA_TOKEN = new RawStigmaToken("stigma-token");
 
     private static final Stigma STIGMA = new Stigma("stigma-value");
+
+    private static final StigmaDetails STIGMA_DETAILS = new StigmaDetails(
+            STIGMA,
+            StigmaStatus.ACTIVE,
+            Instant.parse("2020-01-21T10:25:43.511Z"));
 
     @Mock
     StigmaCookieService stigmaCookieService;
@@ -37,55 +43,34 @@ class RevokedStigmaDetectingFilterTest {
     @Mock
     StigmaService stigmaService;
 
-    MockHttpServletRequest request = new MockHttpServletRequest();
+    HttpServletRequest request = new MockHttpServletRequest();
 
     @InjectMocks
-    RevokedStigmaDetectingFilter filter;
+    StigmaExtractingFilter filter;
 
     @Test
-    void should_mark_request_as_using_revoked_stigma() {
+    void should_write_stigma_details_as_attribute() {
         // given
         given(stigmaCookieService.readStigmaToken(request)).willReturn(STIGMA_TOKEN);
-        given(stigmaService.findStigmaDetails(STIGMA_TOKEN)).willReturn(stigmaDetails(StigmaStatus.REVOKED));
+        given(stigmaService.findStigmaDetails(STIGMA_TOKEN)).willReturn(STIGMA_DETAILS);
 
         // when
         filter.apply(request);
 
         // then
-        assertThat(request.getAttribute(StigmaConstants.REVOKED_STIGMA_USAGE_ATTRIBUTE)).isEqualTo(Boolean.TRUE);
+        assertThat(request.getAttribute(StigmaConstants.STIGMA_METADATA_ATTRIBUTE)).isEqualTo(STIGMA_DETAILS);
     }
 
     @Test
-    void should_mark_request_as_not_using_revoked_stigma() {
+    void should_not_write_stigma_details_attribute_when_stigma_not_available() {
         // given
         given(stigmaCookieService.readStigmaToken(request)).willReturn(STIGMA_TOKEN);
-        given(stigmaService.findStigmaDetails(STIGMA_TOKEN)).willReturn(stigmaDetails(StigmaStatus.ACTIVE));
+        given(stigmaService.findStigmaDetails(STIGMA_TOKEN)).willReturn(null);
 
         // when
         filter.apply(request);
 
         // then
-        assertThat(request.getAttribute(StigmaConstants.REVOKED_STIGMA_USAGE_ATTRIBUTE)).isEqualTo(Boolean.FALSE);
-    }
-
-    @Test
-    void should_mark_request_as_not_using_revoked_stigma_when_stigma_not_present() {
-        // given
-        given(stigmaCookieService.readStigmaToken(request)).willReturn(null);
-        given(stigmaService.findStigmaDetails(null)).willReturn(null);
-
-        // when
-        filter.apply(request);
-
-        // then
-        assertThat(request.getAttribute(StigmaConstants.REVOKED_STIGMA_USAGE_ATTRIBUTE)).isEqualTo(Boolean.FALSE);
-    }
-
-    private StigmaDetails stigmaDetails(final StigmaStatus status) {
-        return new StigmaDetails(
-                STIGMA,
-                status,
-                Instant.parse("2020-01-21T10:25:43.511Z")
-        );
+        assertThat(request.getAttribute(StigmaConstants.STIGMA_METADATA_ATTRIBUTE)).isNull();
     }
 }

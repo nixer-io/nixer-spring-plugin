@@ -20,14 +20,17 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.transaction.annotation.Transactional;
 
 import static io.nixer.example.integrationTest.LoginRequestBuilder.formLogin;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.logout;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.unauthenticated;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.cookie;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.request;
 
 /**
@@ -136,7 +139,12 @@ class StigmaTest {
         loginFailure(stigmaToken);
 
         doLoginFailure(stigmaToken)
-                .andExpect(request().attribute(StigmaConstants.REVOKED_STIGMA_USAGE_ATTRIBUTE, true));
+                .andExpect(request().attribute(StigmaConstants.STIGMA_METADATA_ATTRIBUTE, instanceOf(StigmaDetails.class)))
+                .andExpect(isBlocked());
+    }
+
+    private static ResultMatcher isBlocked() {
+        return redirectedUrl("/login?blockedError");
     }
 
     private RawStigmaToken loginSuccessfully() throws Exception {

@@ -14,7 +14,7 @@ import io.nixer.nixerplugin.stigma.crypto.KeysLoader;
 import io.nixer.nixerplugin.stigma.decision.StigmaDecisionMaker;
 import io.nixer.nixerplugin.stigma.decision.StigmaService;
 import io.nixer.nixerplugin.stigma.decision.StigmaValidator;
-import io.nixer.nixerplugin.stigma.detection.RevokedStigmaDetectingFilter;
+import io.nixer.nixerplugin.stigma.detection.StigmaExtractingFilter;
 import io.nixer.nixerplugin.stigma.generate.StigmaGenerator;
 import io.nixer.nixerplugin.stigma.login.StigmaCookieService;
 import io.nixer.nixerplugin.stigma.login.StigmaLoginActivityHandler;
@@ -124,8 +124,8 @@ public class StigmaAutoConfiguration {
     }
 
     @Bean
-    public RevokedStigmaDetectingFilter revokedStigmaDetectingFilter(final StigmaCookieService stigmaCookieService,
-                                                                     final StigmaService stigmaService) {
-        return new RevokedStigmaDetectingFilter(stigmaCookieService, stigmaService);
+    public StigmaExtractingFilter stigmaExtractingFilter(final StigmaCookieService stigmaCookieService,
+                                                         final StigmaService stigmaService) {
+        return new StigmaExtractingFilter(stigmaCookieService, stigmaService);
     }
 }

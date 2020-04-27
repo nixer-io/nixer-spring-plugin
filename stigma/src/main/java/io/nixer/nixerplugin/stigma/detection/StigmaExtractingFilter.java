@@ -6,23 +6,22 @@ import io.nixer.nixerplugin.core.detection.filter.MetadataFilter;
 import io.nixer.nixerplugin.stigma.decision.StigmaService;
 import io.nixer.nixerplugin.stigma.domain.RawStigmaToken;
 import io.nixer.nixerplugin.stigma.domain.StigmaDetails;
-import io.nixer.nixerplugin.stigma.domain.StigmaStatus;
 import io.nixer.nixerplugin.stigma.login.StigmaCookieService;
 
-import static io.nixer.nixerplugin.stigma.StigmaConstants.REVOKED_STIGMA_USAGE_ATTRIBUTE;
+import static io.nixer.nixerplugin.stigma.StigmaConstants.STIGMA_METADATA_ATTRIBUTE;
 
 /**
  * Created on 24/04/2020.
  *
  * @author Grzegorz Cwiak
  */
-public class RevokedStigmaDetectingFilter extends MetadataFilter {
+public class StigmaExtractingFilter extends MetadataFilter {
 
     private final StigmaCookieService stigmaCookieService;
 
     private final StigmaService stigmaService;
 
-    public RevokedStigmaDetectingFilter(final StigmaCookieService stigmaCookieService, final StigmaService stigmaService) {
+    public StigmaExtractingFilter(final StigmaCookieService stigmaCookieService, final StigmaService stigmaService) {
         this.stigmaCookieService = stigmaCookieService;
         this.stigmaService = stigmaService;
     }
@@ -34,14 +33,8 @@ public class RevokedStigmaDetectingFilter extends MetadataFilter {
 
         final StigmaDetails stigmaDetails = stigmaService.findStigmaDetails(rawStigmaToken);
 
-        if (isRevoked(stigmaDetails)) {
-            request.setAttribute(REVOKED_STIGMA_USAGE_ATTRIBUTE, Boolean.TRUE);
-        } else {
-            request.setAttribute(REVOKED_STIGMA_USAGE_ATTRIBUTE, Boolean.FALSE);
+        if (stigmaDetails != null) {
+            request.setAttribute(STIGMA_METADATA_ATTRIBUTE, stigmaDetails);
         }
-    }
-
-    private static boolean isRevoked(final StigmaDetails stigmaDetails) {
-        return stigmaDetails != null && stigmaDetails.getStatus() == StigmaStatus.REVOKED;
     }
 }
