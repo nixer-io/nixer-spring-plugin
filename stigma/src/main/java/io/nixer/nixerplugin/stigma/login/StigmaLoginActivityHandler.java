@@ -5,9 +5,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import io.nixer.nixerplugin.core.login.LoginActivityHandler;
 import io.nixer.nixerplugin.core.login.LoginContext;
+import io.nixer.nixerplugin.stigma.StigmaConstants;
 import io.nixer.nixerplugin.stigma.decision.StigmaDecisionMaker;
 import io.nixer.nixerplugin.stigma.decision.StigmaRefreshDecision;
-import io.nixer.nixerplugin.stigma.domain.RawStigmaToken;
+import io.nixer.nixerplugin.stigma.domain.StigmaDetails;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.util.Assert;
@@ -44,18 +45,18 @@ public class StigmaLoginActivityHandler implements LoginActivityHandler {
         Assert.notNull(context, "LoginContext can not be null");
         Assert.state(context.getLoginResult() != null, "LoginResult from LoginContext can not be null");
 
-        final RawStigmaToken receivedStigmaToken = stigmaCookieService.readStigmaToken(request);
+        final StigmaDetails receivedStigmaDetails = (StigmaDetails) request.getAttribute(StigmaConstants.STIGMA_METADATA_ATTRIBUTE);
 
         if (logger.isTraceEnabled()) {
-            logger.trace(String.format("Handling login attempt with result='%s' and token='%s'", context.getLoginResult(), receivedStigmaToken));
+            logger.trace(String.format("Handling login attempt with result='%s' and stigma='%s'", context.getLoginResult(), receivedStigmaDetails));
         }
 
-        final StigmaRefreshDecision decision = context.getLoginResult().isSuccess()
-                ? stigmaDecisionMaker.onLoginSuccess(receivedStigmaToken)
-                : stigmaDecisionMaker.onLoginFail(receivedStigmaToken);
+        final StigmaRefreshDecision refreshDecision = context.getLoginResult().isSuccess()
+                ? stigmaDecisionMaker.onLoginSuccess(receivedStigmaDetails)
+                : stigmaDecisionMaker.onLoginFail(receivedStigmaDetails);
 
-        if (decision.requiresStigmaRefresh()) {
-            stigmaCookieService.writeStigmaToken(response, decision.getTokenForRefresh());
-        }
+        refreshDecision.apply(
+                newStigmaToken -> stigmaCookieService.writeStigmaToken(response, newStigmaToken)
+        );
     }
 }

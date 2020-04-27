@@ -32,7 +32,6 @@ class StigmaDecisionMakerTest {
 
     private static final Stigma STIGMA = new Stigma("stigma-value");
     private static final StigmaDetails STIGMA_DETAILS = new StigmaDetails(STIGMA, ACTIVE, Instant.parse("2020-01-21T10:25:43.511Z"));
-    private static final RawStigmaToken STIGMA_TOKEN = new RawStigmaToken("valid-token");
 
     private static final Stigma REFRESHED_STIGMA = new Stigma("refreshed-stigma-value");
     private static final StigmaDetails REFRESHED_STIGMA_DETAILS = new StigmaDetails(REFRESHED_STIGMA, ACTIVE, Instant.parse("2020-01-22T11:26:45.512Z"));
@@ -59,76 +58,66 @@ class StigmaDecisionMakerTest {
     @Test
     void should_make_decision_on_login_success_and_valid_stigma() {
         // given
-        given(stigmaService.findStigmaDetails(STIGMA_TOKEN)).willReturn(STIGMA_DETAILS);
         given(stigmaValidator.isValid(STIGMA_DETAILS)).willReturn(true);
 
         // when
-        final StigmaRefreshDecision result = decisionMaker.onLoginSuccess(STIGMA_TOKEN);
+        final StigmaRefreshDecision result = decisionMaker.onLoginSuccess(STIGMA_DETAILS);
 
         // then
-        assertThat(result).isEqualTo(new StigmaRefreshDecision(STIGMA_TOKEN, TOKEN_GOOD_LOGIN_SUCCESS));
+        assertThat(result).isEqualTo(StigmaRefreshDecision.noRefresh(TOKEN_GOOD_LOGIN_SUCCESS));
     }
 
     @Test
     void should_make_decision_on_login_success_and_invalid_token() {
-        // given
-        given(stigmaService.findStigmaDetails(STIGMA_TOKEN)).willReturn(null);
-
         // when
-        final StigmaRefreshDecision result = decisionMaker.onLoginSuccess(STIGMA_TOKEN);
+        final StigmaRefreshDecision result = decisionMaker.onLoginSuccess(null);
 
         // then
-        assertThat(result).isEqualTo(new StigmaRefreshDecision(REFRESHED_STIGMA_TOKEN, TOKEN_BAD_LOGIN_SUCCESS));
+        assertThat(result).isEqualTo(StigmaRefreshDecision.refresh(REFRESHED_STIGMA_TOKEN, TOKEN_BAD_LOGIN_SUCCESS));
     }
 
     @Test
     void should_make_decision_on_login_success_and_not_active_stigma() {
         // given
-        given(stigmaService.findStigmaDetails(STIGMA_TOKEN)).willReturn(STIGMA_DETAILS);
         given(stigmaValidator.isValid(STIGMA_DETAILS)).willReturn(false);
 
         // when
-        final StigmaRefreshDecision result = decisionMaker.onLoginSuccess(STIGMA_TOKEN);
+        final StigmaRefreshDecision result = decisionMaker.onLoginSuccess(STIGMA_DETAILS);
 
         // then
-        assertThat(result).isEqualTo(new StigmaRefreshDecision(REFRESHED_STIGMA_TOKEN, TOKEN_BAD_LOGIN_SUCCESS));
+        assertThat(result).isEqualTo(StigmaRefreshDecision.refresh(REFRESHED_STIGMA_TOKEN, TOKEN_BAD_LOGIN_SUCCESS));
     }
 
     @Test
     void should_make_decision_on_login_failure_and_valid_token() {
         // given
-        given(stigmaService.findStigmaDetails(STIGMA_TOKEN)).willReturn(STIGMA_DETAILS);
         given(stigmaValidator.isValid(STIGMA_DETAILS)).willReturn(true);
 
         // when
-        final StigmaRefreshDecision result = decisionMaker.onLoginFail(STIGMA_TOKEN);
+        final StigmaRefreshDecision result = decisionMaker.onLoginFail(STIGMA_DETAILS);
 
         // then
-        assertThat(result).isEqualTo(new StigmaRefreshDecision(REFRESHED_STIGMA_TOKEN, TOKEN_GOOD_LOGIN_FAIL));
+        assertThat(result).isEqualTo(StigmaRefreshDecision.refresh(REFRESHED_STIGMA_TOKEN, TOKEN_GOOD_LOGIN_FAIL));
     }
 
     @Test
     void should_make_decision_on_login_failure_and_invalid_token() {
-        // given
-        given(stigmaService.findStigmaDetails(STIGMA_TOKEN)).willReturn(null);
-
         // when
-        final StigmaRefreshDecision result = decisionMaker.onLoginFail(STIGMA_TOKEN);
+        final StigmaRefreshDecision result = decisionMaker.onLoginFail(null);
 
         // then
-        assertThat(result).isEqualTo(new StigmaRefreshDecision(REFRESHED_STIGMA_TOKEN, TOKEN_BAD_LOGIN_FAIL));
+        assertThat(result).isEqualTo(StigmaRefreshDecision.refresh(REFRESHED_STIGMA_TOKEN, TOKEN_BAD_LOGIN_FAIL));
     }
 
     @Test
     void should_make_decision_on_login_failure_and_not_active_stigma() {
         // given
-        given(stigmaService.findStigmaDetails(STIGMA_TOKEN)).willReturn(STIGMA_DETAILS);
         given(stigmaValidator.isValid(STIGMA_DETAILS)).willReturn(false);
 
         // when
-        final StigmaRefreshDecision result = decisionMaker.onLoginFail(STIGMA_TOKEN);
+        final StigmaRefreshDecision result = decisionMaker.onLoginFail(STIGMA_DETAILS);
 
         // then
-        assertThat(result).isEqualTo(new StigmaRefreshDecision(REFRESHED_STIGMA_TOKEN, TOKEN_BAD_LOGIN_FAIL));
+        assertThat(result).isEqualTo(StigmaRefreshDecision.refresh(REFRESHED_STIGMA_TOKEN, TOKEN_BAD_LOGIN_FAIL));
     }
 }

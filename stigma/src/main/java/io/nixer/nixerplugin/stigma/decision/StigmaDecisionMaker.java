@@ -43,13 +43,11 @@ public class StigmaDecisionMaker {
      * and returns {@link StigmaRefreshDecision} to be used for further actions.
      */
     @Nonnull
-    public StigmaRefreshDecision onLoginSuccess(@Nullable final RawStigmaToken originalToken) {
-
-        final StigmaDetails stigmaDetails = findStigmaDetails(originalToken);
+    public StigmaRefreshDecision onLoginSuccess(@Nullable final StigmaDetails stigmaDetails) {
 
         final StigmaRefreshDecision decision = isStigmaValid(stigmaDetails)
-                ? new StigmaRefreshDecision(originalToken, TOKEN_GOOD_LOGIN_SUCCESS)
-                : new StigmaRefreshDecision(newStigmaToken(), TOKEN_BAD_LOGIN_SUCCESS);
+                ? StigmaRefreshDecision.noRefresh(TOKEN_GOOD_LOGIN_SUCCESS)
+                : StigmaRefreshDecision.refresh(newStigmaToken(), TOKEN_BAD_LOGIN_SUCCESS);
 
         if (logger.isDebugEnabled()) {
             logger.debug("Decision after successful login: " + decision);
@@ -66,16 +64,14 @@ public class StigmaDecisionMaker {
      * and returns {@link StigmaRefreshDecision} to be used for further actions.
      */
     @Nonnull
-    public StigmaRefreshDecision onLoginFail(@Nullable final RawStigmaToken originalToken) {
-
-        final StigmaDetails stigmaDetails = findStigmaDetails(originalToken);
+    public StigmaRefreshDecision onLoginFail(@Nullable final StigmaDetails stigmaDetails) {
 
         final StigmaRefreshDecision decision;
         if (isStigmaValid(stigmaDetails)) {
             stigmaService.revokeStigma(stigmaDetails.getStigma());
-            decision = new StigmaRefreshDecision(newStigmaToken(), TOKEN_GOOD_LOGIN_FAIL);
+            decision = StigmaRefreshDecision.refresh(newStigmaToken(), TOKEN_GOOD_LOGIN_FAIL);
         } else {
-            decision = new StigmaRefreshDecision(newStigmaToken(), TOKEN_BAD_LOGIN_FAIL);
+            decision = StigmaRefreshDecision.refresh(newStigmaToken(), TOKEN_BAD_LOGIN_FAIL);
         }
 
         if (logger.isDebugEnabled()) {
@@ -85,12 +81,6 @@ public class StigmaDecisionMaker {
         writeToMetrics(decision);
 
         return decision;
-    }
-
-    @Nullable
-    private StigmaDetails findStigmaDetails(@Nullable final RawStigmaToken stigmaToken) {
-
-        return stigmaService.findStigmaDetails(stigmaToken);
     }
 
     private boolean isStigmaValid(final StigmaDetails stigmaDetails) {
