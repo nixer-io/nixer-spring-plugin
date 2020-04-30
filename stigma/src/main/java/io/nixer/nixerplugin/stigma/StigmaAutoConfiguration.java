@@ -14,13 +14,14 @@ import io.nixer.nixerplugin.stigma.crypto.KeysLoader;
 import io.nixer.nixerplugin.stigma.decision.StigmaDecisionMaker;
 import io.nixer.nixerplugin.stigma.decision.StigmaService;
 import io.nixer.nixerplugin.stigma.decision.StigmaValidator;
+import io.nixer.nixerplugin.stigma.detection.StigmaExtractingFilter;
+import io.nixer.nixerplugin.stigma.generate.StigmaGenerator;
 import io.nixer.nixerplugin.stigma.login.StigmaCookieService;
 import io.nixer.nixerplugin.stigma.login.StigmaLoginActivityHandler;
 import io.nixer.nixerplugin.stigma.storage.StigmaStorage;
 import io.nixer.nixerplugin.stigma.storage.jdbc.JdbcDAOConfigurer;
 import io.nixer.nixerplugin.stigma.storage.jdbc.StigmasJdbcDAO;
 import io.nixer.nixerplugin.stigma.storage.jdbc.StigmasJdbcStorage;
-import io.nixer.nixerplugin.stigma.generate.StigmaGenerator;
 import io.nixer.nixerplugin.stigma.token.create.StigmaTokenFactory;
 import io.nixer.nixerplugin.stigma.token.read.StigmaExtractor;
 import io.nixer.nixerplugin.stigma.token.read.TokenDecrypter;
@@ -88,11 +89,10 @@ public class StigmaAutoConfiguration {
     }
 
     @Bean
-    public StigmaDecisionMaker stigmaDecisionMaker(StigmaExtractor stigmaExtractor,
-                                                   StigmaService stigmaService,
+    public StigmaDecisionMaker stigmaDecisionMaker(StigmaService stigmaService,
                                                    StigmaTokenFactory stigmaTokenFactory,
                                                    StigmaValidator stigmaValidator) {
-        return new StigmaDecisionMaker(stigmaExtractor, stigmaService, stigmaTokenFactory, stigmaValidator);
+        return new StigmaDecisionMaker(stigmaService, stigmaTokenFactory, stigmaValidator);
     }
 
     @Bean
@@ -102,9 +102,10 @@ public class StigmaAutoConfiguration {
 
     @Bean
     public StigmaService stigmaService(StigmaStorage stigmaStorage,
-                                       StigmaGenerator stigmaGenerator) {
+                                       StigmaGenerator stigmaGenerator,
+                                       StigmaExtractor stigmaExtractor) {
 
-        return new StigmaService(stigmaStorage, stigmaGenerator);
+        return new StigmaService(stigmaStorage, stigmaExtractor, stigmaGenerator);
     }
 
     @Bean
@@ -120,5 +121,11 @@ public class StigmaAutoConfiguration {
     @Bean
     public StigmaStorage stigmaStorage(StigmasJdbcDAO stigmasJdbcDAO) {
         return new StigmasJdbcStorage(stigmasJdbcDAO);
+    }
+
+    @Bean
+    public StigmaExtractingFilter stigmaExtractingFilter(final StigmaCookieService stigmaCookieService,
+                                                         final StigmaService stigmaService) {
+        return new StigmaExtractingFilter(stigmaCookieService, stigmaService);
     }
 }

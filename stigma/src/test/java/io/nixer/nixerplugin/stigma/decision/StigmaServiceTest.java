@@ -2,11 +2,13 @@ package io.nixer.nixerplugin.stigma.decision;
 
 import java.time.Instant;
 
+import io.nixer.nixerplugin.stigma.domain.RawStigmaToken;
 import io.nixer.nixerplugin.stigma.domain.Stigma;
 import io.nixer.nixerplugin.stigma.domain.StigmaStatus;
 import io.nixer.nixerplugin.stigma.domain.StigmaDetails;
 import io.nixer.nixerplugin.stigma.storage.StigmaStorage;
 import io.nixer.nixerplugin.stigma.generate.StigmaGenerator;
+import io.nixer.nixerplugin.stigma.token.read.StigmaExtractor;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -25,6 +27,8 @@ import static org.mockito.Mockito.verify;
 @ExtendWith(MockitoExtension.class)
 class StigmaServiceTest {
 
+    private static final RawStigmaToken STIGMA_TOKEN = new RawStigmaToken("stigma-token");
+
     private static final Stigma STIGMA = new Stigma("stigma-value");
 
     private static final StigmaDetails STIGMA_DETAILS = new StigmaDetails(
@@ -36,6 +40,9 @@ class StigmaServiceTest {
     private StigmaStorage stigmaStorage;
 
     @Mock
+    private StigmaExtractor stigmaExtractor;
+
+    @Mock
     private StigmaGenerator stigmaGenerator;
 
     @InjectMocks
@@ -44,10 +51,11 @@ class StigmaServiceTest {
     @Test
     void should_find_stigma_details() {
         // given
+        given(stigmaExtractor.extractStigma(STIGMA_TOKEN)).willReturn(STIGMA);
         given(stigmaStorage.findStigmaDetails(STIGMA)).willReturn(STIGMA_DETAILS);
 
         // when
-        final StigmaDetails result = stigmaService.findStigmaDetails(STIGMA);
+        final StigmaDetails result = stigmaService.findStigmaDetails(STIGMA_TOKEN);
 
         // then
         assertThat(result).isEqualTo(STIGMA_DETAILS);
@@ -57,10 +65,11 @@ class StigmaServiceTest {
     @Test
     void should_return_empty_result_when_stigma_not_found_in_storage() {
         // given
+        given(stigmaExtractor.extractStigma(STIGMA_TOKEN)).willReturn(STIGMA);
         given(stigmaStorage.findStigmaDetails(STIGMA)).willReturn(null);
 
         // when
-        final StigmaDetails result = stigmaService.findStigmaDetails(STIGMA);
+        final StigmaDetails result = stigmaService.findStigmaDetails(STIGMA_TOKEN);
 
         // then
         assertThat(result).isNull();
