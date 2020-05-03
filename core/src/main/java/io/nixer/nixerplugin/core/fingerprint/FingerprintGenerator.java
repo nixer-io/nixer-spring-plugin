@@ -1,4 +1,4 @@
-package io.nixer.nixerplugin.core.detection.filter.fingerprint;
+package io.nixer.nixerplugin.core.fingerprint;
 
 import java.security.SecureRandom;
 

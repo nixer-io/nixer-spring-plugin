@@ -4,6 +4,7 @@ import io.nixer.nixerplugin.core.detection.DetectionConfiguration;
 import io.nixer.nixerplugin.core.detection.events.elastic.ElasticLoggingAutoConfiguration;
 import io.nixer.nixerplugin.core.detection.events.log.EventLogConfiguration;
 import io.nixer.nixerplugin.core.detection.filter.FilterConfiguration;
+import io.nixer.nixerplugin.core.fingerprint.FingerprintConfiguration;
 import io.nixer.nixerplugin.core.login.LoginConfiguration;
 import io.nixer.nixerplugin.core.metrics.MetricsConfiguration;
 import io.nixer.nixerplugin.core.util.NowSource;
@@ -18,6 +19,7 @@ import static io.nixer.nixerplugin.core.NixerAutoConfiguration.ORDER;
 @AutoConfigureOrder(ORDER)
 @Import({
         DetectionConfiguration.class,
+        FingerprintConfiguration.class,
         FilterConfiguration.class,
         LoginConfiguration.class,
         MetricsConfiguration.class,
