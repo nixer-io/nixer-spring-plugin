@@ -102,7 +102,7 @@ class CaptchaTest {
     }
 
     @Test
-    void shouldFailLoginWithBadCaptcha() throws Exception {
+    void shouldFailLoginWithBadCredentialsAndBadCaptcha() throws Exception {
         //enable captcha
         this.captchaChecker.setCaptchaCondition(CaptchaCondition.ALWAYS);
 
@@ -111,6 +111,32 @@ class CaptchaTest {
                 .andExpect(captchaChallenge());
 
         this.mockMvc.perform(formLogin().user("user").password("guess").captcha(BAD_CAPTCHA).build())
+                .andExpect(unauthenticated());
+    }
+
+    @Test
+    void shouldFailLoginWithBadCredentialsAndGoodCaptcha() throws Exception {
+        //enable captcha
+        this.captchaChecker.setCaptchaCondition(CaptchaCondition.ALWAYS);
+
+        this.mockMvc.perform(get(LOGIN_PAGE))
+                .andExpect(status().isOk())
+                .andExpect(captchaChallenge());
+
+        this.mockMvc.perform(formLogin().user("user").password("guess").captcha(GOOD_CAPTCHA).build())
+                .andExpect(unauthenticated());
+    }
+
+    @Test
+    void shouldFailLoginWithGoodCredentialsAndBadCaptcha() throws Exception {
+        //enable captcha
+        this.captchaChecker.setCaptchaCondition(CaptchaCondition.ALWAYS);
+
+        this.mockMvc.perform(get(LOGIN_PAGE))
+                .andExpect(status().isOk())
+                .andExpect(captchaChallenge());
+
+        this.mockMvc.perform(formLogin().user("user").password("user").captcha(BAD_CAPTCHA).build())
                 .andExpect(unauthenticated());
     }
 

@@ -1,7 +1,6 @@
 package io.nixer.nixerplugin.core.login.inmemory;
 
 import io.nixer.nixerplugin.core.login.LoginContext;
-import io.nixer.nixerplugin.core.login.LoginResult;
 import org.springframework.util.Assert;
 
 /**
@@ -30,10 +29,10 @@ public class LoginCounter implements LoginMetric {
         return key != null ? counter.count(key) : 0;
     }
 
-    public void onLogin(final LoginResult result, final LoginContext context) {
+    public void onLogin(final LoginContext context) {
         final String key = this.featureKey.key(context);
         if (key != null) {
-            countingStrategy.counter(counter, result).accept(key);
+            countingStrategy.counter(counter, context.getLoginResult()).accept(key);
         }
     }
 }

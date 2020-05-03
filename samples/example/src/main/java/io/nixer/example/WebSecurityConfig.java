@@ -7,6 +7,7 @@ import io.nixer.nixerplugin.captcha.security.CaptchaAuthenticationProvider;
 import io.nixer.nixerplugin.captcha.security.CaptchaChecker;
 import io.nixer.nixerplugin.core.detection.filter.FilterConfiguration;
 import io.nixer.nixerplugin.core.detection.filter.behavior.Conditions;
+import io.nixer.nixerplugin.stigma.rules.StigmaConditions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.filter.OrderedRequestContextFilter;
 import org.springframework.context.annotation.Bean;
@@ -88,7 +89,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 //        //JDBC Authentication with post-processor mechanism.
 //        //Credentials take precedence before captcha.
-          //Invalid captcha will not be reported when captcha is empty and credentials are correct (though the authentication will fail as expected).
+        //Invalid captcha will not be reported when captcha is empty and credentials are correct (though the authentication will fail as expected).
 //        auth
 //                .jdbcAuthentication()
 //                .dataSource(dataSource)
@@ -120,6 +121,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Bean
     public FilterConfiguration.BehaviorProviderConfigurer behaviorConfigurer() {
+        // @formatter:off
         return builder -> builder
                     .rule("blacklistedIp")  // we want to hide fact that request was blocked. So pretending regular login error.
                     .when(Conditions::isBlacklistedIp)
@@ -140,6 +142,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .rule("failedLoginRatioActive")
                     .when(Conditions::isFailedLoginRatioActive)
                     .then(CAPTCHA)
-                .buildRule();
+                .buildRule()
+                    .rule("revokedStigmaUsage")
+                    .when(StigmaConditions::isStigmaRevoked)
+                    .then(BLOCKED_ERROR)
+                .buildRule()
+                ;
+        // @formatter:on
     }
 }

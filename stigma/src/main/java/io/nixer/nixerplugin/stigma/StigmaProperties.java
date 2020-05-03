@@ -4,21 +4,18 @@ import java.time.Duration;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-import static io.nixer.nixerplugin.stigma.StigmaConstants.DEFAULT_STIGMA_COOKIE_NAME;
-import static io.nixer.nixerplugin.stigma.StigmaConstants.DEFAULT_STIGMA_LIFETIME;
-
 @ConfigurationProperties(prefix = "nixer.stigma")
 public class StigmaProperties {
 
     /**
      * Name of HTTP cookie to be used for storing Stigma Token.
      */
-    private String cookieName = DEFAULT_STIGMA_COOKIE_NAME;
+    private String cookieName = "stgtk";
 
     /**
      * Amount of time after Stigma is considered expired.
      */
-    private Duration stigmaLifetime = DEFAULT_STIGMA_LIFETIME;
+    private Duration stigmaLifetime = Duration.ofDays(365);
 
     /**
      * Location of file resource with decryption keys to be used for reading Stigma Tokens.

@@ -48,6 +48,10 @@ public class StigmaDetails {
         return creationDate;
     }
 
+    public boolean isRevoked() {
+        return status == StigmaStatus.REVOKED;
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;
