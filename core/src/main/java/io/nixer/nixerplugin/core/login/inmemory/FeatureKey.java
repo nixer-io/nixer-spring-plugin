@@ -46,7 +46,15 @@ public interface FeatureKey {
                     return LoginResult.Status.FAILURE.name();
                 }
             }
-        };
+        },
+        FINGERPRINT {
+            @Nullable
+            @Override
+            public String key(final LoginContext loginContext) {
+                return loginContext.getFingerprint();
+            }
+        }
+        ;
 
         @Override
         @Nullable

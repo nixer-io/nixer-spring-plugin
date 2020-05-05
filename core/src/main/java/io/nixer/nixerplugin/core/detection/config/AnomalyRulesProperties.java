@@ -27,6 +27,7 @@ public class AnomalyRulesProperties {
     public enum Name {
         username,
         useragent,
-        ip
+        ip,
+        fingerprint
     }
 }

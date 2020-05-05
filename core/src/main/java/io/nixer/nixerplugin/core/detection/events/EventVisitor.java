@@ -10,6 +10,8 @@ public interface EventVisitor {
 
     void accept(IpFailedLoginOverThresholdEvent event);
 
+    void accept(FingerprintFailedLoginOverThresholdEvent event);
+
     void accept(FailedLoginRatioEvent event);
 
     void accept(GlobalCredentialStuffingEvent event);

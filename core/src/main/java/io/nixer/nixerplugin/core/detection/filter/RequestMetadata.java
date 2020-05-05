@@ -10,6 +10,9 @@ public interface RequestMetadata {
     String IP_FAILED_LOGIN_OVER_THRESHOLD = "nixer.ip.failedLoginOverThreshold";
     String USERNAME_FAILED_LOGIN_OVER_THRESHOLD = "nixer.username.failedLoginOverThreshold";
     String USER_AGENT_FAILED_LOGIN_OVER_THRESHOLD = "nixer.useragent.failedLoginOverThreshold";
+    String FINGERPRINT_FAILED_LOGIN_OVER_THRESHOLD = "nixer.fingerprint.failedLoginOverThreshold";
+
+    String FINGERPRINT_VALUE = "nixer.fingerprint.fingerprintValue";
 
     String GLOBAL_CREDENTIAL_STUFFING = "nixer.cs.global";
 

@@ -1,11 +1,13 @@
 package io.nixer.example.integrationTest.detection;
 
 import java.util.Random;
+import javax.servlet.http.Cookie;
 
 import com.google.common.base.Joiner;
 import io.nixer.nixerplugin.core.detection.config.AnomalyRulesProperties;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.autoconfigure.metrics.export.influx.InfluxMetricsExportAutoConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -13,17 +15,22 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 
 import static io.nixer.example.integrationTest.LoginRequestBuilder.formLogin;
+import static io.nixer.nixerplugin.core.detection.config.AnomalyRulesProperties.Name.fingerprint;
 import static io.nixer.nixerplugin.core.detection.config.AnomalyRulesProperties.Name.ip;
 import static io.nixer.nixerplugin.core.detection.config.AnomalyRulesProperties.Name.useragent;
 import static io.nixer.nixerplugin.core.detection.config.AnomalyRulesProperties.Name.username;
+import static io.nixer.nixerplugin.core.detection.filter.RequestMetadata.FINGERPRINT_FAILED_LOGIN_OVER_THRESHOLD;
 import static io.nixer.nixerplugin.core.detection.filter.RequestMetadata.IP_FAILED_LOGIN_OVER_THRESHOLD;
 import static io.nixer.nixerplugin.core.detection.filter.RequestMetadata.USERNAME_FAILED_LOGIN_OVER_THRESHOLD;
 import static io.nixer.nixerplugin.core.detection.filter.RequestMetadata.USER_AGENT_FAILED_LOGIN_OVER_THRESHOLD;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.USER_AGENT;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.unauthenticated;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.cookie;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.request;
 
 @SpringBootTest
@@ -39,6 +46,9 @@ class LoginAnomalyThresholdsTest {
 
     @Autowired
     private AnomalyRulesProperties ruleProperties;
+
+    @Value("${nixer.fingerprint.cookieName}")
+    private String fingerprintCookie;
 
     @Test
     void should_mark_number_of_failed_logins_for_single_user_agent_is_over_threshold() throws Exception {
@@ -97,21 +107,55 @@ class LoginAnomalyThresholdsTest {
                 .andExpect(request().attribute(USERNAME_FAILED_LOGIN_OVER_THRESHOLD, false));
     }
 
+    @Test
+    void should_mark_number_of_failed_logins_for_single_fingerprint_is_over_threshold() throws Exception {
+        final Random random = new Random(4);
+        final Integer threshold = ruleProperties.getFailedLoginThreshold().get(fingerprint).getThreshold();
+
+        final String fingerprint = getFingerprint(
+                doFailedLoginAttempt(dummyUsername(random), dummyUserAgent(random), dummyIp(random))
+        );
+
+        // Saturate the failed login counter for the given fingerprint address.
+        for (int i = 0; i <= threshold; i++) {
+            expectNoThresholdsExceeded(
+                    doFailedLoginAttempt(dummyUsername(random), dummyUserAgent(random), dummyIp(random), fingerprint)
+            );
+        }
+
+        doFailedLoginAttempt(dummyUsername(random), dummyUserAgent(random), dummyIp(random), fingerprint)
+                .andExpect(request().attribute(USER_AGENT_FAILED_LOGIN_OVER_THRESHOLD, false))
+                .andExpect(request().attribute(IP_FAILED_LOGIN_OVER_THRESHOLD, false))
+                .andExpect(request().attribute(USERNAME_FAILED_LOGIN_OVER_THRESHOLD, false))
+                .andExpect(request().attribute(FINGERPRINT_FAILED_LOGIN_OVER_THRESHOLD, true));
+    }
+
     private static void expectNoThresholdsExceeded(final ResultActions resultActions) throws Exception {
         resultActions
                 .andExpect(request().attribute(USER_AGENT_FAILED_LOGIN_OVER_THRESHOLD, false))
                 .andExpect(request().attribute(IP_FAILED_LOGIN_OVER_THRESHOLD, false))
-                .andExpect(request().attribute(USERNAME_FAILED_LOGIN_OVER_THRESHOLD, false));
+                .andExpect(request().attribute(USERNAME_FAILED_LOGIN_OVER_THRESHOLD, false))
+                .andExpect(request().attribute(FINGERPRINT_FAILED_LOGIN_OVER_THRESHOLD, false));
     }
 
     private ResultActions doFailedLoginAttempt(final String username, final String userAgent, final String ip) throws Exception {
+        return doFailedLoginAttempt(username, userAgent, ip, null);
+    }
+
+    private ResultActions doFailedLoginAttempt(
+            final String username, final String userAgent, final String ip, final String fingerprint) throws Exception {
+
+        final MockHttpServletRequestBuilder formLogin = formLogin()
+                .user(username).password(INVALID_PASSWORD).build()
+                .header(USER_AGENT, userAgent)
+                .with(remoteAddress(ip));
+
+        if (fingerprint != null) {
+            formLogin.cookie(new Cookie(fingerprintCookie, fingerprint));
+        }
+
         return this.mockMvc
-                .perform(
-                        formLogin()
-                                .user(username).password(INVALID_PASSWORD).build()
-                                .header(USER_AGENT, userAgent)
-                                .with(remoteAddress(ip))
-                )
+                .perform(formLogin)
                 .andExpect(unauthenticated());
     }
 
@@ -137,5 +181,15 @@ class LoginAnomalyThresholdsTest {
 
     private static String dummyUserAgent(final Random random) {
         return "user-agent_" + random.nextLong();
+    }
+
+    private String getFingerprint(final ResultActions resultActions) throws Exception {
+        final String fingerprint = resultActions
+                .andExpect(cookie().exists(fingerprintCookie))
+                .andReturn().getResponse().getCookie(fingerprintCookie).getValue();
+
+        assertThat(fingerprint).isNotBlank();
+
+        return fingerprint;
     }
 }

@@ -29,6 +29,10 @@ public class Conditions {
         return Boolean.TRUE.equals(facts.getFact(RequestMetadata.USERNAME_FAILED_LOGIN_OVER_THRESHOLD));
     }
 
+    public static boolean isFingerprintLoginOverThreshold(Facts facts) {
+        return Boolean.TRUE.equals(facts.getFact(RequestMetadata.FINGERPRINT_FAILED_LOGIN_OVER_THRESHOLD));
+    }
+
     public static boolean isFailedLoginRatioActive(Facts facts) {
         return Boolean.TRUE.equals(facts.getFact(RequestMetadata.FAILED_LOGIN_RATIO_ACTIVE));
     }

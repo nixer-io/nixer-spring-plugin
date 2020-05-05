@@ -89,7 +89,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 //        //JDBC Authentication with post-processor mechanism.
 //        //Credentials take precedence before captcha.
-        //Invalid captcha will not be reported when captcha is empty and credentials are correct (though the authentication will fail as expected).
+          //Invalid captcha will not be reported when captcha is empty and credentials are correct (though the authentication will fail as expected).
 //        auth
 //                .jdbcAuthentication()
 //                .dataSource(dataSource)
@@ -145,6 +145,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .buildRule()
                     .rule("revokedStigmaUsage")
                     .when(StigmaConditions::isStigmaRevoked)
+                    .then(BLOCKED_ERROR)
+                .buildRule()
+                    .rule("fingerprintLoginOverThreshold")
+                    .when(Conditions::isFingerprintLoginOverThreshold)
                     .then(BLOCKED_ERROR)
                 .buildRule()
                 ;

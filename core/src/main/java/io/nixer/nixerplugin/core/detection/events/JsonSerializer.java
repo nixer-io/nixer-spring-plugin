@@ -41,6 +41,11 @@ public class JsonSerializer implements EventVisitor {
     }
 
     @Override
+    public void accept(final FingerprintFailedLoginOverThresholdEvent event) {
+        apply(event, () -> writeStringField("fingerprint", event.getFingerprint()));
+    }
+
+    @Override
     public void accept(final FailedLoginRatioEvent event) {
         apply(event, () -> writeStringField("failedLoginRatio", String.valueOf(event.getRatio())));
     }

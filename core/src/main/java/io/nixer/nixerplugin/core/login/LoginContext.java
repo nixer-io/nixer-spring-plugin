@@ -1,6 +1,7 @@
 package io.nixer.nixerplugin.core.login;
 
-import com.google.common.base.Objects;
+import java.util.Objects;
+
 import io.nixer.nixerplugin.core.detection.filter.ip.IpMetadata;
 
 /**
@@ -70,21 +71,30 @@ public class LoginContext {
         this.loginResult = loginResult;
     }
 
+    public String getFingerprint() {
+        return fingerprint;
+    }
+
+    public void setFingerprint(final String fingerprint) {
+        this.fingerprint = fingerprint;
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         final LoginContext that = (LoginContext) o;
-        return Objects.equal(ipAddress, that.ipAddress) &&
-                Objects.equal(userAgent, that.userAgent) &&
-                Objects.equal(ipMetadata, that.ipMetadata) &&
-                Objects.equal(userAgentToken, that.userAgentToken) &&
-                Objects.equal(username, that.username) &&
-                Objects.equal(loginResult, that.loginResult);
+        return Objects.equals(username, that.username) &&
+                Objects.equals(ipAddress, that.ipAddress) &&
+                Objects.equals(userAgent, that.userAgent) &&
+                Objects.equals(userAgentToken, that.userAgentToken) &&
+                Objects.equals(fingerprint, that.fingerprint) &&
+                Objects.equals(ipMetadata, that.ipMetadata) &&
+                Objects.equals(loginResult, that.loginResult);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(ipAddress, userAgent, username, ipMetadata, userAgentToken, loginResult);
+        return Objects.hash(username, ipAddress, userAgent, userAgentToken, fingerprint, ipMetadata, loginResult);
     }
 }

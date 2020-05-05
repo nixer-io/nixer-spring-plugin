@@ -2,10 +2,10 @@ package io.nixer.example.integrationTest.fingerprint;
 
 import javax.servlet.http.Cookie;
 
-import io.nixer.nixerplugin.core.fingerprint.FingerprintProperties;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.autoconfigure.metrics.export.influx.InfluxMetricsExportAutoConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -32,8 +32,8 @@ public class FingerprintTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @Autowired
-    private FingerprintProperties fingerprintProperties;
+    @Value("${nixer.fingerprint.cookieName}")
+    private String fingerprintCookie;
 
     @AfterEach
     void tearDown() throws Exception {
@@ -46,15 +46,15 @@ public class FingerprintTest {
                 this.mockMvc
                         .perform(formLogin().user("user").password("user").build())
                         .andExpect(authenticated())
-                        .andExpect(cookie().exists(fingerprintProperties.getCookieName()))
-                        .andReturn().getResponse().getCookie(fingerprintProperties.getCookieName()).getValue();
+                        .andExpect(cookie().exists(fingerprintCookie))
+                        .andReturn().getResponse().getCookie(fingerprintCookie).getValue();
 
         this.mockMvc
                 .perform(
                         formLogin().user("user").password("user").build()
-                                .cookie(new Cookie(fingerprintProperties.getCookieName(), fingerprint))
+                                .cookie(new Cookie(fingerprintCookie, fingerprint))
                 )
                 .andExpect(authenticated())
-                .andExpect(cookie().doesNotExist(fingerprintProperties.getCookieName()));
+                .andExpect(cookie().doesNotExist(fingerprintCookie));
     }
 }

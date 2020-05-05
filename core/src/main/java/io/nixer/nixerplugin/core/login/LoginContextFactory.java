@@ -3,6 +3,7 @@ package io.nixer.nixerplugin.core.login;
 import javax.servlet.http.HttpServletRequest;
 
 import com.google.common.net.HttpHeaders;
+import io.nixer.nixerplugin.core.detection.filter.RequestMetadata;
 import io.nixer.nixerplugin.core.detection.filter.ip.IpMetadata;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.event.AbstractAuthenticationEvent;
@@ -44,6 +45,8 @@ public class LoginContextFactory {
         context.setUserAgent(userAgent);
         context.setUserAgentToken((String) request.getAttribute(USER_AGENT_TOKEN));
         context.setIpMetadata((IpMetadata) request.getAttribute(IP_METADATA));
+        context.setIpMetadata((IpMetadata) request.getAttribute(IP_METADATA));
+        context.setFingerprint((String) request.getAttribute(RequestMetadata.FINGERPRINT_VALUE));
         return context;
     }
 

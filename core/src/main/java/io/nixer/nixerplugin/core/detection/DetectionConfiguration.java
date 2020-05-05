@@ -5,11 +5,13 @@ import java.util.List;
 import io.nixer.nixerplugin.core.detection.config.AnomalyRulesProperties;
 import io.nixer.nixerplugin.core.detection.config.FailedLoginRatioProperties;
 import io.nixer.nixerplugin.core.detection.config.WindowThresholdRuleProperties;
+import io.nixer.nixerplugin.core.detection.filter.fingerprint.FingerprintFailedLoginOverThresholdFilter;
 import io.nixer.nixerplugin.core.detection.filter.login.FailedLoginRatioFilter;
 import io.nixer.nixerplugin.core.detection.filter.login.IpFailedLoginOverThresholdFilter;
 import io.nixer.nixerplugin.core.detection.filter.login.UserAgentFailedLoginOverThresholdFilter;
 import io.nixer.nixerplugin.core.detection.filter.login.UsernameFailedLoginOverThresholdFilter;
 import io.nixer.nixerplugin.core.detection.registry.FailedLoginRatioRegistry;
+import io.nixer.nixerplugin.core.detection.registry.FingerprintFailedLoginOverThresholdRegistry;
 import io.nixer.nixerplugin.core.detection.registry.IpOverLoginThresholdRegistry;
 import io.nixer.nixerplugin.core.detection.registry.UserAgentOverLoginThresholdRegistry;
 import io.nixer.nixerplugin.core.detection.registry.UsernameOverLoginThresholdRegistry;
@@ -17,16 +19,19 @@ import io.nixer.nixerplugin.core.detection.rules.LoginAnomalyRuleFactory;
 import io.nixer.nixerplugin.core.detection.rules.LoginRule;
 import io.nixer.nixerplugin.core.detection.rules.RulesRunner;
 import io.nixer.nixerplugin.core.domain.useragent.UserAgentTokenizer;
+import io.nixer.nixerplugin.core.fingerprint.FingerprintProperties;
 import io.nixer.nixerplugin.core.login.inmemory.CounterRegistry;
 import io.nixer.nixerplugin.core.login.inmemory.InMemoryLoginActivityRepository;
 import io.nixer.nixerplugin.core.util.NowSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.AllNestedConditions;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
@@ -86,6 +91,61 @@ public class DetectionConfiguration {
         @Bean
         public IpOverLoginThresholdRegistry ipRegistry() {
             return new IpOverLoginThresholdRegistry();
+        }
+    }
+
+
+    static class FingerprintLoginThresholdFeatureEnabled extends AllNestedConditions {
+        FingerprintLoginThresholdFeatureEnabled() {
+            super(ConfigurationPhase.PARSE_CONFIGURATION);
+        }
+
+        @ConditionalOnProperty(prefix = "nixer.fingerprint", name = "enabled", havingValue = "true")
+        static class FingerprintingEnabled {
+        }
+
+        @ConditionalOnProperty(prefix = "nixer.rules.failed-login-threshold.fingerprint", name = "enabled", havingValue = "true")
+        static class FingerprintThresholdRuleEnabled {
+        }
+    }
+
+    @Configuration
+    @Conditional(FingerprintLoginThresholdFeatureEnabled.class)
+    static class FingerprintLoginThresholdRule {
+
+        private final DetectionConfiguration detectionConfiguration;
+        private final FingerprintProperties fingerprintProperties;
+
+        FingerprintLoginThresholdRule(final DetectionConfiguration detectionConfiguration, final FingerprintProperties fingerprintProperties) {
+            this.detectionConfiguration = detectionConfiguration;
+            this.fingerprintProperties = fingerprintProperties;
+        }
+
+        @Bean
+        @ConfigurationProperties(prefix = "nixer.rules.failed-login-threshold.fingerprint")
+        public WindowThresholdRuleProperties fingerprintThresholdRulesProperties() {
+            return new WindowThresholdRuleProperties();
+        }
+
+        @Bean
+        public LoginRule fingerprintFailedLoginThresholdRule() {
+            final WindowThresholdRuleProperties properties = fingerprintThresholdRulesProperties();
+
+            return detectionConfiguration.ruleFactory()
+                    .createFingerprintRule(properties.getWindow(), properties.getThreshold());
+        }
+
+        @Bean
+        public FingerprintFailedLoginOverThresholdFilter fingerprintFilter() {
+            return new FingerprintFailedLoginOverThresholdFilter(
+                    fingerprintProperties.getCookieName(),
+                    fingerprintRegistry()
+            );
+        }
+
+        @Bean
+        public FingerprintFailedLoginOverThresholdRegistry fingerprintRegistry() {
+            return new FingerprintFailedLoginOverThresholdRegistry();
         }
     }
 

@@ -3,6 +3,7 @@ package io.nixer.nixerplugin.core.detection.rules;
 import java.time.Duration;
 
 import io.nixer.nixerplugin.core.detection.rules.ratio.FailedLoginRatioRule;
+import io.nixer.nixerplugin.core.detection.rules.threshold.FingerprintFailedLoginOverThresholdRule;
 import io.nixer.nixerplugin.core.detection.rules.threshold.IpFailedLoginOverThresholdRule;
 import io.nixer.nixerplugin.core.detection.rules.threshold.UserAgentFailedLoginOverThresholdRule;
 import io.nixer.nixerplugin.core.detection.rules.threshold.UsernameFailedLoginOverThresholdRule;
@@ -72,6 +73,22 @@ public class LoginAnomalyRuleFactory {
         counterRegistry.registerCounter(counter);
 
         final IpFailedLoginOverThresholdRule rule = new IpFailedLoginOverThresholdRule(counter);
+        if (threshold != null) {
+            rule.setThreshold(threshold);
+        }
+        return rule;
+    }
+
+    public FingerprintFailedLoginOverThresholdRule createFingerprintRule(final Duration window, final Integer threshold) {
+
+        final LoginCounter counter = LoginCounterBuilder.counter(FeatureKey.Features.FINGERPRINT)
+                .window(window)
+                .count(CountingStrategies.CONSECUTIVE_FAILS)
+                .buildCachedRollingCounter();
+
+        counterRegistry.registerCounter(counter);
+
+        final FingerprintFailedLoginOverThresholdRule rule = new FingerprintFailedLoginOverThresholdRule(counter);
         if (threshold != null) {
             rule.setThreshold(threshold);
         }
