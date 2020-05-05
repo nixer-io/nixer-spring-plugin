@@ -1,9 +1,8 @@
-package io.nixer.nixerplugin.core.detection.rules.threshold;
+package io.nixer.nixerplugin.core.fingerprint.loginThreshold;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import io.nixer.nixerplugin.core.detection.events.FingerprintFailedLoginOverThresholdEvent;
 import io.nixer.nixerplugin.core.login.LoginContext;
 import io.nixer.nixerplugin.core.login.inmemory.LoginMetric;
 import org.junit.jupiter.api.Test;

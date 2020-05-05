@@ -5,6 +5,7 @@ import java.io.StringWriter;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
+import io.nixer.nixerplugin.core.fingerprint.loginThreshold.FingerprintFailedLoginOverThresholdEvent;
 
 public class JsonSerializer implements EventVisitor {
 

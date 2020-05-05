@@ -1,10 +1,9 @@
-package io.nixer.nixerplugin.core.detection.registry;
+package io.nixer.nixerplugin.core.fingerprint.loginThreshold;
 
 import java.time.Duration;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import io.nixer.nixerplugin.core.detection.events.FingerprintFailedLoginOverThresholdEvent;
 import org.springframework.context.ApplicationListener;
 
 

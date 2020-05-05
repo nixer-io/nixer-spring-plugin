@@ -1,11 +1,10 @@
-package io.nixer.nixerplugin.core.detection.filter.fingerprint;
+package io.nixer.nixerplugin.core.fingerprint.loginThreshold;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 import io.nixer.nixerplugin.core.detection.filter.MetadataFilter;
 import io.nixer.nixerplugin.core.detection.filter.RequestMetadata;
-import io.nixer.nixerplugin.core.detection.registry.FingerprintFailedLoginOverThresholdRegistry;
 import org.springframework.util.StringUtils;
 import org.springframework.web.util.WebUtils;
 

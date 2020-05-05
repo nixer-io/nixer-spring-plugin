@@ -1,6 +1,8 @@
-package io.nixer.nixerplugin.core.detection.events;
+package io.nixer.nixerplugin.core.fingerprint.loginThreshold;
 
 import com.google.common.base.Objects;
+import io.nixer.nixerplugin.core.detection.events.AnomalyEvent;
+import io.nixer.nixerplugin.core.detection.events.EventVisitor;
 
 public class FingerprintFailedLoginOverThresholdEvent extends AnomalyEvent {
 

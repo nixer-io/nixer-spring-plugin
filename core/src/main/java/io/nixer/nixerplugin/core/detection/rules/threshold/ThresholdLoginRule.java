@@ -5,15 +5,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 import io.nixer.nixerplugin.core.detection.rules.LoginRule;
 import org.springframework.util.Assert;
 
-abstract class ThresholdLoginRule implements LoginRule {
+public abstract class ThresholdLoginRule implements LoginRule {
 
     private final AtomicInteger threshold;
 
-    ThresholdLoginRule(final int threshold) {
+    public ThresholdLoginRule(final int threshold) {
         this.threshold = new AtomicInteger(threshold);
     }
 
-    boolean isOverThreshold(int value) {
+    public boolean isOverThreshold(int value) {
         return value > threshold.get();
     }
 

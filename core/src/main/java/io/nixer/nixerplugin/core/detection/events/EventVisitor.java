@@ -1,5 +1,7 @@
 package io.nixer.nixerplugin.core.detection.events;
 
+import io.nixer.nixerplugin.core.fingerprint.loginThreshold.FingerprintFailedLoginOverThresholdEvent;
+
 public interface EventVisitor {
 
     void accept(AnomalyEvent event);

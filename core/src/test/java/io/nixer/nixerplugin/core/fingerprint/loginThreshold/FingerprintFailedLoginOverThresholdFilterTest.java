@@ -1,9 +1,8 @@
-package io.nixer.nixerplugin.core.detection.filter.fingerprint;
+package io.nixer.nixerplugin.core.fingerprint.loginThreshold;
 
 import javax.servlet.http.Cookie;
 
 import io.nixer.nixerplugin.core.detection.filter.RequestMetadata;
-import io.nixer.nixerplugin.core.detection.registry.FingerprintFailedLoginOverThresholdRegistry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

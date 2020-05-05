@@ -3,7 +3,7 @@ package io.nixer.nixerplugin.core.detection.rules;
 import java.time.Duration;
 
 import io.nixer.nixerplugin.core.detection.rules.ratio.FailedLoginRatioRule;
-import io.nixer.nixerplugin.core.detection.rules.threshold.FingerprintFailedLoginOverThresholdRule;
+import io.nixer.nixerplugin.core.fingerprint.loginThreshold.FingerprintFailedLoginOverThresholdRule;
 import io.nixer.nixerplugin.core.detection.rules.threshold.IpFailedLoginOverThresholdRule;
 import io.nixer.nixerplugin.core.detection.rules.threshold.UserAgentFailedLoginOverThresholdRule;
 import io.nixer.nixerplugin.core.detection.rules.threshold.UsernameFailedLoginOverThresholdRule;
