@@ -37,17 +37,19 @@ public class LoginContextFactory {
 
         final String userAgent = request.getHeader(HttpHeaders.USER_AGENT);
         final String ip = request.getRemoteAddr();
+        final String userAgentToken = (String) request.getAttribute(USER_AGENT_TOKEN);
+        final IpMetadata ipMetadata = (IpMetadata) request.getAttribute(IP_METADATA);
+        final String fingerprint = (String) request.getAttribute(RequestMetadata.FINGERPRINT_VALUE);
 
-        final LoginContext context = new LoginContext();
-        context.setLoginResult(loginResult);
-        context.setUsername(username);
-        context.setIpAddress(ip);
-        context.setUserAgent(userAgent);
-        context.setUserAgentToken((String) request.getAttribute(USER_AGENT_TOKEN));
-        context.setIpMetadata((IpMetadata) request.getAttribute(IP_METADATA));
-        context.setIpMetadata((IpMetadata) request.getAttribute(IP_METADATA));
-        context.setFingerprint((String) request.getAttribute(RequestMetadata.FINGERPRINT_VALUE));
-        return context;
+        return new LoginContext(
+                username,
+                ip,
+                userAgent,
+                userAgentToken,
+                loginResult,
+                ipMetadata,
+                fingerprint
+        );
     }
 
 

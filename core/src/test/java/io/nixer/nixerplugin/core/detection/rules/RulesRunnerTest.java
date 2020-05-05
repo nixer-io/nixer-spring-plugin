@@ -9,6 +9,7 @@ import io.nixer.nixerplugin.core.detection.events.IpFailedLoginOverThresholdEven
 import io.nixer.nixerplugin.core.detection.events.UserAgentFailedLoginOverThresholdEvent;
 import io.nixer.nixerplugin.core.login.LoginContext;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -29,7 +30,7 @@ class RulesRunnerTest {
 
         final RulesRunner rulesRunner = new RulesRunner(publisherStub, rules);
 
-        rulesRunner.onLogin(new LoginContext());
+        rulesRunner.onLogin(Mockito.mock(LoginContext.class));
 
         assertThat(publisherStub.getEvents()).hasSize(2)
                 .hasAtLeastOneElementOfType(UserAgentFailedLoginOverThresholdEvent.class)

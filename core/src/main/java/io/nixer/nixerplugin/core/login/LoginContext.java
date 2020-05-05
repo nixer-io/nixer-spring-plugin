@@ -3,80 +3,73 @@ package io.nixer.nixerplugin.core.login;
 import java.util.Objects;
 
 import io.nixer.nixerplugin.core.detection.filter.ip.IpMetadata;
+import org.springframework.util.Assert;
 
 /**
  * Stores data about user making login request.
  */
 public class LoginContext {
 
-    private String username;
+    private final String username;
 
-    private String ipAddress;
+    private final String ipAddress;
 
-    private String userAgent;
+    private final String userAgent;
 
-    private String userAgentToken;
+    private final String userAgentToken;
 
-    private String fingerprint;
+    private final LoginResult loginResult;
 
-    private IpMetadata ipMetadata;
+    private final IpMetadata ipMetadata;
 
-    private LoginResult loginResult;
+    private final String fingerprint;
+
+    public LoginContext(final String username,
+                        final String ipAddress,
+                        final String userAgent,
+                        final String userAgentToken,
+                        final LoginResult loginResult,
+                        final IpMetadata ipMetadata,
+                        final String fingerprint) {
+        Assert.notNull(username, "username must not be null");
+        Assert.notNull(ipAddress, "ipAddress must not be null");
+        Assert.notNull(loginResult, "loginResult must not be null");
+
+        this.username = username;
+        this.ipAddress = ipAddress;
+        this.userAgent = userAgent;
+        this.userAgentToken = userAgentToken;
+        this.loginResult = loginResult;
+        this.ipMetadata = ipMetadata;
+        this.fingerprint = fingerprint;
+    }
 
     public String getUsername() {
         return username;
-    }
-
-    public void setUsername(final String username) {
-        this.username = username;
     }
 
     public String getIpAddress() {
         return ipAddress;
     }
 
-    public void setIpAddress(final String ipAddress) {
-        this.ipAddress = ipAddress;
-    }
-
     public String getUserAgent() {
         return userAgent;
-    }
-
-    public void setUserAgent(final String userAgent) {
-        this.userAgent = userAgent;
     }
 
     public IpMetadata getIpMetadata() {
         return ipMetadata;
     }
 
-    public void setIpMetadata(final IpMetadata ipMetadata) {
-        this.ipMetadata = ipMetadata;
-    }
-
     public String getUserAgentToken() {
         return userAgentToken;
-    }
-
-    public void setUserAgentToken(final String userAgentToken) {
-        this.userAgentToken = userAgentToken;
     }
 
     public LoginResult getLoginResult() {
         return loginResult;
     }
 
-    public void setLoginResult(final LoginResult loginResult) {
-        this.loginResult = loginResult;
-    }
-
     public String getFingerprint() {
         return fingerprint;
-    }
-
-    public void setFingerprint(final String fingerprint) {
-        this.fingerprint = fingerprint;
     }
 
     @Override

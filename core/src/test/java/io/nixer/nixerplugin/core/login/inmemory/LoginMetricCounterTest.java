@@ -6,8 +6,10 @@ import io.nixer.nixerplugin.core.login.LoginContext;
 import io.nixer.nixerplugin.core.login.LoginFailureType;
 import io.nixer.nixerplugin.core.login.LoginResult;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.BDDMockito.given;
 
 class LoginCounterTest {
 
@@ -69,16 +71,16 @@ class LoginCounterTest {
     }
 
     private static LoginContext failedLoginContext(final String ip) {
-        final LoginContext loginContext = new LoginContext();
-        loginContext.setIpAddress(ip);
-        loginContext.setLoginResult(LoginResult.failure(LoginFailureType.BAD_PASSWORD));
+        final LoginContext loginContext = Mockito.mock(LoginContext.class);
+        given(loginContext.getIpAddress()).willReturn(ip);
+        given(loginContext.getLoginResult()).willReturn(LoginResult.failure(LoginFailureType.BAD_PASSWORD));
         return loginContext;
     }
 
     private static LoginContext successfulLoginContext(final String ip) {
-        final LoginContext loginContext = new LoginContext();
-        loginContext.setIpAddress(ip);
-        loginContext.setLoginResult(LoginResult.success());
+        final LoginContext loginContext = Mockito.mock(LoginContext.class);
+        given(loginContext.getIpAddress()).willReturn(ip);
+        given(loginContext.getLoginResult()).willReturn(LoginResult.success());
         return loginContext;
     }
 }
