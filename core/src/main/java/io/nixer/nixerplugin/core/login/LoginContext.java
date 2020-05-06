@@ -1,6 +1,7 @@
 package io.nixer.nixerplugin.core.login;
 
 import java.util.Objects;
+import javax.annotation.Nullable;
 
 import io.nixer.nixerplugin.core.detection.filter.ip.IpMetadata;
 import org.springframework.util.Assert;
@@ -20,8 +21,10 @@ public class LoginContext {
 
     private final LoginResult loginResult;
 
+    @Nullable
     private final IpMetadata ipMetadata;
 
+    @Nullable
     private final String fingerprint;
 
     public LoginContext(final String username,
@@ -29,8 +32,8 @@ public class LoginContext {
                         final String userAgent,
                         final String userAgentToken,
                         final LoginResult loginResult,
-                        final IpMetadata ipMetadata,
-                        final String fingerprint) {
+                        @Nullable final IpMetadata ipMetadata,
+                        @Nullable final String fingerprint) {
         Assert.notNull(username, "username must not be null");
         Assert.notNull(ipAddress, "ipAddress must not be null");
         Assert.notNull(userAgent, "userAgent must not be null");
@@ -58,6 +61,7 @@ public class LoginContext {
         return userAgent;
     }
 
+    @Nullable
     public IpMetadata getIpMetadata() {
         return ipMetadata;
     }
@@ -70,6 +74,7 @@ public class LoginContext {
         return loginResult;
     }
 
+    @Nullable
     public String getFingerprint() {
         return fingerprint;
     }
