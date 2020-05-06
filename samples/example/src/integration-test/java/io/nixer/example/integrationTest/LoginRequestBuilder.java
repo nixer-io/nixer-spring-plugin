@@ -54,7 +54,7 @@ public class LoginRequestBuilder {
      * @return the {@link LoginRequestBuilder} for additional customizations
      */
     public LoginRequestBuilder captchaParameter(final String captchaParameter) {
-        this.captchaParam = captchaParam;
+        this.captchaParam = captchaParameter;
         return this;
     }
 
