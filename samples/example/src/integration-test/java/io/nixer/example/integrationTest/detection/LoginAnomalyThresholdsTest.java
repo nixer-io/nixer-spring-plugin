@@ -28,7 +28,6 @@ import static io.nixer.nixerplugin.core.detection.filter.RequestMetadata.IP_FAIL
 import static io.nixer.nixerplugin.core.detection.filter.RequestMetadata.USERNAME_FAILED_LOGIN_OVER_THRESHOLD;
 import static io.nixer.nixerplugin.core.detection.filter.RequestMetadata.USER_AGENT_FAILED_LOGIN_OVER_THRESHOLD;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.http.HttpHeaders.USER_AGENT;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.unauthenticated;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.cookie;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.request;
@@ -146,8 +145,7 @@ class LoginAnomalyThresholdsTest {
             final String username, final String userAgent, final String ip, final String fingerprint) throws Exception {
 
         final MockHttpServletRequestBuilder formLogin = formLogin()
-                .user(username).password(INVALID_PASSWORD).build()
-                .header(USER_AGENT, userAgent)
+                .user(username).password(INVALID_PASSWORD).userAgent(userAgent).build()
                 .with(remoteAddress(ip));
 
         if (fingerprint != null) {

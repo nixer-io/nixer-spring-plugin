@@ -33,6 +33,8 @@ public class LoginContext {
                         final String fingerprint) {
         Assert.notNull(username, "username must not be null");
         Assert.notNull(ipAddress, "ipAddress must not be null");
+        Assert.notNull(userAgent, "userAgent must not be null");
+        Assert.notNull(userAgentToken, "userAgentToken must not be null");
         Assert.notNull(loginResult, "loginResult must not be null");
 
         this.username = username;

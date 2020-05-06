@@ -27,6 +27,7 @@ import org.springframework.web.filter.RequestContextFilter;
 
 import static io.nixer.nixerplugin.core.detection.filter.behavior.Behaviors.BLOCKED_ERROR;
 import static io.nixer.nixerplugin.core.detection.filter.behavior.Behaviors.CAPTCHA;
+import static io.nixer.nixerplugin.core.detection.filter.behavior.Behaviors.LOG;
 import static org.springframework.http.HttpMethod.POST;
 
 /**
@@ -133,7 +134,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .buildRule()
                     .rule("userAgentLoginOverThreshold")
                     .when(Conditions::isUserAgentLoginOverThreshold)
-                    .then(CAPTCHA)
+                    .then(LOG)
                 .buildRule()
                     .rule("credentialStuffingActive")
                     .when(Conditions::isGlobalCredentialStuffing)

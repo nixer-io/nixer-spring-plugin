@@ -4,6 +4,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 
+import static org.springframework.http.HttpHeaders.USER_AGENT;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
@@ -17,6 +18,7 @@ public class LoginRequestBuilder {
     private String username = "user";
     private String password = "password";
     private String loginProcessingUrl = "/login";
+    private String userAgent = "user_agent_string";
     private MediaType acceptMediaType = MediaType.APPLICATION_FORM_URLENCODED;
 
     private RequestPostProcessor postProcessor = csrf();
@@ -28,6 +30,7 @@ public class LoginRequestBuilder {
     public MockHttpServletRequestBuilder build() {
         return post(this.loginProcessingUrl)
                 .accept(this.acceptMediaType)
+                .header(USER_AGENT, this.userAgent)
                 .param(this.usernameParam, this.username)
                 .param(this.passwordParam, this.password)
                 .param(this.captchaParam, this.captcha)
@@ -149,4 +152,14 @@ public class LoginRequestBuilder {
         return this;
     }
 
+    /**
+     * The value of the HTTP {@code User-Agent} header. Default is "user_agent_string".
+     *
+     * @param userAgent the value of the HTTP {@code User-Agent} header. Default is "user_agent_string".
+     * @return the {@link LoginRequestBuilder} for additional customizations
+     */
+    public LoginRequestBuilder userAgent(String userAgent) {
+        this.userAgent = userAgent;
+        return this;
+    }
 }
