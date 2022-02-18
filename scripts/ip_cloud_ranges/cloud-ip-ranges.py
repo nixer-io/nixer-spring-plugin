@@ -88,7 +88,7 @@ def fetch_aws_ip_ranges():
 # https://docs.microsoft.com/en-us/azure/virtual-network/public-ip-address-prefix
 # Please note that link to ip ranges resource is dynamically changing.
 def fetch_azure_ip_ranges():
-    url = 'https://download.microsoft.com/download/7/1/D/71D86715-5596-4529-9B13-DA13A5DE5B63/ServiceTags_Public_20190909.json'
+    url = 'https://download.microsoft.com/download/7/1/D/71D86715-5596-4529-9B13-DA13A5DE5B63/ServiceTags_Public_20220214.json'
     ips = fetch_json(url)
 
     ipv4_ranges = []
@@ -152,13 +152,13 @@ def fetch_gce_ip_ranges():
     }
 
 
-# IBM https://cloud.ibm.com/docs/infrastructure/virtual-router-appliance?topic=hardware-firewall-dedicated-ibm-cloud-ip-ranges
+# IBM https://github.com/ibm-cloud-docs/hardware-firewall-shared/blob/master/ips.md
 def fetch_ibm_ip_ranges():
-    url = "https://raw.githubusercontent.com/ibm-cloud-docs/hardware-firewall-dedicated/master/ips.md"
-    oracle_docs = fetch_text(url)
+    url = "https://raw.githubusercontent.com/ibm-cloud-docs/hardware-firewall-shared/master/ips.md"
+    ibm_docs = fetch_text(url)
     
     ipv4_ranges = []
-    for line in oracle_docs.splitlines():
+    for line in ibm_docs.splitlines():
         for prefix in re.finditer(r'(\d{1,3}(\.\d{1,3}){3}/\d{1,2})', line):
             ipv4_ranges.append(prefix.group(0))
 
