@@ -152,7 +152,7 @@ def fetch_gce_ip_ranges():
     }
 
 
-# IBM https://cloud.ibm.com/docs/infrastructure/virtual-router-appliance?topic=hardware-firewall-dedicated-ibm-cloud-ip-ranges
+# IBM https://github.com/ibm-cloud-docs/hardware-firewall-shared/blob/master/ips.md
 def fetch_ibm_ip_ranges():
     url = "https://raw.githubusercontent.com/ibm-cloud-docs/hardware-firewall-shared/master/ips.md"
     ibm_docs = fetch_text(url)
