@@ -1,5 +1,7 @@
 # Nixer Spring Plugin ![](https://github.com/nixer-io/nixer-spring-plugin/workflows/Java%20CI/badge.svg)
 
+This project is deprecated and archived.
+
 Nixer plugin for [Spring](https://github.com/spring-projects/spring-framework) framework for dealing with credential stuffing attacks.
 
 For overview and tutorials visit [our documentation website](https://nixer-io.github.io/).
